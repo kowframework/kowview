@@ -1,0 +1,89 @@
+V "GNAT Lib v4.3"
+P SS ZX
+R nnnnnnnnnnnnnnnnnnnnnnvnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+
+U contador%b		contador.adb		58eb300a NE PK IL
+W ada%s			ada.ads			ada.ali
+W ada.strings%s		a-string.ads		a-string.ali
+W ada.strings.unbounded%s  a-strunb.adb		a-strunb.ali
+W ada.text_io%s		a-textio.adb		a-textio.ali
+W to_upper_case%s	to_upper_case.adb	to_upper_case.ali
+
+U contador%s		contador.ads		ee1b2f21 EE NE PK IL
+W ada%s			ada.ads			ada.ali
+W ada.text_io%s		a-textio.adb		a-textio.ali
+
+D ada.ads		20080616192205 9c7dd3ea
+D a-charac.ads		20080616192211 506ce725
+D a-chlat1.ads		20080616192159 e9ee6d0a
+D a-except.ads		20080616192205 ba3e26e2
+D a-finali.ads		20080616192206 9eaacebd
+D a-filico.ads		20080616192204 9299732a
+D a-ioexce.ads		20080616192207 be0900a0
+D a-stream.ads		20080616192200 34aca5be
+D a-string.ads		20080616192212 87b4230b
+D a-strmap.ads		20080616192202 5253a637
+D a-strunb.ads		20080616192208 f0549c04
+D a-tags.ads		20080616192212 e10285b3
+D a-textio.ads		20080616192208 bc6e78fe
+D a-unccon.ads		20080616192157 51e09df2
+D contador.ads		20080903202756 527557df
+D contador.adb		20080904123649 95c32566
+D interfac.ads		20080616192200 a69cad5c
+D i-cstrea.ads		20080616192206 e1e064a9
+D system.ads		20080616192211 e2b32c27
+D s-crtl.ads		20080616192212 ef997abb
+D s-exctab.ads		20080616192205 5c1c61ae
+D s-ficobl.ads		20080616192204 8bb681e5
+D s-finimp.ads		20080616192201 9449f4cb
+D s-finroo.ads		20080616192207 1408f9d1
+D s-parame.ads		20080616192207 f32e56e9
+D s-secsta.ads		20080616192201 7bae3621
+D s-soflin.ads		20080616192206 2b67bae6
+D s-stache.ads		20080616192200 257b3be8
+D s-stalib.ads		20080616192205 9ac44ca2
+D s-stoele.ads		20080616192212 1104c881
+D s-stoele.adb		20080616192212 e9998c78
+D s-stratt.ads		20080616192202 b4bf338e
+D s-traent.ads		20080616192209 bd5f2753
+D s-unstyp.ads		20080616192210 c0f9fae5
+D s-wchcon.ads		20080616192209 ab028799
+D to_upper_case.ads	20080903211023 d367a649
+X 1 ada.ads
+16K9*Ada 19e8 15|1r6 1r29 16|1r6 1r33 2r6 2r33 10r17 11r17 15r23 23r17 23r59
+. 27r27 32r25
+X 9 a-string.ads
+16K13*Strings 35e16 16|2r10 2r37
+X 11 a-strunb.ads
+41K21*Unbounded 430e26 16|2w18 2r45
+X 13 a-textio.ads
+50K13*Text_IO 482e16 15|1w10 1r33 16|1w10 1r37 10r21 11r21 15r27 23r21 23r63
+. 27r31 32r29
+53P9*File_Type(345R9) 16|15r35
+54n23*In_File{54E9} 16|23r71
+94U14*Open 16|23r29
+95p7 File{53P9} 16|23r35
+96e7 Mode{54E9} 16|23r53
+97s7 Name{string} 16|23r80
+185V13*End_Of_File{boolean} 16|27r39
+185p26 File{53P9} 16|27r52
+207U14*Get 16|32r37
+207p19 File{53P9} 16|32r42
+207e37 Item{character} 16|32r62
+244U14*Put 16|10r29 11r29 30r25
+X 15 contador.ads
+3K9*contador 10l5 10e13 16|6b14 50l5 50t13
+5E17*Letras_Validas{character} 6r40
+6A14*Contagem_Letras(natural)<character> 8r61 16|14r61 17r35
+8V18*AbrirTxt{6A14} 8>28 16|14b18 41l13 41t21
+8s28 Nome_Arquivo{string} 16|14b28 23r86
+9U19*teste 9>26 16|8b19 12l13 12t18
+9s26 Nome_Arquivo{string} 16|8b26 10r34
+X 16 contador.adb
+15p9 MeuArquivo{13|53P9} 23m41 27r60 32r50
+17a9 Contagem_Letras_Array{15|6A14} 21m17 40r24
+18e9 letra{character} 32m70 35r48
+X 36 to_upper_case.ads
+3K9*to_upper_case 16|3w6 35r25 36|9e18
+7U19*convert 16|35r39
+

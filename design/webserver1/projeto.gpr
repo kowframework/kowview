@@ -1,0 +1,13 @@
+
+
+
+with "aws.gpr";
+
+
+project projeto is
+
+	for Source_Dirs use (".");
+	for Exec_Dir use ".";
+
+	for main use ("webserver");
+end projeto;

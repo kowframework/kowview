@@ -1,0 +1,143 @@
+V "GNAT Lib v4.3"
+A -gnatA
+P SS ZX
+R nnnvnnnnnnnnnnnvnnvnnnnvnnnnvnvnnnnnnvnvnnnnnnnnnnnnnnvnvnnnnnnnnnnnnnnnn
+
+U server_utils%b	server_utils.adb	06a26bee PK
+W ada.exceptions%s	a-except.adb		a-except.ali
+W ada.tags%s		a-tags.adb		a-tags.ali
+W system%s		system.ads		system.ali
+W system.exception_table%s  s-exctab.adb	s-exctab.ali
+W system.finalization_implementation%s  s-finimp.adb  s-finimp.ali
+W system.finalization_root%s  s-finroo.adb	s-finroo.ali
+W system.parameters%s	s-parame.adb		s-parame.ali
+W system.secondary_stack%s  s-secsta.adb	s-secsta.ali
+W system.soft_links%s	s-soflin.adb		s-soflin.ali
+W system.standard_library%s  s-stalib.adb	s-stalib.ali
+W system.storage_elements%s  s-stoele.adb	s-stoele.ali
+W system.string_ops_concat_3%s  s-sopco3.adb	s-sopco3.ali
+
+U server_utils%s	server_utils.ads	83b18a08 EE NE PK
+W ada%s			ada.ads			ada.ali
+W ada.strings%s		a-string.ads		a-string.ali
+W ada.strings.unbounded%s  a-strunb.adb		a-strunb.ali
+W aw_config%s		aw_config.adb		aw_config.ali
+W aw_config.xml%s	aw_config-xml.adb	aw_config-xml.ali
+W aw_lib%s		aw_lib.ads		aw_lib.ali
+W aw_lib.ustring_ordered_maps%s  aw_lib-ustring_ordered_maps.ads  aw_lib-ustring_ordered_maps.ali
+W my_page%s		my_page.adb		my_page.ali
+
+D ada.ads		20080616192205 9c7dd3ea
+D a-calend.ads		20080616192209 e18fa1bf
+D a-calfor.ads		20080616192212 e9a1e10c
+D a-catizo.ads		20080616192202 5e5912b4
+D a-charac.ads		20080616192211 506ce725
+D a-chlat1.ads		20080616192159 e9ee6d0a
+D a-contai.ads		20080616192212 7b35f559
+D a-cohata.ads		20080616192210 ab6e313e
+D a-cohama.ads		20080616192208 adbf661e
+D a-coorma.ads		20080616192202 9381d641
+D a-crbltr.ads		20080616192207 3ec6743e
+D a-convec.ads		20080616192200 317e4a8c
+D a-envvar.ads		20080616192157 4438a956
+D a-except.ads		20080616192205 ba3e26e2
+D a-finali.ads		20080616192206 9eaacebd
+D a-filico.ads		20080616192204 9299732a
+D a-ioexce.ads		20080616192207 be0900a0
+D a-stream.ads		20080616192200 34aca5be
+D a-string.ads		20080616192212 87b4230b
+D a-strmap.ads		20080616192202 5253a637
+D a-strunb.ads		20080616192208 f0549c04
+D a-stunha.ads		20080616192202 88e7ce50
+D a-tags.ads		20080616192212 e10285b3
+D a-textio.ads		20080616192208 bc6e78fe
+D a-unccon.ads		20080616192157 51e09df2
+D aw_config.ads		20081009175435 0c830ee7
+D aw_config-xml.ads	20081009181501 09e07620
+D aw_lib.ads		20081009175434 f529e8dc
+D aw_lib-locales.ads	20081009175434 316b1d59
+D aw_lib-string_util.ads  20081009175434 357a40a7
+D aw_lib-ustring_ordered_maps.ads  20081009175434 63a492d7
+D aw_lib-ustring_vectors.ads  20081009175434 c2bb3ed5
+D input_sources.ads	20080813192212 897445f2
+D interfac.ads		20080616192200 a69cad5c
+D i-cstrea.ads		20080616192206 e1e064a9
+D my_page.ads		20081014211715 8976efa8
+D sax.ads		20080813192212 3c830d26
+D sax-attributes.ads	20080813192212 0d33f55e
+D sax-exceptions.ads	20080813192212 2c2544e1
+D sax-htable.ads	20080813192212 99d51350
+D sax-locators.ads	20080813192212 135e9fc7
+D sax-models.ads	20080813192212 a8d1d235
+D sax-readers.ads	20080813192212 e0423698
+D server_utils.ads	20081014194531 9c5413b4
+D server_utils.adb	20081014202358 9af6785a
+D system.ads		20080616192211 e2b32c27
+D s-crtl.ads		20080616192212 ef997abb
+D s-exctab.ads		20080616192205 5c1c61ae
+D s-ficobl.ads		20080616192204 8bb681e5
+D s-finimp.ads		20080616192201 9449f4cb
+D s-finroo.ads		20080616192207 1408f9d1
+D s-parame.ads		20080616192207 f32e56e9
+D s-secsta.ads		20080616192201 7bae3621
+D s-soflin.ads		20080616192206 2b67bae6
+D s-stache.ads		20080616192200 257b3be8
+D s-stalib.ads		20080616192205 9ac44ca2
+D s-stoele.ads		20080616192212 1104c881
+D s-stoele.adb		20080616192212 e9998c78
+D s-stratt.ads		20080616192202 b4bf338e
+D s-strops.ads		20080616192202 845f72d2
+D s-sopco3.ads		20080616192202 72ce1063
+D s-sopco4.ads		20080616192202 bc112723
+D s-sopco5.ads		20080616192202 191315e8
+D s-traent.ads		20080616192209 bd5f2753
+D s-unstyp.ads		20080616192210 c0f9fae5
+D s-wchcon.ads		20080616192209 ab028799
+D unchdeal.ads		20080616192211 66b7fd29
+D unicode.ads		20080813192212 a8172975
+D unicode-ccs.ads	20080813192212 fb9d8abb
+D unicode-ces.ads	20080813192212 83ae0998
+D unicode-ces-basic_8bit.ads  20080813192212 f1fb7359
+D unicode-ces-utf32.ads	20080813192212 70ff4ee6
+X 1 ada.ads
+16K9*Ada 19e8 44|3r6 3r45
+X 10 a-coorma.ads
+53R9*Map 44|13r89[31|41] 15r72[31|41] 45|5r91[31|41] 19r72[31|41]
+153V13*Element{21|44R9} 45|26r42[31|41]
+159V13*Contains{boolean} 45|25r20[31|41]
+X 19 a-string.ads
+16K13*Strings 35e16 44|3r10 3r49
+X 21 a-strunb.ads
+41K21*Unbounded 430e26 44|3w18 3r57
+44R9*Unbounded_String 397e14 44|15r89 45|19r89 21r33
+65V13*To_String{string} 45|29r78
+X 26 aw_config.ads
+56K9*Aw_Config 393e14 44|5w6 7r6 45|7r27 11r17 13r29 13r70 15r24
+63R14*Config_File 391e19 45|7r37
+147U19*Add_Config_Path 45|11r27
+182V18*New_Config_File{63R14} 45|13r39
+327V18*Get_Contents_Map{10|53R9[31|41]} 45|15r34
+X 27 aw_config-xml.ads
+49K19*Xml 148e18 44|7w16 45|13r80
+51R14*Parser<26|69R14> 145e19 45|13r84
+X 28 aw_lib.ads
+12K9*Aw_Lib 14e11 44|1r6 1r45 13r61 15r44 45|5r63 19r44
+X 31 aw_lib-ustring_ordered_maps.ads
+41K16*UString_Ordered_Maps[10|47] 44|1w13 1r52 13r68 15r51 45|5r70 19r51
+X 36 my_page.ads
+14K9*My_Page 43e12 44|9w6 9r45
+25R14*Page 37e19 45|22r32
+39V18*New_Page{25R14} 45|27r41
+X 44 server_utils.ads
+11K9*Server_Utils 18l5 18e17 45|1b14 35l5 35t17
+13V18*Load_Config_File{10|53R9[31|41]} 13>35 45|5b18 16l13 16t29
+13s35 FileName{string} 45|5b36 13r56
+15U19*Pages_Factory 15>33 15>77 45|19b19 32l13 32t26
+15r33 Pages_Map{10|53R9[31|41]} 45|19b33 25r29 26r50
+15r77 Page_Name{21|44R9} 45|19b77 25r40 26r61 27r50 29r88
+X 45 server_utils.adb
+3X9 PAGE_NOT_DEFINE 29r31
+7r17 Cfg_File{26|63R14} 13m17 15r52
+21r17 Adb_File_Name{21|44R9} 26m25 27r61
+22r17 Pagina_Atual{36|25R14} 27m25
+

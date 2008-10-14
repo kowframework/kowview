@@ -1,0 +1,84 @@
+V "GNAT Lib v4.3"
+M P W=b
+P SS ZX
+R nnnnnnnnnnnnnnnvnnvnnnvnnnnnnnnnnnnnnvnvnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+
+U main%b		main.adb		6df05a06 NE SU IL
+W ada%s			ada.ads			ada.ali
+W ada.command_line%s	a-comlin.adb		a-comlin.ali
+W ada.io_exceptions%s	a-ioexce.ads		a-ioexce.ali
+W ada.strings%s		a-string.ads		a-string.ali
+W ada.strings.unbounded%s  a-strunb.adb		a-strunb.ali
+W ada.text_io%s		a-textio.adb		a-textio.ali
+W contador%s		contador.adb		contador.ali
+W system.secondary_stack%s  s-secsta.adb	s-secsta.ali
+W system.soft_links%s	s-soflin.adb		s-soflin.ali
+W to_upper_case%s	to_upper_case.adb	to_upper_case.ali
+
+D ada.ads		20080616192205 9c7dd3ea
+D a-charac.ads		20080616192211 506ce725
+D a-chlat1.ads		20080616192159 e9ee6d0a
+D a-comlin.ads		20080616192200 3b71d99c
+D a-except.ads		20080616192205 ba3e26e2
+D a-finali.ads		20080616192206 9eaacebd
+D a-filico.ads		20080616192204 9299732a
+D a-ioexce.ads		20080616192207 be0900a0
+D a-stream.ads		20080616192200 34aca5be
+D a-string.ads		20080616192212 87b4230b
+D a-strmap.ads		20080616192202 5253a637
+D a-strunb.ads		20080616192208 f0549c04
+D a-tags.ads		20080616192212 e10285b3
+D a-textio.ads		20080616192208 bc6e78fe
+D a-unccon.ads		20080616192157 51e09df2
+D contador.ads		20080903202756 527557df
+D interfac.ads		20080616192200 a69cad5c
+D i-cstrea.ads		20080616192206 e1e064a9
+D main.adb		20080904125231 25a09656
+D system.ads		20080616192211 e2b32c27
+D s-crtl.ads		20080616192212 ef997abb
+D s-exctab.ads		20080616192205 5c1c61ae
+D s-ficobl.ads		20080616192204 8bb681e5
+D s-finimp.ads		20080616192201 9449f4cb
+D s-finroo.ads		20080616192207 1408f9d1
+D s-parame.ads		20080616192207 f32e56e9
+D s-secsta.ads		20080616192201 7bae3621
+D s-soflin.ads		20080616192206 2b67bae6
+D s-stache.ads		20080616192200 257b3be8
+D s-stalib.ads		20080616192205 9ac44ca2
+D s-stoele.ads		20080616192212 1104c881
+D s-stoele.adb		20080616192212 e9998c78
+D s-stratt.ads		20080616192202 b4bf338e
+D s-traent.ads		20080616192209 bd5f2753
+D s-unstyp.ads		20080616192210 c0f9fae5
+D s-wchcon.ads		20080616192209 ab028799
+D to_upper_case.ads	20080903211023 d367a649
+X 1 ada.ads
+16K9*Ada 19e8 19|1r6 1r33 2r6 5r6 5r33 6r6 12r23 14r43 22r14
+X 4 a-comlin.ads
+38K13*Command_Line 136e21 19|2w10 12r27 14r47
+41V13*Argument_Count{natural} 19|12r40
+48V13*Argument{string} 19|14r60
+X 8 a-ioexce.ads
+16K13*IO_Exceptions 28e22 19|6w10 22r18
+22X4*Use_Error 19|22r32
+X 10 a-string.ads
+16K13*Strings 35e16 19|5r10 5r37
+X 12 a-strunb.ads
+41K21*Unbounded 430e26 19|5w18 5r45
+X 14 a-textio.ads
+50K13*Text_IO 482e16 19|1w10 1r37
+168U14*New_Line 19|17r25
+244U14*Put 19|16r25
+265U14*Put_Line 19|23r9
+X 16 contador.ads
+3K9*contador 10e13 19|4w6 4r33
+6A14*Contagem_Letras(natural)<character> 19|9r7
+8V18*AbrirTxt{6A14} 19|18r32
+X 19 main.adb
+8U11*main 8b11 24l5 24t9
+9a1 bla{16|6A14} 18m25
+12i13 i{integer}
+14a25 My_Arg{string} 16r29 18r42
+X 37 to_upper_case.ads
+3K9*to_upper_case 19|3w6 37|9e18
+

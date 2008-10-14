@@ -1,0 +1,8 @@
+[PROJECT_NAME]_CONFIG_PATH
+
+package Page_Registry is new Aw_Config.Generic_Registry(
+                Element_Type    => TIPO_QUE_DESCREVE_SUA_PAGINA,
+                Relative_Path   => "pages",
+                Parser          => new Aw_Config.Text.Parser
+                );
+"type" => "standard"

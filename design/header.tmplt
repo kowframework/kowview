@@ -1,0 +1,21 @@
+ola, eu sou o header.
+
+<!--efetuar chamada de seguranca.-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="
+@@IF@@ @_isLangDef_@
+	@@INCLUDE@@ @_language_@
+@@END_IF@@
+">
+
+<head
+<meta http-equiv="Content-Type" content="
+@@IF@@ @_isContentDef_@
+	@@INCLUDE@@ @_content_@
+@@END_IF@@
+">
+
+@@IF@@ @_isGlogalDef_@
+	@@INCLUDE@@ @_global_@
+@@END_IF@@
+</head>

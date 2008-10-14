@@ -1,0 +1,19 @@
+
+
+
+
+<html>
+<head>
+<title>Letras</title>
+<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>
+</head>
+<body>
+<table>
+<tr><td>Letra</td><td>Ocorr&ecirc;ncias</td></tr>
+@@TABLE@@
+<tr><td>@_LETRA_@</td><td><table bgcolor='#564897' width = '@_QTD_@0' ><tr><td>&nbsp;</td></tr></table></td></tr>
+@@END_TABLE@@
+</table>
+</body>
+</html>
+
