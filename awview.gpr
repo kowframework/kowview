@@ -7,8 +7,8 @@
 -- $Revision: $
 -- $Author: $
 
-
-with "awlib.gpr";
+with "awconfig";
+with "awlib";
 
 with "aws";
 

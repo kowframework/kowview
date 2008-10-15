@@ -7,6 +7,7 @@
 
 package Aw_View is
 
-	procedure dummie;
-	-- for testing only
+
+	procedure Run;
+
 end Aw_View;

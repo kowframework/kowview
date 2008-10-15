@@ -1,8 +1,7 @@
 package body Aw_View is
 
-	procedure dummie is
-		-- for testing only
+	procedure Run is
 	begin
-		null;
-	end dummie;
+		raise PROGRAM_ERROR with "Not implemented yet!";
+	end Run;
 end Aw_View;
