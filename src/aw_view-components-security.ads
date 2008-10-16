@@ -11,6 +11,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 ---------------
 
 with Aw_Config;
+with Aw_Sec;
 
 
 ---------
@@ -18,6 +19,7 @@ with Aw_Config;
 ---------
 
 with AWS.Response;
+with AWS.Session;
 with AWS.Status;
 with Templates_Parser;
 
@@ -33,9 +35,17 @@ package Aw_View.Components.Security is
 	
 
 
+	package User_Data is new AWS.Session.Generic_Data(
+			Data		=> Aw_Sec.User_Access,
+			Null_Data	=> Null
+		);
+
+	User_Key: constant String;
+
+
 	--overriding
 	procedure Initialize(
-			Component	: in     Component_Type;
+			Component	: in out Component_Type;
 			Component_Name	: in     String;
 			Config		: in out Aw_Config.Config_File
 		);
@@ -52,7 +62,7 @@ package Aw_View.Components.Security is
 	--overriding
 	function Create_Instance(
 			Component	: in Component_Type;
-			Module		: in String;
+			Module_Name	: in String;
 			Config		: in Aw_Config.Config_File
 		) return Module_Instance_Interface'Class;
 	-- no matter what module we request, the Criteria_Module_Module will be always called
@@ -61,7 +71,7 @@ package Aw_View.Components.Security is
 	--overriding
 	function Create_Instance(
 			Component	: in Component_Type;
-			Service		: in String
+			Service_Name	: in String
 		) return Service_Instance_Interface'Class;
 
 
@@ -86,7 +96,7 @@ package Aw_View.Components.Security is
 	-- if the user can access the page, do nothing.
 	-- if it can't, then build a 'Location: access_denyed_page
 
-
+	overriding
 	procedure Process_Header(
 			Module		: in out Criteria_Module;
 			Request		: in     AWS.Status.Data;
@@ -101,24 +111,34 @@ package Aw_View.Components.Security is
 	--------------
 	-- Services --
 	--------------
-	type Logout_Service is new Service_Instance_Interface with private;
-	-- process the logout, if required, and redirect to some standard page
 
 
 	type Login_Service is new Service_Instance_Interface with private;
 	-- try to login the user and redirect to the correct status page
 	
+	overriding
+	procedure Process_Request(
+			Service		: in out Login_Service;
+			Request		: in     AWS.Status.Data;
+			Response	: in out AWS.Response.Data
+		);
 
+
+
+	type Logout_Service is new Service_Instance_Interface with private;
+	-- process the logout, if required, and redirect to some standard page
+
+	overriding
 	procedure Process_Request(
 			Service		: in out Logout_Service;
 			Request		: in     AWS.Status.Data;
 			Response	: in out AWS.Response.Data
 		);
-	-- process a request to a service
-	-- the entire request is handled by the service
-	-- sometimes is useful for a service only to be created and released - such as in a counter service
 
 private
+
+
+	User_Key : constant String := "aw_sec.user";
 
 	type Component_Type is new Aw_View.Components.Component_Interface with record
 		Default_Redirect	: Unbounded_String	:= To_Unbounded_String( "/" );
@@ -129,6 +149,7 @@ private
 
 	type Criteria_Module is new Module_Instance_Interface with record
 		Expression		: Unbounded_String;
+		Access_Denied_Page	: Unbounded_String;
 	end record;
 
 

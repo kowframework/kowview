@@ -46,7 +46,7 @@ package Aw_View.Components is
 
 
 	procedure Initialize(
-			Component	: in     Component_Interface;
+			Component	: in out Component_Interface;
 			Component_Name	: in     String;
 			Config		: in out Aw_Config.Config_File
 		) is abstract;
@@ -73,7 +73,7 @@ package Aw_View.Components is
 
 	function Create_Instance(
 			Component	: in Component_Interface;
-			Module		: in String;
+			Module_Name	: in String;
 			Config		: in Aw_Config.Config_File 
 		) return Module_Instance_Interface'Class is abstract;
 	-- create a new module instance.
@@ -150,7 +150,7 @@ package Aw_View.Components is
 
 	function Create_Instance(
 			Component	: in Component_Interface;
-			Service		: in String
+			Service_Name	: in String
 		) return Service_Instance_Interface'Class is abstract;
 	-- create a new service instance.
 	-- depending on the service, the instance object can represent different things and can, or not, even me extended

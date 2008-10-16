@@ -17,26 +17,25 @@ with Aw_Sec.Authorization_Criterias;
 ---------
 -- AWS --
 ---------
-
+with AWS.Parameters;
 with AWS.Response;
+with AWS.Session;
 with AWS.Status;
 with Templates_Parser;
 
 
 
-package Aw_View.Components.Security is
+package body Aw_View.Components.Security is
 
 	----------------
 	-- Components --
 	----------------
-
-	type Component_Type is new Aw_View.Components.Component_Type with private;
 	
 
 
 	overriding
 	procedure Initialize(
-			Component	: in     Component_Type;
+			Component	: in out Component_Type;
 			Component_Name	: in     String;
 			Config		: in out Aw_Config.Config_File
 		) is
@@ -72,7 +71,7 @@ package Aw_View.Components.Security is
 	overriding
 	function Create_Instance(
 			Component	: in Component_Type;
-			Module		: in String;
+			Module_Name	: in String;
 			Config		: in Aw_Config.Config_File
 		) return Module_Instance_Interface'Class is
 		-- no matter what module we request, the Criteria_Module_Module will be always called
@@ -81,36 +80,37 @@ package Aw_View.Components.Security is
 
 		Module.Expression := Aw_Config.Element(
 						f	=> Config,
-						Key	=> "expressin"
+						Key	=> "expression"
 					);
+		Module.Access_Denied_Page := Component.Access_Denied_Page;
 		return Module;
 	end Create_Instance;
 
 	overriding
 	function Create_Instance(
 			Component	: in Component_Type;
-			Service		: in String
+			Service_Name	: in String
 		) return Service_Instance_Interface'Class is
 	begin
-		if Service = "login" then
+		if Service_Name = "login" then
 			declare
 				Service: Login_Service;
 			begin
-				Service.Access_Denied_Page := Component.Access_Denied_Page;
+				Service.Default_Redirect := Component.Default_Redirect;
 				Service.Login_Error_Page   := Component.Login_Error_Page;
 
 				return Service;
 			end;
-		elsif Service = "logout" then
+		elsif Service_Name = "logout" then
 			declare
 				Service: Logout_Service;
 			begin
-				Service.Logout_Redirect := Component.Logout_Redirect;
+				Service.Default_Redirect := Component.Default_Redirect;
 
 				return Service;
 			end;
 		else
-			raise SERVICE_ERROR with "Service """ & Service & """ doesn't exist";
+			raise SERVICE_ERROR with "Service """ & Service_Name & """ doesn't exist";
 		end if;
 	end Create_Instance;
 
@@ -133,17 +133,32 @@ package Aw_View.Components.Security is
 		-- if it can't, then build a 'Location: access_denyed_page
 		use Aw_Sec;
 		use Aw_Sec.Authorization_Criterias;
-		Criteria: Criteria'Class := Create_Expression_Criteria(
+		Criteria_Object: Criteria'Class := Create_Expressions_Criteria(
 					Criteria_Descriptor(
 						Module.Expression
 					)
 				);
+		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
+		User_Object : Aw_Sec.User_Access := User_Data.Get( Session_ID, User_Key );
+
+
 	begin
-		
+		if User_Object = NULL then
+			raise ACCESS_DENIED;
+		end if;
+
+		Require( User_Object.all, Criteria_Object );
+		-- notice: CONSTRAINT_ERROR shouldn't be raised as we've checked if
+		-- the user objectis null before calling this procedure!
+
+	exception
+		when Aw_Sec.ACCESS_DENIED =>
+			Is_Final := TRUE;
+			Response := AWS.Response.URL( To_String ( Module.Access_Denied_Page ) );
 	end Initialize_Request;
 
 	procedure Process_Header(
-			Module		: in out Module_Instance_Interface;
+			Module		: in out Criteria_Module;
 			Request		: in     AWS.Status.Data;
 			Parameters	: in out Templates_Parser.Translate_Set;
 			Response	: in out Unbounded_String
@@ -152,7 +167,7 @@ package Aw_View.Components.Security is
 		-- print the expression criteria used as a HTML comment
 
 		Begin_Comment	: Unbounded_String := To_Unbounded_String( "<!-- " );
-		End_Comment	: Unbounded_String := To_Unbounded_String( " // --> " );;
+		End_Comment	: Unbounded_String := To_Unbounded_String( " // --> " );
 	begin
 		Response := Response & Begin_Comment & Module.Expression & End_Comment;
 	end Process_Header;
@@ -161,57 +176,86 @@ package Aw_View.Components.Security is
 	--------------
 	-- Services --
 	--------------
-	overriding
-	function Create_Instance(
-			Component	: in Component_Type;
-			Service		: in String
-		) return Service_Instance_Interface'Class;
+
+
+	procedure Process_Request(
+			Service		: in out Login_Service;
+			Request		: in     AWS.Status.Data;
+			Response	: in out AWS.Response.Data
+		) is
+
+
+		P : constant AWS.Parameters.List := AWS.Status.Parameters (Request);
+
+		Username	: String := AWS.Parameters.Get( P, "username" );
+		Password	: String := AWS.Parameters.Get( P, "password" );
+
+		function Redirect return String is
+			Pragma Inline( Redirect );
+
+			R: String := AWS.Parameters.Get( P, "redirect" );
+		begin
+			if R = "" then
+				return To_String( Service.Default_Redirect );
+			end if;
+
+			return R;
+		end Redirect;
+			
+
+
+	begin
+		if Username = "" OR Password = "" then
+			raise CONSTRAINT_ERROR with "Username or Password required for Login service";
+		end if;
+		
+		declare
+			User_Object: Aw_Sec.User'Class := Aw_Sec.Do_Login( Username, Password );
+
+
+			Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
+		begin
+			User_Data.Set( Session_ID, User_Key, Aw_Sec.To_Access( User_Object ) );
+		end;
+
+		Response := AWS.Response.URL( Redirect );
+		-- the user is logged in... time to continue
+
+	exception
+		when OTHERS =>
+			-- when anything wrong happens... redirect to the error page
+			Response := AWS.Response.URL( To_String( Service.Login_Error_PAge ) );
+	end Process_Request;
 
 
 
-	type Login_Service is new Service_Instance_Interface with private;
-	-- try to login the user and redirect to the correct status page
+
 	procedure Process_Request(
 			Service		: in out Logout_Service;
 			Request		: in     AWS.Status.Data;
 			Response	: in out AWS.Response.Data
-		);
+		) is
 
+		P : constant AWS.Parameters.List := AWS.Status.Parameters (Request);
+		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
 
-	type Logout_Service is new Service_Instance_Interface with private;
-	-- process the logout, if required, and redirect to some standard page
+		function Redirect return String is
+			Pragma Inline( Redirect );
 
+			R: String := AWS.Parameters.Get( P, "redirect" );
+		begin
+			if R = "" then
+				return To_String( Service.Default_Redirect );
+			end if;
 
-	procedure Process_Request(
-			Service		: in out Logout_Service;
-			Request		: in     AWS.Status.Data;
-			Response	: in out AWS.Response.Data
-		);
-	-- process a request to a service
-	-- the entire request is handled by the service
-	-- sometimes is useful for a service only to be created and released - such as in a counter service
+			return R;
+		end Redirect;
+	begin
+		AWS.Session.Delete( Session_ID );
+		-- simply clear the current session and continue..
 
-private
+		Response := AWS.Response.URL( Redirect );
 
-	type Component_Type is new Aw_View.Components.Component_Type with record
-		Default_Redirect	: Unbounded_String	:= To_Unbounded_String( "/" );
-		Access_Denied_Page	: Unbounded_String	:= To_Unbounded_String( "/theme/403" );
-		Login_Error_Page	: Unbounded_String	:= To_Unbounded_String( "/theme/login" );
-	end Component_Type;
-
-
-	type Criteria_Module is new Module_Instance_Interface with record
-		Expression		: Unbounded_String;
-	end record;
-
-
-	type Login_Service is new Service_Instance_Interface with record
-		Default_Redirect	: Unbounded_String;
-		Login_Error_Page	: Unbounded_String;
-	end record;
-
-	type Logout_Service is new Service_Instance_Interface with record
-		Default_Redirect	: Unbounded_String;
-	end record;
+	end Process_Request;
 
 end Aw_View.Components.Security;

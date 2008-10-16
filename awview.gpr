@@ -9,8 +9,8 @@
 
 with "awconfig";
 with "awconfig-text";
-with "awconfig-xml";
 with "awlib";
+with "awsec";
 
 with "aws";
 
