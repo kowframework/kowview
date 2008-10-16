@@ -25,11 +25,31 @@ with Templates_Parser;
 
 package Aw_View.Components is
 
+	----------------
+	-- Components --
+	----------------
+
 	type Component_Interface is interface;
 	-- it encapsulates a set of functionalities provided by means of modules and services
 	-- there should be only one instance of this type each time.
 	
 	type Component_Access is not null access all Component_Interface'Class;
+
+
+	procedure Initialize(
+			Component	: in     Component_Interface;
+			Component_Name	: in     String;
+			Config		: in out Aw_Config.Config_File
+		) is abstract;
+	-- Initialize the component while starting up the server
+	-- Config is an already initialized configuration file located at:
+	-- 	awview/component_name
+
+
+
+	-------------
+	-- Modules --
+	-------------
 
 
 
@@ -39,29 +59,13 @@ package Aw_View.Components is
 	type Module_Instance_Access is not null access all Module_Instance_Interface'Class;
 
 
-	type Service_Instance_Interface is interface;
-	-- a service usually represents a module to the external world.
-	-- the service can be mapped to a base URI
-	--      . when mapped to /do, /do/something will call it
 
-	type Service_Instance_Access is not null access all Service_Instance_Interface'Class;
 
 
 	function Create_Instance(
 			Component	: in Component_Interface;
-			Service		: in String;
-			Config		: in Aw_Config.Config_File
-		) return Service_Instance_Interface'Class is abstract;
-	-- create a new service instance.
-	-- depending on the service, the instance object can represent different things and can, or not, even me extended
-	-- to implement additional functionality.
-	-- A service can also have it's own state which can be saved in the session for later retrieval.
-
-
-	function Create_Instance(
-			Component: in Component_Interface;
-			Module: in String;
-			Config: in Aw_Config.Config_File 
+			Module		: in String;
+			Config		: in Aw_Config.Config_File 
 		) return Module_Instance_Interface'Class is abstract;
 	-- create a new module instance.
 	-- depending on the service, the instance object can represent different things and can, or not, even me extended
@@ -70,16 +74,6 @@ package Aw_View.Components is
 
 
 
-	procedure Process_Request(
-			Service		: in out Service_Instance_Interface;
-			Request		: in     AWS.Status.Data;
-			Response	: in out AWS.Response.Data
-		) is null;
-	-- process a request to a service
-	-- the entire request is handled by the service
-	-- sometimes is useful for a service only to be created and released - such as in a counter service
-
-	
 	procedure Initialize_Request(
 			Module		: in out Module_Instance_Interface;
 			Request		: in     AWS.Status.Data;
@@ -126,5 +120,47 @@ package Aw_View.Components is
 		) is null;
 	-- Finalize processing the request.
 	-- Called when the process has been finalized
+
+
+
+	--------------
+	-- Services --
+	--------------
+
+
+
+	type Service_Instance_Interface is interface;
+	-- a service usually represents a module to the external world.
+	-- the service can be mapped to a base URI
+	--      . when mapped to /do, /do/something will call it
+
+	type Service_Instance_Access is not null access all Service_Instance_Interface'Class;
+
+
+
+
+	function Create_Instance(
+			Component	: in Component_Interface;
+			Service		: in String
+		) return Service_Instance_Interface'Class is abstract;
+	-- create a new service instance.
+	-- depending on the service, the instance object can represent different things and can, or not, even me extended
+	-- to implement additional functionality.
+	-- A service can also have it's own state which can be saved in the session for later retrieval.
+	--
+	-- The service configuration should be handled by the Component Initialization
+
+
+
+
+	procedure Process_Request(
+			Service		: in out Service_Instance_Interface;
+			Request		: in     AWS.Status.Data;
+			Response	: in out AWS.Response.Data
+		) is null;
+	-- process a request to a service
+	-- the entire request is handled by the service
+	-- sometimes is useful for a service only to be created and released - such as in a counter service
+
 
 end Aw_View.Components;

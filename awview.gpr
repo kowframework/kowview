@@ -8,6 +8,8 @@
 -- $Author: $
 
 with "awconfig";
+with "awconfig-text";
+with "awconfig-xml";
 with "awlib";
 
 with "aws";
