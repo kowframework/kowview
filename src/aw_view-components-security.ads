@@ -29,11 +29,11 @@ package Aw_View.Components.Security is
 	-- Components --
 	----------------
 
-	type Component_Type is new Aw_View.Components.Component_Type with private;
+	type Component_Type is new Aw_View.Components.Component_Interface with private;
 	
 
 
-	overriding
+	--overriding
 	procedure Initialize(
 			Component	: in     Component_Type;
 			Component_Name	: in     String;
@@ -49,7 +49,7 @@ package Aw_View.Components.Security is
 	-- 	default_redirect	:: default "/"
 
 
-	overriding
+	--overriding
 	function Create_Instance(
 			Component	: in Component_Type;
 			Module		: in String;
@@ -58,7 +58,7 @@ package Aw_View.Components.Security is
 	-- no matter what module we request, the Criteria_Module_Module will be always called
 
 
-	overriding
+	--overriding
 	function Create_Instance(
 			Component	: in Component_Type;
 			Service		: in String
@@ -88,7 +88,7 @@ package Aw_View.Components.Security is
 
 
 	procedure Process_Header(
-			Module		: in out Module_Instance_Interface;
+			Module		: in out Criteria_Module;
 			Request		: in     AWS.Status.Data;
 			Parameters	: in out Templates_Parser.Translate_Set;
 			Response	: in out Unbounded_String
@@ -101,26 +101,13 @@ package Aw_View.Components.Security is
 	--------------
 	-- Services --
 	--------------
-	overriding
-	function Create_Instance(
-			Component	: in Component_Type;
-			Service		: in String
-		) return Service_Instance_Interface'Class;
-
+	type Logout_Service is new Service_Instance_Interface with private;
+	-- process the logout, if required, and redirect to some standard page
 
 
 	type Login_Service is new Service_Instance_Interface with private;
 	-- try to login the user and redirect to the correct status page
-	procedure Process_Request(
-			Service		: in out Logout_Service;
-			Request		: in     AWS.Status.Data;
-			Response	: in out AWS.Response.Data
-		);
-
-
-	type Logout_Service is new Service_Instance_Interface with private;
-	-- process the logout, if required, and redirect to some standard page
-
+	
 
 	procedure Process_Request(
 			Service		: in out Logout_Service;
@@ -133,11 +120,11 @@ package Aw_View.Components.Security is
 
 private
 
-	type Component_Type is new Aw_View.Components.Component_Type with record
+	type Component_Type is new Aw_View.Components.Component_Interface with record
 		Default_Redirect	: Unbounded_String	:= To_Unbounded_String( "/" );
 		Access_Denied_Page	: Unbounded_String	:= To_Unbounded_String( "/theme/403" );
 		Login_Error_Page	: Unbounded_String	:= To_Unbounded_String( "/theme/login" );
-	end Component_Type;
+	end record;
 
 
 	type Criteria_Module is new Module_Instance_Interface with record
