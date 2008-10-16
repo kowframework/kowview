@@ -25,6 +25,15 @@ with Templates_Parser;
 
 package Aw_View.Components is
 
+
+	----------------
+	-- Exceptions --
+	----------------
+	COMPONENT_ERROR	: Exception;
+	MODULE_ERROR	: Exception;
+	SERVICE_ERROR	: Exception;
+
+
 	----------------
 	-- Components --
 	----------------
