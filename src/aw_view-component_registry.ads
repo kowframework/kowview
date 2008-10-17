@@ -5,6 +5,7 @@
 
 
 with Ada.Containers.Ordered_Maps;
+with Ada.Directories;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
 
@@ -71,6 +72,29 @@ package Aw_View.Component_Registry is
 	function Load_Service( Component_Name, Service_Name: in String ) return Service_Instance_Interface'Class;
 	-- load a service by it's component name and it's name
 
+
+	--------------------------------
+	-- Component Helper Functions --
+	--------------------------------
+
+	function Locate_Resource(
+			Component_Name	: in String;
+			Resource	: in String;
+			Kind		: in Ada.Directories.File_Kind	
+		) return String;
+	-- locate a resource file for this component in the Aw_Config's configuration path
+	-- returning it's name if nothing has been found raise Ada.Direct_IO.Name_Error if not found
+
+	function Load_Main_Configuration(
+			Component_Name	: in String
+		) return Aw_Config.Config_File;
+	-- load the main configuration for this component
+	
+	function Load_Configuration(
+			Component_Name		: in String;
+			Configuration_Name	: in String
+		) return Aw_Config.Config_File;
+	-- load a configuration file from this component's relative path
 
 private
 
