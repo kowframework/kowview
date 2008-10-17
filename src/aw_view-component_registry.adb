@@ -119,79 +119,24 @@ package body Aw_View.Component_Registry is
 		-- locate a resource file for this component in the Aw_Config's configuration path
 		-- returning it's name if nothing has been found raise Ada.Direct_IO.Name_Error if not found
 
-		use Aw_Lib.UString_Vectors;
+		use Ada.Directories;
 
-		Config_Path: Aw_Lib.UString_Vectors.Vector := Aw_Config.Get_Config_Path;
-
-		Path: Unbounded_String := Null_Unbounded_String;
-
-		Filter: Filter_Type := ( others => false );
+		Sep	: Character	:= Aw_Lib.File_System.Separator;
+		Name	: String	:= "data" & Sep & Component_Name & Sep & Resource;
 
 
-		Relative_Path: String := Component_Name & "/" & Resource;
-
-
-		function Get_Resource_Name return String is
-		begin
-			for i in reverse Resource'Range loop
-				if Resource( i ) = Aw_Lib.File_System.Separator and i /= Resource'Last then
-					return Resource( i + 1 .. Resource'Last );
-				end if;
-			end loop;
-
-			return Resource;
-		end Get_Resource_Name;
-
-		Resource_Name: String := Get_Resource_Name;
-
-		function Get_Resource_Path return String is
-		begin
-			return Relative_Path( Relative_Path'First .. Relative_Path'Last - Resource_Name'Length );
-		end Get_Resource_Path;
-
-
-	
-		Resource_Path: String := Get_Resource_Path;
-
-
-		procedure Path_Iterator( C: in Aw_Lib.UString_Vectors.Cursor ) is
-			-- for each element in the config_path, look for the resource.
-			-- once it has been found, set Path and stop searching the directory
-			procedure Process_Search( Directory_Entry : Directory_Entry_Type ) is
-			begin
-				Path := Element( C ) & To_Unbounded_String( Aw_Lib.File_System.Separator &  Relative_Path );
-			end Process_Search;
-
-			function Directory return String is
-				pragma Inline( Directory );
-			begin
-				return To_String( Element( C ) ) & Aw_lib.File_System.Separator & Resource_Path;
-
-			end Directory;
-		begin
-			if Path /= Null_Unbounded_String then
-				-- it means we've found the path!
-				return;
-			end if;
-			
-			Search( Directory       => Directory,
-				Pattern         => Resource_Name,
-				Filter          => Filter,
-				Process         => Process_Search'Access );
-		exception
-			when ADA.IO_EXCEPTIONS.NAME_ERROR => null;
-		end Path_Iterator;
+		Real_Kind : File_Kind := Ada.Directories.Kind( Name );
 	begin
-		Aw_Lib.Ustring_Vectors.Iterate( Config_Path, Path_Iterator'Access );
 
-		Filter( Kind ) := True;
-
-		if Path = Null_Unbounded_String then
-			raise NAME_ERROR with "Impossible to load resource """ & Resource & """ for component """ & Component_Name & """";
+		if Real_Kind /= Kind then
+			raise Name_Error with
+					"Resource """ & Resource &
+					""" of component """ & Component_Name &
+					""" is of type """ & File_Kind'Image( Real_Kind ) &
+					""" ( expected """ & File_Kind'Image( Kind ) & """)";
 		end if;
 
-		return To_String( Path );
-
+		return Name;
 	end Locate_Resource;
 
 

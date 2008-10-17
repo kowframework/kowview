@@ -82,7 +82,9 @@ package Aw_View.Component_Registry is
 			Resource	: in String;
 			Kind		: in Ada.Directories.File_Kind	
 		) return String;
-	-- locate a resource file for this component in the Aw_Config's configuration path
+	-- locate a resource file for this component
+	-- this file should be placed at
+	-- 	[WORKING_DIR]/data/component_name/resource
 	-- returning it's name if nothing has been found raise Ada.Direct_IO.Name_Error if not found
 
 	function Load_Main_Configuration(
