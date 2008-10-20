@@ -114,6 +114,7 @@ package body Aw_View.Components_Registry is
 	function Locate_Resource(
 			Component_Name	: in String;
 			Resource	: in String;
+			Extension	: in String;
 			Kind		: in Ada.Directories.File_Kind	
 		) return String is
 		-- locate a resource file for this component in the Aw_Config's configuration path
@@ -121,8 +122,8 @@ package body Aw_View.Components_Registry is
 
 		use Ada.Directories;
 
-		Sep	: Character	:= Aw_Lib.File_System.Separator;
-		Name	: String	:= "data" & Sep & Component_Name & Sep & Resource;
+		Sep	: constant Character	:= Aw_Lib.File_System.Separator;
+		Name	: String		:= "data" & Sep & Component_Name & Sep & Resource & "." & Extension;
 
 
 		Real_Kind : File_Kind := Ada.Directories.Kind( Name );
