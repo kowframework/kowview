@@ -55,7 +55,6 @@ package Aw_View.Pages is
 		) return Module_Instance_Interface'Class;
 	-- Available modules:
 	-- 	. page
-	-- 	. static
 
 
 
@@ -99,26 +98,6 @@ package Aw_View.Pages is
 	-- This is the only procedure implemented by the page module.
 	-- That's how it's done so there is no need to deal with dynamic allocation
 
-
-	--
-	-- Static Module
-	--
-
-
-	type Static_Module is new Module_Instance_Interface with private;
-	-- Responsible for managing static content loading.
-	-- It should be used to read from static text files into the rendered page.
-	--
-	-- It's not the same thing as the static service!
-
-
-	overriding
-	procedure Process_Request(
-			Module		: in out Static_Module;
-			Request		: in     AWS.Status.Data;
-			Parameters	: in out Templates_Parser.Translate_Set;
-			Response	: in out Unbounded_String
-		);
 
 
 	--------------
@@ -172,14 +151,6 @@ private
 		Config: Aw_Config.Config_File;
 		-- there is no processing of the config file before 
 		-- the page rendering begins.
-	end record;
-
-	type Static_Module is new Module_Instance_Interface with record
-		Resource	: Unbounded_String;
-		-- the resource name to load
-
-		Extension	: Unbounded_String;
-		-- the extension of the resource to load
 	end record;
 
 	type Page_Service is new Service_Instance_Interface with record

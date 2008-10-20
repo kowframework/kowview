@@ -43,7 +43,6 @@ package body Aw_View.Pages is
 		) return Module_Instance_Interface'Class is
 		-- Available modules:
 		-- 	. page
-		-- 	. static
 	begin
 		if Module_Name = "page" then
 			declare
@@ -51,14 +50,6 @@ package body Aw_View.Pages is
 			begin
 				Module.Config := Config;
 
-				return Module;
-			end;
-		elsif Module_Name = "static" then
-			declare
-				Module: Static_Module;
-			begin
-				Module.Resource		:= Aw_Config.Element( Config, "resource" );
-				Module.Extension	:= Aw_Config.Value( Config, "extension", "" );
 				return Module;
 			end;
 		else
@@ -129,19 +120,6 @@ package body Aw_View.Pages is
 	--
 
 	
-	-- TODO: static module
-	overriding
-	procedure Process_Request(
-			Module		: in out Static_Module;
-			Request		: in     AWS.Status.Data;
-			Parameters	: in out Templates_Parser.Translate_Set;
-			Response	: in out Unbounded_String
-		) is
-	begin
-		null;
-	end Process_Request;
-
-
 	--------------
 	-- Services --
 	-------------
