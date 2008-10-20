@@ -11,7 +11,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 ---------------
 
 with Aw_Config;
-
+with Aw_View.Components;
 
 ---------
 -- AWS --
@@ -144,4 +144,4 @@ package Aw_View.Themes is
 	-- sometimes is useful for a service only to be created and released - such as in a counter service
 
 
-end Aw_View.Components;
+end Aw_View.Themes;

@@ -19,7 +19,7 @@ with Aw_View.Components;		use Aw_View.Components;
 
 
 
-package Aw_View.Component_Registry is
+package Aw_View.Components_Registry is
 
 	----------------
 	-- Exceptions --
@@ -110,4 +110,4 @@ private
 
 
 
-end Aw_View.Component_Registry;
+end Aw_View.Components_Registry;

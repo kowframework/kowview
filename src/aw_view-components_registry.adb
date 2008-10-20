@@ -20,7 +20,7 @@ with Aw_View.Components;		use Aw_View.Components;
 
 
 
-package body Aw_View.Component_Registry is
+package body Aw_View.Components_Registry is
 
 
 	Parser: Aw_Config.Parser_Access := new Aw_Config.Text.Parser;
@@ -167,4 +167,4 @@ package body Aw_View.Component_Registry is
 	end Load_Configuration;
 
 
-end Aw_View.Component_Registry;
+end Aw_View.Components_Registry;
