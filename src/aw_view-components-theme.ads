@@ -48,24 +48,13 @@ package Aw_View.Components.Theme is
 	-- All it does is to load a string representing the AWS template as string
 	-- and provide methods for pa
 
-	type Module_Instance_Interface is interface;
-	-- a module is something that can be accessed anywhere inside the system.
-
-	type Module_Instance_Access is not null access all Module_Instance_Interface'Class;
-
-
-
-
 
 	function Create_Instance(
-			Component	: in Component_Type;
+			Component	: in Template_Assembler_Module;
 			Module_Name	: in String;
-			Config		: in Aw_Config.Config_File 
-		) return Module_Instance_Interface'Class is abstract;
-	-- create a new module instance.
-	-- depending on the service, the instance object can represent different things and can, or not, even me extended
-	-- to implement additional functionality.
-	-- A service can also have it's own state which can be saved in the session for later retrieval.
+			Config		: in Aw_Config.Config_File
+		) return Module_Instance_Interface'Class;
+	-- Creates a module instance
 
 
 
@@ -75,11 +64,8 @@ package Aw_View.Components.Theme is
 			Parameters	: in out Templates_Parser.Translate_Set;
 			Response	: in out AWS.Response.Data;
 			Is_Final	: out    Boolean
-		) is null;
-	-- Initialize the processing of a request
-	-- Called before anything has been build.
-	-- If Is_Final = True than stop processing other modules and return Response
-	-- Useful when handling secured modules or modules that require sending cookies
+		);
+	
 
 	procedure Process_Header(
 			Module		: in out Module_Instance_Interface;
