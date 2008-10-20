@@ -150,7 +150,8 @@ package Aw_View.Components is
 
 	function Create_Instance(
 			Component	: in Component_Interface;
-			Service_Name	: in String
+			Service_Name	: in String;
+			Service_Mapping	: in String
 		) return Service_Instance_Interface'Class is abstract;
 	-- create a new service instance.
 	-- depending on the service, the instance object can represent different things and can, or not, even me extended

@@ -89,7 +89,8 @@ package body Aw_View.Security is
 	overriding
 	function Create_Instance(
 			Component	: in Component_Type;
-			Service_Name	: in String
+			Service_Name	: in String;
+			Service_Mapping	: in String
 		) return Service_Instance_Interface'Class is
 	begin
 		if Service_Name = "login" then

@@ -98,12 +98,17 @@ package body Aw_View.Components_Registry is
 	-- Service Management --
 	------------------------
 
-	function Load_Service( Component_Name, Service_Name: in String ) return Service_Instance_Interface'Class is
+	function Load_Service(
+			Component_Name	: in String;
+			Service_Name	: in String;
+			Service_Mapping	: in String
+		) return Service_Instance_Interface'Class is
 		-- load a service by it's component name and it's name
 	begin
 		return Create_Instance(
 				Load( Component_Name ).all,
-				Service_Name
+				Service_Name,
+				Service_Mapping
 			);
 	end Load_Service;
 
