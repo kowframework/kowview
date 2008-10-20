@@ -53,7 +53,7 @@ package Aw_View.Components_Registry is
 	-- Loads a component by it's name
 	-- There is only one instance for each component.
 
-
+	function Load( Component_Name: in Unbounded_String ) return Aw_View.Components.Component_Access;
 	-----------------------
 	-- Module Management --
 	-----------------------

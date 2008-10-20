@@ -72,10 +72,16 @@ package body Aw_View.Components_Registry is
 		-- Loads a component by it's name
 		-- There is only one instance for each component.
 	begin
-		return Component_Maps.Element( The_Registry, To_Unbounded_String( Component_Name ) );
+		return Load( To_Unbounded_String( Component_Name ) );
+	end Load;
+
+
+	function Load( Component_Name: in Unbounded_String ) return Aw_View.Components.Component_Access is
+	begin
+		return Component_Maps.Element( The_Registry, Component_Name );
 	exception
 		when CONSTRAINT_ERROR =>
-			raise UNKNOWN_COMPONENT_ERROR with Component_Name;
+			raise UNKNOWN_COMPONENT_ERROR with To_String( Component_Name );
 	end Load;
 
 
