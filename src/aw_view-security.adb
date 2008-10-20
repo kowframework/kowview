@@ -25,7 +25,7 @@ with Templates_Parser;
 
 
 
-package body Aw_View.Components.Security is
+package body Aw_View.Security is
 
 	----------------
 	-- Components --
@@ -258,4 +258,4 @@ package body Aw_View.Components.Security is
 
 	end Process_Request;
 
-end Aw_View.Components.Security;
+end Aw_View.Security;

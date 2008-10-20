@@ -25,7 +25,7 @@ with Templates_Parser;
 
 
 
-package Aw_View.Components.Security is
+package Aw_View.Security is
 
 	----------------
 	-- Components --
@@ -162,4 +162,4 @@ private
 		Default_Redirect	: Unbounded_String;
 	end record;
 
-end Aw_View.Components.Security;
+end Aw_View.Security;

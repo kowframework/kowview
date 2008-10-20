@@ -23,7 +23,7 @@ with Templates_Parser;
 
 
 
-package Aw_View.Components.Theme is
+package Aw_View.Themes is
 
 
 	type Component_Type is new Aw_View.Components.Component_Interface with private;
