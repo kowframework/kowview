@@ -12,7 +12,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
 with Aw_Config;
 with Aw_Sec;
-
+with Aw_View.Components;		use Aw_View.Components;
 
 ---------
 -- AWS --
@@ -43,7 +43,7 @@ package Aw_View.Security is
 	User_Key: constant String;
 
 
-	--overriding
+	overriding
 	procedure Initialize(
 			Component	: in out Component_Type;
 			Component_Name	: in     String;
@@ -59,7 +59,7 @@ package Aw_View.Security is
 	-- 	default_redirect	:: default "/"
 
 
-	--overriding
+	overriding
 	function Create_Instance(
 			Component	: in Component_Type;
 			Module_Name	: in String;
@@ -68,7 +68,7 @@ package Aw_View.Security is
 	-- no matter what module we request, the Criteria_Module_Module will be always called
 
 
-	--overriding
+	overriding
 	function Create_Instance(
 			Component	: in Component_Type;
 			Service_Name	: in String
