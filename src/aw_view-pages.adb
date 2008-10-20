@@ -5,7 +5,6 @@
 ---------
 
 with Ada.Directories;
-with Ada.Direct_IO;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
 

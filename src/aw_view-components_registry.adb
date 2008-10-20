@@ -123,7 +123,7 @@ package body Aw_View.Components_Registry is
 			Kind		: in Ada.Directories.File_Kind	
 		) return String is
 		-- locate a resource file for this component in the Aw_Config's configuration path
-		-- returning it's name if nothing has been found raise Ada.Direct_IO.Name_Error if not found
+		-- returning it's name if nothing has been found raise Ada.Directories.Name_Error if not found
 
 		use Ada.Directories;
 
@@ -135,7 +135,7 @@ package body Aw_View.Components_Registry is
 	begin
 
 		if Real_Kind /= Kind then
-			raise Name_Error with
+			raise Ada.Directories.Name_Error with
 					"Resource """ & Resource &
 					""" of component """ & Component_Name &
 					""" is of type """ & File_Kind'Image( Real_Kind ) &

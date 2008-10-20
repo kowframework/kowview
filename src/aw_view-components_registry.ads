@@ -90,7 +90,7 @@ package Aw_View.Components_Registry is
 	-- locate a resource file for this component
 	-- this file should be placed at
 	-- 	[WORKING_DIR]/data/component_name/resource.extension
-	-- returning it's name if nothing has been found raise Ada.Direct_IO.Name_Error if not found
+	-- returning it's name if nothing has been found raise Ada.Directories.Name_Error if not found
 	-- TODO: Implement locale support
 
 	function Load_Main_Configuration(
