@@ -14,8 +14,11 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
 with Aw_Config;
 with Aw_Lib.File_System;
+with Aw_Lib.String_Util;
+with Aw_Lib.UString_Vectors;
 with Aw_View.Components;		use Aw_View.Components;
 with Aw_View.Components_Registry;
+with Aw_View.Themes;			use Aw_View.Themes;
 
 ---------
 -- AWS --
@@ -102,42 +105,25 @@ package body Aw_View.Pages is
 
 
 	overriding
-	procedure Process_Request(
+	procedure Initialize_Request(
 			Module		: in out Page_Module;
 			Request		: in     AWS.Status.Data;
 			Parameters	: in out Templates_Parser.Translate_Set;
-			Response	: in out Unbounded_String
+			Response	: in out AWS.Response.Data;
+			Is_Final	: out    Boolean
 		) is
-		-- This is the only procedure implemented by the page module.
-		-- That's how it's done so there is no need to deal with dynamic allocation
+	-- this is where the page is initialized.
 
 		use Aw_Config;
 		use Aw_View.Components_Registry;
 
 		type Regions_Array is Array( Integer range<> ) of Unbounded_String;
 
-		Template_Name	: constant Unbounded_String
-					:= Value( Module.Config, "template", "default" );
-		Modules_Cfg	: constant Config_File_Array
-					:= Elements_Array( Module.Config, "modules" );
-
+		Template_Name		: constant Unbounded_String
+						:= Value( Module.Config, "template", "default" );
+		Modules_Cfg		: constant Config_File_Array
+						:= Elements_Array( Module.Config, "modules" );
 		Theme_Component_Name	: constant String := To_String( Module.Theme_Component_Name );
-
-
-		function Load_Processor return Aw_View.Themes.Template_Processor_Module'Class is
-			pragma Inline( Load_Processor );
-
-			-- notice: it's here only to clean up the syntax
-		begin
-			return Aw_View.Themes.Template_Processor_Module'Class(
-					Load_Module(
-						Component	=> Theme_Component_Name,
-						Module		=> "template_processor"
-					);
-		end Load_Processor;
-
-		Processor		: Aw_View.Themes.Template_Processor_Module'Class := Load_Processor;
-		Is_Final		: Boolean;
 		Available_Regions	: Aw_Lib.UString_Vectors.Vector;
 
 		Module_Regions		: Regions_Array( Modules_Cfg'Range );
@@ -148,7 +134,7 @@ package body Aw_View.Pages is
 			-- assemble the vector containing the modules to render.
 			use Aw_Lib.UString_Vectors;
 
-			Modules: Vector := Aw_Lib.String_Util.Explode( ',' Element( C ) );
+			Modules: Vector := Aw_Lib.String_Util.Explode( ',', Element( C ) );
 
 			procedure Module_Iterator( C2: in Cursor ) is
 				index: Integer;
@@ -168,11 +154,17 @@ package body Aw_View.Pages is
 			Iterate( Modules, Module_Iterator'Access );
 		end Region_Iterator;
 
-
 	begin
-		Set_Template( Processor, Template_Name );
+		Module.Processor := Aw_View.Themes.Template_Processor_Module(
+					Aw_View.Components_Registry.Load_Module(
+						Component_Name	=> Theme_Component_Name,
+						Module_Name	=> "template_processor"
+					)
+				);
 
-		Available_Regions := Get_Regions( Processor );
+		Set_Template( Module.Processor, Template_Name );
+
+		Available_Regions := Get_Regions( Module.Processor );
 		-- get all available regions in the template
 	
 
@@ -180,8 +172,8 @@ package body Aw_View.Pages is
 		-- now we setup the regions for each module.
 		-- each module can appear only once.
 
-		Initialize_Request(
-			Module		=> Module,
+		Aw_View.Themes.Initialize_Request(
+			Module		=> Module.Processor,
 			Request		=> Request,
 			Parameters	=> Parameters,
 			Response	=> Response,
@@ -195,27 +187,19 @@ package body Aw_View.Pages is
 		for i in Modules_Cfg'Range loop
 			declare
 				Cfg		: Config_File := Modules_Cfg( i );
-				Module		: Module_Instance_Interface'Class
+				Inner_Module	: Module_Instance_Interface'Class
 							:= Load_Module(
-								Element( cfg, "component" ),
-								Element( cfg, "module" ),
+								To_String( Element( cfg, "component" ) ),
+								To_String( Element( cfg, "module" ) ),
 								Cfg
 							);
 				Header		: Unbounded_String;
 				Contents	: Unbounded_String;
 				Footer		: Unbounded_String;
 				
-				use Aw_Lib.UString_Vectors;
-				procedure Region_Iterator( C: in Cursor ) is
-				begin
-					Append_Header(
-						Module		=> Processor,
-						Region		=> Element( C ),
-						Component_Id	=>
-
 			begin
 				Initialize_Request(
-					Module		=> Module,
+					Module		=> Inner_Module,
 					Request		=> Request,
 					Parameters	=> Parameters,
 					Response	=> Response,
@@ -227,22 +211,23 @@ package body Aw_View.Pages is
 					return;
 				end if;
 
-				if Should_Draw( i ) then
+				if Module_Regions( i ) /= Null_Unbounded_String then
+
 					Process_Header(
-						Module		=> Module,
+						Module		=> Inner_Module,
 						Request		=> Request,
 						Parameters	=> Parameters,
 						Response	=> Header
 					);
 	
 					Process_Request(
-						Module		=> Module,
+						Module		=> Inner_Module,
 						Request		=> Request,
 						Parameters	=> Parameters,
 						Response	=> Contents
 					);
 					Process_Footer(
-						Module		=> Module,
+						Module		=> Inner_Module,
 						Request		=> Request,
 						Parameters	=> Parameters,
 						Response	=> Footer
@@ -250,15 +235,15 @@ package body Aw_View.Pages is
 
 
 					Append_Header(	
-						Processor, Module_Regions( i ), i, Header );
+						Module.Processor, Module_Regions( i ), i, Header );
 					Append_Contents(
-						Processor, Module_Regions( i ), i, Contents );
+						Module.Processor, Module_Regions( i ), i, Contents );
 					Append_Footer(
-						Processor, Module_Regions( i ), i, Footer );
+						Module.Processor, Module_Regions( i ), i, Footer );
 				end if;
 	
 				Finalize_Request(
-					Module		=> Module,
+					Module		=> Inner_Module,
 					Request		=> Request,
 					Parameters	=> Parameters
 				);
@@ -267,16 +252,46 @@ package body Aw_View.Pages is
 			end;
 		end loop;
 
+
+	end Initialize_Request;
+
+	overriding
+	procedure Process_Request(
+			Module		: in out Page_Module;
+			Request		: in     AWS.Status.Data;
+			Parameters	: in out Templates_Parser.Translate_Set;
+			Response	: in out Unbounded_String
+		) is
+		-- it's where the page is assembled.
+	begin
 		Response := Get_Response(
-				Module		=> Processor
+				Module		=> Module.Processor,
 				Request		=> Request,
 				Parameters	=> Parameters
 			);
-
-
 	end Process_Request;
-
 	
+
+	overriding
+	procedure Finalize_Request(
+			Module		: in out Page_Module;
+			Request		: in     AWS.Status.Data;
+			Parameters	: in out Templates_Parser.Translate_Set
+		) is
+	begin
+		if Module.Processor not in Aw_View.Themes.Template_Processor_Module then
+			return;
+			-- this is to avoid GNAT warnings.
+		end if;
+		Finalize_Request(
+			Module		=> Module.Processor,
+			Request		=> Request,
+			Parameters	=> Parameters
+			);
+	end Finalize_Request;
+
+
+
 	--------------
 	-- Services --
 	-------------
@@ -295,7 +310,7 @@ package body Aw_View.Pages is
 		) is
 
 		-- This service provides direct access to the page module.
-		Translate_Set	: Templates_Parser.Translate_Set;
+		Parameters : Templates_Parser.Translate_Set;
 		-- a null set
 		
 		use Aw_View.Components_Registry;
@@ -307,13 +322,25 @@ package body Aw_View.Pages is
 							Config		=> Load_Configuration( "page", AWS.Status.URI( Request ) )
 						);
 
-		Text_Output: Unbounded_String;
+		Text_Output	: Unbounded_String;
+		Is_Final	: Boolean;
 	begin
+		Initialize_Request(
+			Module		=> Module,
+			Request		=> Request,
+			Parameters	=> Parameters,
+			Response	=> Response,
+			Is_Final	=> Is_Final
+		);
+
+		if Is_Final then
+			return;
+		end if;
 
 		Process_Request(
 			Module		=> Module,
 			Request		=> Request,
-			Parameters	=> Translate_Set,
+			Parameters	=> Parameters,
 			Response	=> Text_Output
 		);
 

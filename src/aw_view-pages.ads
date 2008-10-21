@@ -12,6 +12,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
 with Aw_Config;
 with Aw_View.Components;		use Aw_View.Components;
+with Aw_View.Themes;
 
 ---------
 -- AWS --
@@ -43,7 +44,7 @@ package Aw_View.Pages is
 			Component	: in out Component_Type;
 			Component_Name	: in     String;
 			Config		: in out Aw_Config.Config_File
-		);
+		) is null;
 	-- no initialization
 
 
@@ -86,6 +87,15 @@ package Aw_View.Pages is
 	-- It's the engine for the Page_Service service.
 	-- Can also be used in your own components and pages.
 
+	overriding
+	procedure Initialize_Request(
+			Module		: in out Page_Module;
+			Request		: in     AWS.Status.Data;
+			Parameters	: in out Templates_Parser.Translate_Set;
+			Response	: in out AWS.Response.Data;
+			Is_Final	: out    Boolean
+		);
+	-- this is where the page is initialized.
 
 
 	overriding
@@ -95,8 +105,14 @@ package Aw_View.Pages is
 			Parameters	: in out Templates_Parser.Translate_Set;
 			Response	: in out Unbounded_String
 		);
-	-- This is the only procedure implemented by the page module.
-	-- That's how it's done so there is no need to deal with dynamic allocation
+	-- it's where the page is assembled.
+
+	overriding
+	procedure Finalize_Request(
+			Module		: in out Page_Module;
+			Request		: in     AWS.Status.Data;
+			Parameters	: in out Templates_Parser.Translate_Set
+		);
 
 
 
@@ -149,6 +165,7 @@ private
 
 	type Page_Module is new Module_Instance_Interface with record
 		Config		: Aw_Config.Config_File;
+		Processor	: Aw_View.Themes.Template_Processor_Module;
 		-- there is no processing of the config file before 
 		-- the page rendering begins.
 		Theme_Component_Name : Unbounded_String;
