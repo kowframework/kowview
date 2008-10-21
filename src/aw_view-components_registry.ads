@@ -59,11 +59,29 @@ package Aw_View.Components_Registry is
 	-----------------------
 
 	function Load_Module(
+			Component_Name	: in Unbounded_String;
+			Module_Name	: in Unbounded_String;
+			Config		: in Aw_Config.Config_File
+		) return Module_Instance_Interface'Class;
+	-- get a module instance
+	
+
+	function Load_Module(
 			Component_Name	: in String;
 			Module_Name	: in String;
 			Config		: in Aw_Config.Config_File
 		) return Module_Instance_Interface'Class;
 	-- get a module instance
+
+
+
+
+	function Load_Module(
+			Component_Name	: in String;
+			Module_Name	: in String
+		) return Module_Instance_Interface'Class;
+	-- get the module, using the standard module configuration
+	
 
 	------------------------
 	-- Service Management --
