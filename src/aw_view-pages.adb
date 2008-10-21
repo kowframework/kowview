@@ -114,6 +114,8 @@ package body Aw_View.Pages is
 		use Aw_Config;
 		use Aw_View.Components_Registry;
 
+		type Regions_Array is Array( Integer range<> ) of Unbounded_String;
+
 		Template_Name	: constant Unbounded_String
 					:= Value( Module.Config, "template", "default" );
 		Modules_Cfg	: constant Config_File_Array
@@ -134,12 +136,50 @@ package body Aw_View.Pages is
 					);
 		end Load_Processor;
 
-		Processor	: Aw_View.Themes.Template_Processor_Module'Class
-		Is_Final	: Boolean;
+		Processor		: Aw_View.Themes.Template_Processor_Module'Class := Load_Processor;
+		Is_Final		: Boolean;
+		Available_Regions	: Aw_Lib.UString_Vectors.Vector;
 
+		Module_Regions		: Regions_Array( Modules_Cfg'Range );
+		-- map each module to it's region
+
+
+		procedure Region_Iterator( C: in Aw_Lib.UString_Vectors.Cursor ) is
+			-- assemble the vector containing the modules to render.
+			use Aw_Lib.UString_Vectors;
+
+			Modules: Vector := Aw_Lib.String_Util.Explode( ',' Element( C ) );
+
+			procedure Module_Iterator( C2: in Cursor ) is
+				index: Integer;
+			begin
+				index := Integer'Value( To_String( Element( C2 ) ) );
+
+				if Module_Regions( index ) /= Null_Unbounded_String then
+					raise MODULE_ERROR with "Region for module """ & To_String( Element( C2 ) ) & """ already set";
+				end if;
+				Module_Regions( index ) := Element( C );
+			exception
+				when CONSTRAINT_ERROR =>
+					raise MODULE_ERROR with "Impossible to assemble page using module """ & To_String( Element( C2 ) ) & """";
+			end Module_Iterator;
+		begin
+
+			Iterate( Modules, Module_Iterator'Access );
+		end Region_Iterator;
 
 
 	begin
+		Set_Template( Processor, Template_Name );
+
+		Available_Regions := Get_Regions( Processor );
+		-- get all available regions in the template
+	
+
+		Aw_Lib.UString_Vectors.Iterate( Available_Regions, Region_Iterator'Access );
+		-- now we setup the regions for each module.
+		-- each module can appear only once.
+
 		Initialize_Request(
 			Module		=> Module,
 			Request		=> Request,
@@ -164,6 +204,15 @@ package body Aw_View.Pages is
 				Header		: Unbounded_String;
 				Contents	: Unbounded_String;
 				Footer		: Unbounded_String;
+				
+				use Aw_Lib.UString_Vectors;
+				procedure Region_Iterator( C: in Cursor ) is
+				begin
+					Append_Header(
+						Module		=> Processor,
+						Region		=> Element( C ),
+						Component_Id	=>
+
 			begin
 				Initialize_Request(
 					Module		=> Module,
@@ -178,26 +227,36 @@ package body Aw_View.Pages is
 					return;
 				end if;
 
-				Process_Header(
-					Module		=> Module,
-					Request		=> Request,
-					Parameters	=> Parameters,
-					Response	=> Header
-				);
+				if Should_Draw( i ) then
+					Process_Header(
+						Module		=> Module,
+						Request		=> Request,
+						Parameters	=> Parameters,
+						Response	=> Header
+					);
+	
+					Process_Request(
+						Module		=> Module,
+						Request		=> Request,
+						Parameters	=> Parameters,
+						Response	=> Contents
+					);
+					Process_Footer(
+						Module		=> Module,
+						Request		=> Request,
+						Parameters	=> Parameters,
+						Response	=> Footer
+					);
 
-				Process_Request(
-					Module		=> Module,
-					Request		=> Request,
-					Parameters	=> Parameters,
-					Response	=> Contents
-				);
-				Process_Footer(
-					Module		=> Module,
-					Request		=> Request,
-					Parameters	=> Parameters,
-					Response	=> Footer
-				);
 
+					Append_Header(	
+						Processor, Module_Regions( i ), i, Header );
+					Append_Contents(
+						Processor, Module_Regions( i ), i, Contents );
+					Append_Footer(
+						Processor, Module_Regions( i ), i, Footer );
+				end if;
+	
 				Finalize_Request(
 					Module		=> Module,
 					Request		=> Request,
@@ -205,9 +264,6 @@ package body Aw_View.Pages is
 				);
 
 
-				Append_Header( Processor, i, Header );
-				Append_Header( Processor, i, Contents );
-				Append_Header( Processor, i, Footer );
 			end;
 		end loop;
 
@@ -216,6 +272,8 @@ package body Aw_View.Pages is
 				Request		=> Request,
 				Parameters	=> Parameters
 			);
+
+
 	end Process_Request;
 
 	
@@ -263,6 +321,12 @@ package body Aw_View.Pages is
 				Content_Type    => "text/html",
 				Message_Body    => To_String( Text_Output )
 			);
+
+		Finalize_Request(
+			Module		=> Module,
+			Request		=> Request,
+			Parameters	=> Parameters
+		);
 
 	end Process_Request;
 
