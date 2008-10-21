@@ -49,7 +49,7 @@ package body Aw_View.Pages is
 				Module: Page_Module;
 			begin
 				Module.Config := Config;
-
+				Module.Theme_Component_Name := Component.Theme_Component_Name;
 				return Module;
 			end;
 		else
@@ -101,7 +101,6 @@ package body Aw_View.Pages is
 	--
 
 
-	-- TODO: page module
 	overriding
 	procedure Process_Request(
 			Module		: in out Page_Module;
@@ -111,13 +110,113 @@ package body Aw_View.Pages is
 		) is
 		-- This is the only procedure implemented by the page module.
 		-- That's how it's done so there is no need to deal with dynamic allocation
-	begin
-		null;
-	end Process_Request;
 
-	--
-	-- Static Module
-	--
+		use Aw_Config;
+		use Aw_View.Components_Registry;
+
+		Template_Name	: constant Unbounded_String
+					:= Value( Module.Config, "template", "default" );
+		Modules_Cfg	: constant Config_File_Array
+					:= Elements_Array( Module.Config, "modules" );
+
+		Theme_Component_Name	: constant String := To_String( Module.Theme_Component_Name );
+
+
+		function Load_Processor return Aw_View.Themes.Template_Processor_Module'Class is
+			pragma Inline( Load_Processor );
+
+			-- notice: it's here only to clean up the syntax
+		begin
+			return Aw_View.Themes.Template_Processor_Module'Class(
+					Load_Module(
+						Component	=> Theme_Component_Name,
+						Module		=> "template_processor"
+					);
+		end Load_Processor;
+
+		Processor	: Aw_View.Themes.Template_Processor_Module'Class
+		Is_Final	: Boolean;
+
+
+
+	begin
+		Initialize_Request(
+			Module		=> Module,
+			Request		=> Request,
+			Parameters	=> Parameters,
+			Response	=> Response,
+			Is_Final	=> Is_Final
+		);
+
+		if Is_Final then
+			return;
+		end if;
+
+		for i in Modules_Cfg'Range loop
+			declare
+				Cfg		: Config_File := Modules_Cfg( i );
+				Module		: Module_Instance_Interface'Class
+							:= Load_Module(
+								Element( cfg, "component" ),
+								Element( cfg, "module" ),
+								Cfg
+							);
+				Header		: Unbounded_String;
+				Contents	: Unbounded_String;
+				Footer		: Unbounded_String;
+			begin
+				Initialize_Request(
+					Module		=> Module,
+					Request		=> Request,
+					Parameters	=> Parameters,
+					Response	=> Response,
+					Is_Final	=> Is_Final
+				);
+
+				if Is_Final then
+					-- if it's final, nothing else should be processed
+					return;
+				end if;
+
+				Process_Header(
+					Module		=> Module,
+					Request		=> Request,
+					Parameters	=> Parameters,
+					Response	=> Header
+				);
+
+				Process_Request(
+					Module		=> Module,
+					Request		=> Request,
+					Parameters	=> Parameters,
+					Response	=> Contents
+				);
+				Process_Footer(
+					Module		=> Module,
+					Request		=> Request,
+					Parameters	=> Parameters,
+					Response	=> Footer
+				);
+
+				Finalize_Request(
+					Module		=> Module,
+					Request		=> Request,
+					Parameters	=> Parameters
+				);
+
+
+				Append_Header( Processor, i, Header );
+				Append_Header( Processor, i, Contents );
+				Append_Header( Processor, i, Footer );
+			end;
+		end loop;
+
+		Response := Get_Response(
+				Module		=> Processor
+				Request		=> Request,
+				Parameters	=> Parameters
+			);
+	end Process_Request;
 
 	
 	--------------

@@ -43,7 +43,7 @@ package Aw_View.Pages is
 			Component	: in out Component_Type;
 			Component_Name	: in     String;
 			Config		: in out Aw_Config.Config_File
-		) is null;
+		);
 	-- no initialization
 
 
@@ -143,14 +143,15 @@ private
 
 
 	type Component_Type is new Aw_View.Components.Component_Interface with record
-		Default_Mapping: Unbounded_String;
+		Theme_Component_Name: Unbounded_String;
 	end record;
 
 
 	type Page_Module is new Module_Instance_Interface with record
-		Config: Aw_Config.Config_File;
+		Config		: Aw_Config.Config_File;
 		-- there is no processing of the config file before 
 		-- the page rendering begins.
+		Theme_Component_Name : Umbounded_String;
 	end record;
 
 	type Page_Service is new Service_Instance_Interface with record

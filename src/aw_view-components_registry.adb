@@ -90,6 +90,18 @@ package body Aw_View.Components_Registry is
 	-----------------------
 
 	function Load_Module(
+			Component_Name	: in Unbounded_String;
+			Module_Name	: in Unbounded_String;
+			Config		: in Aw_Config.Config_File
+		) return Module_Instance_Interface'Class is
+		-- get a module instance
+		Component	: Component_Access := Load( Component_Name );
+	begin
+		return Create_Instance( Component.all, To_String( Module_Name ), Config );
+	end Load_Module;
+
+
+	function Load_Module(
 			Component_Name	: in String;
 			Module_Name	: in String;
 			Config		: in Aw_Config.Config_File
@@ -98,6 +110,23 @@ package body Aw_View.Components_Registry is
 		Component	: Component_Access := Load( Component_Name );
 	begin
 		return Create_Instance( Component.all, Module_Name, Config );
+	end Load_Module;
+
+
+	function Load_Module(
+			Component_Name	: in String;
+			Module_Name	: in String
+		) return Module_Instance_Interface'Class is
+		-- get the module, using the standard module configuration
+	begin
+		return Load_Module(
+				Component_Name	=> Component_Name,
+				Module_Name	=> Module_Name,
+				Config		=> Load_Configuration(
+							Component_Name		=> Component_Name,
+							Configuration_Name	=> Module_Name
+						)
+				);
 	end Load_Module;
 
 	------------------------
