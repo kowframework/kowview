@@ -12,9 +12,11 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 ---------------
 
 with Aw_Config;
+with Aw_Config.Generic_Registry;
+with Aw_Config.Text;
 with Aw_Lib.File_System;		use Aw_Lib.File_System;
 with Aw_Lib.UString_Vectors;
-with Aw_View.Components;
+with Aw_View.Components;		use Aw_View.Components;
 
 ---------
 -- AWS --
@@ -46,7 +48,7 @@ package Aw_View.Themes is
 
 	overriding
 	function Create_Instance(
-			Component	: in Template_Assembler_Module;
+			Component	: in Component_Type;
 			Module_Name	: in String;
 			Config		: in Aw_Config.Config_File
 		) return Module_Instance_Interface'Class;
@@ -58,9 +60,9 @@ package Aw_View.Themes is
 	overriding
 	function Create_Instance(
 			Component	: in Component_Type;
-			Service_Name	: in String
+			Service_Name	: in String;
 			Service_Mapping	: in String
-		) return Service_Instance_Interface'Class is abstract;
+		) return Service_Instance_Interface'Class;
 	-- create a service.
 	-- available services:
 	-- 	. theme
@@ -161,7 +163,7 @@ package Aw_View.Themes is
 		);
 	-- Load a template configuration and prepare for processing
 
-	function Get_Regions( Module : in Templante_Processor_Module ) return Aw_Lib.UString_Vectors.Vector;
+	function Get_Regions( Module : in Template_Processor_Module ) return Aw_Lib.UString_Vectors.Vector;
 
 	procedure Append_Header(
 			Module		: in out Template_Processor_Module;
@@ -201,7 +203,7 @@ package Aw_View.Themes is
 	--------------
 
 
-	type Theme_Service is new Theme_Instance_Interface with private;
+	type Theme_Service is new Service_Instance_Interface with private;
 	-- Map a URI to theme resources
 
 
@@ -247,14 +249,16 @@ package Aw_View.Themes is
 
 	package Themes_Registry is new Aw_Config.Generic_Registry(
 				Element_Type	=> Theme_Descriptor_Type,
-				Relative_Path	=> "awview" & Separator & "themes" & Separator & "themes"
+				Relative_Path	=> "awview" & Separator & "themes" & Separator & "themes",
+				Parser		=> new Aw_Config.Text.Parser
 			);
 	-- Store all the available theme's descriptor.
 
 
 	package Templates_Registry is new Aw_Config.Generic_Registry(
 				Element_Type	=> Template_Descriptor_Type,
-				Relative_Path	=> "awview" & Separator & "themes" & Separator & "templates"
+				Relative_Path	=> "awview" & Separator & "themes" & Separator & "templates",
+				Parser		=> new Aw_Config.Text.Parser
 			);
 	-- Store all required templates.
 
@@ -264,6 +268,7 @@ private
 
 	type Component_Type is new Aw_View.Components.Component_Interface with record
 		Default_Theme	: Unbounded_String;
+		Name		: Unbounded_String;
 	end record;
 	
 	type Template_Processor_Module is new Module_Instance_Interface with record
@@ -273,7 +278,7 @@ private
 		Descriptor		: Template_Descriptor_Type;
 	end record;
 
-	type Theme_Service is new Theme_Instance_Interface with record
+	type Theme_Service is new Service_Instance_Interface with record
 		Mapping		: Unbounded_String;
 	end record;
 end Aw_View.Themes;
