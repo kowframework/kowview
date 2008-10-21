@@ -151,7 +151,7 @@ private
 		Config		: Aw_Config.Config_File;
 		-- there is no processing of the config file before 
 		-- the page rendering begins.
-		Theme_Component_Name : Umbounded_String;
+		Theme_Component_Name : Unbounded_String;
 	end record;
 
 	type Page_Service is new Service_Instance_Interface with record
