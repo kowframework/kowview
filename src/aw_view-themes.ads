@@ -189,7 +189,6 @@ package Aw_View.Themes is
 	
 	function Get_Response(
 			Module		: in Template_Processor_Module;
-			Region		: in     Unbounded_String;
 			Request		: in AWS.Status.Data;
 			Parameters	: in Templates_Parser.Translate_Set
 		) return Unbounded_String;
@@ -206,9 +205,9 @@ package Aw_View.Themes is
 	type Theme_Service is new Service_Instance_Interface with private;
 	-- Map a URI to theme resources
 
-
+	overriding
 	procedure Process_Request(
-			Service		: in out Service_Instance_Interface;
+			Service		: in out Theme_Service;
 			Request		: in     AWS.Status.Data;
 			Response	: in out AWS.Response.Data
 		);
