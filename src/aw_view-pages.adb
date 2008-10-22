@@ -128,6 +128,7 @@ package body Aw_View.Pages is
 		use Aw_View.Components_Registry;
 
 		type Regions_Array is Array( Integer range<> ) of Unbounded_String;
+		type Values_Array is Array( Integer range<> ) of Unbounded_String;
 
 		Template_Name		: constant Unbounded_String
 						:= Value( Module.Config, "template", "default" );
@@ -138,7 +139,9 @@ package body Aw_View.Pages is
 
 		Module_Regions		: Regions_Array( Modules_Cfg'Range );
 		-- map each module to it's region
-
+		Headers			: Values_Array( Modules_Cfg'Range );
+		Contents		: Values_array( Modules_Cfg'Range );
+		Footers			: Values_Array( Modules_Cfg'Range );
 
 		procedure Region_Iterator( C: in Aw_Lib.UString_Vectors.Cursor ) is
 			-- assemble the vector containing the modules to render.
@@ -165,6 +168,38 @@ package body Aw_View.Pages is
 			Iterate( Modules, Module_Iterator'Access );
 		end Region_Iterator;
 
+		procedure Region_Append_Iterator( C: in Aw_Lib.UString_Vectors.Cursor ) is
+			-- assemble the vector containing the modules to render.
+			use Aw_Lib.UString_Vectors;
+
+			Current_Region : constant Unbounded_String := Element( C );
+
+			Modules_Str: String := Aw_Config.Element( Module.Config, To_String( Current_Region ) );
+			Modules: Vector := Aw_Lib.String_Util.Explode( ',', Modules_Str );
+			
+
+			procedure Module_Iterator( C2: in Cursor ) is
+				i: Integer;
+			begin
+				i := Integer'Value( To_String( Element( C2 ) ) );
+				
+				Append_Header(
+					Module.Processor, Current_Region, i, Headers( i )
+				);
+				Append_Contents(
+					Module.Processor, Current_Region, i, Contents( i )
+				);
+				Append_Footer(
+					Module.Processor, Current_Region, i, Footers( i )
+				);
+
+			end Module_Iterator;
+		begin
+
+			Iterate( Modules, Module_Iterator'Access );
+		end Region_Append_Iterator;
+
+
 	begin
 		Module.Processor := Aw_View.Themes.Template_Processor_Module(
 					Aw_View.Components_Registry.Load_Module(
@@ -181,7 +216,6 @@ package body Aw_View.Pages is
 			Is_Final	=> Is_Final
 		);
 
-		put_line(" continuing..." & To_String( Template_Name) );
 		Set_Template( Module.Processor, Template_Name );
 
 		Available_Regions := Get_Regions( Module.Processor );
@@ -207,10 +241,6 @@ package body Aw_View.Pages is
 								To_String( Element( cfg, "module" ) ),
 								Cfg
 							);
-				Header		: Unbounded_String;
-				Contents	: Unbounded_String;
-				Footer		: Unbounded_String;
-				
 			begin
 				Initialize_Request(
 					Module		=> Inner_Module,
@@ -231,29 +261,23 @@ package body Aw_View.Pages is
 						Module		=> Inner_Module,
 						Request		=> Request,
 						Parameters	=> Parameters,
-						Response	=> Header
+						Response	=> Headers( i )
 					);
 	
 					Process_Request(
 						Module		=> Inner_Module,
 						Request		=> Request,
 						Parameters	=> Parameters,
-						Response	=> Contents
+						Response	=> Contents( i )
 					);
 					Process_Footer(
 						Module		=> Inner_Module,
 						Request		=> Request,
 						Parameters	=> Parameters,
-						Response	=> Footer
+						Response	=> Footers( i )
 					);
 
 
-					Append_Header(	
-						Module.Processor, Module_Regions( i ), i, Header );
-					Append_Contents(
-						Module.Processor, Module_Regions( i ), i, Contents );
-					Append_Footer(
-						Module.Processor, Module_Regions( i ), i, Footer );
 				end if;
 	
 				Finalize_Request(
@@ -265,6 +289,10 @@ package body Aw_View.Pages is
 
 			end;
 		end loop;
+		-- now we append the values in the right order..
+		Aw_Config.Set_Section( Module.Config, "positions" );
+		Aw_Lib.UString_Vectors.Iterate( Available_Regions, Region_Append_Iterator'Access );
+
 
 
 	end Initialize_Request;
