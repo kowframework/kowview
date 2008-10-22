@@ -162,6 +162,14 @@ package body Aw_View.Pages is
 					)
 				);
 
+		Aw_View.Themes.Initialize_Request(
+			Module		=> Module.Processor,
+			Request		=> Request,
+			Parameters	=> Parameters,
+			Response	=> Response,
+			Is_Final	=> Is_Final
+		);
+
 		Set_Template( Module.Processor, Template_Name );
 
 		Available_Regions := Get_Regions( Module.Processor );
@@ -172,13 +180,6 @@ package body Aw_View.Pages is
 		-- now we setup the regions for each module.
 		-- each module can appear only once.
 
-		Aw_View.Themes.Initialize_Request(
-			Module		=> Module.Processor,
-			Request		=> Request,
-			Parameters	=> Parameters,
-			Response	=> Response,
-			Is_Final	=> Is_Final
-		);
 
 		if Is_Final then
 			return;
@@ -264,10 +265,11 @@ package body Aw_View.Pages is
 		) is
 		-- it's where the page is assembled.
 	begin
-		Response := Get_Response(
+		Get_Response(
 				Module		=> Module.Processor,
 				Request		=> Request,
-				Parameters	=> Parameters
+				Parameters	=> Parameters,
+				Response	=> Response
 			);
 	end Process_Request;
 	
@@ -370,37 +372,14 @@ package body Aw_View.Pages is
 		) is
 		-- This service acts like a standard web server, providing access
 		-- to static files.
-
+		use Aw_View.Components_Registry;
 		
 		URI	: constant string := AWS.Status.URI( Request );
 		Mapping	: constant string := To_String( Service.Mapping );
 
-		function Get_Extension return String is
-		begin
+		Extension	: constant string := Get_Extension( URI );
+		Resource	: constant string := Get_Resource( Mapping, URI, Extension );
 
-			for i in reverse URI'Range loop
-				if URI( i ) = '.' then
-					return URI( i + 1 .. URI'Last );
-				end if;
-			end loop;
-
-			return "";
-		end Get_Extension;
-		Extension	: constant string := Get_Extension;
-
-		function Get_Resource return String is
-			M_Last	: constant integer	:= Mapping'Last;
-			Ret	: constant string	:= URI( URI'First + M_Last + 1 .. URI'Last - Extension'Length - 1 );
-		begin
-
-			if Mapping( M_Last ) = '/' then
-				return '/' & Ret;	-- does not include the /
-			else
-				return Ret;		-- does include the /
-			end if;
-		end Get_Resource;
-		
-		Resource	: constant string := Get_Resource;
 		Path		: Unbounded_String;
 
 

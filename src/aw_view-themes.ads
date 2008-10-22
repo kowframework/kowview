@@ -4,6 +4,8 @@
 -- Ada --
 ---------
 with Ada.Calendar;
+with Ada.Containers.Ordered_Maps;
+with Ada.Directories;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
 
@@ -31,9 +33,26 @@ with Templates_Parser;
 
 package Aw_View.Themes is
 
+	--------------------
+	-- Helper Methods --
+	--------------------
+
+	theme_name_session_key: constant string := "aw_view::theme_name";
+
+	function Locate_Theme_Resource(
+			Component_Name	: in String;
+			Theme_Name	: in String;
+			Resource	: in String;
+			Extension	: in String;
+			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
+		) return String;
+
+	---------------
+	-- Component --
+	---------------
+
 
 	type Component_Type is new Aw_View.Components.Component_Interface with private;
-
 
 	
 
@@ -187,11 +206,12 @@ package Aw_View.Themes is
 			Contents	: in     Unbounded_String
 		);
 	
-	function Get_Response(
-			Module		: in Template_Processor_Module;
-			Request		: in AWS.Status.Data;
-			Parameters	: in Templates_Parser.Translate_Set
-		) return Unbounded_String;
+	procedure Get_Response(
+			Module		: in out Template_Processor_Module;
+			Request		: in     AWS.Status.Data;
+			Parameters	: in out Templates_Parser.Translate_Set;
+			Response	: in out Unbounded_String
+		);
 	-- Process all the regular module render operations returning the
 	-- content rendered.
 	--
@@ -211,9 +231,8 @@ package Aw_View.Themes is
 			Request		: in     AWS.Status.Data;
 			Response	: in out AWS.Response.Data
 		);
-	-- process a request to a service
-	-- the entire request is handled by the service
-	-- sometimes is useful for a service only to be created and released - such as in a counter service
+	-- process request for a theme's static file
+	-- only direct access to files that aren't template are alowed
 
 
 
@@ -231,7 +250,7 @@ package Aw_View.Themes is
 		-- A record type for describing how a theme operates and other information.
 		Name		: Unbounded_String;
 		Author		: Unbounded_String;
-		Creation_Date	: Ada.Calendar.Time;
+		Creation_Date	: Unbounded_String; -- TODO: store the creation date as Ada.Calendar.Time
 	end record;
 	
 
@@ -266,18 +285,46 @@ private
 
 
 	type Component_Type is new Aw_View.Components.Component_Interface with record
-		Default_Theme	: Unbounded_String;
-		Name		: Unbounded_String;
+		Default_Theme_Name	: Unbounded_String; -- default
+		Name			: Unbounded_String;
+		Template_Extension	: Unbounded_String; -- html
 	end record;
 	
+
+
+	package Tag_Maps is new Ada.Containers.Ordered_Maps(
+					Key_Type	=> Unbounded_String,
+					Element_Type	=> Templates_Parser.Tag,
+					"="		=> Templates_Parser."="
+				);
+
 	type Template_Processor_Module is new Module_Instance_Interface with record
-		Template_Name		: Unbounded_String;
-		Template_Descriptor	: Unbounded_String;
-		Template_File		: Unbounded_String;
-		Descriptor		: Template_Descriptor_Type;
+		Component_name		: Unbounded_String;
+		Default_Theme_Name	: Unbounded_String;
+		Theme_Name		: Unbounded_String;
+		Template_Descriptor	: Template_Descriptor_Type;
+		Template_File_Name	: Unbounded_String;
+		Template_Extension	: Unbounded_String;
+
+		Render_Start_Timestamp	: Ada.Calendar.Time;
+
+		Header_Contents			: Templates_Parser.Tag;
+		Module_Header_Contents		: Tag_Maps.Map;
+		-- the user can access every header or only one of the headers;
+
+		Module_Contents			: Tag_Maps.Map;
+		Module_Ids			: Tag_Maps.Map;
+		-- thats where the module contents are stored
+	
+		Module_Footer_Contents		: Tag_Maps.Map;
+		Footer_Contents			: Templates_Parser.Tag;
+		-- the same for the header is for the footer
 	end record;
 
 	type Theme_Service is new Service_Instance_Interface with record
-		Mapping		: Unbounded_String;
+		Mapping			: Unbounded_String;
+		Component_Name		: Unbounded_String;
+		Theme_Name		: Unbounded_String;
+		Template_Extension	: Unbounded_String;
 	end record;
 end Aw_View.Themes;

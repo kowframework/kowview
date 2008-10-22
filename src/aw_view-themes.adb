@@ -4,6 +4,8 @@
 -- Ada --
 ---------
 with Ada.Calendar;
+with Ada.Strings;
+with Ada.Strings.Fixed;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
 
@@ -13,18 +15,83 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
 with Aw_Config;
 with Aw_Lib.File_System;		use Aw_Lib.File_System;
+with Aw_Lib.String_Util;
 with Aw_Lib.UString_Vectors;
 with Aw_View.Components;
+with Aw_View.Components_Registry;
 
 ---------
 -- AWS --
 ---------
 
+with AWS.MIME;
 with AWS.Response;
+with AWS.Session;
 with AWS.Status;
-with Templates_Parser;
+with Templates_Parser;			use Templates_Parser;
 
 package body Aw_View.Themes is
+	--------------------
+	-- Helper Methods --
+	--------------------
+
+	function Locate_Theme_Resource(
+			Component_Name	: in String;
+			Theme_Name	: in String;
+			Resource	: in String;
+			Extension	: in String;
+			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
+		) return String is
+	begin
+		return Aw_View.Components_Registry.Locate_Resource(
+				Component_Name	=> Component_Name,
+				Resource	=> Theme_Name & Separator & Resource,
+				Extension	=> Extension,
+				Kind		=> Kind
+			);
+	end Locate_Theme_Resource;
+
+	
+
+	function Template_Factory(
+			Name	: in String;
+			Config	: in Aw_Config.Config_File )
+		return Template_Descriptor_Type is
+		-- private method for loading the template descriptor from it's configuration
+		Descriptor : Template_Descriptor_Type;
+	begin
+		Descriptor.Name		:= To_Unbounded_String( Name );
+		Descriptor.Description	:= Aw_Config.Element( Config, "description" );
+
+		Descriptor.Regions	:= Aw_Lib.String_Util.Explode(
+							',',
+							To_String(
+								Aw_Config.Element( Config, "regions" )
+							)
+						);
+		return Descriptor;
+	end Template_Factory;
+
+
+	
+	function Theme_Factory(
+			Name	: in String;
+			Config	: in Aw_Config.Config_File )
+		return Theme_Descriptor_Type is
+		-- private method for loading the theme descriptor from it's configuration
+		Descriptor : Theme_Descriptor_Type;
+	begin
+		Descriptor.Name			:= To_Unbounded_String( Name );
+		Descriptor.Author		:= Aw_Config.Element( Config, "author" );
+		Descriptor.Creation_Date	:= Aw_Config.Element( Config, "creation_time" );
+
+		return Descriptor;
+	end Theme_Factory;
+
+
+	---------------
+	-- Component --
+	---------------
 
 
 
@@ -37,9 +104,22 @@ package body Aw_View.Themes is
 		-- Initialize the Theme component, setting every variable required
 		use Aw_Config;
 	begin
-		Component.Default_Theme := Value( Config, "default_theme", "default" );
 		Component.Name := To_Unbounded_String( Component_Name );
+		Component.Default_Theme_Name	:= Value( Config, "default_theme", "default" );
+		Component.Template_Extension	:= Value( Config, "template_extension", "html" );
+		
+		Templates_Registry.Factory_Registry.Register(
+				"template",
+				Template_Factory'Access
+			);
+		Templates_Registry.Reload_Registry;
 
+		Themes_Registry.Factory_Registry.Register(
+				"theme",
+				Theme_Factory'Access
+			);
+
+		Themes_Registry.Reload_Registry;
 	end Initialize;
 
 
@@ -58,6 +138,10 @@ package body Aw_View.Themes is
 			declare
 				Module: Template_Processor_Module;
 			begin
+				Module.Component_Name		:= Component.Name;
+				Module.Default_Theme_Name	:= Component.Default_Theme_Name;
+				Module.Template_Extension	:= Component.Template_Extension;
+				-- todo: implement loading theme from user's session and profile
 				return Module;
 			end;
 		else
@@ -85,7 +169,10 @@ package body Aw_View.Themes is
 			declare
 				Service: Theme_Service;
 			begin
-				Service.Mapping := To_Unbounded_String( Service_Mapping );
+				Service.Component_Name		:= Component.Name;
+				Service.Mapping			:= To_Unbounded_String( Service_Mapping );
+				Service.Theme_Name		:= Component.Default_Theme_Name;
+				Service.Template_Extension	:= Component.Template_Extension;
 				return Service;
 			end;
 		else
@@ -113,9 +200,24 @@ package body Aw_View.Themes is
 			Response	: in out AWS.Response.Data;
 			Is_Final	: out    Boolean
 		) is
+		Session_ID	: constant AWS.Session.ID := AWS.Status.Session (Request);
+		Theme_Name	: constant string := AWS.Session.Get(
+							Session_ID,
+							theme_name_session_key
+						);
+
 	begin
+	
+	
+		if Theme_Name /= "" then
+			Module.Theme_Name := To_Unbounded_String( Theme_Name );
+		else
+			Module.Theme_Name := Module.Default_Theme_Name;
+		end if;
+		
+		Module.Render_Start_Timestamp := Ada.Calendar.Clock;
+
 		Is_Final := false;
-		null;
 	end Initialize_Request;
 	
 
@@ -129,8 +231,17 @@ package body Aw_View.Themes is
 		) is
 		-- process header of the response.
 		-- it's assumed that 
+		use Ada.Calendar;
+		Computed_Time : String :=
+				Ada.Strings.Fixed.Trim(
+					Duration'Image( Clock - Module.Render_Start_Timestamp ),
+					Ada.Strings.Both
+				);
 	begin
-		null;
+		Response := Response & To_Unbounded_String(
+				"<!-- components rendered in " & Computed_Time & " secconds // -->"
+			);
+
 	end Process_Header;
 
 
@@ -145,6 +256,7 @@ package body Aw_View.Themes is
 		-- process the request for a module.
 		-- sometimes is useful for a module only to be created and released - such as in a page counter module
 	begin
+		-- TODO: request processing for template processor
 		null;
 	end Process_Request;
 
@@ -157,10 +269,16 @@ package body Aw_View.Themes is
 			Parameters	: in out Templates_Parser.Translate_Set;
 			Response	: in out Unbounded_String
 		) is
-		-- process some footer of the module
-		-- useful when creating benchmar modules
+		use Ada.Calendar;
+		Computed_Time : String :=
+				Ada.Strings.Fixed.Trim(
+					Duration'Image( Clock - Module.Render_Start_Timestamp ),
+					Ada.Strings.Both
+				);
 	begin
-		null;
+		Response := Response & To_Unbounded_String(
+				"<!-- components + page rendered in " & Computed_Time & " secconds // -->"
+			);
 	end Process_Footer;
 
 
@@ -185,15 +303,42 @@ package body Aw_View.Themes is
 		) is
 		-- Load a template configuration and prepare for processing
 	begin
-		null;
+		Module.Template_Descriptor := Templates_Registry.Registry.Get( Template_Name );
+		Module.Template_File_Name := To_Unbounded_String(
+			Locate_Theme_Resource(
+				Component_Name	=> To_String( Module.Component_Name ),
+				Theme_Name	=> To_String( Module.Theme_Name ),
+				Resource	=> To_String( Template_Name ),
+				Extension	=> To_String( Module.Template_Extension )
+			)
+		);
 	end Set_Template;
 
 
 
 	function Get_Regions( Module : in Template_Processor_Module ) return Aw_Lib.UString_Vectors.Vector is
 	begin
-		return Module.Descriptor.Regions;
+		return Module.Template_Descriptor.Regions;
 	end Get_Regions;
+
+
+
+	procedure Generic_Append(
+			To_Map		: in out Tag_Maps.Map;
+			Region		: in     Unbounded_String;
+			Contents	: in     String
+		) is
+		A_Tag: Tag;
+	begin
+		if Tag_Maps.Contains( To_Map, Region ) then
+			A_Tag := Tag_Maps.Element( To_Map, Region );
+		end if;
+
+		A_Tag := A_Tag & Contents;
+
+		Tag_Maps.Include( To_Map, Region, A_Tag );
+		-- Notice: include replaces or insert a new element
+	end Generic_Append;
 
 
 
@@ -203,8 +348,16 @@ package body Aw_View.Themes is
 			Index		: in     Integer;
 			Contents	: in     Unbounded_String
 		) is
+
+		Str_Contents: String := To_String( Contents );
 	begin
-		null;
+		Generic_Append(
+			To_Map		=> Module.Module_Header_Contents,
+			Region		=> Region,
+			Contents	=> Str_Contents
+		);
+
+		Module.Header_Contents := Module.Header_Contents & Str_Contents;
 	end Append_Header;
 
 
@@ -215,8 +368,19 @@ package body Aw_View.Themes is
 			Index		: in     Integer;
 			Contents	: in     Unbounded_String
 		) is
+		use Ada.Strings.Fixed;
 	begin
-		null;
+		Generic_Append(
+			To_Map		=> Module.Module_Contents,
+			Region		=> Region,
+			Contents	=> To_String( Contents )
+		);
+
+		Generic_Append(
+			To_Map		=> Module.Module_Ids,
+			Region		=> Region,
+			Contents	=> Trim( Integer'Image( Index ), Ada.Strings.Both )
+		);
 	end Append_Contents;
 
 
@@ -227,24 +391,48 @@ package body Aw_View.Themes is
 			Index		: in     Integer;
 			Contents	: in     Unbounded_String
 		) is
+		Str_Contents : String := To_String( Contents );
 	begin
-		null;
+		Generic_Append(
+			To_Map		=> Module.Module_Footer_Contents,
+			Region		=> Region,
+			Contents	=> Str_Contents
+		);
+
+		Module.Footer_Contents := Module.Footer_Contents & Str_Contents;
 	end Append_Footer;
 
 
 	
-	function Get_Response(
-			Module		: in Template_Processor_Module;
-			Request		: in AWS.Status.Data;
-			Parameters	: in Templates_Parser.Translate_Set
-		) return Unbounded_String is
+	procedure Get_Response(
+			Module		: in out Template_Processor_Module;
+			Request		: in     AWS.Status.Data;
+			Parameters	: in out Templates_Parser.Translate_Set;
+			Response	: in out Unbounded_String
+		) is
 		-- Process all the regular module render operations returning the
 		-- content rendered.
 		--
 		-- Notice: Initialize_Request and Finalize_Request should be called elsewhere
-		Response: Unbounded_String;
 	begin
-		return Response;
+		Process_Header(
+			Module		=> Module,
+			Request		=> Request,
+			Parameters	=> Parameters,
+			Response	=> Response
+		);
+		Process_Request(
+			Module		=> Module,
+			Request		=> Request,
+			Parameters	=> Parameters,
+			Response	=> Response
+		);
+		Process_Footer(
+			Module		=> Module,
+			Request		=> Request,
+			Parameters	=> Parameters,
+			Response	=> Response
+		);
 	end Get_Response;
 
 
@@ -260,11 +448,33 @@ package body Aw_View.Themes is
 			Request		: in     AWS.Status.Data;
 			Response	: in out AWS.Response.Data
 		) is
-		-- process a request to a service
-		-- the entire request is handled by the service
-		-- sometimes is useful for a service only to be created and released - such as in a counter service
+		-- process request for a theme's static file
+		-- only direct access to files that aren't template are alowed
+		Session_ID	: constant AWS.Session.ID := AWS.Status.Session (Request);
+		Theme_Name	: constant string := AWS.Session.Get( Session_ID, theme_name_session_key );
+		
+		URI		: constant string := AWS.Status.URI( Request );
+		Mapping		: constant string := To_String( Service.Mapping );
+		Extension	: constant string := Aw_View.Components_Registry.Get_Extension( URI );
+		Resource	: constant string := Aw_View.Components_Registry.Get_Resource( Mapping, URI, Extension );
+		Component_Name	: constant string := To_String( Service.Component_Name );
+		Complete_Path	: constant string := Locate_Theme_Resource(
+				Component_Name	=> Component_Name,
+				Theme_Name	=> Theme_Name,
+				Resource	=> Resource,
+				Extension	=> Extension,
+				Kind		=> Ada.Directories.Ordinary_File
+			);
 	begin
-		null;
+		if Extension = To_String( Service.Template_Extension ) then
+			raise CONSTRAINT_ERROR with "I can't show you my template sources! Sorry!";
+		end if;
+		-- if it got here, everything went well
+		Response := AWS.Response.File(
+				Content_Type	=> AWS.MIME.Content_Type( Resource ),
+				Filename	=> Complete_Path
+			);
 	end Process_Request;
+
 
 end Aw_View.Themes;

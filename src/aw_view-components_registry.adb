@@ -150,6 +150,29 @@ package body Aw_View.Components_Registry is
 	--------------------------------
 	-- Component Helper Functions --
 	--------------------------------
+	function Get_Extension( URI: in String ) return String is
+	begin
+
+		for i in reverse URI'Range loop
+			if URI( i ) = '.' then
+				return URI( i + 1 .. URI'Last );
+			end if;
+		end loop;
+
+		return "";
+	end Get_Extension;
+	function Get_Resource( Mapping, URI, Extension: in String ) return String is
+		M_Last	: constant integer	:= Mapping'Last;
+		Ret	: constant string	:= URI( URI'First + M_Last + 1 .. URI'Last - Extension'Length - 1 );
+	begin
+
+		if Mapping( M_Last ) = '/' then
+			return '/' & Ret;	-- does not include the /
+		else
+			return Ret;		-- does include the /
+		end if;
+	end Get_Resource;
+
 
 	function Locate_Resource(
 			Component_Name	: in String;

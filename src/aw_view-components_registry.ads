@@ -99,6 +99,10 @@ package Aw_View.Components_Registry is
 	-- Component Helper Functions --
 	--------------------------------
 
+	function Get_Extension( URI: in String ) return String;
+	-- tries to compute the extension based on the URI
+	function Get_Resource( Mapping, URI, Extension: in String ) return String;
+
 	function Locate_Resource(
 			Component_Name	: in String;
 			Resource	: in String;
