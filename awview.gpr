@@ -26,7 +26,7 @@ project AwView is
 	for Library_Dir use "lib";
 	for Library_Name use "awview";
 	for Library_Kind use "dynamic";
-	for Library_Version use "libview.so." & Version;
+	for Library_Version use "libawview.so." & Version;
 	
 	
 	package Compiler is
