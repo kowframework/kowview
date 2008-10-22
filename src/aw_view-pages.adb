@@ -433,12 +433,15 @@ package body Aw_View.Pages is
 		Path		: Unbounded_String;
 
 
+		Prefix : constant String := To_String( Service.Mapping ) & Aw_Lib.File_System.Separator;
+
+
 	begin
 		begin
 			Path := To_Unbounded_String(
 					Aw_View.Components_Registry.Locate_Resource(
-							Component_Name		=> "page",
-							Resource		=> Resource,
+							Component_Name		=> "pages",
+							Resource		=> Prefix & Resource,
 							Extension		=> Extension,
 							Kind			=> Ada.Directories.Ordinary_File
 					)
@@ -448,8 +451,8 @@ package body Aw_View.Pages is
 				-- look for a index file
 				Path := To_Unbounded_String(
 						Aw_View.Components_Registry.Locate_Resource(
-								Component_Name		=> "page",
-								Resource		=> Resource & "." & Extension & Aw_Lib.FIle_System.Separator & "index",
+								Component_Name		=> "pages",
+								Resource		=> Prefix & Resource & "." & Extension & Aw_Lib.FIle_System.Separator & "index",
 								Extension		=> "html",
 								Kind			=> Ada.Directories.Ordinary_File
 						)

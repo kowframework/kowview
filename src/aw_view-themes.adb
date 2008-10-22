@@ -171,7 +171,7 @@ package body Aw_View.Themes is
 			begin
 				Service.Component_Name		:= Component.Name;
 				Service.Mapping			:= To_Unbounded_String( Service_Mapping );
-				Service.Theme_Name		:= Component.Default_Theme_Name;
+				Service.Default_Theme_Name	:= Component.Default_Theme_Name;
 				Service.Template_Extension	:= Component.Template_Extension;
 				return Service;
 			end;
@@ -486,8 +486,17 @@ package body Aw_View.Themes is
 		-- process request for a theme's static file
 		-- only direct access to files that aren't template are alowed
 		Session_ID	: constant AWS.Session.ID := AWS.Status.Session (Request);
-		Theme_Name	: constant string := AWS.Session.Get( Session_ID, theme_name_session_key );
-		
+	
+		function Theme_Name return string is
+			User_Theme : constant string := AWS.Session.Get( Session_ID, theme_name_session_key );
+		begin
+			if User_Theme /= "" then
+				return User_Theme;
+			else
+				return To_String( Service.Default_Theme_Name );
+			end if;
+		end Theme_Name;
+
 		URI		: constant string := AWS.Status.URI( Request );
 		Mapping		: constant string := To_String( Service.Mapping );
 		Extension	: constant string := Aw_View.Components_Registry.Get_Extension( URI );
@@ -501,12 +510,13 @@ package body Aw_View.Themes is
 				Kind		=> Ada.Directories.Ordinary_File
 			);
 	begin
+
 		if Extension = To_String( Service.Template_Extension ) then
 			raise CONSTRAINT_ERROR with "I can't show you my template sources! Sorry!";
 		end if;
 		-- if it got here, everything went well
 		Response := AWS.Response.File(
-				Content_Type	=> AWS.MIME.Content_Type( Resource ),
+				Content_Type	=> AWS.MIME.Content_Type( Complete_Path ),
 				Filename	=> Complete_Path
 			);
 	end Process_Request;

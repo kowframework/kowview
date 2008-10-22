@@ -324,7 +324,7 @@ private
 	type Theme_Service is new Service_Instance_Interface with record
 		Mapping			: Unbounded_String;
 		Component_Name		: Unbounded_String;
-		Theme_Name		: Unbounded_String;
+		Default_Theme_Name	: Unbounded_String;
 		Template_Extension	: Unbounded_String;
 	end record;
 end Aw_View.Themes;
