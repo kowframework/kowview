@@ -37,7 +37,7 @@ package body Aw_View.Service_Mapping is
 		Cfgs : Config_File_Array := Elements_Array( Cfg, "map" );
 	begin
 
-		Default_Service := Value( cfg, "default_service", "/page" );
+		Default_Service := Value( cfg, "default_service", "pages" );
 		Service_Maps.Clear( Mapping );
 
 		for i in Cfgs'Range loop
@@ -90,16 +90,25 @@ package body Aw_View.Service_Mapping is
 
 		function Last_URI_Boundary return Integer is
 		begin
+
+			if URI'Length = 1 then
+				Response := AWS.Response.URL(
+					Location => To_String( Default_Service )
+					);
+				return -13;
+			end if;
+
+
 			for i in URI'First + 1 .. URI'Last loop
 				if URI( i ) = '/' then
 					return i - 1;
 				end if;
 			end loop;
+
+
+			-- if got here, the URI is the service mapping:
+			return URI'Last;
 		
-			Response := AWS.Response.URL(
-					Location => To_String( Default_Service )
-				);
-			return -13;
 		end Last_URI_Boundary;
 
 

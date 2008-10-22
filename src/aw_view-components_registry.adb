@@ -163,14 +163,31 @@ package body Aw_View.Components_Registry is
 	end Get_Extension;
 	function Get_Resource( Mapping, URI, Extension: in String ) return String is
 		M_Last	: constant integer	:= Mapping'Last;
-		Ret	: constant string	:= URI( URI'First + M_Last + 1 .. URI'Last - Extension'Length - 1 );
-	begin
 
-		if Mapping( M_Last ) = '/' then
-			return '/' & Ret;	-- does not include the /
+		function Slashit( Ret: in String ) return String is
+		begin
+			if Mapping( M_Last ) = '/' then
+				return '/' & Ret;	-- does not include the /
+			else
+				return Ret;		-- does include the /
+			end if;
+		end Slashit;
+
+	begin
+		if Extension = "" then
+			declare
+				Ret	: constant string	:= URI( URI'First + M_Last + 1 .. URI'Last );
+			begin
+				return Slashit( Ret );
+			end;
 		else
-			return Ret;		-- does include the /
+			declare
+				Ret	: constant string	:= URI( URI'First + M_Last + 1 .. URI'Last - Extension'Length - 1 );
+			begin
+				return Slashit( Ret );
+			end;
 		end if;
+
 	end Get_Resource;
 
 
@@ -211,7 +228,7 @@ package body Aw_View.Components_Registry is
 		-- load the main configuration for this component
 	begin
 		return Aw_Config.New_Config_File(
-				N => "awconfig" & Aw_Lib.File_System.Separator & Component_Name,
+				N => "awview" & Aw_Lib.File_System.Separator & Component_Name,
 				P => new Aw_Config.Text.Parser -- todo: change this to a more sane approach
 			);
 	end Load_Main_Configuration;
@@ -225,7 +242,7 @@ package body Aw_View.Components_Registry is
 		-- load a configuration file from this component's relative path
 	begin
 		return Aw_Config.New_Config_File(
-				N => "awconfig" & Aw_Lib.File_System.Separator & Component_Name & Aw_Lib.File_System.Separator & Configuration_Name,
+				N => "awview" & Aw_Lib.File_System.Separator & Component_Name & Aw_Lib.File_System.Separator & Configuration_Name,
 				P => new Aw_Config.Text.Parser -- todo: change this to a more sane approach
 			);
 	end Load_Configuration;

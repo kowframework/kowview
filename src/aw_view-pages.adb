@@ -319,9 +319,18 @@ package body Aw_View.Pages is
 
 		Module		: Module_Instance_Interface'Class :=
 					Aw_View.Components_Registry.Load_Module(
-							Component_Name	=> "page",
+							Component_Name	=> "pages",
 							Module_Name	=> "page",
-							Config		=> Load_Configuration( "page", AWS.Status.URI( Request ) )
+							Config		=> Load_Configuration(
+										"pages",
+										"page" &
+											Aw_Lib.File_System.Separator &
+											Get_Resource(
+												To_String( Service.Mapping ),
+												AWS.Status.URI( Request ),
+												""
+											)
+									)
 						);
 
 		Text_Output	: Unbounded_String;

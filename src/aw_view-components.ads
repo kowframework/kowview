@@ -38,7 +38,7 @@ package Aw_View.Components is
 	-- Components --
 	----------------
 
-	type Component_Interface is interface;
+	type Component_Interface is abstract tagged null record;
 	-- it encapsulates a set of functionalities provided by means of modules and services
 	-- there should be only one instance of this type each time.
 	
