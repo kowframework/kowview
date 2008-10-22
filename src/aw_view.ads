@@ -6,8 +6,6 @@
 
 
 package Aw_View is
-
-
-	procedure Run;
+pragma Pure( Aw_View );
 
 end Aw_View;
