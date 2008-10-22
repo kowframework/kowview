@@ -144,7 +144,9 @@ package body Aw_View.Pages is
 			-- assemble the vector containing the modules to render.
 			use Aw_Lib.UString_Vectors;
 
-			Modules: Vector := Aw_Lib.String_Util.Explode( ',', Element( C ) );
+			Modules_Str: String := Aw_Config.Element( Module.Config, To_String( Element( C ) ) );
+			Modules: Vector := Aw_Lib.String_Util.Explode( ',', Modules_Str );
+			
 
 			procedure Module_Iterator( C2: in Cursor ) is
 				index: Integer;
@@ -160,7 +162,6 @@ package body Aw_View.Pages is
 					raise MODULE_ERROR with "Impossible to assemble page using module """ & To_String( Element( C2 ) ) & """";
 			end Module_Iterator;
 		begin
-
 			Iterate( Modules, Module_Iterator'Access );
 		end Region_Iterator;
 
@@ -187,6 +188,7 @@ package body Aw_View.Pages is
 		-- get all available regions in the template
 	
 
+		Aw_Config.Set_Section( Module.Config, "positions" );
 		Aw_Lib.UString_Vectors.Iterate( Available_Regions, Region_Iterator'Access );
 		-- now we setup the regions for each module.
 		-- each module can appear only once.
