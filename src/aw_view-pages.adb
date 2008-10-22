@@ -37,6 +37,16 @@ package body Aw_View.Pages is
 	----------------
 	-- Components --
 	----------------
+	overriding
+	procedure Initialize(
+			Component	: in out Component_Type;
+			Component_Name	: in     String;
+			Config		: in out Aw_Config.Config_File
+		) is
+		-- the only thing to setup is the theme_component
+	begin
+		Component.Theme_Component_Name := Aw_Config.Value( Config, "theme_component", "themes" );
+	end Initialize;
 
 	overriding
 	function Create_Instance(

@@ -44,8 +44,8 @@ package Aw_View.Pages is
 			Component	: in out Component_Type;
 			Component_Name	: in     String;
 			Config		: in out Aw_Config.Config_File
-		) is null;
-	-- no initialization
+		);
+	-- the only thing to setup is the theme_component
 
 
 	overriding
