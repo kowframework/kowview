@@ -246,6 +246,27 @@ package body Aw_View.Themes is
 
 
 
+	procedure Insert_All(
+			To	: in out Templates_Parser.Translate_Set;
+			Suffix	: in     String;
+			Tag_Map	: in out Tag_Maps.Map
+		) is
+		use Templates_Parser;
+	
+		procedure Iterator( C: Tag_Maps.Cursor ) is
+		begin
+			Insert(
+				To,
+				assoc(
+					To_String( Tag_Maps.Key( C ) ) & Suffix,
+					Tag_Maps.Element( C )
+				)
+			);
+		end Iterator;
+	begin
+		Tag_Maps.Iterate( Tag_Map, Iterator'Access );
+	end Insert_All;
+
 	overriding
 	procedure Process_Request(
 			Module		: in out Template_Processor_Module;
@@ -255,9 +276,23 @@ package body Aw_View.Themes is
 		) is
 		-- process the request for a module.
 		-- sometimes is useful for a module only to be created and released - such as in a page counter module
+		use Templates_Parser;
 	begin
-		-- TODO: request processing for template processor
-		null;
+
+		Insert( Parameters, assoc( "header", Module.Header_Contents ) );
+		Insert( Parameters, assoc( "footer", Module.Footer_Contents ) );
+
+		Insert_All( Parameters, "_header_contents", Module.Module_Header_Contents );
+		Insert_All( Parameters, "_contents", Module.Module_Contents );
+		Insert_All( Parameters, "_ids", Module.Module_Ids );
+
+		Response := Response & To_Unbounded_String(
+					Parse(
+						To_String( Module.Template_File_Name ),
+						Parameters
+					)
+				);
+
 	end Process_Request;
 
 
