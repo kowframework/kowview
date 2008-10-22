@@ -203,11 +203,21 @@ package body Aw_View.Components_Registry is
 		use Ada.Directories;
 
 		Sep	: constant Character	:= Aw_Lib.File_System.Separator;
-		Name	: String		:= "data" & Sep & Component_Name & Sep & Resource & "." & Extension;
+		Name	: String		:= "data" & Sep & "awview" & Sep & Component_Name & Sep & Resource & "." & Extension;
 
 
-		Real_Kind : File_Kind := Ada.Directories.Kind( Name );
+		Real_Kind : File_Kind;
 	begin
+
+		begin
+			Real_Kind := Ada.Directories.Kind( Name );
+		exception
+			when Ada.IO_Exceptions.Name_Error =>
+				raise Ada.Directories.Name_Error with
+					"Resource """ & Resource &
+					""" of component """ & Component_Name &
+					""" ( aka """ & Name & """ ) not found";
+		end;
 
 		if Real_Kind /= Kind then
 			raise Ada.Directories.Name_Error with

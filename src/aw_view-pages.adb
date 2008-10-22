@@ -6,7 +6,7 @@
 
 with Ada.Directories;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
-
+with ada.text_io;			use ada.text_io;
 
 ---------------
 -- Ada Works --
@@ -180,6 +180,7 @@ package body Aw_View.Pages is
 			Is_Final	=> Is_Final
 		);
 
+		put_line(" continuing..." & To_String( Template_Name) );
 		Set_Template( Module.Processor, Template_Name );
 
 		Available_Regions := Get_Regions( Module.Processor );
