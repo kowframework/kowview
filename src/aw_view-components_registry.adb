@@ -239,8 +239,7 @@ package body Aw_View.Components_Registry is
 	begin
 		return Aw_Config.New_Config_File(
 				N => "awview" & Aw_Lib.File_System.Separator & Component_Name,
-				--P => new Aw_Config.Text.Parser -- todo: change this to a more sane approach
-				P => Parser -- todo: change this to a more sane approach
+				P => new Aw_Config.Text.Parser -- todo: change this to a more sane approach
 			);
 	end Load_Main_Configuration;
 
@@ -254,8 +253,7 @@ package body Aw_View.Components_Registry is
 	begin
 		return Aw_Config.New_Config_File(
 				N => "awview" & Aw_Lib.File_System.Separator & Component_Name & Aw_Lib.File_System.Separator & Configuration_Name,
-				--P => new Aw_Config.Text.Parser -- todo: change this to a more sane approach
-				P => Parser -- todo: change this to a more sane approach
+				P => new Aw_Config.Text.Parser -- todo: change this to a more sane approach
 			);
 	end Load_Configuration;
 
