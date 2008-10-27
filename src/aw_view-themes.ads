@@ -306,7 +306,8 @@ private
 		Template_File_Name	: Unbounded_String;
 		Template_Extension	: Unbounded_String;
 
-		Render_Start_Timestamp	: Ada.Calendar.Time;
+		Render_Start_Timestamp		: Ada.Calendar.Time;
+		Modules_Finish_Render_Timestamp	: Ada.Calendar.Time;
 
 		Header_Contents			: Templates_Parser.Tag;
 		Module_Header_Contents		: Tag_Maps.Map;

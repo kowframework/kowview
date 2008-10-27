@@ -232,16 +232,8 @@ package body Aw_View.Themes is
 		-- process header of the response.
 		-- it's assumed that 
 		use Ada.Calendar;
-		Computed_Time : String :=
-				Ada.Strings.Fixed.Trim(
-					Duration'Image( Clock - Module.Render_Start_Timestamp ),
-					Ada.Strings.Both
-				);
 	begin
-		Response := Response & To_Unbounded_String(
-				"<!-- components rendered in " & Computed_Time & " secconds // -->"
-			);
-
+		Module.Modules_Finish_Render_Timestamp := Clock;
 	end Process_Header;
 
 
@@ -310,7 +302,18 @@ package body Aw_View.Themes is
 					Duration'Image( Clock - Module.Render_Start_Timestamp ),
 					Ada.Strings.Both
 				);
+		Computed_Modules_Time : String :=
+				Ada.Strings.Fixed.Trim(
+					Duration'Image(
+						Module.Modules_Finish_Render_Timestamp - 
+						Module.Render_Start_Timestamp
+						),
+					Ada.Strings.Both
+				);
 	begin
+		Response := Response & To_Unbounded_String(
+				"<!-- components rendered in " & Computed_Modules_Time & " secconds // -->"
+			);
 		Response := Response & To_Unbounded_String(
 				"<!-- components + page rendered in " & Computed_Time & " secconds // -->"
 			);
