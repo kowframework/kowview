@@ -5,8 +5,9 @@
 ---------
 
 with Ada.Directories;
+with Ada.Exceptions;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
-with ada.text_io;			use ada.text_io;
+with Ada.Text_IO;			use Ada.Text_IO;
 
 ---------------
 -- Ada Works --
@@ -34,6 +35,26 @@ with Templates_Parser;
 package body Aw_View.Pages is
 
 
+	-------------------------
+	-- Auxiliary Functions --
+	-------------------------
+
+	function Load_Page_Config( Config_Name : in String ) return Aw_Config.Config_File is
+		-- load a configuration from the page. ;)
+	begin
+		return Aw_View.Components_Registry.Load_Configuration(
+				"pages",
+				"page" &
+					Aw_Lib.File_System.Separator &
+					Config_Name
+			);
+
+		-- TODO AQUI
+	end Load_Page_Config;
+
+
+
+
 	----------------
 	-- Components --
 	----------------
@@ -56,12 +77,35 @@ package body Aw_View.Pages is
 		) return Module_Instance_Interface'Class is
 		-- Available modules:
 		-- 	. page
+
+
+
+		function Merge_Page_Parents( Cfg : in Aw_Config.Config_File ) return Aw_Config.Config_File is
+			Parent_Cfg	: Aw_Config.Config_File;
+			Extends		: String := Aw_Config.Value( Cfg, "extends", "" );
+		begin
+			if Extends /= "" then
+				Parent_Cfg := Load_Page_Config( Extends );
+				return Aw_Config.Merge_Configs(
+						Parent	=> Merge_Page_Parents( Parent_Cfg ),
+						Child	=> Cfg
+					);
+			else
+				return Cfg;
+			end if;
+		exception
+			when e : PAGE_CONFIG_ERROR =>
+				Ada.Exceptions.Reraise_Occurrence( E );
+			when others => 
+				raise PAGE_CONFIG_ERROR with "Error while extending """ & Extends & """";
+		end Merge_Page_Parents;
+
 	begin
 		if Module_Name = "page" then
 			declare
 				Module: Page_Module;
 			begin
-				Module.Config := Config;
+				Module.Config := Merge_Page_Parents( Config );
 				Module.Theme_Component_Name := Component.Theme_Component_Name;
 				return Module;
 			end;
@@ -362,10 +406,7 @@ package body Aw_View.Pages is
 					Aw_View.Components_Registry.Load_Module(
 							Component_Name	=> "pages",
 							Module_Name	=> "page",
-							Config		=> Load_Configuration(
-										"pages",
-										"page" &
-											Aw_Lib.File_System.Separator &
+							Config		=> Load_Page_Config(
 											Get_Resource(
 												To_String( Service.Mapping ),
 												AWS.Status.URI( Request ),

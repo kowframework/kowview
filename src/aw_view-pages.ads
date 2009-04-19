@@ -27,6 +27,9 @@ with Templates_Parser;
 package Aw_View.Pages is
 
 
+	PAGE_CONFIG_ERROR : Exception;
+	-- TODO: use this exception all over (overriding constraint_error whenever possible)
+
 	----------------
 	-- Components --
 	----------------
@@ -164,11 +167,11 @@ private
 
 
 	type Page_Module is new Module_Instance_Interface with record
-		Config		: Aw_Config.Config_File;
-		Processor	: Aw_View.Themes.Template_Processor_Module;
+		Config			: Aw_Config.Config_File;
+		Processor		: Aw_View.Themes.Template_Processor_Module;
 		-- there is no processing of the config file before 
 		-- the page rendering begins.
-		Theme_Component_Name : Unbounded_String;
+		Theme_Component_Name	: Unbounded_String;
 	end record;
 
 	type Page_Service is new Service_Instance_Interface with record
