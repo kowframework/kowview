@@ -109,6 +109,12 @@ package body Aw_View.Pages is
 				Module.Theme_Component_Name := Component.Theme_Component_Name;
 				return Module;
 			end;
+		elsif Module_Name = "void" then
+			declare
+				Module : Void_Module;
+			begin
+				return Module;
+			end;
 		else
 			raise Module_Error with "Module """ & Module_Name & """ doesn't exist";
 		end if;

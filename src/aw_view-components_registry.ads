@@ -113,7 +113,7 @@ package Aw_View.Components_Registry is
 	-- this file should be placed at
 	-- 	[WORKING_DIR]/data/component_name/resource.extension
 	-- returning it's name if nothing has been found raise Ada.Directories.Name_Error if not found
-	-- TODO: Implement locale support
+	-- TODO: Implement locale support at Locate_Resource function
 
 	function Load_Main_Configuration(
 			Component_Name	: in String

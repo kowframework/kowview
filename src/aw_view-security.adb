@@ -3,6 +3,7 @@
 ---------
 -- Ada --
 ---------
+with Ada.Directories;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
 
@@ -11,8 +12,10 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 ---------------
 
 with Aw_Config;
+with Aw_Lib.File_System;
 with Aw_Sec;
 with Aw_Sec.Authorization_Criterias;
+with Aw_View.Components_Registry;
 
 ---------
 -- AWS --
@@ -76,14 +79,55 @@ package body Aw_View.Security is
 		) return Module_Instance_Interface'Class is
 		-- no matter what module we request, the Criteria_Module_Module will be always called
 		Module: Criteria_Module;
+
+		function Get_Resolved_Path( Key, Default : in String ) return Unbounded_String is
+			Name : String := Aw_Config.Value( Config, Key, Default );
+		begin
+			return To_Unbounded_String(
+					Aw_View.Components_Registry.Locate_Resource(
+							Component_Name  => "security",
+							Resource        => Name,
+							Extension       => "html",
+							Kind            => Ada.Directories.Ordinary_File
+						)
+				);
+		end Get_Resolved_Path;
+
 	begin
 
-		Module.Expression := Aw_Config.Element(
-						f	=> Config,
-						Key	=> "expression"
-					);
-		Module.Access_Denied_Page := Component.Access_Denied_Page;
-		return Module;
+		if Module_Name = "criteria" then
+			declare
+				Module: Criteria_Module;
+			begin
+				
+				Module.Expression := Aw_Config.Element(
+								f	=> Config,
+								Key	=> "expression"
+							);
+
+
+				Module.Access_Denied_Page := Component.Access_Denied_Page;
+				return Module;
+			end;
+		elsif Module_Name = "login_form" then
+			declare
+				use Aw_Lib.File_System;
+				Module			: Login_Form_Module;
+			begin
+
+				Module.Username_Label	:= Aw_Config.Value( Config, "username_label", "Username" );
+				Module.Password_Label	:= Aw_Config.Value( Config, "password_label", "Password" );
+				Module.Redirect		:= Aw_Config.Value( Config, "redirect", "" );
+				Module.Template_Path	:= Get_Resolved_Path(
+										Key	=> "template",
+										Default	=> "default_templates" & Separator & "login_form"
+									);
+				return Module;
+			end;
+		else
+			raise Aw_View.Components.MODULE_ERROR with "no module called """ & Module_Name & """ in ""pages"" component.";
+		end if;
+
 	end Create_Instance;
 
 	overriding
@@ -120,6 +164,10 @@ package body Aw_View.Security is
 	-- Modules --
 	-------------
 
+
+	--
+	-- Criteria
+	--
 
 
 	overriding
@@ -172,6 +220,63 @@ package body Aw_View.Security is
 	begin
 		Response := Response & Begin_Comment & Module.Expression & End_Comment;
 	end Process_Header;
+
+
+
+
+
+
+	--
+	-- Login Form 
+	--
+
+
+	overriding
+	procedure Process_Request(
+			Module		: in out Login_Form_Module;
+			Request		: in     AWS.Status.Data;
+			Parameters	: in out Templates_Parser.Translate_Set;
+			Response	: in out Unbounded_String
+		) is
+
+		My_Parameters : Templates_Parser.Translate_Set := Parameters;
+	begin
+
+		Templates_Parser.Insert(
+				My_Parameters,
+				Templates_Parser.Assoc(
+						"username_label",
+						Module.Username_Label
+					)
+			);
+		Templates_Parser.Insert(
+				My_Parameters,
+				Templates_Parser.Assoc(
+						"password_label",
+						Module.Password_Label
+					)
+				);
+		Templates_Parser.Insert(
+				My_Parameters,
+				Templates_Parser.Assoc(
+						"redirect",
+						Module.Redirect
+					)
+				);
+
+		Response := Response &
+			To_Unbounded_String(
+				Templates_Parser.Parse(
+						To_String( Module.Template_Path ),
+						My_Parameters
+					)
+				);
+
+
+	end Process_Request;
+
+
+
 
 
 	--------------

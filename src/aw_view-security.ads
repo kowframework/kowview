@@ -80,6 +80,10 @@ package Aw_View.Security is
 	-- Modules --
 	-------------
 
+	--
+	-- Criteria
+	--
+
 	type Criteria_Module is new Module_Instance_Interface with private;
 	-- a module is something that can be accessed anywhere inside the system.
 
@@ -106,6 +110,24 @@ package Aw_View.Security is
 		);
 	-- used only for debugging
 	-- print the expression criteria used as a HTML comment
+
+
+
+	--
+	-- Login Form
+	--
+
+	type Login_Form_Module is new Module_Instance_Interface with private;
+
+	overriding
+	procedure Process_Request(
+			Module		: in out Login_Form_Module;
+			Request		: in     AWS.Status.Data;
+			Parameters	: in out Templates_Parser.Translate_Set;
+			Response	: in out Unbounded_String
+		);
+	-- put a login form into the response
+
 
 
 
@@ -144,13 +166,21 @@ private
 	type Component_Type is new Aw_View.Components.Component_Interface with record
 		Default_Redirect	: Unbounded_String	:= To_Unbounded_String( "/" );
 		Access_Denied_Page	: Unbounded_String	:= To_Unbounded_String( "/theme/403" );
-		Login_Error_Page	: Unbounded_String	:= To_Unbounded_String( "/theme/login" );
+		Login_Error_Page	: Unbounded_String	:= To_Unbounded_String( "/pages/login_error" );
 	end record;
 
 
 	type Criteria_Module is new Module_Instance_Interface with record
 		Expression		: Unbounded_String;
 		Access_Denied_Page	: Unbounded_String;
+	end record;
+
+
+	type Login_Form_Module is new Module_Instance_Interface with record
+		Username_Label		: Unbounded_String;
+		Password_Label		: Unbounded_String;
+		Redirect		: Unbounded_String;
+		Template_Path		: Unbounded_String;
 	end record;
 
 

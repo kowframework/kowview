@@ -118,6 +118,13 @@ package Aw_View.Pages is
 		);
 
 
+	--
+	-- Void Module
+	--
+
+	type Void_Module is new Module_Instance_Interface with null record;
+	-- this module does nothing.. it's only to reserve slots in the page config
+
 
 	--------------
 	-- Services --
