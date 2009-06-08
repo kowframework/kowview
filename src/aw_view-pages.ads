@@ -117,6 +117,20 @@ package Aw_View.Pages is
 			Parameters	: in out Templates_Parser.Translate_Set
 		);
 
+	--
+	-- Static Module
+	--
+	
+	type Static_Module is new Module_Instance_Interface with private;
+
+	overriding
+	procedure Process_Request(
+			Module		: in out Static_Module;
+			Request		: in     AWS.Status.Data;
+			Parameters	: in out Templates_Parser.Translate_Set;
+			Response	: in out Unbounded_String
+		);
+	-- simply get some content and input inside the page;
 
 	--
 	-- Void Module
@@ -179,6 +193,15 @@ private
 		-- there is no processing of the config file before 
 		-- the page rendering begins.
 		Theme_Component_Name	: Unbounded_String;
+	end record;
+
+	type Static_Module is new Module_Instance_interface with record
+		Resource		: Unbounded_String;
+		-- the resource (without extension) for the file to be queried
+		-- we use resources in here to allow extending this module to be multilingual
+
+		Extension	: Unbounded_String;
+		-- the extension for the file (default is html)
 	end record;
 
 	type Page_Service is new Service_Instance_Interface with record

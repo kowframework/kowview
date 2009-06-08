@@ -122,6 +122,8 @@ package body Aw_View.Security is
 										Key	=> "template",
 										Default	=> "default_templates" & Separator & "login_form"
 									);
+				Module.Logged_in_as_Label	:= Aw_Config.Value( Config, "logged_in_as_label", "Welcome" );
+				Module.Logout_Label		:= Aw_Config.Value( Config, "logout_label", "logout" );
 				return Module;
 			end;
 		else
@@ -200,6 +202,7 @@ package body Aw_View.Security is
 		-- notice: CONSTRAINT_ERROR shouldn't be raised as we've checked if
 		-- the user objectis null before calling this procedure!
 
+		Is_Final := False;
 	exception
 		when Aw_Sec.ACCESS_DENIED =>
 			Is_Final := TRUE;
@@ -238,31 +241,77 @@ package body Aw_View.Security is
 			Parameters	: in out Templates_Parser.Translate_Set;
 			Response	: in out Unbounded_String
 		) is
+		use Aw_Sec;
 
-		My_Parameters : Templates_Parser.Translate_Set := Parameters;
+		My_Parameters	: Templates_Parser.Translate_Set := Parameters;
+		User_Object	: Aw_Sec.User_Access := Get_User( Request );
+
 	begin
 
 		Templates_Parser.Insert(
 				My_Parameters,
 				Templates_Parser.Assoc(
-						"username_label",
-						Module.Username_Label
-					)
+					"username_label",
+					Module.Username_Label
+				)
 			);
 		Templates_Parser.Insert(
 				My_Parameters,
 				Templates_Parser.Assoc(
-						"password_label",
-						Module.Password_Label
-					)
-				);
+					"password_label",
+					Module.Password_Label
+				)
+			);
 		Templates_Parser.Insert(
-				My_Parameters,
-				Templates_Parser.Assoc(
-						"redirect",
-						Module.Redirect
+			My_Parameters,
+			Templates_Parser.Assoc(
+					"redirect",
+					Module.Redirect
+				)
+			);
+
+		if User_Object = null then
+			Templates_Parser.Insert(
+					My_Parameters,
+					Templates_Parser.Assoc(
+						"is_logged_in",
+						False
 					)
 				);
+		else
+			Templates_Parser.Insert(
+					My_Parameters,
+					Templates_Parser.Assoc(
+						"is_logged_in",
+						True
+					)
+				);
+			Templates_Parser.Insert(
+					My_Parameters,
+					Templates_Parser.Assoc(
+						"user_identity",
+						Aw_Sec.Identity( User_Object.All )
+					)
+				);
+
+
+			Templates_Parser.Insert(
+					My_Parameters,
+					Templates_Parser.Assoc(
+						"logged_in_as_label",
+						Module.Logged_in_as_Label
+					)
+				);
+
+			Templates_Parser.Insert(
+					My_Parameters,
+					Templates_Parser.Assoc(
+						"logout_label",
+						Module.Logout_Label
+					)
+				);
+
+		end if;
 
 		Response := Response &
 			To_Unbounded_String(
@@ -363,5 +412,27 @@ package body Aw_View.Security is
 		Response := AWS.Response.URL( Redirect );
 
 	end Process_Request;
+
+
+
+	-----------------------------
+	-- User Session Management --
+	-----------------------------
+
+
+	function Is_Logged_In( Request : in AWS.Status.Data ) return Boolean is
+		-- check if the user is logged in into the system
+		use Aw_Sec;
+	begin
+		return Get_User( Request ) /= Null;
+	end Is_Logged_In;
+
+	function Get_User( Request : in AWS.Status.Data ) return Aw_Sec.User_Access is
+		-- get the user object (or null) :)
+		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
+	begin
+		return User_Data.Get( Session_ID, User_Key );
+	end Get_User;
+
 
 end Aw_View.Security;

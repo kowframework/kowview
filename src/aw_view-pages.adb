@@ -109,6 +109,15 @@ package body Aw_View.Pages is
 				Module.Theme_Component_Name := Component.Theme_Component_Name;
 				return Module;
 			end;
+		elsif Module_Name = "static" then
+			declare
+				Module : Static_Module;
+			begin
+				Module.Resource	:= Aw_Config.Element( Config, "resource" );
+				Module.Extension:= Aw_Config.Value( Config, "extension", "html" );
+
+				return Module;
+			end;
 		elsif Module_Name = "void" then
 			declare
 				Module : Void_Module;
@@ -383,6 +392,62 @@ package body Aw_View.Pages is
 			);
 	end Finalize_Request;
 
+
+
+	-------------------
+	-- Static Module --
+	-------------------
+	overriding
+	procedure Process_Request(
+			Module		: in out Static_Module;
+			Request		: in     AWS.Status.Data;
+			Parameters	: in out Templates_Parser.Translate_Set;
+			Response	: in out Unbounded_String
+		) is
+		-- simply get some content and input inside the page;
+		Resource	: constant string := To_String( Module.Resource );
+		Extension	: constant string := To_String( Module.Extension );
+		Prefix		: constant String := "static_module" & Aw_Lib.File_System.Separator;
+		Path		: Unbounded_String;
+
+		File		: Ada.Text_IO.File_Type;
+		Char		: Character;
+
+	begin
+		begin
+			Path := To_Unbounded_String(
+					Aw_View.Components_Registry.Locate_Resource(
+							Component_Name		=> "pages",
+							Resource		=> Prefix & Resource,
+							Extension		=> Extension,
+							Kind			=> Ada.Directories.Ordinary_File
+					)
+				);
+		exception
+			when Ada.Directories.Name_Error =>
+				-- look for a index file
+				Path := To_Unbounded_String(
+						Aw_View.Components_Registry.Locate_Resource(
+								Component_Name		=> "pages",
+								Resource		=> Prefix & Resource & Aw_Lib.FIle_System.Separator & "index",
+								Extension		=> Extension,
+								Kind			=> Ada.Directories.Ordinary_File
+						)
+				);
+		end;
+
+
+		-- TODO :: use streams as it's a lot faster than text_io
+		Ada.Text_IO.Open( File, Ada.Text_IO.In_File, To_String( Path ) );
+
+		loop
+			Ada.Text_IO.Get( File, Char );
+			Response := Response & Char;
+		end loop;
+	exception
+		when End_Error =>
+			Ada.Text_IO.Close( File );
+	end Process_Request;
 
 
 	--------------

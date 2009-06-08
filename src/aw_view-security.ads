@@ -158,6 +158,46 @@ package Aw_View.Security is
 			Response	: in out AWS.Response.Data
 		);
 
+
+	
+
+	-----------------------------
+	-- User Session Management --
+	-----------------------------
+
+
+	function Is_Logged_In( Request : in AWS.Status.Data ) return Boolean;
+	-- check if the user is logged in into the system
+
+	function Get_User( Request : in AWS.Status.Data ) return Aw_Sec.User_Access;
+	-- get the user object (or null) :)
+
+
+	-----------------------------------
+	-- Session Authorization Profile --
+	-----------------------------------
+
+
+	-- TODO :: implement the following for the sake of the security of this system ::
+
+	-- What is it about:
+	-- 
+	-- It's a way for the application to grant some sort of authorization dinamically for the user session for later user.
+	--
+	-- What it means is, imagine a form for an entity.
+	--
+	-- There is a main service usually mapped to /entities. This is the place where forms are submited to store
+	-- entity data. With no security check or whatsoever anyone could change anything in the database by knowing the entity
+	-- structure (including user password).
+	--
+	-- To solve this, the page that renders the form can create an authorization key for this single session. This
+	-- authorization key will be valid only for this session and the given entity/id (or without ID, when creating entities).
+	--
+	-- Moreover this authorization would be valid only for a short period of time (that can be changed by the application
+	-- programmer).
+	--
+	-- Even more, it's gonna be a generic and precise way for handling authorizations throughout the application components.
+
 private
 
 
@@ -181,6 +221,9 @@ private
 		Password_Label		: Unbounded_String;
 		Redirect		: Unbounded_String;
 		Template_Path		: Unbounded_String;
+
+		Logged_In_As_Label	: Unbounded_String;
+		Logout_Label		: Unbounded_String;
 	end record;
 
 
