@@ -3,6 +3,7 @@
 ---------
 -- Ada --
 ---------
+with Ada.Calendar;			use Ada.Calendar;
 with Ada.Directories;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
@@ -433,6 +434,154 @@ package body Aw_View.Security is
 	begin
 		return User_Data.Get( Session_ID, User_Key );
 	end Get_User;
+
+
+
+	-----------------------------------
+	-- Session Authorization Profile --
+	-----------------------------------
+
+
+
+	procedure Grant_Authorization(
+				Request			: in     AWS.Status.Data;
+				Authorization_Key 	: in     String;
+				Authorization_Level	: in     Authorization_Level_Type;
+				Life_Time		: in     Duration := 300.0;
+				Count			: in     Natural := 0
+			) is
+		-- grant an authorization with the given key and level for the given life time
+	begin
+		Authorization_Manager.Grant_Authorization(
+				Request,
+				Authorization_Key,
+				Authorization_Level,
+				Life_Time,
+				Count
+			);
+	end Grant_Authorization;
+
+
+	procedure Request_Authorization(
+				Request			: in     AWS.Status.Data;
+				Authorization_Key	: in     String;
+				Authorization_Level	: in     Authorization_Level_Type
+			) is
+		-- tries to perform some change under some given authorization that should be granted before this call
+	begin
+		Authorization_Manager.Request_Authorization(
+				Request,
+				Authorization_Key,
+				Authorization_Level
+			);
+	end Request_Authorization;
+
+
+
+
+	---------------------------------------------------
+	-- Private Part of Session Authorization Profile --
+	---------------------------------------------------
+
+
+
+	protected body Authorization_Manager is
+		-- this is where the actual authorization granting/requesting happens.
+		-- it's done this way to allow AJAX requests.
+		procedure Grant_Authorization(
+					Request			: in     AWS.Status.Data;
+					Authorization_Key 	: in     String;
+					Authorization_Level	: in     Authorization_Level_Type;
+					Life_Time		: in     Duration := 300.0;
+					Count			: in     Natural := 0
+				) is
+			-- grant an authorization with the given key and level for the given life time
+
+
+			My_Key	: Unbounded_String := To_Unbounded_String( Authorization_Key );
+			Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
+			The_Map	: Authorization_Maps.Map := Authorization_Data.Get( Session_ID, Authorization_Map_Key );
+			-- if the THe_Map is null, no worries... it's only an empty map and it's time to fill it in with some
+			-- more data
+
+			My_Descriptor : Authorization_Descriptor_Type;
+
+			My_Expiration_Time : Ada.Calendar.Time := Clock + Life_Time;
+
+			use Authorization_Maps;
+		begin
+			My_Descriptor := Element( The_Map, My_Key );
+
+
+			-- if got here, there is an element with the same key...
+			-- time to update it
+			
+			if My_Descriptor.Expiration_Time < My_Expiration_Time then
+				My_Descriptor.Expiration_Time := My_Expiration_Time;
+			end if;
+
+			if My_Descriptor.Level < Authorization_Level then
+				My_Descriptor.Level := Authorization_Level;
+			end if;
+
+			if My_Descriptor.Count < Count or ( Count = 0 AND My_Descriptor.Count /= 0 ) then
+				My_Descriptor.Count := Count;
+			end if;
+
+
+			Include( The_Map, My_Key, My_Descriptor );
+			Authorization_Data.Set( Session_ID, Authorization_Map_Key, The_Map );
+
+		exception
+			when Constraint_Error =>
+				-- there is no element My_Key in the map..
+				My_Descriptor := ( Expiration_Time => Clock + Life_Time, Level => Authorization_Level, Count => Count );
+				Insert( The_Map, My_key, My_Descriptor );
+				Authorization_Data.Set( Session_ID, Authorization_Map_Key, The_Map );
+		end Grant_Authorization;
+
+		procedure Request_Authorization(
+					Request			: in     AWS.Status.Data;
+					Authorization_Key	: in     String;
+					Authorization_Level	: in     Authorization_Level_Type
+				) is
+			-- tries to perform some change under some given authorization that should be granted before this call
+			
+			My_Key : Unbounded_String := To_Unbounded_String( Authorization_Key );
+			Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
+			The_Map	: Authorization_Maps.Map := Authorization_Data.Get( Session_ID, Authorization_Map_Key );
+			-- if the THe_Map is null, no worries... it's only an empty map and it's time to fill it in with some
+			-- more data
+
+			My_Descriptor : Authorization_Descriptor_Type;
+			
+			The_Clock : Ada.Calendar.Time := Clock;
+
+
+			use Authorization_Maps;
+
+		begin
+
+			My_Descriptor := Element( The_Map, My_key );
+			-- if got here, there is was any level at any time...
+			--
+			-- lets try it out;
+
+
+			if My_Descriptor.Expiration_Time < The_Clock then
+				raise Aw_Sec.ACCESS_DENIED with "your authorization key for """ & Authorization_Key & """ has been expired.";
+			elsif My_Descriptor.Level < Authorization_Level then
+				raise Aw_Sec.ACCESS_DENIED with
+						"you do not have enought permission to access """ &
+						Authorization_Key & """ at """ &
+						Authorization_Level_Type'Image( Authorization_Level ) & """ level";
+			end if;
+		exception
+			when CONSTRAINT_ERROR =>
+				raise Aw_Sec.ACCESS_DENIED with "you don't have permission to access """ & Authorization_Key & """";
+		end Request_Authorization;
+	end Authorization_Manager;
+
 
 
 end Aw_View.Security;

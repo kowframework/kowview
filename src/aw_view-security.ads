@@ -3,6 +3,8 @@
 ---------
 -- Ada --
 ---------
+with Ada.Calendar;
+with Ada.Containers.Ordered_Maps;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
 
@@ -197,6 +199,32 @@ package Aw_View.Security is
 	-- programmer).
 	--
 	-- Even more, it's gonna be a generic and precise way for handling authorizations throughout the application components.
+	--
+	
+
+	type Authorization_Level_Type is ( Read, Create, Edit );
+	-- this is what's used to map the authorizatrion level.
+	-- it could mean anything depending on the contest... in the entity management the analogy is obvious.
+	--
+	-- Whapenns in here is that if anyone grant CREATE the user can request both READ and CREATE.
+
+	procedure Grant_Authorization(
+				Request			: in     AWS.Status.Data;
+				Authorization_Key 	: in     String;
+				Authorization_Level	: in     Authorization_Level_Type;
+				Life_Time		: in     Duration := 300.0;
+				Count			: in     Natural := 0
+			);
+	-- grant an authorization with the given key and level for the given life time
+	-- when count > 0, allow only this given number of attempts
+	
+
+	procedure Request_Authorization(
+				Request			: in     AWS.Status.Data;
+				Authorization_Key	: in     String;
+				Authorization_Level	: in     Authorization_Level_Type
+			);
+	-- tries to perform some change under some given authorization that should be granted before this call
 
 private
 
@@ -235,5 +263,60 @@ private
 	type Logout_Service is new Service_Instance_Interface with record
 		Default_Redirect	: Unbounded_String;
 	end record;
+
+
+	---------------------------------------------------
+	-- Private Part of Session Authorization Profile --
+	---------------------------------------------------
+
+
+	Authorization_Map_Key : constant String := "aw_sec.authorization_map";
+
+	
+	type Authorization_Descriptor_Type is record
+		Expiration_Time	: Ada.Calendar.Time;
+		Level		: Authorization_Level_Type;
+		Count		: Natural;
+		-- TODO :: put COUNT really in use...
+		-- for now it's just half implemented..
+	end record;
+
+
+	package Authorization_Maps is new Ada.Containers.Ordered_Maps(
+				Key_Type	=> Unbounded_String,
+				Element_Type	=> Authorization_Descriptor_Type
+			);
+
+	package Authorization_Data is new AWS.Session.Generic_Data(
+			Data		=> Authorization_Maps.Map,
+			Null_Data	=> Authorization_Maps.Empty_Map
+		);
+
+
+
+	protected Authorization_Manager is
+		-- this is where the actual authorization granting/requesting happens.
+		-- it's done this way to allow AJAX requests.
+		procedure Grant_Authorization(
+					Request			: in     AWS.Status.Data;
+					Authorization_Key 	: in     String;
+					Authorization_Level	: in     Authorization_Level_Type;
+					Life_Time		: in     Duration := 300.0;
+					Count			: in     Natural := 0
+				);
+		-- grant an authorization with the given key and level for the given life time
+	
+
+		procedure Request_Authorization(
+					Request			: in     AWS.Status.Data;
+					Authorization_Key	: in     String;
+					Authorization_Level	: in     Authorization_Level_Type
+				);
+		-- tries to perform some change under some given authorization that should be granted before this call
+
+
+	private
+		My_Map : Authorization_Maps.Map;
+	end Authorization_Manager;
 
 end Aw_View.Security;
