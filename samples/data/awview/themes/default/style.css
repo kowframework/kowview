@@ -1,0 +1,46 @@
+body{
+	background-color: white;
+	color: red;
+}
+
+
+#a1{
+	color: red;
+}
+
+
+div.entity_label{
+	color		: black;
+	font-weight	: bold;
+	font-size	: 12px;
+	text-align	: left;
+	border		: thin solid black;
+}
+
+table.entity_table{
+	border		: thin solid black;
+	text-align	: left;
+	color		: black;
+	font-size	: 12px;
+}
+
+table.entity_table th{
+	text-align	: left;
+	color		: gray;
+	font-weight	: normal;
+	font-size	: 10px;
+	border-bottom	: thin dotted gray;
+}
+
+table.entity_table td{
+	border-bottom	: thin dotted gray;
+}
+
+table.entity_table input{
+	border	: thin solid gray;
+}
+
+table.entity_table input:focus{
+	border		: thin solid gray;
+	background-color: #C0C0C0;
+}
