@@ -10,7 +10,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -- Ada Works --
 ---------------
 
-with Aw_Config;
+with KOW_Config;
 
 
 ---------
@@ -23,7 +23,7 @@ with Templates_Parser;
 
 
 
-package Aw_View.Components is
+package KOW_View.Components is
 
 
 	----------------
@@ -48,11 +48,11 @@ package Aw_View.Components is
 	procedure Initialize(
 			Component	: in out Component_Interface;
 			Component_Name	: in     String;
-			Config		: in out Aw_Config.Config_File
+			Config		: in out KOW_Config.Config_File
 		) is abstract;
 	-- Initialize the component while starting up the server
 	-- Config is an already initialized configuration file located at:
-	-- 	awview/component_name
+	-- 	kowview/component_name
 
 
 
@@ -74,7 +74,7 @@ package Aw_View.Components is
 	function Create_Instance(
 			Component	: in Component_Interface;
 			Module_Name	: in String;
-			Config		: in Aw_Config.Config_File 
+			Config		: in KOW_Config.Config_File 
 		) return Module_Instance_Interface'Class is abstract;
 	-- create a new module instance.
 	-- depending on the service, the instance object can represent different things and can, or not, even me extended
@@ -173,4 +173,4 @@ package Aw_View.Components is
 	-- sometimes is useful for a service only to be created and released - such as in a counter service
 
 
-end Aw_View.Components;
+end KOW_View.Components;

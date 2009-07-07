@@ -11,19 +11,19 @@
 with "apq.gpr";
 with "apq-mysql.gpr";
 
-with "awconfig.gpr";
-with "awent.gpr";
-with "awlib.gpr";
-with "awview.gpr";
-with "awview-entities.gpr";
+with "kowconfig.gpr";
+with "kowent.gpr";
+with "kowlib.gpr";
+with "kowview.gpr";
+with "kowview-entities.gpr";
 
 
 with "aws";
 
 
-project AwView.Samples is
+project KOWView.Samples is
 
-	Version := AwConfig.Version;
+	Version := KOWConfig.Version;
 	
 	
 	for Source_Dirs use ( "src" );
@@ -33,9 +33,9 @@ project AwView.Samples is
 	for Exec_Dir use "bin";
 	for Main use ( "web_server" );
 	
-	package Linker renames AwConfig.Linker;
+	package Linker renames KOWConfig.Linker;
 	
-	package Compiler renames AwLib.Compiler;
+	package Compiler renames KOWLib.Compiler;
 
-end AwView.Samples;
+end KOWView.Samples;
 

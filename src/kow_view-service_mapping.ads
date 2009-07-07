@@ -17,7 +17,7 @@ with AWS.Status;
 with Ada.Containers.Ordered_Maps;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
-package Aw_View.Service_Mapping is
+package KOW_View.Service_Mapping is
 
 
 
@@ -42,4 +42,4 @@ private
 	Mapping		: Service_Maps.Map;
 	Default_Service	: Unbounded_String; -- "/page"
 
-end Aw_View.Service_Mapping;
+end KOW_View.Service_Mapping;

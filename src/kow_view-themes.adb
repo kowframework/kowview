@@ -13,12 +13,12 @@ with ada.text_io;			use ada.text_io;
 -- Ada Works --
 ---------------
 
-with Aw_Config;
-with Aw_Lib.File_System;		use Aw_Lib.File_System;
-with Aw_Lib.String_Util;
-with Aw_Lib.UString_Vectors;
-with Aw_View.Components;
-with Aw_View.Components_Registry;
+with KOW_Config;
+with KOW_Lib.File_System;		use KOW_Lib.File_System;
+with KOW_Lib.String_Util;
+with KOW_Lib.UString_Vectors;
+with KOW_View.Components;
+with KOW_View.Components_Registry;
 
 ---------
 -- AWS --
@@ -30,7 +30,7 @@ with AWS.Session;
 with AWS.Status;
 with Templates_Parser;			use Templates_Parser;
 
-package body Aw_View.Themes is
+package body KOW_View.Themes is
 	--------------------
 	-- Helper Methods --
 	--------------------
@@ -43,7 +43,7 @@ package body Aw_View.Themes is
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
 		) return String is
 	begin
-		return Aw_View.Components_Registry.Locate_Resource(
+		return KOW_View.Components_Registry.Locate_Resource(
 				Component_Name	=> Component_Name,
 				Resource	=> Theme_Name & Separator & Resource,
 				Extension	=> Extension,
@@ -55,18 +55,18 @@ package body Aw_View.Themes is
 
 	function Template_Factory(
 			Name	: in String;
-			Config	: in Aw_Config.Config_File )
+			Config	: in KOW_Config.Config_File )
 		return Template_Descriptor_Type is
 		-- private method for loading the template descriptor from it's configuration
 		Descriptor : Template_Descriptor_Type;
 	begin
 		Descriptor.Name		:= To_Unbounded_String( Name );
-		Descriptor.Description	:= Aw_Config.Element( Config, "description" );
+		Descriptor.Description	:= KOW_Config.Element( Config, "description" );
 
-		Descriptor.Regions	:= Aw_Lib.String_Util.Explode(
+		Descriptor.Regions	:= KOW_Lib.String_Util.Explode(
 							',',
 							To_String(
-								Aw_Config.Element( Config, "regions" )
+								KOW_Config.Element( Config, "regions" )
 							)
 						);
 		return Descriptor;
@@ -76,14 +76,14 @@ package body Aw_View.Themes is
 	
 	function Theme_Factory(
 			Name	: in String;
-			Config	: in Aw_Config.Config_File )
+			Config	: in KOW_Config.Config_File )
 		return Theme_Descriptor_Type is
 		-- private method for loading the theme descriptor from it's configuration
 		Descriptor : Theme_Descriptor_Type;
 	begin
 		Descriptor.Name			:= To_Unbounded_String( Name );
-		Descriptor.Author		:= Aw_Config.Element( Config, "author" );
-		Descriptor.Creation_Date	:= Aw_Config.Element( Config, "creation_time" );
+		Descriptor.Author		:= KOW_Config.Element( Config, "author" );
+		Descriptor.Creation_Date	:= KOW_Config.Element( Config, "creation_time" );
 
 		return Descriptor;
 	end Theme_Factory;
@@ -99,10 +99,10 @@ package body Aw_View.Themes is
 	procedure Initialize(
 			Component	: in out Component_Type;
 			Component_Name	: in     String;
-			Config		: in out Aw_Config.Config_File
+			Config		: in out KOW_Config.Config_File
 		) is
 		-- Initialize the Theme component, setting every variable required
-		use Aw_Config;
+		use KOW_Config;
 	begin
 		Component.Name := To_Unbounded_String( Component_Name );
 		Component.Default_Theme_Name	:= Value( Config, "default_theme", "default" );
@@ -128,7 +128,7 @@ package body Aw_View.Themes is
 	function Create_Instance(
 			Component	: in Component_Type;
 			Module_Name	: in String;
-			Config		: in Aw_Config.Config_File
+			Config		: in KOW_Config.Config_File
 		) return Module_Instance_Interface'Class is
 		-- Creates a module instance
 		-- Available modules:
@@ -354,7 +354,7 @@ package body Aw_View.Themes is
 
 
 
-	function Get_Regions( Module : in Template_Processor_Module ) return Aw_Lib.UString_Vectors.Vector is
+	function Get_Regions( Module : in Template_Processor_Module ) return KOW_Lib.UString_Vectors.Vector is
 	begin
 		return Module.Template_Descriptor.Regions;
 	end Get_Regions;
@@ -502,8 +502,8 @@ package body Aw_View.Themes is
 
 		URI		: constant string := AWS.Status.URI( Request );
 		Mapping		: constant string := To_String( Service.Mapping );
-		Extension	: constant string := Aw_View.Components_Registry.Get_Extension( URI );
-		Resource	: constant string := Aw_View.Components_Registry.Get_Resource( Mapping, URI, Extension );
+		Extension	: constant string := KOW_View.Components_Registry.Get_Extension( URI );
+		Resource	: constant string := KOW_View.Components_Registry.Get_Resource( Mapping, URI, Extension );
 		Component_Name	: constant string := To_String( Service.Component_Name );
 		Complete_Path	: constant string := Locate_Theme_Resource(
 				Component_Name	=> Component_Name,
@@ -525,4 +525,4 @@ package body Aw_View.Themes is
 	end Process_Request;
 
 
-end Aw_View.Themes;
+end KOW_View.Themes;

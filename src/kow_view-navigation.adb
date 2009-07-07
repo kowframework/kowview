@@ -11,8 +11,8 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -- Ada Works --
 ---------------
 
-with Aw_Config;
-with Aw_View.Components_Registry;
+with KOW_Config;
+with KOW_View.Components_Registry;
 
 ---------
 -- AWS --
@@ -25,7 +25,7 @@ with Templates_Parser;
 
 
 
-package body Aw_View.Navigation is
+package body KOW_View.Navigation is
 
 	----------------
 	-- Components --
@@ -37,16 +37,16 @@ package body Aw_View.Navigation is
 	procedure Initialize(
 			Component	: in out Component_Type;
 			Component_Name	: in     String;
-			Config		: in out Aw_Config.Config_File
+			Config		: in out KOW_Config.Config_File
 		) is
 		-- Initializie the component while starting up the server
 		-- Config is an already initialized configuration file located at:
-		-- 	awview/component_name
+		-- 	kowview/component_name
 		--
 		-- Component Options:
 		-- 	default_menu_template	=> the template name for the link module
 	begin
-		Component.Default_menu_template := Aw_Config.Value(
+		Component.Default_menu_template := KOW_Config.Value(
 						F	=> Config,
 						Key	=> "default_menu_template",
 						Default	=> Component.Default_menu_template
@@ -57,31 +57,31 @@ package body Aw_View.Navigation is
 
 	function Create_Menu_Module_Instance(
 			Component	: in Component_Type;
-			Config		: in Aw_Config.Config_File
+			Config		: in KOW_Config.Config_File
 		) return Menu_Module_Type is
 
-		Configs : Aw_Config.Config_File_Array := Aw_Config.Elements_Array( Config, "link" );
+		Configs : KOW_Config.Config_File_Array := KOW_Config.Elements_Array( Config, "link" );
 		Link	: Link_Descriptor_Type;
 
 		Module	: Menu_Module_Type;
 	begin
 
-		Module.Template := Aw_Config.Value(
+		Module.Template := KOW_Config.Value(
 						F	=> Config,
 						Key	=> "template",
 						Default	=> Component.Default_menu_template
 					);
 
 		for i in Configs'First .. Configs'Last loop
-			Link.Label := Aw_Config.Element( Configs( i ), "label" );
-			Link.Href  := Aw_Config.Element( Configs( i ), "href"  );
+			Link.Label := KOW_Config.Element( Configs( i ), "label" );
+			Link.Href  := KOW_Config.Element( Configs( i ), "href"  );
 
 			Link_Vectors.Append( Module.Links, Link );
 		end loop;
 
 		return Module;
 	exception
-		when CONSTRAINT_ERROR => raise Aw_View.Components.MODULE_ERROR with "big bad issue while building a menu... something is missing in here";
+		when CONSTRAINT_ERROR => raise KOW_View.Components.MODULE_ERROR with "big bad issue while building a menu... something is missing in here";
 	end Create_Menu_Module_Instance;
 
 
@@ -91,7 +91,7 @@ package body Aw_View.Navigation is
 	function Create_Instance(
 			Component	: in Component_Type;
 			Module_Name	: in String;
-			Config		: in Aw_Config.Config_File
+			Config		: in KOW_Config.Config_File
 		) return Module_Instance_Interface'Class is
 		-- no matter what module we request, the Menu_Module_Type_Module will be always called
 		Module: Menu_Module_Type;
@@ -100,7 +100,7 @@ package body Aw_View.Navigation is
 	end Create_Instance;
 
 
-	type DUMB_SERVICE is new Aw_View.Components.Service_Instance_Interface with null record;
+	type DUMB_SERVICE is new KOW_View.Components.Service_Instance_Interface with null record;
 
 	overriding
 	function Create_Instance(
@@ -110,7 +110,7 @@ package body Aw_View.Navigation is
 		) return Service_Instance_Interface'Class is
 		D:DUMB_SERVICE;
 	begin
-		raise Aw_View.Components.SERVICE_ERROR with "no service " & Service_Name & " available";
+		raise KOW_View.Components.SERVICE_ERROR with "no service " & Service_Name & " available";
 
 		return D;
 	end Create_Instance;
@@ -129,7 +129,7 @@ package body Aw_View.Navigation is
 		
 		use Templates_Parser;
 
-		Template_Path : String := Aw_View.Components_Registry.Locate_Resource(
+		Template_Path : String := KOW_View.Components_Registry.Locate_Resource(
 							Component_Name  => "navigation",
 							Resource        => To_String( Module.Template ),
 							Extension       => "html",
@@ -158,4 +158,4 @@ package body Aw_View.Navigation is
 					);
 	end Process_Request;
 
-end Aw_View.Navigation;
+end KOW_View.Navigation;

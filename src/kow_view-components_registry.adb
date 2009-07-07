@@ -11,19 +11,19 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -- Ada Works --
 ---------------
 
-with Aw_Config;
-with Aw_Config.Text;
-with Aw_Config.Generic_Registry;
-with Aw_Lib.File_System;
-with Aw_Lib.UString_Vectors;
-with Aw_View.Components;		use Aw_View.Components;
+with KOW_Config;
+with KOW_Config.Text;
+with KOW_Config.Generic_Registry;
+with KOW_Lib.File_System;
+with KOW_Lib.UString_Vectors;
+with KOW_View.Components;		use KOW_View.Components;
 
 
 
-package body Aw_View.Components_Registry is
+package body KOW_View.Components_Registry is
 
 
-	Parser: Aw_Config.Parser_Access := new Aw_Config.Text.Parser;
+	Parser: KOW_Config.Parser_Access := new KOW_Config.Text.Parser;
 
 	--------------------------
 	-- Component Management --
@@ -31,7 +31,7 @@ package body Aw_View.Components_Registry is
 
 	procedure Register(
 			Component_Name		: in String;
-			Component		: in Aw_View.Components.Component_Access;
+			Component		: in KOW_View.Components.Component_Access;
 			Require_Configuration	: in Boolean
 			) is
 		-- A component, once registered, is never deallocated.
@@ -42,7 +42,7 @@ package body Aw_View.Components_Registry is
 		--
 		-- If Require_Configuration == true and there is no config file available raise
 		-- COMPONENT_CONFIGURATION_ERROR
-		Config	: Aw_Config.Config_File;
+		Config	: KOW_Config.Config_File;
 		CN	: Unbounded_String := To_Unbounded_String( Component_Name );
 
 		use Component_Maps;
@@ -51,7 +51,7 @@ package body Aw_View.Components_Registry is
 			Config := Load_Main_Configuration( Component_Name );
 			Initialize( Component.all, Component_Name, Config );
 		exception
-			when Aw_Config.File_Not_Found =>
+			when KOW_Config.File_Not_Found =>
 				if Require_Configuration then
 					raise COMPONENT_CONFIGURATION_ERROR with "Missing config for " & Component_Name;
 				end if;
@@ -68,7 +68,7 @@ package body Aw_View.Components_Registry is
 
 
 
-	function Load( Component_Name: in String ) return Aw_View.Components.Component_Access is
+	function Load( Component_Name: in String ) return KOW_View.Components.Component_Access is
 		-- Loads a component by it's name
 		-- There is only one instance for each component.
 	begin
@@ -76,7 +76,7 @@ package body Aw_View.Components_Registry is
 	end Load;
 
 
-	function Load( Component_Name: in Unbounded_String ) return Aw_View.Components.Component_Access is
+	function Load( Component_Name: in Unbounded_String ) return KOW_View.Components.Component_Access is
 	begin
 		return Component_Maps.Element( The_Registry, Component_Name );
 	exception
@@ -92,7 +92,7 @@ package body Aw_View.Components_Registry is
 	function Load_Module(
 			Component_Name	: in Unbounded_String;
 			Module_Name	: in Unbounded_String;
-			Config		: in Aw_Config.Config_File
+			Config		: in KOW_Config.Config_File
 		) return Module_Instance_Interface'Class is
 		-- get a module instance
 		Component	: Component_Access := Load( Component_Name );
@@ -104,7 +104,7 @@ package body Aw_View.Components_Registry is
 	function Load_Module(
 			Component_Name	: in String;
 			Module_Name	: in String;
-			Config		: in Aw_Config.Config_File
+			Config		: in KOW_Config.Config_File
 		) return Module_Instance_Interface'Class is
 		-- get a module instance
 		Component	: Component_Access := Load( Component_Name );
@@ -197,13 +197,13 @@ package body Aw_View.Components_Registry is
 			Extension	: in String;
 			Kind		: in Ada.Directories.File_Kind	
 		) return String is
-		-- locate a resource file for this component in the Aw_Config's configuration path
+		-- locate a resource file for this component in the KOW_Config's configuration path
 		-- returning it's name if nothing has been found raise Ada.Directories.Name_Error if not found
 
 		use Ada.Directories;
 
-		Sep	: constant Character	:= Aw_Lib.File_System.Separator;
-		Name	: String		:= "data" & Sep & "awview" & Sep & Component_Name & Sep & Resource & "." & Extension;
+		Sep	: constant Character	:= KOW_Lib.File_System.Separator;
+		Name	: String		:= "data" & Sep & "kowview" & Sep & Component_Name & Sep & Resource & "." & Extension;
 
 
 		Real_Kind : File_Kind;
@@ -234,12 +234,12 @@ package body Aw_View.Components_Registry is
 
 	function Load_Main_Configuration(
 			Component_Name	: in String
-		) return Aw_Config.Config_File is
+		) return KOW_Config.Config_File is
 		-- load the main configuration for this component
 	begin
-		return Aw_Config.New_Config_File(
-				N => "awview" & Aw_Lib.File_System.Separator & Component_Name,
-				P => new Aw_Config.Text.Parser -- todo: change this to a more sane approach
+		return KOW_Config.New_Config_File(
+				N => "kowview" & KOW_Lib.File_System.Separator & Component_Name,
+				P => new KOW_Config.Text.Parser -- todo: change this to a more sane approach
 			);
 	end Load_Main_Configuration;
 
@@ -248,14 +248,14 @@ package body Aw_View.Components_Registry is
 	function Load_Configuration(
 			Component_Name		: in String;
 			Configuration_Name	: in String
-		) return Aw_Config.Config_File is
+		) return KOW_Config.Config_File is
 		-- load a configuration file from this component's relative path
 	begin
-		return Aw_Config.New_Config_File(
-				N => "awview" & Aw_Lib.File_System.Separator & Component_Name & Aw_Lib.File_System.Separator & Configuration_Name,
-				P => new Aw_Config.Text.Parser -- todo: change this to a more sane approach
+		return KOW_Config.New_Config_File(
+				N => "kowview" & KOW_Lib.File_System.Separator & Component_Name & KOW_Lib.File_System.Separator & Configuration_Name,
+				P => new KOW_Config.Text.Parser -- todo: change this to a more sane approach
 			);
 	end Load_Configuration;
 
 
-end Aw_View.Components_Registry;
+end KOW_View.Components_Registry;

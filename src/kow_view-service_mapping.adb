@@ -6,10 +6,10 @@
 -- Ada Works --
 ---------------
 
-with Aw_Config;
-with Aw_Config.Text;
-with Aw_View.Components;
-with Aw_View.Components_Registry;
+with KOW_Config;
+with KOW_Config.Text;
+with KOW_View.Components;
+with KOW_View.Components_Registry;
 
 ---------
 -- AWS --
@@ -25,14 +25,14 @@ with AWS.Status;
 --------------
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
-package body Aw_View.Service_Mapping is
+package body KOW_View.Service_Mapping is
 
 	procedure Reload_Mappings is
-		use Aw_Config;
+		use KOW_Config;
 
 		Cfg: Config_File := New_Config_File(
-						"aw_view_mappings",
-						new Aw_Config.Text.Parser
+						"kow_view_mappings",
+						new KOW_Config.Text.Parser
 					);
 		Cfgs : Config_File_Array := Elements_Array( Cfg, "map" );
 	begin
@@ -64,8 +64,8 @@ package body Aw_View.Service_Mapping is
 			Response	: in out AWS.Response.Data
 		) is
 
-		use Aw_View.Components;
-		use Aw_View.Components_Registry;
+		use KOW_View.Components;
+		use KOW_View.Components_Registry;
 
 		Service : Service_Instance_Interface'Class := Load_Service(
 				Component_Name	=> To_String( Service_Map.Component_Name ),
@@ -145,4 +145,4 @@ package body Aw_View.Service_Mapping is
 	
 	end AWS_Callback;			
 
-end Aw_View.Service_Mapping;
+end KOW_View.Service_Mapping;

@@ -13,12 +13,12 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -- Ada Works --
 ---------------
 
-with Aw_Config;
-with Aw_Config.Generic_Registry;
-with Aw_Config.Text;
-with Aw_Lib.File_System;		use Aw_Lib.File_System;
-with Aw_Lib.UString_Vectors;
-with Aw_View.Components;		use Aw_View.Components;
+with KOW_Config;
+with KOW_Config.Generic_Registry;
+with KOW_Config.Text;
+with KOW_Lib.File_System;		use KOW_Lib.File_System;
+with KOW_Lib.UString_Vectors;
+with KOW_View.Components;		use KOW_View.Components;
 
 ---------
 -- AWS --
@@ -31,13 +31,13 @@ with Templates_Parser;
 -- TODO: create module for theme listing
 -- TODO: create service for theme selection
 
-package Aw_View.Themes is
+package KOW_View.Themes is
 
 	--------------------
 	-- Helper Methods --
 	--------------------
 
-	theme_name_session_key: constant string := "aw_view::theme_name";
+	theme_name_session_key: constant string := "KOW_view::theme_name";
 
 	function Locate_Theme_Resource(
 			Component_Name	: in String;
@@ -52,7 +52,7 @@ package Aw_View.Themes is
 	---------------
 
 
-	type Component_Type is new Aw_View.Components.Component_Interface with private;
+	type Component_Type is new KOW_View.Components.Component_Interface with private;
 
 	
 
@@ -60,7 +60,7 @@ package Aw_View.Themes is
 	procedure Initialize(
 			Component	: in out Component_Type;
 			Component_Name	: in     String;
-			Config		: in out Aw_Config.Config_File
+			Config		: in out KOW_Config.Config_File
 		);
 	-- Initialize the Theme component, setting every variable required
 
@@ -69,7 +69,7 @@ package Aw_View.Themes is
 	function Create_Instance(
 			Component	: in Component_Type;
 			Module_Name	: in String;
-			Config		: in Aw_Config.Config_File
+			Config		: in KOW_Config.Config_File
 		) return Module_Instance_Interface'Class;
 	-- Creates a module instance
 	-- Available modules:
@@ -96,7 +96,7 @@ package Aw_View.Themes is
 	-- All it does is to load a string representing the AWS template as string
 	-- and provide methods for pa
 	--
-	-- This is how theme engines are implemented in Aw_View. You can also implement your own
+	-- This is how theme engines are implemented in KOW_View. You can also implement your own
 	-- (this requires changing the Create_Instance return Module_Instance_Iterface'Class method)
 
 
@@ -182,7 +182,7 @@ package Aw_View.Themes is
 		);
 	-- Load a template configuration and prepare for processing
 
-	function Get_Regions( Module : in Template_Processor_Module ) return Aw_Lib.UString_Vectors.Vector;
+	function Get_Regions( Module : in Template_Processor_Module ) return KOW_Lib.UString_Vectors.Vector;
 
 	procedure Append_Header(
 			Module		: in out Template_Processor_Module;
@@ -243,7 +243,7 @@ package Aw_View.Themes is
 
 	-- The following methods and types are for internal use only.
 	--
-	-- That's what runs Aw_View.Themes component.
+	-- That's what runs KOW_View.Themes component.
 
 
 	type Theme_Descriptor_Type is record
@@ -262,21 +262,21 @@ package Aw_View.Themes is
 		-- Also, contains information about the author and why is this template required.
 		Name		: Unbounded_String;
 		Description	: Unbounded_String;
-		Regions		: Aw_Lib.UString_Vectors.Vector;
+		Regions		: KOW_Lib.UString_Vectors.Vector;
 	end record;
 
-	package Themes_Registry is new Aw_Config.Generic_Registry(
+	package Themes_Registry is new KOW_Config.Generic_Registry(
 				Element_Type	=> Theme_Descriptor_Type,
-				Relative_Path	=> "awview" & Separator & "themes" & Separator & "themes",
-				Parser		=> new Aw_Config.Text.Parser
+				Relative_Path	=> "kowview" & Separator & "themes" & Separator & "themes",
+				Parser		=> new KOW_Config.Text.Parser
 			);
 	-- Store all the available theme's descriptor.
 
 
-	package Templates_Registry is new Aw_Config.Generic_Registry(
+	package Templates_Registry is new KOW_Config.Generic_Registry(
 				Element_Type	=> Template_Descriptor_Type,
-				Relative_Path	=> "awview" & Separator & "themes" & Separator & "templates",
-				Parser		=> new Aw_Config.Text.Parser
+				Relative_Path	=> "kowview" & Separator & "themes" & Separator & "templates",
+				Parser		=> new KOW_Config.Text.Parser
 			);
 	-- Store all required templates.
 
@@ -284,7 +284,7 @@ package Aw_View.Themes is
 private
 
 
-	type Component_Type is new Aw_View.Components.Component_Interface with record
+	type Component_Type is new KOW_View.Components.Component_Interface with record
 		Default_Theme_Name	: Unbounded_String; -- default
 		Name			: Unbounded_String;
 		Template_Extension	: Unbounded_String; -- html
@@ -328,4 +328,4 @@ private
 		Default_Theme_Name	: Unbounded_String;
 		Template_Extension	: Unbounded_String;
 	end record;
-end Aw_View.Themes;
+end KOW_View.Themes;

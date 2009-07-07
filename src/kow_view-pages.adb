@@ -13,13 +13,13 @@ with Ada.Text_IO;			use Ada.Text_IO;
 -- Ada Works --
 ---------------
 
-with Aw_Config;
-with Aw_Lib.File_System;
-with Aw_Lib.String_Util;
-with Aw_Lib.UString_Vectors;
-with Aw_View.Components;		use Aw_View.Components;
-with Aw_View.Components_Registry;
-with Aw_View.Themes;			use Aw_View.Themes;
+with KOW_Config;
+with KOW_Lib.File_System;
+with KOW_Lib.String_Util;
+with KOW_Lib.UString_Vectors;
+with KOW_View.Components;		use KOW_View.Components;
+with KOW_View.Components_Registry;
+with KOW_View.Themes;			use KOW_View.Themes;
 
 ---------
 -- AWS --
@@ -32,20 +32,20 @@ with Templates_Parser;
 
 
 
-package body Aw_View.Pages is
+package body KOW_View.Pages is
 
 
 	-------------------------
 	-- Auxiliary Functions --
 	-------------------------
 
-	function Load_Page_Config( Config_Name : in String ) return Aw_Config.Config_File is
+	function Load_Page_Config( Config_Name : in String ) return KOW_Config.Config_File is
 		-- load a configuration from the page. ;)
 	begin
-		return Aw_View.Components_Registry.Load_Configuration(
+		return KOW_View.Components_Registry.Load_Configuration(
 				"pages",
 				"page" &
-					Aw_Lib.File_System.Separator &
+					KOW_Lib.File_System.Separator &
 					Config_Name
 			);
 
@@ -62,31 +62,31 @@ package body Aw_View.Pages is
 	procedure Initialize(
 			Component	: in out Component_Type;
 			Component_Name	: in     String;
-			Config		: in out Aw_Config.Config_File
+			Config		: in out KOW_Config.Config_File
 		) is
 		-- the only thing to setup is the theme_component
 	begin
-		Component.Theme_Component_Name := Aw_Config.Value( Config, "theme_component", "themes" );
+		Component.Theme_Component_Name := KOW_Config.Value( Config, "theme_component", "themes" );
 	end Initialize;
 
 	overriding
 	function Create_Instance(
 			Component	: in Component_Type;
 			Module_Name	: in String;
-			Config		: in Aw_Config.Config_File
+			Config		: in KOW_Config.Config_File
 		) return Module_Instance_Interface'Class is
 		-- Available modules:
 		-- 	. page
 
 
 
-		function Merge_Page_Parents( Cfg : in Aw_Config.Config_File ) return Aw_Config.Config_File is
-			Parent_Cfg	: Aw_Config.Config_File;
-			Extends		: String := Aw_Config.Value( Cfg, "extends", "" );
+		function Merge_Page_Parents( Cfg : in KOW_Config.Config_File ) return KOW_Config.Config_File is
+			Parent_Cfg	: KOW_Config.Config_File;
+			Extends		: String := KOW_Config.Value( Cfg, "extends", "" );
 		begin
 			if Extends /= "" then
 				Parent_Cfg := Load_Page_Config( Extends );
-				return Aw_Config.Merge_Configs(
+				return KOW_Config.Merge_Configs(
 						Parent	=> Merge_Page_Parents( Parent_Cfg ),
 						Child	=> Cfg
 					);
@@ -113,8 +113,8 @@ package body Aw_View.Pages is
 			declare
 				Module : Static_Module;
 			begin
-				Module.Resource	:= Aw_Config.Element( Config, "resource" );
-				Module.Extension:= Aw_Config.Value( Config, "extension", "html" );
+				Module.Resource	:= KOW_Config.Element( Config, "resource" );
+				Module.Extension:= KOW_Config.Value( Config, "extension", "html" );
 
 				return Module;
 			end;
@@ -183,8 +183,8 @@ package body Aw_View.Pages is
 		) is
 	-- this is where the page is initialized.
 
-		use Aw_Config;
-		use Aw_View.Components_Registry;
+		use KOW_Config;
+		use KOW_View.Components_Registry;
 
 		type Regions_Array is Array( Integer range<> ) of Unbounded_String;
 		type Values_Array is Array( Integer range<> ) of Unbounded_String;
@@ -194,7 +194,7 @@ package body Aw_View.Pages is
 		Modules_Cfg		: constant Config_File_Array
 						:= Elements_Array( Module.Config, "modules" );
 		Theme_Component_Name	: constant String := To_String( Module.Theme_Component_Name );
-		Available_Regions	: Aw_Lib.UString_Vectors.Vector;
+		Available_Regions	: KOW_Lib.UString_Vectors.Vector;
 
 		Module_Regions		: Regions_Array( Modules_Cfg'Range );
 		-- map each module to it's region
@@ -202,12 +202,12 @@ package body Aw_View.Pages is
 		Contents		: Values_array( Modules_Cfg'Range );
 		Footers			: Values_Array( Modules_Cfg'Range );
 
-		procedure Region_Iterator( C: in Aw_Lib.UString_Vectors.Cursor ) is
+		procedure Region_Iterator( C: in KOW_Lib.UString_Vectors.Cursor ) is
 			-- assemble the vector containing the modules to render.
-			use Aw_Lib.UString_Vectors;
+			use KOW_Lib.UString_Vectors;
 
-			Modules_Str: String := Aw_Config.Element( Module.Config, To_String( Element( C ) ) );
-			Modules: Vector := Aw_Lib.String_Util.Explode( ',', Modules_Str );
+			Modules_Str: String := KOW_Config.Element( Module.Config, To_String( Element( C ) ) );
+			Modules: Vector := KOW_Lib.String_Util.Explode( ',', Modules_Str );
 			
 
 			procedure Module_Iterator( C2: in Cursor ) is
@@ -227,14 +227,14 @@ package body Aw_View.Pages is
 			Iterate( Modules, Module_Iterator'Access );
 		end Region_Iterator;
 
-		procedure Region_Append_Iterator( C: in Aw_Lib.UString_Vectors.Cursor ) is
+		procedure Region_Append_Iterator( C: in KOW_Lib.UString_Vectors.Cursor ) is
 			-- assemble the vector containing the modules to render.
-			use Aw_Lib.UString_Vectors;
+			use KOW_Lib.UString_Vectors;
 
 			Current_Region : constant Unbounded_String := Element( C );
 
-			Modules_Str: String := Aw_Config.Element( Module.Config, To_String( Current_Region ) );
-			Modules: Vector := Aw_Lib.String_Util.Explode( ',', Modules_Str );
+			Modules_Str: String := KOW_Config.Element( Module.Config, To_String( Current_Region ) );
+			Modules: Vector := KOW_Lib.String_Util.Explode( ',', Modules_Str );
 			
 
 			procedure Module_Iterator( C2: in Cursor ) is
@@ -260,14 +260,14 @@ package body Aw_View.Pages is
 
 
 	begin
-		Module.Processor := Aw_View.Themes.Template_Processor_Module(
-					Aw_View.Components_Registry.Load_Module(
+		Module.Processor := KOW_View.Themes.Template_Processor_Module(
+					KOW_View.Components_Registry.Load_Module(
 						Component_Name	=> Theme_Component_Name,
 						Module_Name	=> "template_processor"
 					)
 				);
 
-		Aw_View.Themes.Initialize_Request(
+		KOW_View.Themes.Initialize_Request(
 			Module		=> Module.Processor,
 			Request		=> Request,
 			Parameters	=> Parameters,
@@ -281,8 +281,8 @@ package body Aw_View.Pages is
 		-- get all available regions in the template
 	
 
-		Aw_Config.Set_Section( Module.Config, "positions" );
-		Aw_Lib.UString_Vectors.Iterate( Available_Regions, Region_Iterator'Access );
+		KOW_Config.Set_Section( Module.Config, "positions" );
+		KOW_Lib.UString_Vectors.Iterate( Available_Regions, Region_Iterator'Access );
 		-- now we setup the regions for each module.
 		-- each module can appear only once.
 
@@ -349,8 +349,8 @@ package body Aw_View.Pages is
 			end;
 		end loop;
 		-- now we append the values in the right order..
-		Aw_Config.Set_Section( Module.Config, "positions" );
-		Aw_Lib.UString_Vectors.Iterate( Available_Regions, Region_Append_Iterator'Access );
+		KOW_Config.Set_Section( Module.Config, "positions" );
+		KOW_Lib.UString_Vectors.Iterate( Available_Regions, Region_Append_Iterator'Access );
 
 
 
@@ -381,7 +381,7 @@ package body Aw_View.Pages is
 			Parameters	: in out Templates_Parser.Translate_Set
 		) is
 	begin
-		if Module.Processor not in Aw_View.Themes.Template_Processor_Module then
+		if Module.Processor not in KOW_View.Themes.Template_Processor_Module then
 			return;
 			-- this is to avoid GNAT warnings.
 		end if;
@@ -407,7 +407,7 @@ package body Aw_View.Pages is
 		-- simply get some content and input inside the page;
 		Resource	: constant string := To_String( Module.Resource );
 		Extension	: constant string := To_String( Module.Extension );
-		Prefix		: constant String := "static_module" & Aw_Lib.File_System.Separator;
+		Prefix		: constant String := "static_module" & KOW_Lib.File_System.Separator;
 		Path		: Unbounded_String;
 
 		File		: Ada.Text_IO.File_Type;
@@ -416,7 +416,7 @@ package body Aw_View.Pages is
 	begin
 		begin
 			Path := To_Unbounded_String(
-					Aw_View.Components_Registry.Locate_Resource(
+					KOW_View.Components_Registry.Locate_Resource(
 							Component_Name		=> "pages",
 							Resource		=> Prefix & Resource,
 							Extension		=> Extension,
@@ -427,9 +427,9 @@ package body Aw_View.Pages is
 			when Ada.Directories.Name_Error =>
 				-- look for a index file
 				Path := To_Unbounded_String(
-						Aw_View.Components_Registry.Locate_Resource(
+						KOW_View.Components_Registry.Locate_Resource(
 								Component_Name		=> "pages",
-								Resource		=> Prefix & Resource & Aw_Lib.FIle_System.Separator & "index",
+								Resource		=> Prefix & Resource & KOW_Lib.FIle_System.Separator & "index",
 								Extension		=> Extension,
 								Kind			=> Ada.Directories.Ordinary_File
 						)
@@ -471,10 +471,10 @@ package body Aw_View.Pages is
 		Parameters : Templates_Parser.Translate_Set;
 		-- a null set
 		
-		use Aw_View.Components_Registry;
+		use KOW_View.Components_Registry;
 
 		Module		: Module_Instance_Interface'Class :=
-					Aw_View.Components_Registry.Load_Module(
+					KOW_View.Components_Registry.Load_Module(
 							Component_Name	=> "pages",
 							Module_Name	=> "page",
 							Config		=> Load_Page_Config(
@@ -534,7 +534,7 @@ package body Aw_View.Pages is
 		) is
 		-- This service acts like a standard web server, providing access
 		-- to static files.
-		use Aw_View.Components_Registry;
+		use KOW_View.Components_Registry;
 		
 		URI	: constant string := AWS.Status.URI( Request );
 		Mapping	: constant string := To_String( Service.Mapping );
@@ -545,13 +545,13 @@ package body Aw_View.Pages is
 		Path		: Unbounded_String;
 
 
-		Prefix : constant String := To_String( Service.Mapping ) & Aw_Lib.File_System.Separator;
+		Prefix : constant String := To_String( Service.Mapping ) & KOW_Lib.File_System.Separator;
 
 
 	begin
 		begin
 			Path := To_Unbounded_String(
-					Aw_View.Components_Registry.Locate_Resource(
+					KOW_View.Components_Registry.Locate_Resource(
 							Component_Name		=> "pages",
 							Resource		=> Prefix & Resource,
 							Extension		=> Extension,
@@ -562,9 +562,9 @@ package body Aw_View.Pages is
 			when Ada.Directories.Name_Error =>
 				-- look for a index file
 				Path := To_Unbounded_String(
-						Aw_View.Components_Registry.Locate_Resource(
+						KOW_View.Components_Registry.Locate_Resource(
 								Component_Name		=> "pages",
-								Resource		=> Prefix & Resource & "." & Extension & Aw_Lib.FIle_System.Separator & "index",
+								Resource		=> Prefix & Resource & "." & Extension & KOW_Lib.FIle_System.Separator & "index",
 								Extension		=> "html",
 								Kind			=> Ada.Directories.Ordinary_File
 						)
@@ -586,4 +586,4 @@ package body Aw_View.Pages is
 	end Process_Request;
 
 
-end Aw_View.Pages;
+end KOW_View.Pages;

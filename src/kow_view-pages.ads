@@ -10,9 +10,9 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -- Ada Works --
 ---------------
 
-with Aw_Config;
-with Aw_View.Components;		use Aw_View.Components;
-with Aw_View.Themes;
+with KOW_Config;
+with KOW_View.Components;		use KOW_View.Components;
+with KOW_View.Themes;
 
 ---------
 -- AWS --
@@ -24,7 +24,7 @@ with Templates_Parser;
 
 
 
-package Aw_View.Pages is
+package KOW_View.Pages is
 
 
 	PAGE_CONFIG_ERROR : Exception;
@@ -34,7 +34,7 @@ package Aw_View.Pages is
 	-- Components --
 	----------------
 
-	type Component_Type is new Aw_View.Components.Component_Interface with private;
+	type Component_Type is new KOW_View.Components.Component_Interface with private;
 	-- This component is responsible for calling all other components in order
 	-- to render the page.
 	--
@@ -46,7 +46,7 @@ package Aw_View.Pages is
 	procedure Initialize(
 			Component	: in out Component_Type;
 			Component_Name	: in     String;
-			Config		: in out Aw_Config.Config_File
+			Config		: in out KOW_Config.Config_File
 		);
 	-- the only thing to setup is the theme_component
 
@@ -55,7 +55,7 @@ package Aw_View.Pages is
 	function Create_Instance(
 			Component	: in Component_Type;
 			Module_Name	: in String;
-			Config		: in Aw_Config.Config_File
+			Config		: in KOW_Config.Config_File
 		) return Module_Instance_Interface'Class;
 	-- Available modules:
 	-- 	. page
@@ -182,14 +182,14 @@ package Aw_View.Pages is
 private
 
 
-	type Component_Type is new Aw_View.Components.Component_Interface with record
+	type Component_Type is new KOW_View.Components.Component_Interface with record
 		Theme_Component_Name: Unbounded_String;
 	end record;
 
 
 	type Page_Module is new Module_Instance_Interface with record
-		Config			: Aw_Config.Config_File;
-		Processor		: Aw_View.Themes.Template_Processor_Module;
+		Config			: KOW_Config.Config_File;
+		Processor		: KOW_View.Themes.Template_Processor_Module;
 		-- there is no processing of the config file before 
 		-- the page rendering begins.
 		Theme_Component_Name	: Unbounded_String;
@@ -212,4 +212,4 @@ private
 		Mapping: Unbounded_String;
 	end record;
 
-end Aw_View.Pages;
+end KOW_View.Pages;

@@ -12,11 +12,11 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -- Ada Works --
 ---------------
 
-with Aw_Config;
-with Aw_Lib.File_System;
-with Aw_Sec;
-with Aw_Sec.Authorization_Criterias;
-with Aw_View.Components_Registry;
+with KOW_Config;
+with KOW_Lib.File_System;
+with KOW_Sec;
+with KOW_Sec.Authorization_Criterias;
+with KOW_View.Components_Registry;
 
 ---------
 -- AWS --
@@ -29,7 +29,7 @@ with Templates_Parser;
 
 
 
-package body Aw_View.Security is
+package body KOW_View.Security is
 
 	----------------
 	-- Components --
@@ -41,30 +41,30 @@ package body Aw_View.Security is
 	procedure Initialize(
 			Component	: in out Component_Type;
 			Component_Name	: in     String;
-			Config		: in out Aw_Config.Config_File
+			Config		: in out KOW_Config.Config_File
 		) is
 		-- Initializie the component while starting up the server
 		-- Config is an already initialized configuration file located at:
-		-- 	awview/component_name
+		-- 	kowview/component_name
 		--
 		-- Configuration Parameters:
 		-- 	login_error_page	:: default "/theme/login"
 		--	Access_Denied_page	:: default "/theme/403"
 		-- 	default_redirect	:: default "/"
 	begin
-		Component.Login_Error_Page := Aw_Config.Value(
+		Component.Login_Error_Page := KOW_Config.Value(
 						F	=> Config,
 						Key	=> "login_error_page",
 						Default	=> Component.Login_Error_Page
 					);
 
-		Component.Access_Denied_Page := Aw_Config.Value(
+		Component.Access_Denied_Page := KOW_Config.Value(
 						F	=> Config,
 						Key	=> "access_denied_page",
 						Default	=> Component.Access_Denied_Page
 					);
 
-		Component.Default_Redirect := Aw_Config.Value(
+		Component.Default_Redirect := KOW_Config.Value(
 						F	=> Config,
 						Key	=> "default_redirect",
 						Default	=> Component.Default_Redirect
@@ -76,16 +76,16 @@ package body Aw_View.Security is
 	function Create_Instance(
 			Component	: in Component_Type;
 			Module_Name	: in String;
-			Config		: in Aw_Config.Config_File
+			Config		: in KOW_Config.Config_File
 		) return Module_Instance_Interface'Class is
 		-- no matter what module we request, the Criteria_Module_Module will be always called
 		Module: Criteria_Module;
 
 		function Get_Resolved_Path( Key, Default : in String ) return Unbounded_String is
-			Name : String := Aw_Config.Value( Config, Key, Default );
+			Name : String := KOW_Config.Value( Config, Key, Default );
 		begin
 			return To_Unbounded_String(
-					Aw_View.Components_Registry.Locate_Resource(
+					KOW_View.Components_Registry.Locate_Resource(
 							Component_Name  => "security",
 							Resource        => Name,
 							Extension       => "html",
@@ -101,7 +101,7 @@ package body Aw_View.Security is
 				Module: Criteria_Module;
 			begin
 				
-				Module.Expression := Aw_Config.Element(
+				Module.Expression := KOW_Config.Element(
 								f	=> Config,
 								Key	=> "expression"
 							);
@@ -112,23 +112,23 @@ package body Aw_View.Security is
 			end;
 		elsif Module_Name = "login_form" then
 			declare
-				use Aw_Lib.File_System;
+				use KOW_Lib.File_System;
 				Module			: Login_Form_Module;
 			begin
 
-				Module.Username_Label	:= Aw_Config.Value( Config, "username_label", "Username" );
-				Module.Password_Label	:= Aw_Config.Value( Config, "password_label", "Password" );
-				Module.Redirect		:= Aw_Config.Value( Config, "redirect", "" );
+				Module.Username_Label	:= KOW_Config.Value( Config, "username_label", "Username" );
+				Module.Password_Label	:= KOW_Config.Value( Config, "password_label", "Password" );
+				Module.Redirect		:= KOW_Config.Value( Config, "redirect", "" );
 				Module.Template_Path	:= Get_Resolved_Path(
 										Key	=> "template",
 										Default	=> "default_templates" & Separator & "login_form"
 									);
-				Module.Logged_in_as_Label	:= Aw_Config.Value( Config, "logged_in_as_label", "Welcome" );
-				Module.Logout_Label		:= Aw_Config.Value( Config, "logout_label", "logout" );
+				Module.Logged_in_as_Label	:= KOW_Config.Value( Config, "logged_in_as_label", "Welcome" );
+				Module.Logout_Label		:= KOW_Config.Value( Config, "logout_label", "logout" );
 				return Module;
 			end;
 		else
-			raise Aw_View.Components.MODULE_ERROR with "no module called """ & Module_Name & """ in ""pages"" component.";
+			raise KOW_View.Components.MODULE_ERROR with "no module called """ & Module_Name & """ in ""pages"" component.";
 		end if;
 
 	end Create_Instance;
@@ -183,15 +183,15 @@ package body Aw_View.Security is
 		) is
 		-- if the user can access the page, do nothing.
 		-- if it can't, then build a 'Location: access_denyed_page
-		use Aw_Sec;
-		use Aw_Sec.Authorization_Criterias;
+		use KOW_Sec;
+		use KOW_Sec.Authorization_Criterias;
 		Criteria_Object: Criteria'Class := Create_Expressions_Criteria(
 					Criteria_Descriptor(
 						Module.Expression
 					)
 				);
 		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
-		User_Object : Aw_Sec.User_Access := User_Data.Get( Session_ID, User_Key );
+		User_Object : KOW_Sec.User_Access := User_Data.Get( Session_ID, User_Key );
 
 
 	begin
@@ -205,7 +205,7 @@ package body Aw_View.Security is
 
 		Is_Final := False;
 	exception
-		when Aw_Sec.ACCESS_DENIED =>
+		when KOW_Sec.ACCESS_DENIED =>
 			Is_Final := TRUE;
 			Response := AWS.Response.URL( To_String ( Module.Access_Denied_Page ) );
 	end Initialize_Request;
@@ -242,10 +242,10 @@ package body Aw_View.Security is
 			Parameters	: in out Templates_Parser.Translate_Set;
 			Response	: in out Unbounded_String
 		) is
-		use Aw_Sec;
+		use KOW_Sec;
 
 		My_Parameters	: Templates_Parser.Translate_Set := Parameters;
-		User_Object	: Aw_Sec.User_Access := Get_User( Request );
+		User_Object	: KOW_Sec.User_Access := Get_User( Request );
 
 	begin
 
@@ -291,7 +291,7 @@ package body Aw_View.Security is
 					My_Parameters,
 					Templates_Parser.Assoc(
 						"user_identity",
-						Aw_Sec.Identity( User_Object.All )
+						KOW_Sec.Identity( User_Object.All )
 					)
 				);
 
@@ -366,12 +366,12 @@ package body Aw_View.Security is
 		end if;
 		
 		declare
-			User_Object: Aw_Sec.User'Class := Aw_Sec.Do_Login( Username, Password );
+			User_Object: KOW_Sec.User'Class := KOW_Sec.Do_Login( Username, Password );
 
 
 			Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
 		begin
-			User_Data.Set( Session_ID, User_Key, Aw_Sec.To_Access( User_Object ) );
+			User_Data.Set( Session_ID, User_Key, KOW_Sec.To_Access( User_Object ) );
 		end;
 
 		Response := AWS.Response.URL( Redirect );
@@ -423,12 +423,12 @@ package body Aw_View.Security is
 
 	function Is_Logged_In( Request : in AWS.Status.Data ) return Boolean is
 		-- check if the user is logged in into the system
-		use Aw_Sec;
+		use KOW_Sec;
 	begin
 		return Get_User( Request ) /= Null;
 	end Is_Logged_In;
 
-	function Get_User( Request : in AWS.Status.Data ) return Aw_Sec.User_Access is
+	function Get_User( Request : in AWS.Status.Data ) return KOW_Sec.User_Access is
 		-- get the user object (or null) :)
 		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
 	begin
@@ -569,19 +569,19 @@ package body Aw_View.Security is
 
 
 			if My_Descriptor.Expiration_Time < The_Clock then
-				raise Aw_Sec.ACCESS_DENIED with "your authorization key for """ & Authorization_Key & """ has been expired.";
+				raise KOW_Sec.ACCESS_DENIED with "your authorization key for """ & Authorization_Key & """ has been expired.";
 			elsif My_Descriptor.Level < Authorization_Level then
-				raise Aw_Sec.ACCESS_DENIED with
+				raise KOW_Sec.ACCESS_DENIED with
 						"you do not have enought permission to access """ &
 						Authorization_Key & """ at """ &
 						Authorization_Level_Type'Image( Authorization_Level ) & """ level";
 			end if;
 		exception
 			when CONSTRAINT_ERROR =>
-				raise Aw_Sec.ACCESS_DENIED with "you don't have permission to access """ & Authorization_Key & """";
+				raise KOW_Sec.ACCESS_DENIED with "you don't have permission to access """ & Authorization_Key & """";
 		end Request_Authorization;
 	end Authorization_Manager;
 
 
 
-end Aw_View.Security;
+end KOW_View.Security;

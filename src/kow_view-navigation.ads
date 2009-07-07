@@ -11,8 +11,8 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -- Ada Works --
 ---------------
 
-with Aw_Config;
-with Aw_View.Components;		use Aw_View.Components;
+with KOW_Config;
+with KOW_View.Components;		use KOW_View.Components;
 
 ---------
 -- AWS --
@@ -25,24 +25,24 @@ with Templates_Parser;
 
 
 
-package Aw_View.Navigation is
+package KOW_View.Navigation is
 
 	----------------
 	-- Components --
 	----------------
 
 
-	type Component_Type is new Aw_View.Components.Component_Interface with private;
+	type Component_Type is new KOW_View.Components.Component_Interface with private;
 
 	overriding
 	procedure Initialize(
 			Component	: in out Component_Type;
 			Component_Name	: in     String;
-			Config		: in out Aw_Config.Config_File
+			Config		: in out KOW_Config.Config_File
 		);
 	-- Initialize the component while starting up the server
 	-- Config is an already initialized configuration file located at:
-	-- 	awview/component_name
+	-- 	kowview/component_name
 	--
 	-- Configuration Parameters:
 	-- 	login_error_page	:: default "/theme/login"
@@ -54,7 +54,7 @@ package Aw_View.Navigation is
 	function Create_Instance(
 			Component	: in Component_Type;
 			Module_Name	: in String;
-			Config		: in Aw_Config.Config_File
+			Config		: in KOW_Config.Config_File
 		) return Module_Instance_Interface'Class;
 	-- no matter what module we request, the Menu_Module_Type  will always be created
 
@@ -89,7 +89,7 @@ package Aw_View.Navigation is
 
 private
 
-	type Component_Type is new Aw_View.Components.Component_Interface with record
+	type Component_Type is new KOW_View.Components.Component_Interface with record
 		Default_Menu_Template	: Unbounded_String	:= To_Unbounded_String( "default_menu" );
 		-- TODO: definir default_link_template
 	end record;
@@ -108,4 +108,4 @@ private
 		Links		: Link_Vectors.Vector;
 		Template	: Unbounded_String;
 	end record;
-end Aw_View.Navigation;
+end KOW_View.Navigation;

@@ -1,4 +1,4 @@
--- Build file for Aw_View - Web Framework for Ada Works.
+-- Build file for KOW_View - Web Framework for Ada Works.
 --
 -- author Eduardo Calderini Jr <ecalderini@ydeasolutions.com.br>
 --
@@ -7,14 +7,14 @@
 -- $Revision: $
 -- $Author: $
 
-with "awconfig";
-with "awconfig-text";
-with "awlib";
-with "awsec";
+with "kowconfig";
+with "kowconfig-text";
+with "kowlib";
+with "kowsec";
 
 with "aws";
 
-project AwView is
+project KOWView is
 
 	version := "0.1.0";
 	
@@ -28,7 +28,7 @@ project AwView is
 	
 	-- LIBRARY
 	for Library_Dir use "lib";
-	for Library_Name use "awview";
+	for Library_Name use "kowview";
 	case target is
 		when "Windows_NT" =>
 			for Library_Kind use "dynamic";
@@ -36,14 +36,14 @@ project AwView is
 		when "GNU/Linux" =>
 			for Library_Kind use "dynamic";
 	end case;
-	for Library_Version use "libawview.so." & Version;
+	for Library_Version use "libkowview.so." & Version;
 	
 	
 	package Compiler is
 		for Default_Switches ("ada") use ("-O2", "-gnat05");
 	end Compiler;
 
-	package Linker renames AwLib.Linker;
+	package Linker renames KOWLib.Linker;
 
-end AwView;
+end KOWView;
 

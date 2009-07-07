@@ -10,10 +10,10 @@
 all: libs
 
 libs:
-	gnatmake -P awview.gpr
+	gnatmake -P kowview.gpr
 
 clean: 
-	gnatclean -P awview.gpr
+	gnatclean -P kowview.gpr
 	@echo "All clean"
 
 docs:

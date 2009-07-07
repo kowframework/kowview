@@ -12,9 +12,9 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -- Ada Works --
 ---------------
 
-with Aw_Config;
-with Aw_Sec;
-with Aw_View.Components;		use Aw_View.Components;
+with KOW_Config;
+with KOW_Sec;
+with KOW_View.Components;		use KOW_View.Components;
 
 ---------
 -- AWS --
@@ -27,18 +27,18 @@ with Templates_Parser;
 
 
 
-package Aw_View.Security is
+package KOW_View.Security is
 
 	----------------
 	-- Components --
 	----------------
 
-	type Component_Type is new Aw_View.Components.Component_Interface with private;
+	type Component_Type is new KOW_View.Components.Component_Interface with private;
 	
 
 
 	package User_Data is new AWS.Session.Generic_Data(
-			Data		=> Aw_Sec.User_Access,
+			Data		=> KOW_Sec.User_Access,
 			Null_Data	=> Null
 		);
 
@@ -49,11 +49,11 @@ package Aw_View.Security is
 	procedure Initialize(
 			Component	: in out Component_Type;
 			Component_Name	: in     String;
-			Config		: in out Aw_Config.Config_File
+			Config		: in out KOW_Config.Config_File
 		);
 	-- Initialize the component while starting up the server
 	-- Config is an already initialized configuration file located at:
-	-- 	awview/component_name
+	-- 	kowview/component_name
 	--
 	-- Configuration Parameters:
 	-- 	login_error_page	:: default "/theme/login"
@@ -65,7 +65,7 @@ package Aw_View.Security is
 	function Create_Instance(
 			Component	: in Component_Type;
 			Module_Name	: in String;
-			Config		: in Aw_Config.Config_File
+			Config		: in KOW_Config.Config_File
 		) return Module_Instance_Interface'Class;
 	-- no matter what module we request, the Criteria_Module_Module will be always called
 
@@ -171,7 +171,7 @@ package Aw_View.Security is
 	function Is_Logged_In( Request : in AWS.Status.Data ) return Boolean;
 	-- check if the user is logged in into the system
 
-	function Get_User( Request : in AWS.Status.Data ) return Aw_Sec.User_Access;
+	function Get_User( Request : in AWS.Status.Data ) return KOW_Sec.User_Access;
 	-- get the user object (or null) :)
 
 
@@ -229,9 +229,9 @@ package Aw_View.Security is
 private
 
 
-	User_Key : constant String := "aw_sec.user";
+	User_Key : constant String := "kow_sec.user";
 
-	type Component_Type is new Aw_View.Components.Component_Interface with record
+	type Component_Type is new KOW_View.Components.Component_Interface with record
 		Default_Redirect	: Unbounded_String	:= To_Unbounded_String( "/" );
 		Access_Denied_Page	: Unbounded_String	:= To_Unbounded_String( "/theme/403" );
 		Login_Error_Page	: Unbounded_String	:= To_Unbounded_String( "/pages/login_error" );
@@ -270,7 +270,7 @@ private
 	---------------------------------------------------
 
 
-	Authorization_Map_Key : constant String := "aw_sec.authorization_map";
+	Authorization_Map_Key : constant String := "KOW_sec.authorization_map";
 
 	
 	type Authorization_Descriptor_Type is record
@@ -319,4 +319,4 @@ private
 		My_Map : Authorization_Maps.Map;
 	end Authorization_Manager;
 
-end Aw_View.Security;
+end KOW_View.Security;

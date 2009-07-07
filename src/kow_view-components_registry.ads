@@ -13,13 +13,13 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -- Ada Works --
 ---------------
 
-with Aw_Config;
-with Aw_Config.Generic_Registry;
-with Aw_View.Components;		use Aw_View.Components;
+with KOW_Config;
+with KOW_Config.Generic_Registry;
+with KOW_View.Components;		use KOW_View.Components;
 
 
 
-package Aw_View.Components_Registry is
+package KOW_View.Components_Registry is
 
 	----------------
 	-- Exceptions --
@@ -37,7 +37,7 @@ package Aw_View.Components_Registry is
 
 	procedure Register(
 			Component_Name		: in String;
-			Component		: in Aw_View.Components.Component_Access;
+			Component		: in KOW_View.Components.Component_Access;
 			Require_Configuration	: in Boolean
 			);
 	-- A component, once registered, is never deallocated.
@@ -49,11 +49,11 @@ package Aw_View.Components_Registry is
 	-- If Require_Configuration == true and there is no config file available raise 
 	-- COMPONENT_CONFIGURATION_ERROR
 
-	function Load( Component_Name: in String ) return Aw_View.Components.Component_Access;
+	function Load( Component_Name: in String ) return KOW_View.Components.Component_Access;
 	-- Loads a component by it's name
 	-- There is only one instance for each component.
 
-	function Load( Component_Name: in Unbounded_String ) return Aw_View.Components.Component_Access;
+	function Load( Component_Name: in Unbounded_String ) return KOW_View.Components.Component_Access;
 	-----------------------
 	-- Module Management --
 	-----------------------
@@ -61,7 +61,7 @@ package Aw_View.Components_Registry is
 	function Load_Module(
 			Component_Name	: in Unbounded_String;
 			Module_Name	: in Unbounded_String;
-			Config		: in Aw_Config.Config_File
+			Config		: in KOW_Config.Config_File
 		) return Module_Instance_Interface'Class;
 	-- get a module instance
 	
@@ -69,7 +69,7 @@ package Aw_View.Components_Registry is
 	function Load_Module(
 			Component_Name	: in String;
 			Module_Name	: in String;
-			Config		: in Aw_Config.Config_File
+			Config		: in KOW_Config.Config_File
 		) return Module_Instance_Interface'Class;
 	-- get a module instance
 
@@ -117,13 +117,13 @@ package Aw_View.Components_Registry is
 
 	function Load_Main_Configuration(
 			Component_Name	: in String
-		) return Aw_Config.Config_File;
+		) return KOW_Config.Config_File;
 	-- load the main configuration for this component
 	
 	function Load_Configuration(
 			Component_Name		: in String;
 			Configuration_Name	: in String
-		) return Aw_Config.Config_File;
+		) return KOW_Config.Config_File;
 	-- load a configuration file from this component's relative path
 
 private
@@ -138,4 +138,4 @@ private
 
 
 
-end Aw_View.Components_Registry;
+end KOW_View.Components_Registry;
