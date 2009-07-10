@@ -352,6 +352,28 @@ package body KOW_View.Pages is
 		KOW_Config.Set_Section( Module.Config, "positions" );
 		KOW_Lib.UString_Vectors.Iterate( Available_Regions, Region_Append_Iterator'Access );
 
+		KOW_Config.Set_Section( Module.Config, "" );
+
+		declare
+			procedure Append_From_Cfg( Key : in String ) is
+				use KOW_Config;
+				use Templates_Parser;
+				Value : Unbounded_String := Element( Module.Config, Key );
+			begin
+				Insert(
+						Parameters,
+						Assoc(
+							Key,
+							Value
+						)
+				);
+			end Append_From_Cfg;
+		begin
+			Append_From_Cfg( "page_title" );
+			Append_From_Cfg( "page_author" );
+			Append_From_Cfg( "page_creation" );
+			Append_From_Cfg( "template" );
+		end;
 
 
 	end Initialize_Request;
