@@ -17,12 +17,12 @@ with "aws";
 project KOWView is
 
 	version := KOWLib.Version;
-	prefix	:= $prefix;
 	
-	for Source_Dirs use ( prefix & "/include/kowview" );
+	
+	for Source_Dirs use ( $include_prefix );
 	
 	-- LIBRARY
-	for Library_Dir use prefix & "/lib";
+	for Library_Dir use $lib_prefix;
 	for Library_Name use "kowview";
 	for Library_Kind use KOWLib'Library_Kind;
 	for Library_Version use "libkowview.so." & Version;
