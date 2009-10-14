@@ -8,15 +8,18 @@ with Ada.Directories;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
 
----------------
--- Ada Works --
----------------
+-------------------
+-- KOW Framework --
+-------------------
 
 with KOW_Config;
 with KOW_Lib.File_System;
 with KOW_Sec;
 with KOW_Sec.Authorization_Criterias;
 with KOW_View.Components_Registry;
+
+
+with MD5;
 
 ---------
 -- AWS --
@@ -301,6 +304,14 @@ package body KOW_View.Security is
 					Templates_Parser.Assoc(
 						"logged_in_as_label",
 						Module.Logged_in_as_Label
+					)
+				);
+
+			Templates_Parser.Insert(
+					My_Parameters,
+					Templates_Parser.Assoc(
+						"user_gravatar_url",
+						"http://www.gravatar.com/avatar/" & MD5.Calculate( To_String( User_Object.Email ) ) & ".jpg"
 					)
 				);
 
