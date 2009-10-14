@@ -11,8 +11,8 @@ with Ada.Strings.Unbounded;	use Ada.Strings.Unbounded;
 ---------------
 -- Ada Works --
 ---------------
-with Aw_Config;
-with Aw_View.Components;	use Aw_View.Components;
+with KOW_Config;
+with KOW_View.Components;	use KOW_View.Components;
 
 ---------
 -- AWS --
@@ -27,18 +27,18 @@ package body Hello_World is
 	procedure Initialize(
 			Component	: in out Component_Type;
 			Component_Name	: in     String;
-			Config		: in out Aw_Config.Config_File
+			Config		: in out KOW_Config.Config_File
 		) is
 	begin
 		Component.Name := To_Unbounded_String( Component_Name );
-		Component.User := Aw_Config.Value( Config, "user", "Anonymous" );
+		Component.User := KOW_Config.Value( Config, "user", "Anonymous" );
 	end Initialize;
 
 	overriding
 	function Create_Instance(
 			Component	: in Component_Type;
 			Module_Name	: in String;
-			Config		: in Aw_Config.Config_File
+			Config		: in KOW_Config.Config_File
 		)
 		return Module_Instance_Interface'Class is
 
@@ -47,7 +47,7 @@ package body Hello_World is
 			declare
 				Module: Echo;
 			begin
-				Module.Message := Aw_Config.Element( Config, "message" );
+				Module.Message := KOW_Config.Element( Config, "message" );
 				return Module;
 			end;
 		else

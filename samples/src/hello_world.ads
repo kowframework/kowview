@@ -1,7 +1,7 @@
 
 
-with Aw_Config;
-with Aw_View.Components;	use Aw_View.Components;
+with KOW_Config;
+with KOW_View.Components;	use KOW_View.Components;
 
 
 
@@ -24,7 +24,7 @@ package Hello_World is
 	procedure Initialize(
 			Component	: in out Component_Type;
 			Component_Name	: in     String;
-			Config		: in out Aw_Config.Config_File
+			Config		: in out KOW_Config.Config_File
 		);
 
 
@@ -32,7 +32,7 @@ package Hello_World is
 	function Create_Instance(
 			Component	: in Component_Type;
 			Module_Name	: in String;
-			Config		: in Aw_Config.Config_File
+			Config		: in KOW_Config.Config_File
 		)
 		return Module_Instance_Interface'Class;
 

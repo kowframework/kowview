@@ -4,7 +4,7 @@
 
 PROJECT_FILES=kowview.gpr
 GPR_FILES=kowview.gpr
-INCLUDE_FILES=src/*
+INCLUDE_FILES=src/* include/src*
 
 
 include Makefile.include

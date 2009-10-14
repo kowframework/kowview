@@ -8,15 +8,15 @@
 ---------------
 with APQ;
 with APQ.MySQL.Client;
-with Aw_Config;
-with Aw_Ent;
-with Aw_View.Components_Registry;	use Aw_View.Components_Registry;
-with Aw_View.Components;		use Aw_View.Components;
-with Aw_View.Entities;
-with Aw_View.Pages;
-with Aw_View.Security;
-with Aw_View.Service_Mapping;
-with Aw_View.Themes;
+with KOW_Config;
+with KOW_Ent;
+with KOW_View.Components_Registry;	use KOW_View.Components_Registry;
+with KOW_View.Components;		use KOW_View.Components;
+with KOW_View.Entities;
+with KOW_View.Pages;
+with KOW_View.Security;
+with KOW_View.Service_Mapping;
+with KOW_View.Themes;
 
 
 
@@ -44,18 +44,18 @@ with Hello_World;
 procedure web_server is
 	Web_Server	: AWS.Server.HTTP;
 	Conf		: constant AWS.Config.Object := AWS.Config.Get_Current;
-	Conn		: Aw_Ent.Connection_Ptr := new APQ.Mysql.Client.Connection_Type;
+	Conn		: KOW_Ent.Connection_Ptr := new APQ.Mysql.Client.Connection_Type;
 begin
 
 	---------------------
-	-- Aw_Config Setup --
+	-- KOW_Config Setup --
 	---------------------
 	
-	Aw_Config.Set_Project_Name( "WEB_SERVER" );
+	KOW_Config.Set_Project_Name( "WEB_SERVER" );
 
 
 	--------------------------
-	-- APQ and Aw_Ent Setup --
+	-- APQ and KOW_Ent Setup --
 	--------------------------
 
 	APQ.Set_Host_Name( Conn.all, "localhost" );
@@ -68,40 +68,40 @@ begin
 
 	APQ.Open_DB_Trace( Conn.all, "apq.log" );
 
-	Aw_Ent.Set_Connection( Conn );
+	KOW_Ent.Set_Connection( Conn );
 
 
 	------------------
-	-- Aw_Ent Setup --
+	-- KOW_Ent Setup --
 	------------------
-	Aw_Ent.Labels.Reload_Registry;
+	KOW_Ent.Labels.Reload_Registry;
 
 	-------------------
-	-- Aw_View Setup --
+	-- KOW_View Setup --
 	-------------------
 
 	Register(
 		"security",
-		new Aw_View.Security.Component_Type,
+		new KOW_View.Security.Component_Type,
 		true
 	);
 
 	Register(
 		"themes",
-		new Aw_View.Themes.Component_Type,
+		new KOW_View.Themes.Component_Type,
 		true
 	);
 
 	Register(
 		"pages",
-		new Aw_View.Pages.Component_Type,
+		new KOW_View.Pages.Component_Type,
 		true
 	);
 
 
 	Register(
 		"entities",
-		new Aw_View.Entities.Component_Type,
+		new KOW_View.Entities.Component_Type,
 		false
 	);
 
@@ -112,12 +112,12 @@ begin
 	);
 
 
-	Aw_View.Service_Mapping.Reload_Mappings;
+	KOW_View.Service_Mapping.Reload_Mappings;
 
 
 	AWS.Server.Start(
 		Web_Server,
-		Aw_View.Service_Mapping.AWS_Callback'Unrestricted_Access,
+		KOW_View.Service_Mapping.AWS_Callback'Unrestricted_Access,
 		Conf
 	);
 	

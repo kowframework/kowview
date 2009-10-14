@@ -4,7 +4,7 @@
 
 
 
-PROJECT=awview-samples
+PROJECT=kowview-samples
 
 TCP=$(PWD)/data	
 
