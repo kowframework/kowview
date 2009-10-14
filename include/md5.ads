@@ -39,6 +39,11 @@ package MD5 is
 
    procedure Final (Ctx : in out Context; Digest : out Fingerprint);
 
+
+
+   function Calculate( Str : in String ) return Digest_String;
+
+
 private
 
    type Word is mod 2**32;

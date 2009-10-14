@@ -457,4 +457,17 @@ package body MD5 is
       return Str;
    end Digest_To_Text;
 
+
+
+
+   function Calculate( Str : in String ) return Digest_String is
+	   C  : Context;
+	   FP : Fingerprint;
+   begin
+   	Init( C );
+	Update( C, Str );
+	Final( C, FP );
+	return Digest_to_Text( FP );
+   end Calculate;
+
 end MD5; 
