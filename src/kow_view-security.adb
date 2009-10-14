@@ -121,6 +121,7 @@ package body KOW_View.Security is
 
 				Module.Username_Label	:= KOW_Config.Value( Config, "username_label", "Username" );
 				Module.Password_Label	:= KOW_Config.Value( Config, "password_label", "Password" );
+				Module.Login_Label	:= KOW_Config.Value( Config, "login_label", "ok" );
 				Module.Redirect		:= KOW_Config.Value( Config, "redirect", "" );
 				Module.Template_Path	:= Get_Resolved_Path(
 										Key	=> "template",
@@ -264,6 +265,13 @@ package body KOW_View.Security is
 				Templates_Parser.Assoc(
 					"password_label",
 					Module.Password_Label
+				)
+			);
+		Templates_Parser.Insert(
+				My_Parameters,
+				Templates_Parser.Assoc(
+					"login_label",
+					Module.Login_Label
 				)
 			);
 		Templates_Parser.Insert(

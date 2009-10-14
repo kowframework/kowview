@@ -247,6 +247,7 @@ private
 	type Login_Form_Module is new Module_Instance_Interface with record
 		Username_Label		: Unbounded_String;
 		Password_Label		: Unbounded_String;
+		Login_Label		: Unbounded_String;
 		Redirect		: Unbounded_String;
 		Template_Path		: Unbounded_String;
 
