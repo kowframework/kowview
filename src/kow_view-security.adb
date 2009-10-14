@@ -311,7 +311,7 @@ package body KOW_View.Security is
 					My_Parameters,
 					Templates_Parser.Assoc(
 						"user_gravatar_url",
-						"http://www.gravatar.com/avatar/" & MD5.Calculate( To_String( User_Object.Email ) ) & ".jpg"
+						"http://www.gravatar.com/avatar/" & MD5.Calculate( Email( User_Object.all ) ) & ".jpg"
 					)
 				);
 
