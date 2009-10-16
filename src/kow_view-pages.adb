@@ -179,9 +179,30 @@ package body KOW_View.Pages is
 			Request		: in     AWS.Status.Data;
 			Parameters	: in out Templates_Parser.Translate_Set;
 			Response	: in out AWS.Response.Data;
-			Is_Final	: out    Boolean
+			Is_Final	:    out Boolean
 		) is
 	-- this is where the page is initialized.
+	begin
+		Initialize_Request(
+				Module			=> Module,
+				Request			=> Request,
+				Parameters		=> Parameters,
+				Response		=> Response,
+				Is_Final		=> Is_Final,
+				Initialize_Modules_Only	=> False
+			);
+	end Initialize_Request;
+
+
+
+	procedure Initialize_Request(
+			Module			: in out Page_Module;
+			Request			: in     AWS.Status.Data;
+			Parameters		: in out Templates_Parser.Translate_Set;
+			Response		: in out AWS.Response.Data;
+			Is_Final		:    out Boolean;
+			Initialize_Modules_Only	: in     Boolean
+		) is
 
 		use KOW_Config;
 		use KOW_View.Components_Registry;
@@ -314,36 +335,40 @@ package body KOW_View.Pages is
 					return;
 				end if;
 
-				if Module_Regions( i ) /= Null_Unbounded_String then
 
-					Process_Header(
-						Module		=> Inner_Module,
-						Request		=> Request,
-						Parameters	=> Parameters,
-						Response	=> Headers( i )
-					);
+				if not Initialize_Modules_Only then
+
+					if Module_Regions( i ) /= Null_Unbounded_String then
 	
-					Process_Request(
+						Process_Header(
+							Module		=> Inner_Module,
+							Request		=> Request,
+							Parameters	=> Parameters,
+							Response	=> Headers( i )
+						);
+		
+						Process_Request(
+							Module		=> Inner_Module,
+							Request		=> Request,
+							Parameters	=> Parameters,
+							Response	=> Contents( i )
+						);
+						Process_Footer(
+							Module		=> Inner_Module,
+							Request		=> Request,
+							Parameters	=> Parameters,
+							Response	=> Footers( i )
+						);
+	
+	
+					end if;
+		
+					Finalize_Request(
 						Module		=> Inner_Module,
 						Request		=> Request,
-						Parameters	=> Parameters,
-						Response	=> Contents( i )
+						Parameters	=> Parameters
 					);
-					Process_Footer(
-						Module		=> Inner_Module,
-						Request		=> Request,
-						Parameters	=> Parameters,
-						Response	=> Footers( i )
-					);
-
-
 				end if;
-	
-				Finalize_Request(
-					Module		=> Inner_Module,
-					Request		=> Request,
-					Parameters	=> Parameters
-				);
 
 
 			end;

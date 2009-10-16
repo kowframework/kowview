@@ -7,12 +7,13 @@ with Ada.Directories;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
 
----------------
--- Ada Works --
----------------
+-------------------
+-- KOW Framework --
+-------------------
 
 with KOW_Config;
 with KOW_View.Components_Registry;
+with KOW_View.Pages;
 
 ---------
 -- AWS --
@@ -138,13 +139,57 @@ package body KOW_View.Navigation is
 	
 		Labels_Tag	: Templates_Parser.Tag;
 		Hrefs_Tag	: Templates_Parser.Tag;
+		Has_Access_Tag	: Templates_Parser.Tag;
 		My_Parameters	: Templates_Parser.Translate_Set := Parameters;
+
+		Page_Mapping	: String := "/pages";
+
+
+		function Has_Page_Access( Page : in String ) return Boolean is
+			use KOW_View.Components_Registry;
+
+	                Module : Module_Instance_Interface'Class :=
+					KOW_View.Components_Registry.Load_Module(
+							Component_Name	=> "pages",
+							Module_Name	=> "page",
+							Config		=> KOW_View.Pages.Load_Page_Config( Page )
+						);
+						
+			Text_Output     : Unbounded_String;
+			Is_Final        : Boolean;
+			Response_Data	: AWS.Response.Data;
+		begin
+			KOW_View.Pages.Initialize_Request(
+				Module          	=> KOW_View.Pages.Page_Module'Class( Module ),
+				Request         	=> Request,
+				Parameters      	=> Parameters,
+				Response        	=> Response_Data,
+				Is_Final        	=> Is_Final,
+				Initialize_Modules_Only	=> True
+				);
+			return not Is_Final;
+		end Has_Page_Access;
+
+		function Has_Access( Href : in String ) return Boolean is
+			First	: Integer := Href'First;
+			Last	: Integer := Href'First + Page_Mapping'Length - 1;
+		begin
+			if Href( First .. Last ) /= Page_Mapping then
+				return True;
+			else
+				return Has_Page_Access( Href( Last + 1 .. Href'Last ) );
+			end if;
+		exception
+			when Constraint_Error => return True;
+		end Has_Access;
+
 
 		procedure Iterator( C : Link_Vectors.Cursor ) is
 			Link : Link_Descriptor_Type := Link_Vectors.Element( C );
 		begin
 			Labels_Tag := Labels_Tag & To_String( Link.Label );
 			Hrefs_Tag := Hrefs_Tag & To_String( Link.Href );
+			Has_Access_Tag := Has_Access_Tag & Has_Access( To_String( Link.Href ) );
 		end Iterator;
 	begin
 		
@@ -152,6 +197,7 @@ package body KOW_View.Navigation is
 	
 		Templates_Parser.Insert( My_Parameters, Assoc( "menu_item_label", Labels_Tag ) );
 		Templates_Parser.Insert( My_Parameters, Assoc( "menu_item_href", Hrefs_Tag ) );
+		Templates_Parser.Insert( My_Parameters, Assoc( "menu_has_access", Has_Access_Tag ) );
 
 		Response := Response & To_Unbounded_String(
 						Templates_Parser.Parse( Template_Path, My_Parameters )

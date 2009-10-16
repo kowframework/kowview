@@ -30,6 +30,10 @@ package KOW_View.Pages is
 	PAGE_CONFIG_ERROR : Exception;
 	-- TODO: use this exception all over (overriding constraint_error whenever possible)
 
+
+
+	function Load_Page_Config( Config_Name : in String ) return KOW_Config.Config_File;
+
 	----------------
 	-- Components --
 	----------------
@@ -99,6 +103,18 @@ package KOW_View.Pages is
 			Is_Final	: out    Boolean
 		);
 	-- this is where the page is initialized.
+
+
+	procedure Initialize_Request(
+			Module			: in out Page_Module;
+			Request			: in     AWS.Status.Data;
+			Parameters		: in out Templates_Parser.Translate_Set;
+			Response		: in out AWS.Response.Data;
+			Is_Final		:    out Boolean;
+			Initialize_Modules_Only	: in     Boolean
+		);
+	-- where the page is really initialized.
+	-- if initialize_modules_only is called, only initialize the modules
 
 
 	overriding
