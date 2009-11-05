@@ -1,4 +1,6 @@
 
+with Ada.Command_line;		use ada.Command_Line;
+with Ada.Text_IO;		use Ada.Text_IO;
 
 
 with KOW_View.Commands;
@@ -8,7 +10,7 @@ with KOW_View.Commands;
 -- Implementation of the Version command --
 -------------------------------------------
 
-package KOW_View.Version is
+package body KOW_View.Version is
 
 
 	function New_Command return KOW_View.Commands.Command_Type'Class is

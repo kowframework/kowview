@@ -11,7 +11,7 @@ with KOW_View.Commands;
 package KOW_View.Help is
 
 
-	type Command_Type is new KOW_View.Commands.Command_Type;
+	type Command_Type is new KOW_View.Commands.Command_Type with null record;
 
 
 	function New_Command return KOW_View.Commands.Command_Type'Class;

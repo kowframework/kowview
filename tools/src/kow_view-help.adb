@@ -1,6 +1,7 @@
 
 
 with Ada.Command_Line;		use Ada.Command_Line;
+with Ada.Text_IO;		use Ada.Text_IO;
 
 
 with KOW_View.Commands;
@@ -59,7 +60,11 @@ package body KOW_View.Help is
 				end;
 			end loop;
 		else
-			KOW_View.Commands.Help( KOW_View.Driver.Get( Sub_Command ) );
+			declare
+				Comm : KOW_View.Commands.Command_Type'class := KOW_View.Driver.Get( Sub_Command );
+			begin
+				KOW_View.Commands.Help( Comm );
+			end;
 		end if;
 	end Run;
 
@@ -68,7 +73,7 @@ package body KOW_View.Help is
 	procedure Help( Command : in out Command_Type ) is
 		-- show detailed information about this command
 	begin
-		Describe( Comand );
+		Describe( Command );
 		New_Line;
 	end Help;
 
@@ -79,4 +84,5 @@ package body KOW_View.Help is
 	begin
 		Put( "show usage instructions" );
 	end Describe;
+
 end KOW_View.Help;

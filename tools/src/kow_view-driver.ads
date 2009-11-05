@@ -2,7 +2,11 @@
 
 
 
-with KOW_View.Driver_Commands;
+with KOW_View.Commands;
+
+
+with KOW_View.Help;
+with KOW_View.Version;
 
 -- Contains some tools for managing KOW_View Projects --
 package KOW_View.Driver is
@@ -19,17 +23,16 @@ package KOW_View.Driver is
 
 	procedure Run_Command( Command : in Available_Commands );
 
-	procedure Register( Command : in Available_Commands; Constructor : function return KOW_View.Driver_Commands.Command_Type'Class );
-
-
-	function Get( Command : in Available_Commands ) return KOW_View.Driver_Commands.Command_type'Class;
+	function Get( Command : in Available_Commands ) return KOW_View.Commands.Command_type'Class;
 
 private
-	type Command_Constructor is access function return KOW_View.Driver_Commands'Class;
+	type Available_Commands_Array is array( Available_Commands'First .. Available_Commands'Last ) of access function return KOW_View.Commands.Command_Type'Class;
 
-	type Available_Commands_Array is array( Available_Commands'First .. Available_Commands'Last ) of function return KOW_View.Driver_Commands.Command_Type'Class;
 	
-	Commands_List : Available_Commands_Array;
+	Command_Constructors : constant Available_Commands_Array := (
+						Help	=> KOW_View.Help.New_Command'Access,
+						Version	=> KOW_View.Version.New_Command'Access
+					);
 
 
 end KOW_View.Driver;
