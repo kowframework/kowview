@@ -25,7 +25,7 @@ package body KOW_View.Version is
 	procedure Run( Command : in out Command_Type ) is
 		-- when no parameter is given, display the version message
 	begin
-		Put_line( Command_Name & " version 0.1" );
+		Put_line( Command_Name & " version " & Version );
 	end Run;
 
 
