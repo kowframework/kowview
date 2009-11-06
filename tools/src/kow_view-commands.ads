@@ -6,6 +6,10 @@
 
 package KOW_View.Commands is
 
+
+
+	Usage_Error : Exception;
+
 	type Command_Type is abstract tagged null record;
 
 	procedure Run( Command : in out Command_Type ) is abstract;

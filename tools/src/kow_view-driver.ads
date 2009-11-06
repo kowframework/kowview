@@ -4,8 +4,8 @@
 
 with KOW_View.Commands;
 
-
 with KOW_View.Help;
+with KOW_View.Init;
 with KOW_View.Version;
 
 -- Contains some tools for managing KOW_View Projects --
@@ -15,10 +15,10 @@ package KOW_View.Driver is
 	-- a enum type used to trac all Commands available.
 	type Available_Commands is (
 			help,
+			init,
 			version
 		);
 
-	Usage_Error : Exception;
 
 
 	procedure Run_Command( Command : in Available_Commands );
@@ -31,6 +31,7 @@ private
 	
 	Command_Constructors : constant Available_Commands_Array := (
 						Help	=> KOW_View.Help.New_Command'Access,
+						Init	=> KOW_View.Init.New_Command'Access,
 						Version	=> KOW_View.Version.New_Command'Access
 					);
 
