@@ -11,6 +11,8 @@ with KOW_View.Commands;
 package KOW_View.Version is
 
 
+	Version : constant String := $version;
+
 	type Command_Type is new KOW_View.Commands.Command_Type with null record;
 
 

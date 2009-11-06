@@ -11,6 +11,7 @@ include Makefile.include
 
 
 pre_libs:
+	gnatprep "-Dversion=\"$(VERSION)\"" src/kow_view-version.ads.in src/kow_view-version-.ads
 
 pos_libs:
 
