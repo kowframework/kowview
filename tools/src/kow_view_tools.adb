@@ -4,7 +4,9 @@
 --------------
 -- Ada 2005 --
 --------------
+with Ada.Characters.Handling;
 with Ada.Command_Line;
+with Ada.Directories;
 with Ada.Strings.Unbounded;	use Ada.Strings.Unbounded;
 
 
@@ -38,15 +40,21 @@ package body KOW_View_Tools is
 		Ret : String := To_String( 
 				KOW_Lib.String_Util.Str_Replace(
 						From	=> "project_name",
-						To	=> Project_Name,
+						To	=> Ada.Characters.Handling.To_Lower( Project_Name ),
 						Str	=> Tmp2
 					)
 				);
+		Last : Integer := Ret'Last;
 	begin
+
+		if Ada.Characters.Handling.To_Lower( Ada.Directories.Extension( Name ) ) = "tpl" then
+			Last := Last - 4;
+		end if;
+
 		if Ret( Ret'First ) = '/' then
-			return Ret( Ret'First + 1 .. Ret'Last );
+			return Ret( Ret'First + 1 .. Last );
 		else
-			return Ret;
+			return Ret( Ret'First .. Last );
 		end if;
 	end Destination_Path;
 

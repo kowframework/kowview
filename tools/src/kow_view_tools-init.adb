@@ -122,7 +122,7 @@ package body KOW_View_Tools.Init is
 
 			Destination	: File_Type;
 		begin
-			Create( Destination, Out_File, Destination_Path( Name( Name'First .. Name'Last - 4 ) ) );
+			Create( Destination, Out_File, Destination_Path( Name ) );
 			Put( Destination, Values );
 			Close( Destination );
 		end TPL_Files_Iterator;
