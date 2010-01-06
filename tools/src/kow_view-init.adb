@@ -16,6 +16,7 @@ with Ada.Text_IO;
 -------------------
 -- KOW Framework --
 -------------------
+with KOW_Lib.File_System;
 with KOW_Lib.UString_Vectors;
 with KOW_View.Commands;
 with KOW_View.Driver;
@@ -65,15 +66,18 @@ package body KOW_View.Init is
 
 		In_Parameters	: Templates_Parser.Translate_Set;
 
-		Skel_Path	: constant Unbounded_String := To_Unbounded_String( "/etc/kvdriver/skel" );
+		Skel_Path	: constant Unbounded_String := To_Unbounded_String( 
+								Ada.Directories.Full_Name( "/etc/kvdriver/skel" )
+								);
 
 
 
 
 		function Destination_Path( Name : in String ) return String is
-			First : Integer := Length( Skel_Path ) - Name'First;
+			First : Integer := Length( Skel_Path ) + Name'First;
 			Ret : String := Name( First .. Name'Last );
 		begin
+			Ada.Text_IO.Put_Line( Name & " :: " & To_String( Skel_Path ) );
 			if Ret( Ret'First ) = '/' then
 				return Ret( Ret'First + 1 .. Ret'Last );
 			else
@@ -88,9 +92,15 @@ package body KOW_View.Init is
 
 
 		procedure Process( Directory_Entry : in Directory_Entry_Type ) is
-			SName : constant String := Full_Name( Directory_Entry );
-			Name : constant Unbounded_String := To_Unbounded_String( SName );
+			SName	: constant String := Full_Name( Directory_Entry );
+			Name	: constant Unbounded_String := To_Unbounded_String( SName );
+
+			Filename : String := KOW_Lib.File_System.Get_File_Name( SName );
 		begin
+			if Filename = "." OR ELSE Filename = ".." then
+				return;
+			end if;
+			Ada.Text_IO.Put_Line( "Processing """ & SName & """" );
 			case Kind( Directory_Entry ) is
 				when Directory =>
 					Append( To_Process, Name );
