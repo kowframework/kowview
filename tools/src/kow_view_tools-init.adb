@@ -165,6 +165,7 @@ package body KOW_View_Tools.Init is
 		-- process all the .in files into ordinary files using AWS' Templates Parser and as variables
 		-- 	project_name
 		Templates_Parser.Insert( In_Parameters, Templates_Parser.Assoc( "project_name", Project_Name ) );
+		Templates_Parser.Insert( In_Parameters, Templates_Parser.Assoc( "lower_project_name", Ada.Characters.Handling.To_Lower( Project_Name ) ) );
 		Iterate( TPL_Files, TPL_Files_Iterator'Access );
 	end Run;
 
