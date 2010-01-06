@@ -4,7 +4,7 @@
 -- This is the home for the command interface --
 ------------------------------------------------
 
-package KOW_View.Commands is
+package KOW_View_Tools.Commands is
 
 
 
@@ -23,4 +23,4 @@ package KOW_View.Commands is
 	procedure Describe( Command : in out Command_Type ) is abstract;
 	-- print a short description about the command (used by the help command)
 
-end KOW_View.Commands;
+end KOW_View_Tools.Commands;

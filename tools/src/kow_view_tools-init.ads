@@ -1,20 +1,20 @@
 
 
 
-with KOW_View.Commands;
+with KOW_View_Tools.Commands;
 
 
 ----------------------------------------
 -- Implementation of the Init command --
 ----------------------------------------
 
-package KOW_View.Init is
+package KOW_View_Tools.Init is
 
 
-	type Command_Type is new KOW_View.Commands.Command_Type with null record;
+	type Command_Type is new KOW_View_Tools.Commands.Command_Type with null record;
 
 
-	function New_Command return KOW_View.Commands.Command_Type'Class;
+	function New_Command return KOW_View_Tools.Commands.Command_Type'Class;
 	-- constructor for our command
 
 	overriding
@@ -33,4 +33,4 @@ package KOW_View.Init is
 	overriding
 	procedure Describe( Command : in out Command_Type );
 	-- show a short description about this command;
-end KOW_View.Init;
+end KOW_View_Tools.Init;

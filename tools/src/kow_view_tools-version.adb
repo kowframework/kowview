@@ -3,17 +3,17 @@ with Ada.Command_line;		use ada.Command_Line;
 with Ada.Text_IO;		use Ada.Text_IO;
 
 
-with KOW_View.Commands;
+with KOW_View_Tools.Commands;
 
 
 -------------------------------------------
 -- Implementation of the Version command --
 -------------------------------------------
 
-package body KOW_View.Version is
+package body KOW_View_Tools.Version is
 
 
-	function New_Command return KOW_View.Commands.Command_Type'Class is
+	function New_Command return KOW_View_Tools.Commands.Command_Type'Class is
 		-- constructor for our command
 		Command : Command_Type;
 	begin
@@ -44,4 +44,4 @@ package body KOW_View.Version is
 	begin
 		Put( "display the version for the software being used" );
 	end Describe;
-end KOW_View.Version;
+end KOW_View_Tools.Version;

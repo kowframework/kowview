@@ -4,19 +4,19 @@ with Ada.Command_Line;		use Ada.Command_Line;
 with Ada.Text_IO;		use Ada.Text_IO;
 
 
-with KOW_View.Commands;
+with KOW_View_Tools.Commands;
 
 
-with KOW_View.Driver;
+with KOW_View_Tools.Driver;
 
 
 ----------------------------------------
 -- Implementation of the Help command --
 ----------------------------------------
 
-package body KOW_View.Help is
+package body KOW_View_Tools.Help is
 
-	function New_Command return KOW_View.Commands.Command_Type'Class is
+	function New_Command return KOW_View_Tools.Commands.Command_Type'Class is
 		-- constructor for our command
 		Command : Command_Type;
 	begin
@@ -30,12 +30,12 @@ package body KOW_View.Help is
 
 
 		General_Usage	: Boolean := True;
-		Sub_Command	: KOW_View.Driver.Available_Commands;
+		Sub_Command	: KOW_View_Tools.Driver.Available_Commands;
 	begin
 
 		if Argument_Count = 2 then
 			begin
-				Sub_Command := KOW_View.Driver.Available_Commands'Value(
+				Sub_Command := KOW_View_Tools.Driver.Available_Commands'Value(
 							Argument( 2 )
 						);
 				General_Usage := False;
@@ -49,21 +49,21 @@ package body KOW_View.Help is
 			Put_Line( Command_Name & " command [command parameters]" );
 			Put_Line( "where command can be one of the:" );
 	
-			for Comm in KOW_View.Driver.Available_Commands loop
+			for Comm in KOW_View_Tools.Driver.Available_Commands loop
 				declare
-					use KOW_View.Driver;
-					C : KOW_View.Commands.Command_Type'Class := Get( Comm );
+					use KOW_View_Tools.Driver;
+					C : KOW_View_Tools.Commands.Command_Type'Class := Get( Comm );
 				begin
 					Put( "    "  &  Available_Commands'Image( Comm ) & " => " );
-					KOW_View.Commands.Describe( C );
+					KOW_View_Tools.Commands.Describe( C );
 					New_Line;
 				end;
 			end loop;
 		else
 			declare
-				Comm : KOW_View.Commands.Command_Type'class := KOW_View.Driver.Get( Sub_Command );
+				Comm : KOW_View_Tools.Commands.Command_Type'class := KOW_View_Tools.Driver.Get( Sub_Command );
 			begin
-				KOW_View.Commands.Help( Comm );
+				KOW_View_Tools.Commands.Help( Comm );
 			end;
 		end if;
 	end Run;
@@ -85,4 +85,4 @@ package body KOW_View.Help is
 		Put( "show usage instructions" );
 	end Describe;
 
-end KOW_View.Help;
+end KOW_View_Tools.Help;

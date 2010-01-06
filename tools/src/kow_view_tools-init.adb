@@ -17,9 +17,10 @@ with Ada.Text_IO;
 -- KOW Framework --
 -------------------
 with KOW_Lib.File_System;
+with KOW_Lib.String_Util;
 with KOW_Lib.UString_Vectors;
-with KOW_View.Commands;
-with KOW_View.Driver;
+with KOW_View_Tools.Commands;
+with KOW_View_Tools.Driver;
 
 
 
@@ -32,10 +33,10 @@ with Templates_Parser;
 -- Implementation of the Init command --
 ----------------------------------------
 
-package body KOW_View.Init is
+package body KOW_View_Tools.Init is
 
 
-	function New_Command return KOW_View.Commands.Command_Type'Class is
+	function New_Command return KOW_View_Tools.Commands.Command_Type'Class is
 		Command : Command_Type;
 	begin
 		
@@ -60,7 +61,7 @@ package body KOW_View.Init is
 
 		Directories	: Vector;
 		Ordinary_Files	: Vector;
-		In_Files	: Vector;
+		TPL_Files	: Vector;
 
 
 
@@ -71,13 +72,29 @@ package body KOW_View.Init is
 								);
 
 
+		function Project_Name return String is
+		begin
+			return Ada.Command_Line.Argument( 2 );
+		end Project_Name;
+
 
 
 		function Destination_Path( Name : in String ) return String is
 			First : Integer := Length( Skel_Path ) + Name'First;
-			Ret : String := Name( First .. Name'Last );
+
+			-- TMP1 and TMP2 variables are needed because of a bug in the
+			-- Str_Replace implementation.
+			-- The Str parameter must be indexed from 1 to 'Length....
+			Tmp1 : String := Name( First .. Name'Last );
+			Tmp2 : String( 1 .. Tmp1'Length ) := Tmp1;
+			Ret : String := To_String( 
+					KOW_Lib.String_Util.Str_Replace(
+							From	=> "project_name",
+							To	=> Project_Name,
+							Str	=> Tmp2
+						)
+					);
 		begin
-			Ada.Text_IO.Put_Line( Name & " :: " & To_String( Skel_Path ) );
 			if Ret( Ret'First ) = '/' then
 				return Ret( Ret'First + 1 .. Ret'Last );
 			else
@@ -106,8 +123,8 @@ package body KOW_View.Init is
 					Append( To_Process, Name );
 				when Ordinary_File =>
 					-- the ordinary files might be both .in files or real ordinary files...
-					if Ada.Characters.Handling.To_Lower( Extension( SName ) ) = "in" then
-						Append( In_Files, Name );
+					if Ada.Characters.Handling.To_Lower( Extension( SName ) ) = "tpl" then
+						Append( TPL_Files, Name );
 					else
 						Append( Ordinary_Files, Name );
 					end if;
@@ -138,28 +155,23 @@ package body KOW_View.Init is
 
 	
 		
-		procedure In_Files_Iterator( C : in Cursor ) is
+		procedure TPL_Files_Iterator( C : in Cursor ) is
 			use Ada.Text_IO;
 			Name		: String := To_String( Element( C ) );
 			Values		: String := Templates_Parser.Parse( Name, In_Parameters );
 
 			Destination	: File_Type;
 		begin
-			Create( Destination, Out_File, Destination_Path( Name( Name'First .. Name'Last - 3 ) ) );
+			Create( Destination, Out_File, Destination_Path( Name( Name'First .. Name'Last - 4 ) ) );
 			Put( Destination, Values );
 			Close( Destination );
-		end In_Files_Iterator;
+		end TPL_Files_Iterator;
 
 
-
-		function Project_Name return String is
-		begin
-			return Ada.Command_Line.Argument( 2 );
-		end Project_Name;
-
+	
 	begin
 		if Ada.Command_Line.Argument_Count /= 2 then
-			raise KOW_View.Commands.USAGE_ERROR with "the init command requires a parameter with the project name";
+			raise KOW_View_Tools.Commands.USAGE_ERROR with "the init command requires a parameter with the project name";
 		end if;
 
 
@@ -193,7 +205,7 @@ package body KOW_View.Init is
 		-- process all the .in files into ordinary files using AWS' Templates Parser and as variables
 		-- 	project_name
 		Templates_Parser.Insert( In_Parameters, Templates_Parser.Assoc( "project_name", Project_Name ) );
-		Iterate( In_Files, In_Files_Iterator'Access );
+		Iterate( TPL_Files, TPL_Files_Iterator'Access );
 	end Run;
 
 
@@ -216,4 +228,4 @@ package body KOW_View.Init is
 	begin
 		Ada.Text_IO.Put( "initialize the project folder" );
 	end Describe;
-end KOW_View.Init;
+end KOW_View_Tools.Init;

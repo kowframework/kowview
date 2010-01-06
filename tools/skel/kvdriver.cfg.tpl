@@ -1,1 +1,2 @@
-@_project_name_@
+
+project_name="@_project_name_@"
