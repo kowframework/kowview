@@ -7,6 +7,7 @@ with KOW_View_Tools.Commands;
 with KOW_View_Tools.Help;
 with KOW_View_Tools.Info;
 with KOW_View_Tools.Init;
+with KOW_View_Tools.Setup;
 with KOW_View_Tools.Version;
 
 -- Contains some tools for managing KOW_View_Tools Projects --
@@ -18,6 +19,7 @@ package KOW_View_Tools.Driver is
 			help,
 			info,
 			init,
+			setup,
 			version
 		);
 
@@ -35,6 +37,7 @@ private
 						Help	=> KOW_View_Tools.Help.New_Command'Access,
 						Info	=> KOW_View_Tools.Info.New_Command'Access,
 						Init	=> KOW_View_Tools.Init.New_Command'Access,
+						Setup	=> KOW_View_Tools.Setup.New_Command'Access,
 						Version	=> KOW_View_Tools.Version.New_Command'Access
 					);
 

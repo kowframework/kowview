@@ -7,6 +7,21 @@
 -- not suposed to change after that.. so.... have fun messing around!
 
 
+
+
+--------------
+-- Ada 2005 --
+--------------
+with Ada.Exceptions;
+with Ada.Text_IO;		use Ada.Text_IO;
+
+
+-------------------
+-- KOW Framework --
+-------------------
+with KOW_View;
+
+
 ---------
 -- AWS --
 ---------
@@ -15,8 +30,6 @@ with AWS.Server;
 
 
 
-
-with Ada.Text_IO;		use Ada.Text_IO;
 
 
 with @_project_name_@_Setup;

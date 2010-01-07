@@ -21,6 +21,7 @@ with KOW_Lib.String_Util;
 with KOW_Lib.UString_Vectors;
 with KOW_View_Tools.Commands;
 with KOW_View_Tools.Driver;
+with KOW_View_Tools.Setup;
 
 
 
@@ -65,7 +66,7 @@ package body KOW_View_Tools.Init is
 
 
 
-		In_Parameters	: Templates_Parser.Translate_Set;
+		Tpl_Parameters	: Templates_Parser.Translate_Set;
 
 		
 		procedure Process( Directory_Entry : in Directory_Entry_Type ) is
@@ -118,7 +119,7 @@ package body KOW_View_Tools.Init is
 		procedure TPL_Files_Iterator( C : in Cursor ) is
 			use Ada.Text_IO;
 			Name		: String := To_String( Element( C ) );
-			Values		: String := Templates_Parser.Parse( Name, In_Parameters );
+			Values		: String := Templates_Parser.Parse( Name, Tpl_Parameters );
 
 			Destination	: File_Type;
 		begin
@@ -168,9 +169,18 @@ package body KOW_View_Tools.Init is
 
 		-- process all the .in files into ordinary files using AWS' Templates Parser and as variables
 		-- 	project_name
-		Templates_Parser.Insert( In_Parameters, Templates_Parser.Assoc( "project_name", Project_Name ) );
-		Templates_Parser.Insert( In_Parameters, Templates_Parser.Assoc( "lower_project_name", Ada.Characters.Handling.To_Lower( Project_Name ) ) );
+		Templates_Parser.Insert( Tpl_Parameters, Templates_Parser.Assoc( "project_name", Project_Name ) );
+		Templates_Parser.Insert( Tpl_Parameters, Templates_Parser.Assoc( "lower_project_name", Ada.Characters.Handling.To_Lower( Project_Name ) ) );
+		Templates_Parser.Insert( Tpl_Parameters, Templates_Parser.Assoc( "upper_project_name", Ada.Characters.Handling.To_Upper( Project_Name ) ) );
 		Iterate( TPL_Files, TPL_Files_Iterator'Access );
+
+
+		-- NOW we run the setup.. --
+		declare
+			Setup : KOW_View_Tools.Setup.Command_Type;
+		begin
+			KOW_View_Tools.Setup.Run( Setup );
+		end;
 	end Run;
 
 

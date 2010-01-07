@@ -6,6 +6,29 @@
 
 
 
+-------------------
+-- KOW Framework --
+-------------------
+with KOW_Config;
+with KOW_Config.Text;
+with KOW_Ent;
+with KOW_Lib.Log;
+with KOW_Sec;
+with KOW_Sec.Authentication.Entities;
+pragma Elaborate( KOW_Sec.Authentication.Entities );
+with KOW_Sec.Authorization_Criterias;
+with KOW_View.Components_Registry;	use KOW_View.Components_Registry;
+with KOW_View.Components;		use KOW_View.Components;
+with KOW_View.Entities;
+with KOW_View.Navigation;
+with KOW_View.Pages;
+with KOW_View.Security;
+with KOW_View.Service_Mapping;
+with KOW_View.Themes;
+
+
+
+
 @@TABLE@@
 with @_entity_packages_@;
 pragma Elaborate_Body( @_entity_packages_@ );
@@ -19,7 +42,6 @@ pragma Elaborate_Body( @_component_packages_@ );
 
 
 procedure @_project_name_@_Setup is
-begin
 	Manager: KOW_Sec.Authentication_Manager_Access := new KOW_Sec.Authentication.Entities.Authentication_Manager;
 
 	Provider	: APQ_Provider.Connection_Provider_Ptr := new APQ_Provider.Connection_Provider_Type;
