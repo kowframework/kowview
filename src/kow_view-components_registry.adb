@@ -51,6 +51,8 @@ package body KOW_View.Components_Registry is
 			raise DUPLICATED_COMPONENT_ERROR with Component_Name;
 		end if;
 
+		Component.all.Require_Configuration := Require_Configuration;
+
 		Include( The_Registry, CN, Component );
 		
 	end Register;
