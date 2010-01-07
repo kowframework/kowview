@@ -1,6 +1,6 @@
 
 
-
+with KOW_Config;
 with KOW_View_Tools.Commands;
 with KOW_View_Tools.Driver;
 
@@ -18,6 +18,7 @@ with Ada.Text_IO;
 procedure kvdriver is
 	Command : KOW_View_Tools.Driver.Available_Commands;
 begin
+	KOW_Config.Add_Config_path( "." );
 
 	if Argument_Count = 0 then
 		raise KOW_View_Tools.Commands.Usage_ERROR with "no command given";

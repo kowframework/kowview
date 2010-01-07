@@ -5,6 +5,7 @@
 with KOW_View_Tools.Commands;
 
 with KOW_View_Tools.Help;
+with KOW_View_Tools.Info;
 with KOW_View_Tools.Init;
 with KOW_View_Tools.Version;
 
@@ -15,6 +16,7 @@ package KOW_View_Tools.Driver is
 	-- a enum type used to trac all Commands available.
 	type Available_Commands is (
 			help,
+			info,
 			init,
 			version
 		);
@@ -31,6 +33,7 @@ private
 	
 	Command_Constructors : constant Available_Commands_Array := (
 						Help	=> KOW_View_Tools.Help.New_Command'Access,
+						Info	=> KOW_View_Tools.Info.New_Command'Access,
 						Init	=> KOW_View_Tools.Init.New_Command'Access,
 						Version	=> KOW_View_Tools.Version.New_Command'Access
 					);
