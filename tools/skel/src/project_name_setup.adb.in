@@ -5,10 +5,21 @@
 
 
 
+--------------
+-- Ada 2005 --
+--------------
+with Ada.Directories;
+with Ada.Exceptions;
+with Ada.Text_IO;		use Ada.Text_IO;
+
 
 -------------------
 -- KOW Framework --
 -------------------
+with APQ;
+with APQ_Provider;
+
+
 with KOW_Config;
 with KOW_Config.Text;
 with KOW_Ent;

@@ -20,6 +20,7 @@ with Ada.Text_IO;		use Ada.Text_IO;
 -- KOW Framework --
 -------------------
 with KOW_View;
+with KOW_View.Service_Mapping;
 
 
 ---------
