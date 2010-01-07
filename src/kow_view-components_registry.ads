@@ -49,6 +49,14 @@ package KOW_View.Components_Registry is
 	-- If Require_Configuration == true and there is no config file available raise 
 	-- COMPONENT_CONFIGURATION_ERROR
 
+	procedure Setup( Component_Name : in String );
+	-- tries to setup the component
+	-- if Require_Configuration = false and 
+	
+	procedure Setup_Components;
+	-- run setup for every registered component
+
+
 	function Load( Component_Name: in String ) return KOW_View.Components.Component_Access;
 	-- Loads a component by it's name
 	-- There is only one instance for each component.

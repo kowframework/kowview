@@ -67,23 +67,15 @@ package body KOW_View_Tools.Setup is
 			use Templates_Parser;
 		begin
 			Put_Line( To_String( Complete_Key ) );
-			if Key = "load_component" then
+			if Key = "component" then
 				if Value( App_Config, To_String( Complete_Key ) ) then
 					High := Length( Complete_Key ) - 11;
-					Components_Tag := Components_Tag & Unbounded_Slice( 
-										Source	=> Complete_Key,
-										Low	=> 1,
-										High	=> High
-									);
+					Components_Tag := Components_Tag & Complete_Key;
 				end if;
-			elsif Key = "load_entities" then
+			elsif Key = "entities" then
 				if Value( App_Config, To_String( Complete_Key ) ) then
 					High := Length( Complete_Key ) - 7;
-					Entities_Tag := Entities_Tag & Unbounded_Slice(
-										Source	=> Complete_Key,
-										Low	=> 1,
-										High	=> High
-									);
+					Entities_Tag := Entities_Tag & Complete_key;
 				end if;
 			end if;
 		end Iterator;

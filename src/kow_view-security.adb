@@ -601,4 +601,11 @@ package body KOW_View.Security is
 
 
 
+begin
+	KOW_View.Components_Registry.Register(
+			Component_Name		=> "security",
+			Component		=> new Component_Type,
+			Require_Configuration	=> true
+		);
+
 end KOW_View.Security;

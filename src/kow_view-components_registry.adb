@@ -42,21 +42,10 @@ package body KOW_View.Components_Registry is
 		--
 		-- If Require_Configuration == true and there is no config file available raise
 		-- COMPONENT_CONFIGURATION_ERROR
-		Config	: KOW_Config.Config_File;
 		CN	: Unbounded_String := To_Unbounded_String( Component_Name );
 
 		use Component_Maps;
 	begin
-		begin
-			Config := Load_Main_Configuration( Component_Name );
-			Initialize( Component.all, Component_Name, Config );
-		exception
-			when KOW_Config.File_Not_Found =>
-				if Require_Configuration then
-					raise COMPONENT_CONFIGURATION_ERROR with "Missing config for " & Component_Name;
-				end if;
-		end;
-
 		-- the component is in the memory and is initialized:
 		if Contains( The_Registry, CN ) then
 			raise DUPLICATED_COMPONENT_ERROR with Component_Name;
@@ -65,6 +54,54 @@ package body KOW_View.Components_Registry is
 		Include( The_Registry, CN, Component );
 		
 	end Register;
+
+
+	
+	procedure Setup( Component : in out KOW_View.Components.Component_Interface'Class; Component_name : in String ) is
+		Config		: KOW_Config.Config_File;
+	begin
+		Config := Load_Main_Configuration( Component_Name );
+		Initialize( Component, Component_Name, Config );
+	exception
+		when KOW_Config.File_Not_Found =>
+			if Component.Require_Configuration then
+				raise COMPONENT_CONFIGURATION_ERROR with "Missing config for " & Component_Name;
+			end if;
+
+		-- Include( The_Registry, CN, Component );
+		-- as we a dealing with access types, no need to replace the component in the map ;)
+		
+	end Setup;
+
+
+
+	procedure Setup( Component_Name : in String ) is
+		-- tries to setup the component
+		-- if Require_Configuration = false and 
+
+		Config		: KOW_Config.Config_File;
+		CN		: Unbounded_String := To_Unbounded_String( Component_Name );
+		Component	: KOW_View.Components.Component_Access := Component_Maps.Element( The_Registry, CN );
+
+	begin
+		Setup( Component.all, Component_Name );
+	end Setup;
+	
+
+
+
+	procedure Setup_Components is
+		-- run setup for every registered component
+		use Component_Maps;
+
+		procedure Iterator( C : in Cursor ) is
+		begin
+			Setup( Element( C ).all, To_String( Key( C ) ) );
+		end Iterator;
+	begin
+		Iterate( The_Registry, Iterator'Access );
+	end Setup_Components;
+
 
 
 
