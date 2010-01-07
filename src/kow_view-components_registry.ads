@@ -111,7 +111,9 @@ package KOW_View.Components_Registry is
 		) return String;
 	-- locate a resource file for this component
 	-- this file should be placed at
-	-- 	[WORKING_DIR]/data/component_name/resource.extension
+	-- 	[WORKING_DIR]/data/kowview/component_name/resource.extension
+	-- 	or
+	-- 	[WORKING_DIR]/applications/component_name/data/resource.extension
 	-- returning it's name if nothing has been found raise Ada.Directories.Name_Error if not found
 	-- TODO: Implement locale support at Locate_Resource function
 

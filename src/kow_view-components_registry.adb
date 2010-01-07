@@ -197,37 +197,58 @@ package body KOW_View.Components_Registry is
 			Extension	: in String;
 			Kind		: in Ada.Directories.File_Kind	
 		) return String is
-		-- locate a resource file for this component in the KOW_Config's configuration path
+		-- locate a resource file for this component
+		-- this file should be placed at
+		-- 	[WORKING_DIR]/data/kowview/component_name/resource.extension
+		-- 	or
+		-- 	[WORKING_DIR]/applications/component_name/data/resource.extension
 		-- returning it's name if nothing has been found raise Ada.Directories.Name_Error if not found
+		-- TODO: Implement locale support at Locate_Resource function
+
+
 
 		use Ada.Directories;
 
-		Sep	: constant Character	:= KOW_Lib.File_System.Separator;
-		Name	: String		:= "data" & Sep & "kowview" & Sep & Component_Name & Sep & Resource & "." & Extension;
+		Sep		: constant Character	:= KOW_Lib.File_System.Separator;
+		Name		: String		:= "data" & Sep & "kowview" & Sep & Component_Name & Sep & Resource & "." & Extension;
+		Default_Name	: String		:= "applications" & Sep & Component_Name & Sep & "data" & Sep & Resource & "." & Extension;
 
 
-		Real_Kind : File_Kind;
-	begin
 
+
+
+
+		procedure check( FName : in String ) is
+			Real_Kind : File_Kind;
 		begin
-			Real_Kind := Ada.Directories.Kind( Name );
+			Real_Kind := Ada.Directories.Kind( FName );
+
+			if Real_Kind /= Kind then
+				raise Ada.Directories.Name_Error with
+						"Resource """ & Resource &
+						""" of component """ & Component_Name &
+						""" is of type """ & File_Kind'Image( Real_Kind ) &
+						""" ( expected """ & File_Kind'Image( Kind ) & """)";
+			end if;
 		exception
 			when Ada.IO_Exceptions.Name_Error =>
 				raise Ada.Directories.Name_Error with
 					"Resource """ & Resource &
 					""" of component """ & Component_Name &
-					""" ( aka """ & Name & """ ) not found";
-		end;
+					""" ( aka """ & FName & """ ) not found";
+		end Check;
 
-		if Real_Kind /= Kind then
-			raise Ada.Directories.Name_Error with
-					"Resource """ & Resource &
-					""" of component """ & Component_Name &
-					""" is of type """ & File_Kind'Image( Real_Kind ) &
-					""" ( expected """ & File_Kind'Image( Kind ) & """)";
-		end if;
+
+	begin
+
+		Check( Name );
 
 		return Name;
+	exception
+		when others =>
+			Check( Default_Name );
+			return Default_Name;
+
 	end Locate_Resource;
 
 
