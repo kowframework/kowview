@@ -135,6 +135,11 @@ package body KOW_View_Tools.Init is
 		end if;
 
 
+		if Exists( "kvdriver.cfg" ) then
+			raise KOW_View_Tools.Commands.USAGE_ERROR with "you should run this command from a folder where there is no active kvdriver project";
+		end if;
+
+
 		Append( To_Process, Skel_Path );
 
 		To_Process_C := First( To_Process );
