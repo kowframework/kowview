@@ -633,4 +633,13 @@ package body KOW_View.Pages is
 	end Process_Request;
 
 
+
+begin
+	KOW_View.Components_Registry.Register(
+		"pages",
+		new KOW_View.Pages.Component_Type,
+		true
+	);
+
+
 end KOW_View.Pages;

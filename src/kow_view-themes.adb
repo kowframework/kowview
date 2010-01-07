@@ -525,4 +525,13 @@ package body KOW_View.Themes is
 	end Process_Request;
 
 
+
+begin
+	KOW_View.Components_Registry.Register(
+		"themes",
+		new KOW_View.Themes.Component_Type,
+		true
+	);
+
+
 end KOW_View.Themes;
