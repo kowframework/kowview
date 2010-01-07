@@ -1,0 +1,152 @@
+-- This file is part of the KOW Framework project.
+-- 
+-- It is provided as-is and has no specific license... do with it whatever you want. :D
+-- But follow the include libs licenses plz :D
+
+
+
+
+@@TABLE@@
+with @_entity_packages_@;
+pragma Elaborate_Body( @_entity_packages_@ );
+@@END_TABLE@@
+
+
+@@TABLE@@
+with @_component_packages_@;
+pragma Elaborate_Body( @_component_packages_@ );
+@@END_TABLE@@
+
+
+procedure @_project_name_@_Setup is
+begin
+	Manager: KOW_Sec.Authentication_Manager_Access := new KOW_Sec.Authentication.Entities.Authentication_Manager;
+
+	Provider	: APQ_Provider.Connection_Provider_Ptr := new APQ_Provider.Connection_Provider_Type;
+begin
+
+	---------------------
+	-- KOW_Config Setup --
+	---------------------
+	
+	KOW_Config.Set_Project_Name( "@_upper_project_name_@" );
+
+
+	-----------------------
+	-- KOW_Lib.Log Setup --
+	-----------------------
+
+	declare
+		use KOW_Config;
+		Log_Config : Config_File;
+
+
+
+		procedure Set_File_Output(
+				Log_File	: in out KOW_Lib.Log.Log_File_Type;
+				Key		: in     String
+			) is
+
+			Filename : String := Value( Log_Config, Key, "" );
+		begin
+			if Filename /= "" then
+				Log_File := new File_Type;
+				
+				if Ada.Directories.Exists( Filename ) then
+					Open(
+							Log_File.all,
+							Append_File,
+							Filename
+						);
+				else
+					Create(
+							Log_File.all,
+							Append_File,
+							Filename
+						);
+				end if;
+			end if;
+		end Set_File_Output;
+					
+	begin
+		Log_Config := New_Config_File(
+					N	=> "kow_lib-log",
+					P	=> new KOW_Config.Text.Parser
+				);
+
+--		KOW_Lib.Log.Default_Level := KOW_Lib.Log.Log_Level'Value(
+--					"level_" & Value( Log_Config, "log_level", "warning" )
+--				);
+
+		Set_File_Output(
+				KOW_Lib.Log.Error_Output,
+				"error_output" 
+			);
+
+		Set_File_Output(
+				KOW_Lib.Log.Info_Output,
+				"info_output"
+			);
+	exception
+		when KOW_CONFIG.FILE_NOT_FOUND => null;
+	end;
+						
+	--------------------------
+	-- APQ and KOW_Ent Setup --
+	--------------------------
+
+	Provider.Setup(
+			KOW_Config.New_Config_File(
+					"kow_ent",
+					new KOW_Config.Text.Parser
+				)
+			);
+	
+	KOW_Ent.Set_Connection_Provider( Provider );
+
+
+	-- now we get the labels :D
+	KOW_Ent.Labels.Reload_Registry;
+
+
+	------------------
+	-- KOW_Sec Setup --
+	------------------
+
+	-- Register the manager:
+	KOW_Sec.Register_Manager( Manager );
+
+
+
+	-------------------
+	-- KOW_View Setup --
+	-------------------
+
+
+	@@TABLE@@
+	Register(
+		"security",
+		new @_component_packages_@.Component_Type,
+		true
+	);
+	@@END_TABLE@@
+
+	
+	KOW_View.Service_Mapping.Reload_Mappings;
+
+exception
+	when E : Others =>
+		Ada.Text_IO.Put_Line( "=======================================" );
+		Ada.Text_IO.Put_Line( "=======================================" );
+		Ada.Text_IO.Put_Line( "=======================================" );
+		Ada.Text_IO.Put_Line( Ada.Exceptions.Exception_Information( E ) );
+		Ada.Text_IO.Put_Line( "=======================================" );
+		Ada.Text_IO.Put_Line( "=======================================" );
+		Ada.Text_IO.Put_Line( "=======================================" );
+
+
+
+
+
+
+end @_project_name_@_Setup;

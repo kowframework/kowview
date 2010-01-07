@@ -152,7 +152,6 @@ package body KOW_View_Tools.Init is
 					Process		=> Process'Access
 				);
 			Delete( To_Process, To_Process_C );
-			-- TODO :: check if the following line is really needed...
 			To_Process_C := First( To_Process );
 
 			if Current_Directory /= Skel_Path then
