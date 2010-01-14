@@ -69,7 +69,8 @@ package KOW_View.Components_Registry is
 	function Load_Module(
 			Component_Name	: in Unbounded_String;
 			Module_Name	: in Unbounded_String;
-			Config		: in KOW_Config.Config_File
+			Config		: in KOW_Config.Config_File;
+			Module_ID	: in Positive := 1
 		) return Module_Instance_Interface'Class;
 	-- get a module instance
 	
@@ -77,7 +78,8 @@ package KOW_View.Components_Registry is
 	function Load_Module(
 			Component_Name	: in String;
 			Module_Name	: in String;
-			Config		: in KOW_Config.Config_File
+			Config		: in KOW_Config.Config_File;
+			Module_ID	: in Positive := 1
 		) return Module_Instance_Interface'Class;
 	-- get a module instance
 
@@ -86,7 +88,8 @@ package KOW_View.Components_Registry is
 
 	function Load_Module(
 			Component_Name	: in String;
-			Module_Name	: in String
+			Module_Name	: in String;
+			Module_ID	: in Positive := 1
 		) return Module_Instance_Interface'Class;
 	-- get the module, using the standard module configuration
 	

@@ -319,7 +319,8 @@ package body KOW_View.Pages is
 							:= Load_Module(
 								To_String( Element( cfg, "component" ) ),
 								To_String( Element( cfg, "module" ) ),
-								Cfg
+								Cfg,
+								Positive( i )
 							);
 			begin
 				Initialize_Request(

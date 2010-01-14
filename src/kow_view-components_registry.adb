@@ -131,30 +131,39 @@ package body KOW_View.Components_Registry is
 	function Load_Module(
 			Component_Name	: in Unbounded_String;
 			Module_Name	: in Unbounded_String;
-			Config		: in KOW_Config.Config_File
+			Config		: in KOW_Config.Config_File;
+			Module_ID	: in Positive := 1
 		) return Module_Instance_Interface'Class is
 		-- get a module instance
 		Component	: Component_Access := Load( Component_Name );
+		Module		: Module_Instance_Interface'Class := Create_Instance( Component.all, To_String( Module_Name ), Config );
 	begin
-		return Create_Instance( Component.all, To_String( Module_Name ), Config );
+		Module.Module_ID := Module_ID;
+
+		return Module;
 	end Load_Module;
 
 
 	function Load_Module(
 			Component_Name	: in String;
 			Module_Name	: in String;
-			Config		: in KOW_Config.Config_File
+			Config		: in KOW_Config.Config_File;
+			Module_ID	: in Positive := 1
 		) return Module_Instance_Interface'Class is
 		-- get a module instance
 		Component	: Component_Access := Load( Component_Name );
+		Module		: Module_Instance_interface'Class := Create_Instance( Component.all, Module_Name, Config  );
 	begin
-		return Create_Instance( Component.all, Module_Name, Config );
+		Module.Module_ID := Module_ID;
+
+		return Module;
 	end Load_Module;
 
 
 	function Load_Module(
 			Component_Name	: in String;
-			Module_Name	: in String
+			Module_Name	: in String;
+			Module_ID	: in Positive := 1
 		) return Module_Instance_Interface'Class is
 		-- get the module, using the standard module configuration
 	begin
@@ -164,7 +173,8 @@ package body KOW_View.Components_Registry is
 				Config		=> Load_Configuration(
 							Component_Name		=> Component_Name,
 							Configuration_Name	=> Module_Name
-						)
+						),
+				Module_ID	=> Module_ID
 				);
 	end Load_Module;
 

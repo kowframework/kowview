@@ -64,7 +64,15 @@ package KOW_View.Components is
 
 
 
-	type Module_Instance_Interface is interface;
+	type Module_Instance_Interface is abstract tagged record
+		Module_ID	: Positive;
+		-- a number to identify the module in this request/page
+
+
+		ID_Count	: Natural := 0;
+		-- count all the ids that have been generated for this module
+	end record;
+
 	-- a module is something that can be accessed anywhere inside the system.
 
 	type Module_Instance_Access is not null access all Module_Instance_Interface'Class;
@@ -133,6 +141,13 @@ package KOW_View.Components is
 	-- Called when the process has been finalized
 
 
+
+	procedure Generate_HTML_ID(
+				Module		: in out Module_Instance_Interface;
+				The_ID		:    out Unbounded_String
+		);
+	-- procedure used to generate a valid ID for HTML elements
+	-- it's a helper procedure so the user can produce unique IDs for their pages easily
 
 	--------------
 	-- Services --
