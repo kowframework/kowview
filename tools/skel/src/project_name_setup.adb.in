@@ -155,6 +155,7 @@ begin
 	@@END_TABLE@@
 
 	
+	KOW_View.Components_Registry.Setup_Components;
 	KOW_View.Service_Mapping.Reload_Mappings;
 
 exception
