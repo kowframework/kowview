@@ -57,6 +57,7 @@ begin
 	---------------------
 	
 	KOW_Config.Set_Project_Name( "@_upper_project_name_@" );
+	KOW_COnfig.Add_Config_Path( "./data" );
 
 
 	-----------------------
