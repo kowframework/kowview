@@ -15,3 +15,10 @@ pre_libs:
 pos_libs:
 
 extra_clean:
+
+
+
+run:
+	@_upper_project_name_@_CONFIG_PATH=${PWD}/data ./bin/@_lower_project_name_@_server
+
+
