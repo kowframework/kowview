@@ -1,0 +1,494 @@
+/**
+ * Estrutura da Página
+ **/
+
+
+
+
+
+body{
+	background-color: white;
+	color		: black;
+
+	font-family	: georgia,garamond,serif;
+	/*font-size	: 13px;*/
+	font-size	: 10pt;
+}
+
+
+img{
+	border : none;
+}
+
+
+table{
+	border		: thin dashed #E1E1E1;
+}
+
+
+.align_right{
+	position	: relative;
+	margin-left	: auto;
+	text-align	: left;
+	width		: 312px; /* 167 + 58 + 57  + (padding = 5 * 2 * 3 == 30) == 312*/
+}
+
+
+/**
+ * Formulários gerais
+ **/
+
+div.label{
+	color		: #aa0000;
+	font-family	: arial;
+	font-size	: 8pt;
+	font-weight	: bold;
+	margin-bottom	: 4px;
+}
+
+
+div.input{
+	color		: black;
+	font-family	: arial;
+	font-size	: 8pt;
+	font-weight	: bold;
+	margin-bottom	: 4px;
+}
+
+
+div.input input{
+	color		: black;
+	font-family	: arial;
+	font-size	: 8pt;
+	font-weight	: bold;
+	margin-bottom	: 4px;
+	width		: 167px;
+}
+
+
+
+div.button{
+	text-align	: right;
+}
+
+
+
+div.button_left{
+	text-align	: left;
+}
+
+input.button{
+	font-family	: arial;
+	font-size	: 8pt;
+	font-weight	: bold;
+	border		: none;
+	background-color: white;
+	padding-left	: 0px;
+	padding-right	: 0px;
+}
+
+
+input.button:hover{
+	font-family	: arial;
+	font-size	: 8pt;
+	font-weight	: bold;
+	border		: none;
+	background-color: #ebe743;
+}
+
+
+
+
+div#body{
+	margin-left	: auto;
+	margin-right	: auto;
+	width		: 927px;
+}
+
+
+div#banner{
+}
+
+div#banner table{
+	border		: none;
+}
+
+td#banner_left{
+	margin-right	: 10px;
+	margin-bottom	: 51px;
+	border-left	: none;
+	border-bottom	: thin solid black;
+	padding-bottom	: 20px;
+	width		: 167px;
+}
+
+td#banner_center{
+	width		: 20px;
+	border		: none;
+}
+td#banner_right{
+	margin-left	: 30px;
+	width		: 722px;
+	border-bottom	: thin solid black;
+	text-align	: right;
+}
+
+td#banner_right a{
+	display		: block;
+}
+
+td#banner_right table{
+	border		: none;
+}
+
+td#banner_right table tr td {
+	border		: none;
+	padding-left	: 5px;
+	padding-right	: 5px;
+	white-space	: nowrap; 
+}
+
+
+div#top_menu{
+	margin-bottom	: 10px;
+	background-color: white;
+	border		: none;
+	text-align	: right;
+	font-size	: 11px;
+}
+
+
+div#top_menu a{
+	color		: gray;
+	border-left	: dotted thin gray;
+	border-right	: dotted thin gray;
+	margin-right	: 2px;
+	padding		: 1px;
+}
+
+div#top_menu a:hover{
+	color		: black;
+	border-left	: dotted thin black;
+	border-right	: dotted thin black;
+}
+
+
+
+
+div#left_menu{
+	position	: absolute;
+	width		: 175px;
+	margin-top	: 50px;
+}
+
+
+
+div#left_menu div{
+	border-bottom	: thin dotted black;
+	width		: 167px;
+}
+
+div#left_menu div.contents{
+	border-top	: thin dotted black;
+	border-bottom	: none;
+	width		: 167px;
+}
+
+
+
+div#left_menu div a{
+	color		: black;
+	width		: 100%;
+	display		: block;
+	margin-top	: 1px;
+	margin-bottom	: 1px;
+	font-style	: italic;
+	text-decoration	: none;
+
+}
+
+div#left_menu div a:hover{
+	color		: black;
+	background-color: #ebe743;
+}
+
+
+
+div#main{
+	position	: absolute;
+	margin-left	: 195px;
+	width		: 537px;
+	padding-top	: 0px;
+	margin-top	: 50px;
+}
+
+div#main h1{
+	margin-top	: 0px;
+	padding-top	: 0px;
+}
+
+
+
+
+
+div#right_menu{
+	position	: absolute;
+	margin-left	: 750px;
+	width		: 175px;
+	margin-top	: 50px;
+	padding-top	: 0px;
+	border-left	: thin dotted black;
+	padding-left	: 5px;
+}
+
+
+
+
+
+
+/**
+ * Entities
+ */
+
+
+div.entity_label{
+	font-family	: arial;
+	font-weight	: bold;
+	font-size	: 8pt;
+	text-align	: left;
+	border		: none;
+	width		: auto;
+	margin-top	: 30px;
+	margin-bottom	: 10px;
+	text-transform	: uppercase;
+}
+
+table.entity_table{
+	border		: none;
+	text-align	: left;
+	width		: 100%;
+	padding-left	: 0px;
+	margin-left	: 0px;
+	margin-bottom	: 30px;
+}
+
+table.entity_table th{
+	font-family	: arial;
+	font-weight	: bold;
+	font-size	: 8pt;
+	text-align	: left;
+	width		: 200px;
+	padding-top	: 2px;
+}
+
+table.entity_table td{
+	border		: none;
+}
+
+table.entity_table input{
+	width	: 100%;
+	font-family	: arial;
+	font-size	: 8pt;
+}
+
+
+table.entity_table input:focus{
+	background-color: #C0C0C0;
+}
+
+table.entity_table select{
+	border	: thin solid gray;
+	width	: 100%;
+}
+
+table.entity_table select:focus{
+	border		: thin solid gray;
+	background-color: #C0C0C0;
+}
+
+
+
+
+table.view_entity_table{
+	border		: none;
+	text-align	: left;
+	border-top	: thin solid black;
+	width		: 100%;
+	padding-left	: 0px;
+	margin-left	: 0px;
+	margin-bottom	: 30px;
+}
+
+table.view_entity_table th{
+	font-family	: arial;
+	font-weight	: bold;
+	font-size	: 8pt;
+	text-align	: left;
+	width		: 200px;
+	padding-top	: 2px;
+	border-bottom	: thin dotted black;
+}
+
+table.view_entity_table td{
+	border-bottom	: thin dotted black;
+	font-family	: arial;
+	font-size	: 8pt;
+}
+
+
+
+
+
+
+/**
+ * List Entities (for User and Group admin)
+ **/
+
+table.list_entities_table{
+	border-top	: thin solid #c8c8c8;
+	border-left	: none;
+	border-right	: none;
+	border-bottom	: none;
+	margin-top	: 20px;
+
+	width		: 100%;
+}
+
+table.list_entities_table td{
+	margin-left	: 0px;
+	margin-right	: 0px;
+	padding-top	: 10px;
+	padding-bottom	: 10px;
+	border-bottom	: thin solid #c8c8c8;
+}
+
+table.list_entities_table td.icon{
+	width		: 61px;
+}
+
+
+
+table.list_entities_table div.label{
+	color		: black;
+	font-weight	: bold;
+	font-size	: 11pt;
+	font-family	: georgia,garamond,serif;
+}
+
+
+a.create_entity {
+	font-family	: arial;
+	font-weight	: bold;
+	font-size	: 8pt;
+	color		: black;
+
+}
+
+
+a.create_entity:hover {
+	font-family	: arial;
+	font-weight	: bold;
+	font-size	: 8pt;
+	background-color: #ebe743;
+	color		: black;
+
+}
+
+
+
+
+
+
+/*
+ * Inline Menu 
+ */
+
+div.inlineMenu{
+	text-align	: left;
+	color		: #8c8c8c;
+	font-family	: georgia,garamond,serif;
+}
+div.inlineMenuItem{
+	padding-left	: 2px;
+	padding-right	: 2px;
+	padding-top	: 1px;
+	padding-bottom	: 1px;
+	display		: inline;
+}
+div.inlineMenuItem a{
+	color		: #8c8c8c;
+	font-style	: italic;
+}
+
+div.inlineMenuItem a:hover{
+	color		: black;
+}
+
+
+
+a{
+	color	: gray;
+}
+a:hover{
+	color	: black;
+}
+/*a:before
+{
+	content	: url(http://localhost:8083/themes/logo.jpg);
+}*/
+
+
+
+
+/**
+ * Editorial Component
+ **/
+
+
+div.project_browser{
+	padding-top	: 20px;
+}
+
+table#editorial_list_resources{
+	width		: 100%;
+	border		: none;
+	border-top	: thin solid gray;
+	margin-top	: 20px;
+	border-collapse	: collapse;
+}
+
+table#editorial_list_resources td,th{
+	border		: none;
+	border-bottom	: thin solid gray;
+	margin-left	: 0px;
+	margin-right	: 0px;
+	padding-top	: 10px;
+	padding-bottom	: 10px;
+}
+
+
+table#editorial_list_resources th{
+	font-family	: georgia,garamond,serif;
+	/*font-size	: 13px;*/
+	font-size	: 10pt;
+	text-align	: left;
+}
+table#editorial_list_resources td{
+	font-family	: arial;
+	font-size	: 8pt;
+	font-weight	: bold;
+	vertical-align	: bottom;
+	text-align	: center;
+	color		: #c8c8c8;
+	text-transform	: uppercase;
+}
+table#editorial_list_resources td a{
+	display		: block;
+	color		: black;
+	text-decoration	: none;
+}
+
+table#editorial_list_resources td a:hover{
+	color		: gray;
+}
+
