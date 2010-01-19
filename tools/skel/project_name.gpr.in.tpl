@@ -4,6 +4,7 @@
 
 with "apq.gpr";
 with "apq_provider.gpr";
+with "apq_provider-mysql.gpr";
 
 with "kowconfig.gpr";
 with "kowconfig-text.gpr";

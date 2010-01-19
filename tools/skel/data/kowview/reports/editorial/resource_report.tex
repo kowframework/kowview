@@ -1,0 +1,97 @@
+
+\documentclass{article}
+\usepackage{kow} % Define tudo que vc precisa para sempre!
+
+
+% Comandos:								 
+   \newcommand\money[1]{R\$ #1}		% Dinheiro
+   \defineshorthand{"/}{\discretionary{}{/}{/}} 
+
+
+\title{\Huge \textls{\textsc{metarrevisor}}\footnote{Desenvolvido pela Kow Software Livre e Consultoria em parceria com as editoras Esfera e Hedra}}
+
+\begin{document}
+
+\maketitle
+
+
+\begin{abstract}
+Esse relatório foi criado automaticamente e contém todas as modificações 
+que o \textsc{Metarrevisor} executou no recurso de seu projeto. 
+As duas operações básicas indicadas são as \textit{trocas}: substituições
+de palavras  conforme o Novo Vocabuário Ortográfica, e os \textit{erros}:
+mensagens sobre problemas no servidor, e que você deve nos relatar
+pelo e-mail metarrevisor@kow.com.br. Ao reportar um erro,  encaminhe por favor o 
+arquivo original que apresentou o problema e a mensagem que aparece nesse relatório.
+\end{abstract}
+
+
+\setcounter{tocdepth}{2}            % amplitude da presença das partes no índice
+\setcounter{secnumdepth}{1}   % amplitude da numeração das partes  
+\tableofcontents
+
+\section{Relatório}
+	\tablehead{
+		\multicolumn{1}{l}{}	&
+		\multicolumn{1}{l}{}	\\ 
+		}
+
+	\begin{center}
+		\begin{xtabular}{rp{.6\textwidth}}
+			recurso			& @_resource_name_@ \\
+			projeto			& @_project_name_@ \\
+			tipo do arquivo		& @_resource_type_@ \\
+			servidor		& @_commands_generator_@ 
+		\end{xtabular}
+	\end{center}
+
+
+	% TABELA %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\subsection{\textsc{Trocas}}
+	
+		\tablehead{
+			\multicolumn{1}{l}{Sessão}	&
+			\multicolumn{1}{l}{Subsessão}		& 
+			\multicolumn{1}{l}{Padrão Encontrado}		& 
+			\multicolumn{1}{l}{Substituição}	\\ \hline\hline	
+			}
+	
+		\begin{center}
+			\begin{xtabular}{l | l | p{.3\textwidth} | p{.3\textwidth}}
+				@@TABLE@@
+					@@IF@@ @_command_troca_section_@ /= ""
+						@_command_troca_section_@	& 
+						@_command_troca_subsection_@	& 
+						@_command_troca_param1_@	& 
+						@_command_troca_param2_@ \\
+					@@END_IF@@
+				@@END_TABLE@@
+			\end{xtabular}
+		\end{center}
+
+
+	\subsection{\textsc{Erros}}
+	
+		\tablehead{
+			\multicolumn{1}{l}{Sessão}		&
+			\multicolumn{1}{l}{Subsessão}		& 
+			\multicolumn{1}{l}{Erro}		& 
+			\multicolumn{1}{l}{Detalhes}	\\ \hline\hline	
+			}
+	
+		\begin{center}
+			\begin{xtabular}{l | l | p{.3\textwidth} | p{.3\textwidth}}
+				@@TABLE@@
+					@@IF@@ @_command_erro_section_@ /= ""
+						@_command_erro_section_@	& 
+						@_command_erro_subsection_@	& 
+						@_command_erro_param1_@	& 
+						@_command_erro_param2_@ \\
+					@@END_IF@@
+				@@END_TABLE@@
+			\end{xtabular}
+		\end{center}
+
+\noindent\dotfill
+
+\end{document}

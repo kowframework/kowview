@@ -1,0 +1,141 @@
+
+\documentclass{article}
+\usepackage{kow} % Define tudo que vc precisa para sempre!
+
+
+% Comandos:								 
+   \newcommand\money[1]{R\$ #1}		% Dinheiro
+   \defineshorthand{"/}{\discretionary{}{/}{/}} 
+
+
+\title{\Huge \textls{\textsc{metarrevisor}}\footnote{Desenvolvido pela Kow Software Livre e Consultoria em parceria com as editoras Esfera e Hedra}}
+
+\begin{document}
+
+\maketitle
+
+
+\begin{abstract}
+Esse relatório foi criado automaticamente e contém todas as modificações 
+que o \textsc{Metarrevisor} executou em seus projetos. 
+As duas operações básicas indicadas são as \textit{trocas}: substituições
+de palavras  conforme o Novo Vocabuário Ortográfica, e os \textit{erros}:
+mensagens sobre problemas no servidor, e que você deve nos relatar
+pelo e-mail metarrevisor@kow.com.br. Ao reportar um erro,  encaminhe por favor o 
+arquivo original que apresentou o problema e a mensagem que aparece nesse relatório.
+\end{abstract}
+
+
+\setcounter{tocdepth}{2}            % amplitude da presença das partes no índice
+\setcounter{secnumdepth}{1}   % amplitude da numeração das partes  
+\tableofcontents
+
+\section{Instruções}
+
+\begin{center}
+\begin{xtabular}{lr}
+	\hline
+	Páginas processadas	&  424 \\
+	\hline
+	Custo total		& \money{ 636.00} \\
+	\hline
+\end{xtabular}
+\end{center}
+
+\section{Arquivos processados}
+
+
+
+% GAMBI FIX ::
+% O templates parser do AWS faz bagunça ao acessar variáveis de vetores dentro de um looping para matrizes
+% isso resolve o problema
+\newcommand\projectname[0]{nada}
+
+
+@@TABLE@@
+	\renewcommand\projectname[0]{@_project_name_@}
+
+	@@TABLE@@
+
+	@@IF@@ @_log_date_@ /= ""
+	\subsection{@_resource_name_@ (@_log_date_@)}
+
+			\tablehead{
+				\multicolumn{1}{l}{}	&
+				\multicolumn{1}{l}{}	\\ 
+				}
+
+		\begin{center}
+			\begin{xtabular}{rp{.6\textwidth}}
+				usuário			& @_log_user_identity_@ \\
+				projeto			& \projectname \\
+				catálogo		& @_catalog_name_@ \\
+				custo página		& \money{@_catalog_pp_price_@} \\
+				páginas processadas	& @_log_pages_@ \\
+				custo total		& \money{@_log_price_@} \\
+				cliente			& @_contents_generator_@ \\
+				servidor		& @_commands_generator_@ 
+			\end{xtabular}
+		\end{center}
+
+
+		% TABELA %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		\subsubsection{\textsc{Trocas}}
+		
+			\tablehead{
+				\multicolumn{1}{l}{Sessão}	&
+				\multicolumn{1}{l}{Subsessão}		& 
+				\multicolumn{1}{l}{Padrão Encontrado}		& 
+				\multicolumn{1}{l}{Substituição}	\\ \hline\hline	
+				}
+		
+			\begin{center}
+				\begin{xtabular}{l | l | p{.3\textwidth} | p{.3\textwidth}}
+					@@TABLE@@
+						@@IF@@ @_command_troca_section_@ /= ""
+							@_command_troca_section_@	& 
+							@_command_troca_subsection_@	& 
+							@_command_troca_param1_@	& 
+							@_command_troca_param2_@ \\
+						@@END_IF@@
+					@@END_TABLE@@
+				\end{xtabular}
+			\end{center}
+
+	
+		\subsubsection{\textsc{Erros}}
+		
+			\tablehead{
+				\multicolumn{1}{l}{Sessão}		&
+				\multicolumn{1}{l}{Subsessão}		& 
+				\multicolumn{1}{l}{Erro}		& 
+				\multicolumn{1}{l}{Detalhes}	\\ \hline\hline	
+				}
+		
+			\begin{center}
+				\begin{xtabular}{l | l | p{.3\textwidth} | p{.3\textwidth}}
+					@@TABLE@@
+						@@IF@@ @_command_erro_section_@ /= ""
+							@_command_erro_section_@	& 
+							@_command_erro_subsection_@	& 
+							@_command_erro_param1_@	& 
+							@_command_erro_param2_@ \\
+						@@END_IF@@
+					@@END_TABLE@@
+				\end{xtabular}
+			\end{center}
+	
+
+	@@END_IF@@
+	@@END_TABLE@@
+
+
+
+@@END_TABLE@@
+
+
+
+
+\noindent\dotfill
+
+\end{document}

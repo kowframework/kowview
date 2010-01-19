@@ -16,8 +16,9 @@ with Ada.Text_IO;		use Ada.Text_IO;
 -------------------
 -- KOW Framework --
 -------------------
-with APQ;
 with APQ_Provider;
+with APQ_Provider.MySQL;
+pragma Elaborate( APQ_Provider.MySQL );
 
 
 with KOW_Config;

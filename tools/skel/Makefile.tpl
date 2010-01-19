@@ -19,6 +19,7 @@ extra_clean:
 
 
 run:
+	mkdir -p /tmp/aws-@_lower_project_name_@
 	@_upper_project_name_@_CONFIG_PATH=${PWD}/data ./bin/@_lower_project_name_@_server
 
 
