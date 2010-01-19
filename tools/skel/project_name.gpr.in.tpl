@@ -22,7 +22,7 @@ project @_project_name_@ is
 	Version := $version;
 	
 	
-	for Source_Dirs use ( "src", "application/**" );
+	for Source_Dirs use ( "src", "applications/**" );
 	
 	for Object_Dir use "obj";
 	
