@@ -204,12 +204,6 @@ package body KOW_View.Navigation is
 					);
 	end Process_Request;
 
-begin
-	KOW_View.Components_Registry.Register(
-		"navigation",
-		new KOW_View.Navigation.Component_Type,
-		true
-	);
 
 
 

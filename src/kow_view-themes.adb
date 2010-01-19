@@ -526,12 +526,4 @@ package body KOW_View.Themes is
 
 
 
-begin
-	KOW_View.Components_Registry.Register(
-		"themes",
-		new KOW_View.Themes.Component_Type,
-		true
-	);
-
-
 end KOW_View.Themes;
