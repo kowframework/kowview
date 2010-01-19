@@ -80,7 +80,6 @@ package body KOW_View.Security is
 			Config		: in KOW_Config.Config_File
 		) return Module_Instance_Interface'Class is
 		-- no matter what module we request, the Criteria_Module_Module will be always called
-		Module: Criteria_Module;
 
 		function Get_Resolved_Path( Key, Default : in String ) return Unbounded_String is
 			Name : String := KOW_Config.Value( Config, Key, Default );
@@ -600,12 +599,5 @@ package body KOW_View.Security is
 	end Authorization_Manager;
 
 
-
-begin
-	KOW_View.Components_Registry.Register(
-			Component_Name		=> "security",
-			Component		=> new Component_Type,
-			Require_Configuration	=> true
-		);
 
 end KOW_View.Security;
