@@ -1,0 +1,10 @@
+please, put here your default application data.
+
+the user for your application can then override the files using the:
+	.[PROJECT_ROOT]/data/[APPLICATION_NAME]
+folder and still have the original default files available.
+
+
+
+This also easy the updating process, as your data don't conflict
+and don't overwrite the user's data.
