@@ -54,28 +54,24 @@ package body KOW_View_Tools.Setup is
 		App_Config_Map	: KOW_Lib.UString_Ordered_Maps.Map := Get_Contents_Map( App_Config );
 
 
-		Components_Tag	: Templates_Parser.Tag;
-		Entities_Tag	: Templates_Parser.Tag;
+		Applications_Tag	: Templates_Parser.Tag;
 
 		procedure Iterator( C : in KOW_Lib.UString_Ordered_Maps.Cursor ) is
 			Complete_Key	: Unbounded_String := KOW_Lib.UString_Ordered_Maps.Key( C );
 			
+			Element_Values	: KOW_Lib.UString_Vectors.Vector := 
+						KOW_Lib.String_Util.Explode( Sep => '.', Str => Complete_Key );
+			
 			Key		: Unbounded_String := KOW_Lib.UString_Vectors.Last_Element(
-								KOW_Lib.String_Util.Explode( Sep => '.', Str => Complete_Key )
+								Element_Values
 							);
-			High		: Integer;
 			use Templates_Parser;
 		begin
-			Put_Line( To_String( Complete_Key ) );
-			if Key = "component" then
+			if Key = "load" then
 				if Value( App_Config, To_String( Complete_Key ) ) then
-					High := Length( Complete_Key ) - 11;
-					Components_Tag := Components_Tag & Complete_Key;
-				end if;
-			elsif Key = "entities" then
-				if Value( App_Config, To_String( Complete_Key ) ) then
-					High := Length( Complete_Key ) - 7;
-					Entities_Tag := Entities_Tag & Complete_key;
+					KOW_Lib.UString_Vectors.Delete_Last( Element_Values );
+					Complete_Key := KOW_Lib.String_Util.Implode( '.', Element_Values );
+					Applications_Tag := Applications_Tag & Complete_Key;
 				end if;
 			end if;
 		end Iterator;
@@ -89,8 +85,7 @@ package body KOW_View_Tools.Setup is
 				Iterator'Access
 			);
 
-		Templates_Parser.Insert( Parameters, Templates_Parser.Assoc( "entity_packages", Entities_Tag ) );
-		Templates_Parser.Insert( Parameters, Templates_Parser.Assoc( "component_packages", Components_Tag ) );
+		Templates_Parser.Insert( Parameters, Templates_Parser.Assoc( "applications", Applications_Tag ) );
 
 
 		declare

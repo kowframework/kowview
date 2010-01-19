@@ -13,6 +13,9 @@ package KOW_View_Tools is
 								Ada.Directories.Full_Name( "/etc/kvdriver/skel" )
 								);
 
+	App_Skel_Path	: constant Unbounded_String := To_Unbounded_String(
+								Ada.Directories.Full_Name( "/etc/kvdriver/skel-application" )
+								);
 
 
 

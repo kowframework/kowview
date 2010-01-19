@@ -69,6 +69,70 @@ package body KOW_View_Tools.NewApp is
 
 		Tpl_Parameters	: Templates_Parser.Translate_Set;
 
+
+		function Get_Application_Name return String is
+		begin
+			return Ada.Command_Line.Argument( 2 );
+		exception
+			when others =>
+				raise KOW_View_Tools.Commands.Usage_Error with "application name missing";
+		end Get_Application_Name;
+
+
+		Application_Name	: constant String := Get_Application_Name;
+		Lower_Application_Name	: constant String := Ada.Characters.Handling.To_Lower( Application_Name );
+		Application_Package	: constant String := KOW_Lib.String_Util.Str_Replace( From => '-', To => '.', Str => Application_Name );
+
+
+		Lower_Project_Name	: constant String := Ada.Characters.Handling.To_Lower( Project_Name );
+
+
+		function App_Destination_Path( Name : in String ) return String is
+			use KOW_Lib.String_Util;
+			First : Integer := Length( App_Skel_Path ) + Name'First;
+		
+			-- TMP1 and TMP2 variables are needed because of a bug in the
+			-- Str_Replace implementation.
+			-- The Str parameter must be indexed from 1 to 'Length....
+			Tmp1 : String := Name( First .. Name'Last );
+			Tmp2 : String( 1 .. Tmp1'Length ) := Tmp1;
+			Ret1 : String := To_String( 
+					KOW_Lib.String_Util.Str_Replace(
+							From	=> "project_name",
+							To	=> Lower_Project_Name,
+							Str	=> Tmp2
+						)
+					);
+
+			Ret  : String := To_String(
+					KOW_Lib.String_Util.Str_Replace(
+							From	=> "application_name",
+							To	=> Lower_Application_Name,
+							Str	=> Ret1
+						)
+					);
+			Last : Integer := Ret'Last;
+		begin
+	
+			if Ada.Characters.Handling.To_Lower( Ada.Directories.Extension( Name ) ) = "tpl" then
+				Last := Last - 4;
+			end if;
+	
+			if Ret( Ret'First ) = '/' then
+				return "applications/" & Lower_Application_Name & '/' & Ret( Ret'First + 1 .. Last );
+			else
+				return "applications/" & Lower_Application_Name & '/' & Ret( Ret'First .. Last );
+			end if;
+		end App_Destination_Path;
+	
+		function App_Destination_Path( Name : in Unbounded_String ) return String is
+		begin
+			return App_Destination_Path( To_String( Name ) );
+		end App_Destination_Path;
+	
+	
+
+
 		
 		procedure Process( Directory_Entry : in Directory_Entry_Type ) is
 			SName	: constant String := Full_Name( Directory_Entry );
@@ -100,7 +164,7 @@ package body KOW_View_Tools.NewApp is
 
 		procedure Directories_Iterator( C : in Cursor ) is
 		begin
-			Create_Path( Destination_Path( Element( C ) ) );
+			Create_Path( App_Destination_Path( Element( C ) ) );
 		end Directories_Iterator;
 
 
@@ -110,7 +174,7 @@ package body KOW_View_Tools.NewApp is
 		begin
 			Copy_File(
 					Source_Name	=> Name,
-					Target_Name	=> Destination_Path( Name )
+					Target_Name	=> App_Destination_Path( Name )
 				);
 		end Ordinary_Files_Iterator;
 
@@ -124,7 +188,7 @@ package body KOW_View_Tools.NewApp is
 
 			Destination	: File_Type;
 		begin
-			Create( Destination, Out_File, Destination_Path( Name ) );
+			Create( Destination, Out_File, App_Destination_Path( Name ) );
 			Put( Destination, Values );
 			Close( Destination );
 		end TPL_Files_Iterator;
@@ -137,12 +201,12 @@ package body KOW_View_Tools.NewApp is
 		end if;
 
 
-		if Exists( "kvdriver.cfg" ) then
-			raise KOW_View_Tools.Commands.USAGE_ERROR with "you should run this command from a folder where there is no active kvdriver project";
+		if not Exists( "kvdriver.cfg" ) then
+			raise KOW_View_Tools.Commands.USAGE_ERROR with "you should run this command from a folder where there is an active kvdriver project";
 		end if;
 
 
-		Append( To_Process, Skel_Path );
+		Append( To_Process, App_Skel_Path );
 
 		To_Process_C := First( To_Process );
 
@@ -156,7 +220,7 @@ package body KOW_View_Tools.NewApp is
 			Delete( To_Process, To_Process_C );
 			To_Process_C := First( To_Process );
 
-			if Current_Directory /= Skel_Path then
+			if Current_Directory /= App_Skel_Path then
 				Append( Directories, Current_Directory );
 			end if;
 		end loop;
@@ -169,10 +233,17 @@ package body KOW_View_Tools.NewApp is
 		Iterate( Ordinary_Files, Ordinary_Files_Iterator'Access );
 
 		-- process all the .in files into ordinary files using AWS' Templates Parser and as variables
-		-- 	project_name
-		Templates_Parser.Insert( Tpl_Parameters, Templates_Parser.Assoc( "project_name", Project_Name ) );
-		Templates_Parser.Insert( Tpl_Parameters, Templates_Parser.Assoc( "lower_project_name", Ada.Characters.Handling.To_Lower( Project_Name ) ) );
-		Templates_Parser.Insert( Tpl_Parameters, Templates_Parser.Assoc( "upper_project_name", Ada.Characters.Handling.To_Upper( Project_Name ) ) );
+		-- 	Application_Name
+		-- 	Application_Package
+		Templates_Parser.Insert( Tpl_Parameters, Templates_Parser.Assoc( "application_name", Application_Name ) );
+		Templates_Parser.Insert( Tpl_Parameters, Templates_Parser.Assoc( "lower_application_name", Ada.Characters.Handling.To_Lower( Application_Name ) ) );
+		Templates_Parser.Insert( Tpl_Parameters, Templates_Parser.Assoc( "upper_application_name", Ada.Characters.Handling.To_Upper( Application_Name ) ) );
+
+		Templates_Parser.Insert( Tpl_Parameters, Templates_Parser.Assoc( "application_package", Application_package ) );
+		Templates_Parser.Insert( Tpl_Parameters, Templates_Parser.Assoc( "lower_application_package", Ada.Characters.Handling.To_Lower( Application_Package ) ) );
+		Templates_Parser.Insert( Tpl_Parameters, Templates_Parser.Assoc( "upper_application_package", Ada.Characters.Handling.To_Upper( Application_Package ) ) );
+
+
 		Iterate( TPL_Files, TPL_Files_Iterator'Access );
 
 

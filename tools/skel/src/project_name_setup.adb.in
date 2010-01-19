@@ -41,14 +41,7 @@ with KOW_View.Themes;
 
 
 @@TABLE@@
-with @_entity_packages_@;
-pragma Elaborate_Body( @_entity_packages_@ );
-@@END_TABLE@@
-
-
-@@TABLE@@
-with @_component_packages_@;
-pragma Elaborate_Body( @_component_packages_@ );
+with @_applications_@.Load;
 @@END_TABLE@@
 
 
@@ -157,11 +150,7 @@ begin
 
 
 	@@TABLE@@
-	Register(
-		"security",
-		new @_component_packages_@.Component_Type,
-		true
-	);
+	@_applications_@.Load;
 	@@END_TABLE@@
 
 	
