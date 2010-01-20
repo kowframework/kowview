@@ -28,7 +28,7 @@ project kowview_tools is
 	Version := $version;
 	
 	
-	for Source_Dirs use ( "src" );
+	for Source_Dirs use ( "src/**" );
 	
 	for Object_Dir use "obj";
 	
