@@ -42,8 +42,15 @@ with KOW_View.Themes;
 
 
 @@TABLE@@
+with @_entities_@.Entities_Setup;
+@@END_TABLE@@
+
+
+
+@@TABLE@@
 with @_applications_@.Load;
 @@END_TABLE@@
+
 
 
 procedure @_project_name_@_Setup is
@@ -152,8 +159,13 @@ begin
 
 
 	@@TABLE@@
+	@_entities_@.Entities_Setup;
+	@@END_TABLE@@
+
+	@@TABLE@@
 	@_applications_@.Load;
 	@@END_TABLE@@
+
 
 	
 	KOW_View.Components_Registry.Setup_Components;
