@@ -18,6 +18,8 @@ package KOW_View_Tools is
 								);
 
 
+	Ent_Skel_Path	: constant String := Ada.Directories.Full_Name( "/etc/kvdriver/skel-entities" );
+
 
 
 	function Project_Name return String;
