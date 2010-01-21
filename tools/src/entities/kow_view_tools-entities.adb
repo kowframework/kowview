@@ -32,11 +32,18 @@ with Templates_Parser;
 package body KOW_View_Tools.Entities is
 
 
+
 	Sep	: constant Character := KOW_Lib.File_System.Separator;
+
+	function "+"(L,R : in String ) return String is
+	begin
+		return L & Sep & R;
+	end "+";
+
 
 	function Template_Path( Tpl : in String; Ext: in String ) return String is
 	begin
-		return Ent_Skel_Path & Sep & Tpl & '.' & Ext & ".tpl";
+		return Ent_Skel_Path & Tpl & '.' & Ext & ".tpl";
 	end Template_Path;
 
 
@@ -48,11 +55,6 @@ package body KOW_View_Tools.Entities is
 			) return String is
 		-- calculate the destination path for the files in the form:
 		-- 	./applications/APPLICATION/entities-src/application-entities-property_hlp
-		function "+"(L,R : in String ) return String is
-		begin
-			return L & Sep & R;
-		end "+";
-
 	begin
 		return "applications" + Application + "entities-src" + application & "-entities-" & property & "_hlp";
 	end Entity_File_Destination_Path;
@@ -94,6 +96,8 @@ package body KOW_View_Tools.Entities is
 
 				procedure doit( From, To : in String ) is
 					F : File_Type;
+
+					Cont : String := Templates_Parser.Parse( From, Parameters);
 				begin
 					if Ada.Directories.Exists( To ) then
 						Open( F, Out_File, To );
@@ -101,7 +105,8 @@ package body KOW_View_Tools.Entities is
 						Create( F, Out_File, To );
 					end if;
 
-					Put( F, Templates_Parser.Parse( From, Parameters) );
+					Put( F, Cont );
+
 					Close( F );
 				end doit;
 					
@@ -229,6 +234,34 @@ package body KOW_View_Tools.Entities is
 			Process_Entities( KOW_Config.Element( Cfg, "entities" ) );
 		end if;
 
+
+		declare
+			procedure  doit( Ext : in String ) is
+				use Ada.Text_IO;
+				Cont : String := Templates_Parser.Parse(
+							Template_Path(
+								"application-entity_setup",
+								Ext
+							)
+						);
+				F : File_Type;
+
+				Dest : String := "applications" + "entities-src" + to_string(application) & "-entities_setup." & Ext;
+			begin
+				if Ada.Directories.Exists( Dest ) then
+					Open( F, Out_File, Dest );
+				else
+					Create( F, Out_File, Dest );
+				end if;
+				Put( F, Cont );
+				Close( F );
+			end doit;
+		begin
+			doit( "ads" );
+			doit( "adb" );
+		end;
+				
+		
 
 		return true;
 	exception
