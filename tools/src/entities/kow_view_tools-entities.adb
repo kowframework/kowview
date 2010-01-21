@@ -9,6 +9,7 @@
 with Ada.Strings;
 with Ada.Strings.Fixed;
 with Ada.Strings.Unbounded;			use Ada.Strings.Unbounded;
+with Ada.Text_IO;
 
 
 
@@ -40,7 +41,23 @@ package body KOW_View_Tools.Entities is
 
 
 
-	function Process_Property( Entity : in String; Cfg : in KOW_Config.Config_File ) return String is
+	function Entity_File_Destination_Path(
+				Application	: in String;
+				Entity		: in String;
+				Property	: in String
+			) return String is
+		-- calculate the destination path for the files in the form:
+		-- 	./applications/APPLICATION/entities-src/application-entities-property_hlp
+		function "+"(L,R : in String ) return String is
+		begin
+			return L & Sep & R;
+		end "+";
+
+	begin
+		return "applications" + Application + "entities-src" + application & "-entities-" & property & "_hlp";
+	end Entity_File_Destination_Path;
+
+	function Process_Property( Application : in String; Entity : in String; Cfg : in KOW_Config.Config_File ) return String is
 		use Templates_Parser;
 		use KOW_Lib.UString_Ordered_Maps;
 
@@ -51,13 +68,67 @@ package body KOW_View_Tools.Entities is
 		begin
 			Insert( Parameters, Assoc( To_String( Key( C ) ), To_String( Element( C ) ) ) );
 		end Iterator;
+
+
+		Template : String := KOW_Config.Element( Cfg, "template" );
+
 	begin
 
 
 		Templates_Parser.Insert( Parameters, Assoc( "entity", Entity ) );
 
+		Iterate( Contents, Iterator'Access );
+
+
+
+		if not KOW_Config.Has_Element( Cfg, "getter" ) and then not KOW_Config.Has_Element( Cfg, "setter" ) then
+			declare
+				use Ada.Text_IO;
+				Property : String := KOW_Config.Element( Cfg, "property" );
+				F_Path : String := Entity_File_Destination_Path( Application, Entity, property);
+				T_Ads_Path : String := Template_Path( Template, "ads" );
+				T_Adb_Path : String := Template_Path( Template, "adb" );
+
+
+				Dest_Pkg : String := Application & ".Entities." & Property & "_hlp.";
+
+				procedure doit( From, To : in String ) is
+					F : File_Type;
+				begin
+					if Ada.Directories.Exists( To ) then
+						Open( F, Out_File, To );
+					else
+						Create( F, Out_File, To );
+					end if;
+
+					Put( F, Templates_Parser.Parse( From, Parameters) );
+					Close( F );
+				end doit;
+					
+			begin
+				Templates_Parser.Insert(
+						Parameters,
+						Assoc(
+								"getter",
+								Dest_Pkg & "getter"
+							)
+					);
+				Templates_Parser.Insert(
+						Parameters,
+						Assoc(
+								"setter",
+								Dest_Pkg & "setter"
+							)
+					);
+
+				doit( From => T_Ads_Path, To => F_Path & ".ads" );
+				doit( From => T_Adb_Path, To => F_Path & ".adb" );
+
+			end;
+		end if;
+
 		return Templates_Parser.Parse(
-				Template_Path( KOW_Config.Element( Cfg, "template" ) & ".reg", "adb" ), 
+				Template_Path( Template & ".reg", "adb" ), 
 				Parameters
 			);
 	end Process_Property;
@@ -120,7 +191,7 @@ package body KOW_View_Tools.Entities is
 
 			
 			for i in Properties'Range loop
-				Entity_Properties_Tag := Entity_Properties_Tag & Process_Property( Entity, Properties( i ) );
+				Entity_Properties_Tag := Entity_Properties_Tag & Process_Property( To_String( Application ), Entity, Properties( i ) );
 			end loop;
 				
 
