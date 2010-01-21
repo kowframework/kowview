@@ -23,6 +23,6 @@ package KOW_View_Tools.Entities is
 --	function Get_Implementation_Code( P : in Entity_Descriptor_Type ) return String;
 	
 	
-	function Process_Entities( Application : Unbounded_String ) return Boolean;
+	function Process_Entities( App : Unbounded_String ) return Boolean;
 
 end KOW_View_Tools.Entities;

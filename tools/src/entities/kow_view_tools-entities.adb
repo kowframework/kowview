@@ -6,6 +6,7 @@
 --------------
 -- Ada 2005 --
 --------------
+with Ada.Characters.Handling;
 with Ada.Strings;
 with Ada.Strings.Fixed;
 with Ada.Strings.Unbounded;			use Ada.Strings.Unbounded;
@@ -43,7 +44,7 @@ package body KOW_View_Tools.Entities is
 
 	function Template_Path( Tpl : in String; Ext: in String ) return String is
 	begin
-		return Ent_Skel_Path & Tpl & '.' & Ext & ".tpl";
+		return Ent_Skel_Path + Tpl & '.' & Ext & ".tpl";
 	end Template_Path;
 
 
@@ -143,16 +144,17 @@ package body KOW_View_Tools.Entities is
 
 
 
-	function Process_Entities( Application : Unbounded_String ) return Boolean is
+	function Process_Entities( App : Unbounded_String ) return Boolean is
+		
+
+		Application : String := Ada.Characters.Handling.To_Lower( To_String( App ) );
 		Cfg : KOW_Config.Config_File;
 
 
-		App_Str : String := To_String( Application );
-
-		App_Path : String := "applications" & Sep & App_Str & Sep;
+		App_Path : String := "applications" + Application & Sep;
 		
-		App_Cfg : String := App_Path & "application.cfg";
-		Ent_Cfg : String := App_Path & "entities.cfg";
+		App_Cfg : String := App_Path + "application";
+		Ent_Cfg : String := App_Path + "entities";
 
 
 		The_Parser : aliased KOW_Config.Text.Parser;
@@ -196,7 +198,7 @@ package body KOW_View_Tools.Entities is
 
 			
 			for i in Properties'Range loop
-				Entity_Properties_Tag := Entity_Properties_Tag & Process_Property( To_String( Application ), Entity, Properties( i ) );
+				Entity_Properties_Tag := Entity_Properties_Tag & Process_Property( Application, Entity, Properties( i ) );
 			end loop;
 				
 
@@ -246,7 +248,7 @@ package body KOW_View_Tools.Entities is
 						);
 				F : File_Type;
 
-				Dest : String := "applications" + "entities-src" + to_string(application) & "-entities_setup." & Ext;
+				Dest : String := "applications" + "entities-src" + application & "-entities_setup." & Ext;
 			begin
 				if Ada.Directories.Exists( Dest ) then
 					Open( F, Out_File, Dest );
@@ -264,9 +266,6 @@ package body KOW_View_Tools.Entities is
 		
 
 		return true;
-	exception
-		when KOW_Config.FILE_NOT_FOUND =>
-			return false;
 	end process_entities;
 
 end KOW_View_Tools.Entities;
