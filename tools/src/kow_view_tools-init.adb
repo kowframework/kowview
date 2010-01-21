@@ -78,7 +78,7 @@ package body KOW_View_Tools.Init is
 			if Filename = "." OR ELSE Filename = ".." then
 				return;
 			end if;
-			Ada.Text_IO.Put_Line( "Processing """ & SName & """" );
+			--Ada.Text_IO.Put_Line( "Processing """ & SName & """" );
 			case Kind( Directory_Entry ) is
 				when Directory =>
 					Append( To_Process, Name );

@@ -1,1 +1,1 @@
-procedure @_application_package_@.Entities_Setup;
+procedure @_application_@.Entities_Setup;

@@ -1,23 +1,30 @@
 
 
 
-with @_application_package_@.Entities;		use @_application_package_@.Entities;
+with @_application_@.Entities;		use @_application_@.Entities;
 
 
 
 with KOW_Ent;
+with KOW_Ent.Properties;
 
 
 
+-------------------------
+-- Getters and Setters --
+-------------------------
+@@TABLE@@
+with @_gs_packages_@;
+@@END_TABLE@@
 
-procedure @_application_package_@.Entities_Setup is
+procedure @_application_@.Entities_Setup is
 
 	@@TABLE@@
 		function The_@_entities_@_Factory return KOW_Ent.Entity_Type'Class is
-			E : @_application_package_@.Entities.@_entities_@;
+			E : @_application_@.Entities.@_entities_@;
 		begin
 			return E;
-		end My_Factory;
+		end The_@_entities_@_Factory;
 	@@END_TABLE@@
 begin
 
@@ -25,7 +32,7 @@ begin
 	@@TABLE@@
 
 		KOW_Ent.Entity_Registry.Register(
-				Entity_Tag	=> @_application_package_@.Entities.@_entities_@'Tag,
+				Entity_Tag	=> @_application_@.Entities.@_entities_@'Tag,
 				Table_Name	=> "@_table_names_@",
 				Id_Generator	=> @_id_generators_@,
 				Factory		=> The_@_entities_@_Factory'Access
@@ -40,4 +47,7 @@ begin
 	
 	@@END_TABLE@@
 
-end @_application_package_@.Entities_Setup;
+
+	null;
+
+end @_application_@.Entities_Setup;
