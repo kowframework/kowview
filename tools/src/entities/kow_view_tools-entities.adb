@@ -57,7 +57,7 @@ package body KOW_View_Tools.Entities is
 		-- calculate the destination path for the files in the form:
 		-- 	./applications/APPLICATION/entities-src/application-entities-property_hlp
 	begin
-		return "applications" + Application + "entities-src" + application & "-entities-" & property & "_hlp";
+		return "applications" + Application + "entities-src" + application & "-entities-" & entity & '_' & property & "_hlp";
 	end Entity_File_Destination_Path;
 
 	function Process_Property( Application : in String; Entity : in String; Cfg : in KOW_Config.Config_File ) return String is
@@ -78,6 +78,7 @@ package body KOW_View_Tools.Entities is
 	begin
 
 
+		Templates_Parser.Insert( Parameters, Assoc( "application", Application ) );
 		Templates_Parser.Insert( Parameters, Assoc( "entity", Entity ) );
 
 		Iterate( Contents, Iterator'Access );
@@ -93,7 +94,7 @@ package body KOW_View_Tools.Entities is
 				T_Adb_Path : String := Template_Path( Template, "adb" );
 
 
-				Dest_Pkg : String := Application & ".Entities." & Property & "_hlp.";
+				Dest_Pkg : String := Application & ".Entities." & Entity & "_" & Property & "_hlp.";
 
 				procedure doit( From, To : in String ) is
 					F : File_Type;
@@ -242,14 +243,15 @@ package body KOW_View_Tools.Entities is
 				use Ada.Text_IO;
 				Cont : String := Templates_Parser.Parse(
 							Template_Path(
-								"application-entity_setup",
+								"application_name-entities_setup",
 								Ext
 							)
 						);
 				F : File_Type;
 
-				Dest : String := "applications" + "entities-src" + application & "-entities_setup." & Ext;
+				Dest : String := "applications" + application + "entities-src" + application & "-entities_setup." & Ext;
 			begin
+				Put_Line( Dest );
 				if Ada.Directories.Exists( Dest ) then
 					Open( F, Out_File, Dest );
 				else
