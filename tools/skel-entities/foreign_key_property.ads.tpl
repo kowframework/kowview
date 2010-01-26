@@ -1,5 +1,5 @@
 
-with KOW_Ent;
+with KOW_Ent;			use KOW_Ent;
 with KOW_Ent.Properties;	use KOW_Ent.Properties;
 
 

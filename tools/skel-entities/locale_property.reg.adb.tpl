@@ -3,7 +3,7 @@
 			Property	=> KOW_Ent.Properties.New_Locale_Property(
 							Column_Name	=> "@_column_name_@",
 							Getter		=> @_getter_@'Access,
-							Setter		=> @_setter_@'Access,
+							Setter		=> @_setter_@'Access
 							@@IF@@ @_immutable_@ /= ""
 								,Immutable	=> @_immutable_@
 							@@END_IF@@
