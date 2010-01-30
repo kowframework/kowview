@@ -15,6 +15,7 @@ with KOW_Config;
 with KOW_Config.Text;
 with KOW_Config.Generic_Registry;
 with KOW_Lib.File_System;
+with KOW_Lib.String_Util;
 with KOW_Lib.UString_Vectors;
 with KOW_View.Components;		use KOW_View.Components;
 
@@ -258,9 +259,11 @@ package body KOW_View.Components_Registry is
 
 		use Ada.Directories;
 
+		MComponent_Name	: String		:= KOW_Lib.String_Util.Str_Replace( From => '.', To => '-', Str => Component_Name );
+
 		Sep		: constant Character	:= KOW_Lib.File_System.Separator;
-		Name		: String		:= "data" & Sep & "kowview" & Sep & Component_Name & Sep & Resource & "." & Extension;
-		Default_Name	: String		:= "applications" & Sep & Component_Name & Sep & "data" & Sep & Resource & "." & Extension;
+		Name		: String		:= "data" & Sep & "kowview" & Sep & MComponent_Name & Sep & Resource & "." & Extension;
+		Default_Name	: String		:= "applications" & Sep & MComponent_Name & Sep & "data" & Sep & Resource & "." & Extension;
 
 
 
