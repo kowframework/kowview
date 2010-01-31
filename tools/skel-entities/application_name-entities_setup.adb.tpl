@@ -8,6 +8,7 @@ with @_application_@.Entities;		use @_application_@.Entities;
 with KOW_Lib.Locales;
 
 with KOW_Ent;
+with KOW_Ent.Extra_Properties;
 with KOW_Ent.Properties;
 
 
