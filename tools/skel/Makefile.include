@@ -47,6 +47,9 @@ clean: gprclean extra_clean
 	@rm -f $(PROJECT_FILES)
 	@echo "All clean"
 
+distclean: clean
+	@rm -f applications/*/entities-src/*ad{s,b}
+
 docs:
 	@for docdir in $(DOCS_DIRS); do make -C $$docdir;done
 
