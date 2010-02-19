@@ -67,8 +67,10 @@ package body KOW_View_Tools.Entities is
 			) return String is
 		-- calculate the destination path for the files in the form:
 		-- 	./applications/APPLICATION/entities-src/application-entities-property_hlp
+
+		function l( str : in string ) return string renames Ada.Characters.Handling.To_Lower;
 	begin
-		return "applications" / Application / "entities-src" / application & "-entities-" & entity & '_' & property & "_hlp";
+		return "applications" / Application / "entities-src" / application & "-entities-" & l( entity ) & '_' & l( property ) & "_hlp";
 	end Entity_File_Destination_Path;
 
 	function Process_Property( Application : in String; Entity : in String; Cfg : in KOW_Config.Config_File ) return String is
