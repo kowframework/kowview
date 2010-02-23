@@ -151,7 +151,7 @@
 	</script>
 
 
-<form action="/store_entity" method="post" onSubmit="submit_form(this)">
+<form action="/store_entity" method="post" enctype="multipart/form-data" onSubmit="submit_form(this)">
 	<div id="@_entity_id_@" class="entity_label">Editar @_entity_label_@</div>
 	<input type="hidden" name="entity_tag" value="@_entity_tag_@"/>
 	<input type="hidden" name="entity_@_entity_tag_@__id" value="@_entity_id_@"/>
