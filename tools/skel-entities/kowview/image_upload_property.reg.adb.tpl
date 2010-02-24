@@ -14,6 +14,9 @@
 							@@IF@@ @_length_@ /=""
 								,Length		=> @_length_@
 							@@END_IF@@
+							@@IF@@ @_thumbnail_@ /=""
+								,Thumbnail	=> "@_thumbnail_@"
+							@@END_IF@@
 						)
 			@@IF@@ @_is_unique_@ /= ""
 				,Is_Unique => @_is_unique_@
