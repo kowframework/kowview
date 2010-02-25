@@ -207,6 +207,21 @@ div#left_menu div a{
 
 }
 
+div#left_menu div.menuItem2 {
+	font-size	: 9pt;
+	padding-left	: 2px;
+	border-left	: black medium solid;
+}
+
+
+
+div#left_menu div.menuItem3 {
+	font-size	: 8pt;
+	padding-left	: 2px;
+	border-left	: black thick solid;
+}
+
+
 div#left_menu div a:hover{
 	color		: black;
 	background-color: #ebe743;

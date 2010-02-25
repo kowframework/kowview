@@ -140,6 +140,7 @@ package body KOW_View.Navigation is
 	
 		Labels_Tag	: Templates_Parser.Tag;
 		Hrefs_Tag	: Templates_Parser.Tag;
+		Levels_Tag	: Templates_Parser.Tag;
 		Has_Access_Tag	: Templates_Parser.Tag;
 		My_Parameters	: Templates_Parser.Translate_Set := Parameters;
 
@@ -190,6 +191,7 @@ package body KOW_View.Navigation is
 		begin
 			Labels_Tag := Labels_Tag & To_String( Link.Label );
 			Hrefs_Tag := Hrefs_Tag & To_String( Link.Href );
+			Levels_Tag := Levels_Tag & Link.Level;
 			Has_Access_Tag := Has_Access_Tag & Has_Access( To_String( Link.Href ) );
 		end Iterator;
 	begin
@@ -198,6 +200,7 @@ package body KOW_View.Navigation is
 	
 		Templates_Parser.Insert( My_Parameters, Assoc( "menu_item_label", Labels_Tag ) );
 		Templates_Parser.Insert( My_Parameters, Assoc( "menu_item_href", Hrefs_Tag ) );
+		Templates_Parser.Insert( My_Parameters, Assoc( "menu_item_level", Levels_Tag ) );
 		Templates_Parser.Insert( My_Parameters, Assoc( "menu_has_access", Has_Access_Tag ) );
 
 		Response := Response & To_Unbounded_String(
