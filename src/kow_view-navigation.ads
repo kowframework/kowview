@@ -96,7 +96,8 @@ private
 
 
 	type Link_Descriptor_Type is record
-		Label, Href : Unbounded_String;
+		Label, Href	: Unbounded_String;
+		Level		: Natural;
 	end record;
 
 	package Link_Vectors is new Ada.Containers.Vectors(
