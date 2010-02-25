@@ -76,7 +76,7 @@ package body KOW_View.Navigation is
 		for i in Configs'First .. Configs'Last loop
 			Link.Label := KOW_Config.Element( Configs( i ), "label" );
 			Link.Href  := KOW_Config.Element( Configs( i ), "href"  );
-			Link.Level := Natural( KOW_Config.Value( Configs( i ), "level", 0 ) );
+			Link.Level := Positive( KOW_Config.Value( Configs( i ), "level", 1 ) );
 
 			Link_Vectors.Append( Module.Links, Link );
 		end loop;
