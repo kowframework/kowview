@@ -53,7 +53,14 @@ with @_applications_@.Load;
 
 
 
-procedure @_project_name_@_Setup is
+@@TABLE@@
+with @_application_tasks_@;
+@@END_TABLE@@
+
+
+
+
+procedure @_project_name_@_Setup(spawn_tasks : in boolean := false ) is
 	Manager: KOW_Sec.Authentication_Manager_Access := new KOW_Sec.Authentication.Entities.Authentication_Manager;
 
 	Provider	: APQ_Provider.Connection_Provider_Ptr := new APQ_Provider.Connection_Provider_Type;
@@ -166,6 +173,13 @@ begin
 	@_applications_@.Load;
 	@@END_TABLE@@
 
+
+	if Spawn_Tasks then
+		null;
+		@@TABLE@@
+		@_application_tasks_@;
+		@@END_TABLE@@
+	end if;
 
 	
 	KOW_View.Components_Registry.Setup_Components;

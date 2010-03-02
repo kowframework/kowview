@@ -57,6 +57,7 @@ package body KOW_View_Tools.Setup is
 
 
 		Applications_Tag	: Templates_Parser.Tag;
+		Spawn_Tasks_Tag		: Templates_Parser.Tag;
 		Entities_Tag		: Templates_Parser.Tag;
 
 		procedure Iterator( C : in KOW_Lib.UString_Ordered_Maps.Cursor ) is
@@ -81,6 +82,10 @@ package body KOW_View_Tools.Setup is
 						Entities_Tag := Entities_Tag & Complete_Key;
 					end if;
 				end if;
+			elsif Key = "spawn_tasks" then
+				if Value( App_Config, To_String( Complete_Key ) ) then
+					Spawn_Tasks_Tag := Spawn_Tasks_Tag & Complete_Key;
+				end if;
 			end if;
 		end Iterator;
 	begin
@@ -94,6 +99,7 @@ package body KOW_View_Tools.Setup is
 			);
 
 		Templates_Parser.Insert( Parameters, Templates_Parser.Assoc( "applications", Applications_Tag ) );
+		Templates_Parser.Insert( Parameters, Templates_Parser.Assoc( "application_tasks", Spawn_Tasks_Tag ) );
 		Templates_Parser.Insert( Parameters, Templates_Parser.Assoc( "entities", Entities_Tag ) );
 
 

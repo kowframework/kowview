@@ -43,7 +43,7 @@ begin
 	-------------------
 	-- Run the Setup --
 	-------------------
-	@_project_name_@_Setup;
+	@_project_name_@_Setup( true );
 	-- the setup process is where the entire KOW Framework is initialized. :)
 	
 
