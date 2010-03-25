@@ -81,10 +81,10 @@ package body KOW_View_Tools.Setup is
 					if KOW_View_Tools.Entities.Process_Entities( Complete_Key ) then
 						Entities_Tag := Entities_Tag & Complete_Key;
 					end if;
-				end if;
-			elsif Key = "spawn_tasks" then
-				if Value( App_Config, To_String( Complete_Key ) ) then
-					Spawn_Tasks_Tag := Spawn_Tasks_Tag & Complete_Key;
+
+					if KOW_View_Tools.Entities.Spawn_Tasks( Complete_Key ) then
+						Spawn_Tasks_Tag := Spawn_Tasks_Tag & Complete_Key;
+					end if;
 				end if;
 			end if;
 		end Iterator;

@@ -322,4 +322,32 @@ package body KOW_View_Tools.Entities is
 		when KOW_Config.File_Not_Found => return false;
 	end process_entities;
 
+
+	function Spawn_Tasks( App : in Unbounded_String ) return Boolean is
+		-- determine if we should spawn tasks in server mode
+		Application : String := Ada.Characters.Handling.To_Lower( To_String( App ) );
+		Cfg : KOW_Config.Config_File;
+
+
+		App_Path : String := "applications" / Application & Sep;
+		
+		App_Cfg : String := App_Path / "application";
+		Ent_Cfg : String := App_Path / "entities";
+
+
+		The_Parser : aliased KOW_Config.Text.Parser;
+	begin
+		Cfg := KOW_Config.New_Config_File(
+						N	=> App_Cfg,
+						P	=> The_Parser'Unchecked_Access
+				);
+
+		return KOW_Config.Value( Cfg, "spawn_tasks", False );
+		
+	exception
+		when others => return false;
+	end Spawn_Tasks;
+
+
+
 end KOW_View_Tools.Entities;

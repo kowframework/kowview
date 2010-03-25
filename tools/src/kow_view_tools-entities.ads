@@ -25,4 +25,9 @@ package KOW_View_Tools.Entities is
 	
 	function Process_Entities( App : Unbounded_String ) return Boolean;
 
+
+
+	function Spawn_Tasks( App : in Unbounded_String ) return Boolean;
+	-- determine if we should spawn tasks in server mode
+
 end KOW_View_Tools.Entities;
