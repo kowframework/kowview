@@ -115,7 +115,7 @@ package body KOW_View_Tools.Entities is
 				T_Adb_Path : String := Template_Path( Template, "adb" );
 
 
-				Dest_Pkg : String := Application & ".Entities." & Entity & "_" & Property & "_hlp.";
+				Dest_Pkg : String := KOW_Lib.String_Util.Str_Replace('-', '.', Application & ".Entities." & Entity & "_" & Property & "_hlp." );
 
 				procedure doit( From, To : in String ) is
 					F : File_Type;
