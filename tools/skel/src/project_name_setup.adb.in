@@ -54,7 +54,7 @@ with @_applications_@.Load;
 
 
 @@TABLE@@
-with @_application_tasks_@;
+with @_application_tasks_@.Spawn_Tasks;
 @@END_TABLE@@
 
 
@@ -177,7 +177,7 @@ begin
 	if Spawn_Tasks then
 		null;
 		@@TABLE@@
-		@_application_tasks_@;
+		@_application_tasks_@.Spawn_Tasks;
 		@@END_TABLE@@
 	end if;
 
