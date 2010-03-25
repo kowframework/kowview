@@ -7,6 +7,8 @@
 -- Ada 2005 --
 --------------
 with Ada.Characters.Handling;
+with Ada.Exceptions;
+with Ada.IO_Exceptions;
 with Ada.Strings;
 with Ada.Strings.Fixed;
 with Ada.Strings.Unbounded;			use Ada.Strings.Unbounded;
@@ -97,7 +99,7 @@ package body KOW_View_Tools.Entities is
 	begin
 
 
-		Templates_Parser.Insert( Parameters, Assoc( "application", Application ) );
+		Templates_Parser.Insert( Parameters, Assoc( KOW_Lib.String_Util.Str_Replace( '-', '.', "application" ), Application ) );
 		Templates_Parser.Insert( Parameters, Assoc( "entity", Entity ) );
 
 		Iterate( Contents, Iterator'Access );
@@ -118,7 +120,6 @@ package body KOW_View_Tools.Entities is
 				procedure doit( From, To : in String ) is
 					F : File_Type;
 
-					Cont : String := Templates_Parser.Parse( From, Parameters);
 				begin
 					if Ada.Directories.Exists( To ) then
 						Open( F, Out_File, To );
@@ -126,9 +127,25 @@ package body KOW_View_Tools.Entities is
 						Create( F, Out_File, To );
 					end if;
 
-					Put( F, Warning_Message & Cont );
+
+					declare
+						Cont : String := Templates_Parser.Parse( From, Parameters);
+					begin
+						Put( F, Warning_Message & Cont );
+					exception
+						when Ada.IO_Exceptions.Name_Error =>
+							Ada.Text_IO.Put_Line( From );
+							Ada.Text_IO.Put_Line( To );
+							raise Program_error with "Failed processing """& from & '/' & to & """ of " & Property;
+					end;
 
 					Close( F );
+				exception
+					when e : others =>
+							Ada.Text_IO.Put_Line( From );
+							Ada.Text_IO.Put_Line( To );
+							raise Program_error with "Failed processing """& from & '/' & to & """ of " & Property;
+							Ada.Exceptions.Reraise_Occurrence( e );
 				end doit;
 					
 			begin
@@ -157,6 +174,9 @@ package body KOW_View_Tools.Entities is
 				Template_Path( Template & ".reg", "adb" ), 
 				Parameters
 			);
+	exception
+		when Ada.IO_Exceptions.Name_Error =>
+			raise PROGRAM_ERROR with "failed processing property of template " & Template;
 	end Process_Property;
 
 
@@ -267,7 +287,7 @@ package body KOW_View_Tools.Entities is
 
 	begin
 
-		Templates_Parser.Insert( Parameters, Templates_Parser.Assoc( "application", application ) );
+		Templates_Parser.Insert( Parameters, Templates_Parser.Assoc( KOW_Lib.String_Util.Str_Replace( '-', '.', "application") , application ) );
 
 
 		Cfg := KOW_Config.New_Config_File(
