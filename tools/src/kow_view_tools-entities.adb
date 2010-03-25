@@ -99,7 +99,7 @@ package body KOW_View_Tools.Entities is
 	begin
 
 
-		Templates_Parser.Insert( Parameters, Assoc( KOW_Lib.String_Util.Str_Replace( '-', '.', "application" ), Application ) );
+		Templates_Parser.Insert( Parameters, Assoc( "application", KOW_Lib.String_Util.Str_Replace( '-', '.', Application ) ) );
 		Templates_Parser.Insert( Parameters, Assoc( "entity", Entity ) );
 
 		Iterate( Contents, Iterator'Access );
@@ -145,7 +145,6 @@ package body KOW_View_Tools.Entities is
 							Ada.Text_IO.Put_Line( From );
 							Ada.Text_IO.Put_Line( To );
 							raise Program_error with "Failed processing """& from & '/' & to & """ of " & Property;
-							Ada.Exceptions.Reraise_Occurrence( e );
 				end doit;
 					
 			begin
@@ -198,7 +197,11 @@ package body KOW_View_Tools.Entities is
 				return Implode ( '.', V );
 			end;
 		else
-			return application + "entities" + entity & '_' & kow_config.element( cfg, "property" ) & "_hlp";
+			return KOW_Lib.String_Util.Str_Replace(
+						From	=> '-',
+						To	=> '.',
+						Str	=> application + "entities" + entity & '_' & kow_config.element( cfg, "property" ) & "_hlp"
+					);
 		end if;
 	end Get_GS_Package;
 
@@ -287,7 +290,7 @@ package body KOW_View_Tools.Entities is
 
 	begin
 
-		Templates_Parser.Insert( Parameters, Templates_Parser.Assoc( KOW_Lib.String_Util.Str_Replace( '-', '.', "application") , application ) );
+		Templates_Parser.Insert( Parameters, Templates_Parser.Assoc( "application", KOW_Lib.String_Util.Str_Replace( '-', '.', Application ) ) );
 
 
 		Cfg := KOW_Config.New_Config_File(
