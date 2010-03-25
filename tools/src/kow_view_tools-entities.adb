@@ -32,6 +32,12 @@ with Templates_Parser;
 
 package body KOW_View_Tools.Entities is
 
+
+	function To_App( App : in Unbounded_String ) return String is
+	begin
+		return KOW_Lib.String_Util.Str_Replace( '.', '-', Ada.Characters.Handling.To_Lower( To_String( App ) ) );
+	end To_App;
+
 	NL : constant Character := Character'Val(10);
 
 	Warning_Message : constant String :=
@@ -183,7 +189,7 @@ package body KOW_View_Tools.Entities is
 	function Process_Entities( App : Unbounded_String ) return Boolean is
 		
 
-		Application : String := Ada.Characters.Handling.To_Lower( To_String( App ) );
+		Application : String := To_App( App );
 		Cfg : KOW_Config.Config_File;
 
 
@@ -325,7 +331,7 @@ package body KOW_View_Tools.Entities is
 
 	function Spawn_Tasks( App : in Unbounded_String ) return Boolean is
 		-- determine if we should spawn tasks in server mode
-		Application : String := Ada.Characters.Handling.To_Lower( To_String( App ) );
+		Application : String := To_App( App );
 		Cfg : KOW_Config.Config_File;
 
 
