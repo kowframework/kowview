@@ -17,6 +17,9 @@
 							@@IF@@ @_thumbnail_@ /=""
 								,Thumbnail	=> "@_thumbnail_@"
 							@@END_IF@@
+							@@IF@@ @_convert_@ /= ""
+								,Convert	=> "@_convert_@"
+							@@END_IF@@
 						)
 			@@IF@@ @_is_unique_@ /= ""
 				,Is_Unique => @_is_unique_@

@@ -13,6 +13,5 @@ include Makefile.include
 pre_libs:
 
 pos_libs:
-	make -C tools
 
 extra_clean:
