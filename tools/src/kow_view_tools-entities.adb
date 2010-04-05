@@ -216,7 +216,7 @@ package body KOW_View_Tools.Entities is
 		Cfg : KOW_Config.Config_File;
 
 
-		App_Path : String := "applications" / Application & Sep;
+		App_Path : String := "applications" / Application;
 		
 		App_Cfg : String := App_Path / "application";
 		Ent_Cfg : String := App_Path / "entities";
@@ -358,7 +358,7 @@ package body KOW_View_Tools.Entities is
 		Cfg : KOW_Config.Config_File;
 
 
-		App_Path : String := "applications" / Application & Sep;
+		App_Path : String := "applications" / Application;
 		
 		App_Cfg : String := App_Path / "application";
 		Ent_Cfg : String := App_Path / "entities";
