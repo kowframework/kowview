@@ -45,6 +45,13 @@ package KOW_View.Components is
 	end record;
 
 	type Component_Access is not null access all Component_Interface'Class;
+	-- whenever possible use Component_Access as your pointer type
+
+	type Component_Ptr is access all Component_Interface'Class;
+	-- the component_ptr type was created so we could easily implement the
+	-- 	. service.component
+	-- 	. module.component
+	-- variables
 
 
 	procedure Initialize(
@@ -72,7 +79,7 @@ package KOW_View.Components is
 		ID_Count	: Natural := 0;
 		-- count all the ids that have been generated for this module
 
-		Component	: Component_Access;
+		Component	: Component_Ptr;
 	end record;
 
 	-- a module is something that can be accessed anywhere inside the system.
@@ -162,7 +169,7 @@ package KOW_View.Components is
 		-- the service can be mapped to a base URI
 		--      . when mapped to /do, /do/something will call it
 		
-		Component	: Component_Access;
+		Component	: Component_Ptr;
 	end record;
 	type Service_Instance_Access is not null access all Service_Instance_Interface'Class;
 
