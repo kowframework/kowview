@@ -71,6 +71,8 @@ package KOW_View.Components is
 
 		ID_Count	: Natural := 0;
 		-- count all the ids that have been generated for this module
+
+		Component	: Component_Access;
 	end record;
 
 	-- a module is something that can be accessed anywhere inside the system.
@@ -155,11 +157,13 @@ package KOW_View.Components is
 
 
 
-	type Service_Instance_Interface is interface;
-	-- a service usually represents a module to the external world.
-	-- the service can be mapped to a base URI
-	--      . when mapped to /do, /do/something will call it
-
+	type Service_Instance_Interface is abstract tagged record
+		-- a service usually represents a module to the external world.
+		-- the service can be mapped to a base URI
+		--      . when mapped to /do, /do/something will call it
+		
+		Component	: Component_Access;
+	end record;
 	type Service_Instance_Access is not null access all Service_Instance_Interface'Class;
 
 

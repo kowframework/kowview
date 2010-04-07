@@ -140,6 +140,7 @@ package body KOW_View.Components_Registry is
 		Module		: Module_Instance_Interface'Class := Create_Instance( Component.all, To_String( Module_Name ), Config );
 	begin
 		Module.Module_ID := Module_ID;
+		Module.Component := Component;
 
 		return Module;
 	end Load_Module;
@@ -156,6 +157,7 @@ package body KOW_View.Components_Registry is
 		Module		: Module_Instance_interface'Class := Create_Instance( Component.all, Module_Name, Config  );
 	begin
 		Module.Module_ID := Module_ID;
+		Module.Component := Component;
 
 		return Module;
 	end Load_Module;
@@ -189,12 +191,16 @@ package body KOW_View.Components_Registry is
 			Service_Mapping	: in String
 		) return Service_Instance_Interface'Class is
 		-- load a service by it's component name and it's name
+
+		COmponent : Component_Access := Load( Component_Name );
+		Service : Service_INstance_Interface'Class := Create_Instance(
+								Component.all,
+								Service_Name,
+								Service_Mapping
+							);
 	begin
-		return Create_Instance(
-				Load( Component_Name ).all,
-				Service_Name,
-				Service_Mapping
-			);
+		Service.Component := Component;
+		return Service;
 	end Load_Service;
 
 	--------------------------------
