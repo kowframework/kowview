@@ -134,17 +134,14 @@ package body KOW_View_Tools.Entities is
 						Put( F, Warning_Message & Cont );
 					exception
 						when Ada.IO_Exceptions.Name_Error =>
-							Ada.Text_IO.Put_Line( From );
-							Ada.Text_IO.Put_Line( To );
-							raise Program_error with "Failed processing """& from & '/' & to & """ of " & Property;
+							raise Program_error with "Failed processing """& from & " => " & to & """";
 					end;
 
 					Close( F );
 				exception
 					when e : others =>
-							Ada.Text_IO.Put_Line( From );
-							Ada.Text_IO.Put_Line( To );
-							raise Program_error with "Failed processing """& from & '/' & to & """ of " & Property;
+						Ada.Text_IO.Put_line( Ada.Exceptions.Exception_Information( E ) );
+						raise Program_error with "Failed processing """& from & " => " & to & """";
 				end doit;
 					
 			begin
