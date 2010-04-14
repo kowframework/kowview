@@ -303,6 +303,14 @@ package body KOW_View.Security is
 					)
 				);
 
+			Templates_Parser.Insert(
+					My_Parameters,
+					Templates_Parser.Assoc(
+						"user_full_name",
+						KOW_Sec.Full_Name( User_Object.All )
+					)
+				);
+
 
 			Templates_Parser.Insert(
 					My_Parameters,
