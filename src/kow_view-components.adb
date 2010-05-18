@@ -1,17 +1,58 @@
 
 
+
+
 --------------
 -- Ada 2005 --
 --------------
+with Ada.Directories;
 with Ada.Strings;
 with Ada.Strings.Fixed;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
 
+-------------------
+-- KOW Framework --
+-------------------
+with KOW_View.Components_Registry;
 
 
 
 package body KOW_View.Components is
+
+	function Locate_Resource(
+			Component	: in Component_Interface;
+			Resource	: in String;
+			Extension	: in String := "";
+			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
+		) return String is
+	begin
+		return KOW_View.Components_Registry.Locate_Resource(
+					Component_Name	=> To_String( Component.Component_Name ),
+					Resource	=> Resource,
+					Extension	=> Extension,
+					Kind		=> Kind
+				);
+
+	end Locate_Resource;
+
+
+	function Locate_Resource(
+			Module		: in Module_Instance_Interface;
+			Resource	: in String;
+			Extension	: in String := "";
+			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
+		) return String is
+	begin
+		return Locate_Resource(
+					Component	=> Module.Component.all,
+					Resource	=> Resource,
+					Extension	=> Extension,
+					Kind		=> Kind
+				);
+	end Locate_Resource;
+
+
 
 	procedure Generate_HTML_ID(
 				Module		: in out Module_Instance_Interface;
@@ -32,4 +73,24 @@ package body KOW_View.Components is
 		The_ID := To_Unbounded_String( "module_" & T( Natural( Module.Module_ID ) ) & "_id_" & T( Module.ID_Count ) );
 				
 	end Generate_HTML_ID;
+
+
+
+
+	function Locate_Resource(
+			Service		: in Service_Instance_Interface;
+			Resource	: in String;
+			Extension	: in String := "";
+			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
+		) return String is
+	begin
+		return Locate_Resource(
+					Component	=> Service.Component.all,
+					Resource	=> Resource,
+					Extension	=> Extension,
+					Kind		=> Kind
+				);
+	end Locate_Resource;
+
+
 end KOW_View.Components;

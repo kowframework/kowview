@@ -96,7 +96,6 @@ package body KOW_View.Navigation is
 			Config		: in KOW_Config.Config_File
 		) return Module_Instance_Interface'Class is
 		-- no matter what module we request, the Menu_Module_Type_Module will be always called
-		Module: Menu_Module_Type;
 	begin
 		return Create_Menu_Module_Instance( Component, Config );
 	end Create_Instance;

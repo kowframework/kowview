@@ -3,6 +3,7 @@
 ---------
 -- Ada --
 ---------
+with Ada.Directories;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
 
@@ -41,7 +42,12 @@ package KOW_View.Components is
 	type Component_Interface is abstract tagged record
 		-- it encapsulates a set of functionalities provided by means of modules and services
 		-- there should be only one instance of this type each time.
-		Require_Configuration : Boolean;
+		Require_Configuration	: Boolean;
+
+
+		Component_Name		: Unbounded_String;
+		-- this one is set by the register method.
+		-- the name of the component...
 	end record;
 
 	type Component_Access is not null access all Component_Interface'Class;
@@ -53,6 +59,12 @@ package KOW_View.Components is
 	-- 	. module.component
 	-- variables
 
+	function Locate_Resource(
+			Component	: in Component_Interface;
+			Resource	: in String;
+			Extension	: in String := "";
+			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
+		) return String;
 
 	procedure Initialize(
 			Component	: in out Component_Interface;
@@ -150,6 +162,16 @@ package KOW_View.Components is
 	-- Called when the process has been finalized
 
 
+	-- Helper Module Methods that can be overriden if needed
+	
+	function Locate_Resource(
+			Module		: in Module_Instance_Interface;
+			Resource	: in String;
+			Extension	: in String := "";
+			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
+		) return String;
+
+
 
 	procedure Generate_HTML_ID(
 				Module		: in out Module_Instance_Interface;
@@ -199,6 +221,15 @@ package KOW_View.Components is
 	-- process a request to a service
 	-- the entire request is handled by the service
 	-- sometimes is useful for a service only to be created and released - such as in a counter service
+
+
+
+	function Locate_Resource(
+			Service		: in Service_Instance_Interface;
+			Resource	: in String;
+			Extension	: in String := "";
+			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
+		) return String;
 
 
 end KOW_View.Components;

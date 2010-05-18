@@ -53,6 +53,7 @@ package body KOW_View.Components_Registry is
 		end if;
 
 		Component.all.Require_Configuration := Require_Configuration;
+		Component.all.Component_Name := To_Unbounded_String( Component_Name );
 
 		Include( The_Registry, CN, Component );
 		
@@ -69,6 +70,9 @@ package body KOW_View.Components_Registry is
 		when KOW_Config.File_Not_Found =>
 			if Component.Require_Configuration then
 				raise COMPONENT_CONFIGURATION_ERROR with "Missing config for " & Component_Name;
+			else
+				-- else we run initialize with an empty config file..
+				Initialize( Component, Component_Name, Config );
 			end if;
 
 		-- Include( The_Registry, CN, Component );
