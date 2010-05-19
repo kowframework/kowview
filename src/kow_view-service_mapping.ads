@@ -2,13 +2,6 @@
 
 
 
----------
--- AWS --
----------
-with AWS;
-with AWS.Response;
-with AWS.Status;
-
 
 
 --------------
@@ -17,6 +10,21 @@ with AWS.Status;
 with Ada.Containers.Ordered_Maps;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
+
+-------------------
+-- KOW Framework --
+-------------------
+with KOW_Config;
+
+
+---------
+-- AWS --
+---------
+with AWS;
+with AWS.Response;
+with AWS.Status;
+
+
 package KOW_View.Service_Mapping is
 
 
@@ -24,6 +32,7 @@ package KOW_View.Service_Mapping is
 	type Service_Map_Type is record
 		Component_Name	: Unbounded_String;
 		Service_Name	: Unbounded_String;
+		Config		: KOW_Config.Config_File;
 	end record;
 
 

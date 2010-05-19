@@ -211,6 +211,15 @@ package KOW_View.Components is
 	-- The service configuration should be handled by the Component Initialization
 
 
+	procedure Setup_Service(
+			Service		: in out Service_Instance_Interface;
+			Config		: in     KOW_Config.Config_File
+		) is null;
+	-- for those services that can be configured, this is where you implement the configuration calling
+	-- this is usefull if you have two diferent instances of the same service, each one with
+	-- different setup...
+	--
+	-- this is new on kowview 2.0
 
 
 	procedure Process_Request(

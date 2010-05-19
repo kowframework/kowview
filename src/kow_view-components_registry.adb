@@ -197,7 +197,7 @@ package body KOW_View.Components_Registry is
 		-- load a service by it's component name and it's name
 
 		Component : Component_Access := Load( Component_Name );
-		Service : Service_INstance_Interface'Class := Create_Instance(
+		Service : Service_Instance_Interface'Class := Create_Instance(
 								Component.all,
 								Service_Name,
 								Service_Mapping

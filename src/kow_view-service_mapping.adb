@@ -46,6 +46,7 @@ package body KOW_View.Service_Mapping is
 			begin
 				Map.Component_Name := Element( Cfgs( i ), "component" );
 				Map.Service_Name   := Element( Cfgs( i ), "service" );
+				Map.Config         := Cfgs( i );
 
 				Service_Maps.Include(
 					Mapping,
@@ -73,6 +74,7 @@ package body KOW_View.Service_Mapping is
 				Service_Mapping	=> Mapping_Str
 			);
 	begin
+		KOW_View.Components.Setup_Service( Service, Service_Map.Config );
 		Process_Request(
 			Service		=> Service,
 			Request		=> Request,
