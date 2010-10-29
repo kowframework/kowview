@@ -12,9 +12,8 @@ with Ada.Text_IO;			use Ada.Text_IO;
 -- KOW Framework --
 -------------------
 with KOW_Config;			use KOW_Config;
-with KOW_Config.Text;
 with KOW_Lib.String_Util;
-with KOW_Lib.UString_Ordered_Maps;
+with KOW_Lib.UString_Hashed_Maps;
 with KOW_Lib.UString_Vectors;
 
 with KOW_View_Tools.Entities;
@@ -50,18 +49,17 @@ package body KOW_View_Tools.Setup is
 
 		App_Config	: Config_File := New_Config_File(
 							N			=> "applications.cfg",
-							P			=> new KOW_Config.Text.Parser,
 							Is_Complete_Path	=> True
 						);
-		App_Config_Map	: KOW_Lib.UString_Ordered_Maps.Map := Get_Contents_Map( App_Config );
+		App_Config_Map	: KOW_Lib.UString_Hashed_Maps.Map := Get_Contents_Map( App_Config );
 
 
 		Applications_Tag	: Templates_Parser.Tag;
 		Spawn_Tasks_Tag		: Templates_Parser.Tag;
 		Entities_Tag		: Templates_Parser.Tag;
 
-		procedure Iterator( C : in KOW_Lib.UString_Ordered_Maps.Cursor ) is
-			Complete_Key	: Unbounded_String := KOW_Lib.UString_Ordered_Maps.Key( C );
+		procedure Iterator( C : in KOW_Lib.UString_Hashed_Maps.Cursor ) is
+			Complete_Key	: Unbounded_String := KOW_Lib.UString_Hashed_Maps.Key( C );
 			
 			Element_Values	: KOW_Lib.UString_Vectors.Vector := 
 						KOW_Lib.String_Util.Explode( Sep => '.', Str => Complete_Key );
@@ -93,7 +91,7 @@ package body KOW_View_Tools.Setup is
 		Templates_Parser.Insert( Parameters, Templates_Parser.Assoc( "lower_project_name", LP_Name ) );
 		Templates_Parser.Insert( Parameters, Templates_Parser.Assoc( "upper_project_name", Ada.Characters.Handling.To_Upper( P_Name ) ) );
 
-		KOW_Lib.UString_Ordered_Maps.Iterate(
+		KOW_Lib.UString_Hashed_Maps.Iterate(
 				App_Config_Map,
 				Iterator'Access
 			);

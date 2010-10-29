@@ -20,10 +20,9 @@ with Ada.Text_IO;
 -- KOW Framework --
 -------------------
 with KOW_Config;
-with KOW_Config.Text;
 with KOW_Lib.File_System;
 with KOW_Lib.String_Util;
-with KOW_Lib.UString_Ordered_Maps;
+with KOW_Lib.UString_Hashed_Maps;
 with KOW_Lib.UString_Vectors;
 
 
@@ -83,7 +82,7 @@ package body KOW_View_Tools.Entities is
 
 	function Process_Property( Application : in String; Entity : in String; Cfg : in KOW_Config.Config_File ) return String is
 		use Templates_Parser;
-		use KOW_Lib.UString_Ordered_Maps;
+		use KOW_Lib.UString_Hashed_Maps;
 
 		Parameters	: Templates_Parser.Translate_Set;
 		Contents	: Map := KOW_Config.Get_Contents_Map( Cfg );
@@ -219,10 +218,6 @@ package body KOW_View_Tools.Entities is
 		Ent_Cfg : String := App_Path / "entities";
 
 
-		The_Parser : aliased KOW_Config.Text.Parser;
-
-
-
 
 		-- Templates Parser Stuff --
 
@@ -290,16 +285,10 @@ package body KOW_View_Tools.Entities is
 		Templates_Parser.Insert( Parameters, Templates_Parser.Assoc( "application", KOW_Lib.String_Util.Str_Replace( '-', '.', Application ) ) );
 
 
-		Cfg := KOW_Config.New_Config_File(
-						N	=> App_Cfg,
-						P	=> The_Parser'Unchecked_Access
-				);
+		Cfg := KOW_Config.New_Config_File( App_Cfg );
 
 		if KOW_Config.Value( Cfg, "process_entities", False ) then
-			Cfg := KOW_Config.New_Config_File(
-						N	=> Ent_Cfg,
-						P	=> The_Parser'Unchecked_Access
-				);
+			Cfg := KOW_Config.New_Config_File( Ent_Cfg );
 
 
 			Process_Entities( KOW_Config.Element( Cfg, "entities" ) );
@@ -361,12 +350,8 @@ package body KOW_View_Tools.Entities is
 		Ent_Cfg : String := App_Path / "entities";
 
 
-		The_Parser : aliased KOW_Config.Text.Parser;
 	begin
-		Cfg := KOW_Config.New_Config_File(
-						N	=> App_Cfg,
-						P	=> The_Parser'Unchecked_Access
-				);
+		Cfg := KOW_Config.New_Config_File( App_Cfg );
 
 		return KOW_Config.Value( Cfg, "spawn_tasks", False );
 		

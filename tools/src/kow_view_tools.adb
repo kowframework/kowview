@@ -14,7 +14,6 @@ with Ada.Strings.Unbounded;	use Ada.Strings.Unbounded;
 -- KOW Framework --
 -------------------
 with KOW_Config;
-with KOW_Config.Text;
 with KOW_Lib.String_Util;
 
 
@@ -29,11 +28,9 @@ package body KOW_View_Tools is
 		if Ada.Directories.Exists( "kvdriver.cfg" ) then
 			declare
 				use KOW_Config;
-				use KOW_Config.Text;
 				Cfg : Config_File :=
 					New_Config_File(
 						N			=> "kvdriver.cfg",
-						P			=> new Parser,	-- FIXME :: memory leak
 						Is_Complete_Path	=> True
 					);
 			begin
