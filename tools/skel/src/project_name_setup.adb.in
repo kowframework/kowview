@@ -22,7 +22,6 @@ pragma Elaborate( APQ_Provider.MySQL );
 
 
 with KOW_Config;
-with KOW_Config.Text;
 with KOW_Ent;
 with KOW_Lib.Log;
 with KOW_Sec;
@@ -111,10 +110,7 @@ begin
 		end Set_File_Output;
 					
 	begin
-		Log_Config := New_Config_File(
-					N	=> "kow_lib-log",
-					P	=> new KOW_Config.Text.Parser
-				);
+		Log_Config := New_Config_File( "kow_lib-log" );
 
 --		KOW_Lib.Log.Default_Level := KOW_Lib.Log.Log_Level'Value(
 --					"level_" & Value( Log_Config, "log_level", "warning" )
@@ -137,12 +133,7 @@ begin
 	-- APQ and KOW_Ent Setup --
 	--------------------------
 
-	Provider.Setup(
-			KOW_Config.New_Config_File(
-					"kow_ent",
-					new KOW_Config.Text.Parser
-				)
-			);
+	Provider.Setup( KOW_Config.New_Config_File( "kow_ent" ) );
 	
 	KOW_Ent.Set_Connection_Provider( Provider );
 
