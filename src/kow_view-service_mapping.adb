@@ -7,7 +7,6 @@
 ---------------
 
 with KOW_Config;
-with KOW_Config.Text;
 with KOW_View.Components;
 with KOW_View.Components_Registry;
 
@@ -31,8 +30,7 @@ package body KOW_View.Service_Mapping is
 		use KOW_Config;
 
 		Cfg: Config_File := New_Config_File(
-						"kow_view_mappings",
-						new KOW_Config.Text.Parser
+						"kow_view_mappings"
 					);
 		Cfgs : Config_File_Array := Elements_Array( Cfg, "map" );
 	begin

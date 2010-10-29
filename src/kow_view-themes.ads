@@ -15,7 +15,6 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
 with KOW_Config;
 with KOW_Config.Generic_Registry;
-with KOW_Config.Text;
 with KOW_Lib.File_System;		use KOW_Lib.File_System;
 with KOW_Lib.UString_Vectors;
 with KOW_View.Components;		use KOW_View.Components;
@@ -267,16 +266,14 @@ package KOW_View.Themes is
 
 	package Themes_Registry is new KOW_Config.Generic_Registry(
 				Element_Type	=> Theme_Descriptor_Type,
-				Relative_Path	=> "kowview" & Separator & "themes" & Separator & "themes",
-				Parser		=> new KOW_Config.Text.Parser
+				Relative_Path	=> "kowview" & Separator & "themes" & Separator & "themes"
 			);
 	-- Store all the available theme's descriptor.
 
 
 	package Templates_Registry is new KOW_Config.Generic_Registry(
 				Element_Type	=> Template_Descriptor_Type,
-				Relative_Path	=> "kowview" & Separator & "themes" & Separator & "templates",
-				Parser		=> new KOW_Config.Text.Parser
+				Relative_Path	=> "kowview" & Separator & "themes" & Separator & "templates"
 			);
 	-- Store all required templates.
 

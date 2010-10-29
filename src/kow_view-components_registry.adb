@@ -12,7 +12,6 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 ---------------
 
 with KOW_Config;
-with KOW_Config.Text;
 with KOW_Config.Generic_Registry;
 with KOW_Lib.File_System;
 with KOW_Lib.String_Util;
@@ -23,8 +22,6 @@ with KOW_View.Components;		use KOW_View.Components;
 
 package body KOW_View.Components_Registry is
 
-
-	Parser: KOW_Config.Parser_Access := new KOW_Config.Text.Parser;
 
 	--------------------------
 	-- Component Management --
@@ -321,8 +318,7 @@ package body KOW_View.Components_Registry is
 		-- load the main configuration for this component
 	begin
 		return KOW_Config.New_Config_File(
-				N => "kowview" & KOW_Lib.File_System.Separator & Component_Name,
-				P => new KOW_Config.Text.Parser -- todo: change this to a more sane approach
+				N => "kowview" & KOW_Lib.File_System.Separator & Component_Name
 			);
 	end Load_Main_Configuration;
 
@@ -335,8 +331,7 @@ package body KOW_View.Components_Registry is
 		-- load a configuration file from this component's relative path
 	begin
 		return KOW_Config.New_Config_File(
-				N => "kowview" & KOW_Lib.File_System.Separator & Component_Name & KOW_Lib.File_System.Separator & Configuration_Name,
-				P => new KOW_Config.Text.Parser -- todo: change this to a more sane approach
+				N => "kowview" & KOW_Lib.File_System.Separator & Component_Name & KOW_Lib.File_System.Separator & Configuration_Name
 			);
 	end Load_Configuration;
 
