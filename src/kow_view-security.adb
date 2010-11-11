@@ -158,6 +158,15 @@ package body KOW_View.Security is
 
 				return Service;
 			end;
+		elsif Service_Name = "switch_user" then
+			declare
+				Service: Switch_User_Service;
+			begin
+				Service.Default_Redirect := Component.Default_Redirect;
+				Service.Criteria := To_Unbounded_String( "GROUPS={admin}" ); -- TODO :: make it configurable
+
+				return Service;
+			end;
 		else
 			raise SERVICE_ERROR with "Service """ & Service_Name & """ doesn't exist";
 		end if;
@@ -434,6 +443,83 @@ package body KOW_View.Security is
 		AWS.Session.Delete( Session_ID );
 		-- simply clear the current session and continue..
 
+		Response := AWS.Response.URL( Redirect );
+
+	end Process_Request;
+
+
+
+	procedure Process_Request(
+			Service		: in out Switch_User_Service;
+			Request		: in     AWS.Status.Data;
+			Response	: in out AWS.Response.Data
+		) is
+		use KOW_Sec;
+		use KOW_Sec.Authorization_Criterias;
+
+		P : constant AWS.Parameters.List := AWS.Status.Parameters (Request);
+
+		Username	: String := AWS.Parameters.Get( P, "username" );
+
+
+		Session_ID  : AWS.Session.ID := AWS.Status.Session (Request);
+		The_User : KOW_Sec.User_Access := User_Data.Get( Session_ID, User_Key );
+
+
+		function Redirect return String is
+			Pragma Inline( Redirect );
+
+			R: String := AWS.Parameters.Get( P, "redirect" );
+		begin
+			if R = "" then
+				return To_String( Service.Default_Redirect );
+			end if;
+
+			return R;
+		end Redirect;
+	begin
+
+		declare
+			use KOW_Sec;
+			use KOW_Sec.Authorization_Criterias;
+			Criteria_Object: Criteria'Class := Create_Expressions_Criteria(
+						Criteria_Descriptor(
+							Service.Criteria
+						)
+					);
+		begin
+			if The_User = NULL then
+				raise ACCESS_DENIED with "you need to be logged in to do this";
+			end if;
+			
+			Require( The_user.all, Criteria_Object );
+		end;
+
+
+		-- if we got here then we can go on
+
+
+		if Username = "" then
+			raise CONSTRAINT_ERROR with "Username required for switch user service";
+		end if;
+
+
+		-- TODO :: see if it is possible to reset the session
+		-- AWS.Session.Delete( Session_ID );
+		-- simply clear the current session and continue..
+
+		
+		declare
+			User_Object: KOW_Sec.User'Class := KOW_Sec.Get_User( Username );
+		begin
+			Session_ID := AWS.Status.Session (Request);
+			-- new session now.. :D
+			User_Data.Set( Session_ID, User_Key, KOW_Sec.To_Access( User_Object ) );
+		end;
+
+
+
+		
 		Response := AWS.Response.URL( Redirect );
 
 	end Process_Request;

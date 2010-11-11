@@ -161,6 +161,14 @@ package KOW_View.Security is
 		);
 
 
+	type Switch_User_Service is new Service_Instance_Interface with private;
+
+	overriding
+	procedure Process_Request(
+			Service		: in out Switch_User_Service;
+			Request		: in     AWS.Status.Data;
+			Response	: in out AWS.Response.Data
+		);
 	
 
 	-----------------------------
@@ -263,6 +271,11 @@ private
 
 	type Logout_Service is new Service_Instance_Interface with record
 		Default_Redirect	: Unbounded_String;
+	end record;
+
+	type Switch_User_Service is new Service_Instance_Interface with record
+		Default_Redirect	: Unbounded_String;
+		Criteria		: Unbounded_String;
 	end record;
 
 
