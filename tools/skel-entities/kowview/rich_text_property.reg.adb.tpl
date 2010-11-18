@@ -2,8 +2,8 @@
 			Entity_Tag	=> @_application_@.entities.@_entity_@'Tag,
 			Property	=> KOW_View.Entity_Properties.New_Rich_Text_Property(
 							Column_Name	=> "@_column_name_@",
-							Getter		=> @_getter_@'Access,
-							Setter		=> @_setter_@'Access
+							Getter		=> @_getter_@'Unrestricted_Access,
+							Setter		=> @_setter_@'Unrestricted_Access
 							@@IF@@ @_default_value_@ /= ""
 								,Default_Value	=> "@_default_value_@"
 							@@END_IF@@

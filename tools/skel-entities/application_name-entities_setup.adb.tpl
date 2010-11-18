@@ -40,7 +40,7 @@ begin
 				Entity_Tag	=> @_application_@.Entities.@_entities_@'Tag,
 				Table_Name	=> "@_table_names_@",
 				Id_Generator	=> @_id_generators_@,
-				Factory		=> The_@_entities_@_Factory'Access
+				Factory		=> The_@_entities_@_Factory'Unrestricted_Access
 			);
 	
 		

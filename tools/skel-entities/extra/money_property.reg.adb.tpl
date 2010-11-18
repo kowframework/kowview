@@ -2,8 +2,8 @@
 			Entity_Tag	=> @_application_@.entities.@_entity_@'Tag,
 			Property	=> KOW_Ent.Extra_Properties.money_Properties.New_Property(
 							Column_Name	=> "@_column_name_@",
-							Getter		=> @_getter_@'Access,
-							Setter		=> @_setter_@'Access
+							Getter		=> @_getter_@'Unrestricted_Access,
+							Setter		=> @_setter_@'Unrestricted_Access
 							@@IF@@ @_immutable_@ /= ""
 								,Immutable	=> @_immutable_@
 							@@END_IF@@
