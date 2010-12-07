@@ -195,21 +195,17 @@ package body KOW_View.Security is
 		-- if it can't, then build a 'Location: access_denyed_page
 		use KOW_Sec;
 		use KOW_Sec.Authorization_Criterias;
-		Criteria_Object: Criteria'Class := Create_Expressions_Criteria(
+		Criteria_Object: Criteria_Interface'Class := Create_Expressions_Criteria(
 					Criteria_Descriptor(
-						Module.Expression
-					)
-				);
+								Module.Expression
+							)
+						);
 		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
-		User_Object : KOW_Sec.User_Access := User_Data.Get( Session_ID, User_Key );
+		User : KOW_Sec.Logged_User_Type := User_Data.Get( Session_ID, User_Key );
 
 
 	begin
-		if User_Object = NULL then
-			raise ACCESS_DENIED;
-		end if;
-
-		Require( User_Object.all, Criteria_Object );
+		Require( User.User, Criteria_Object );
 		-- notice: CONSTRAINT_ERROR shouldn't be raised as we've checked if
 		-- the user objectis null before calling this procedure!
 
@@ -255,7 +251,7 @@ package body KOW_View.Security is
 		use KOW_Sec;
 
 		My_Parameters	: Templates_Parser.Translate_Set := Parameters;
-		User_Object	: KOW_Sec.User_Access := Get_User( Request );
+		User	: KOW_Sec.Logged_User_Type := Get_User( Request );
 
 	begin
 
@@ -288,7 +284,7 @@ package body KOW_View.Security is
 				)
 			);
 
-		if User_Object = null then
+		if Is_Anonymous( User ) then
 			Templates_Parser.Insert(
 					My_Parameters,
 					Templates_Parser.Assoc(
@@ -308,7 +304,7 @@ package body KOW_View.Security is
 					My_Parameters,
 					Templates_Parser.Assoc(
 						"user_identity",
-						KOW_Sec.Identity( User_Object.All )
+						String( User.User.Identity )
 					)
 				);
 
@@ -316,7 +312,7 @@ package body KOW_View.Security is
 					My_Parameters,
 					Templates_Parser.Assoc(
 						"user_full_name",
-						KOW_Sec.Full_Name( User_Object.All )
+						KOW_Sec.Full_Name( User.User )
 					)
 				);
 
@@ -333,7 +329,7 @@ package body KOW_View.Security is
 					My_Parameters,
 					Templates_Parser.Assoc(
 						"user_gravatar_url",
-						Gravatar_URL( User_Object.all )
+						Gravatar_URL( User.User )
 					)
 				);
 
@@ -399,12 +395,12 @@ package body KOW_View.Security is
 		end if;
 		
 		declare
-			User_Object: KOW_Sec.User'Class := KOW_Sec.Do_Login( Username, Password );
+			User: KOW_Sec.Logged_User_Type := KOW_Sec.Do_Login( Username, Password );
 
 
 			Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
 		begin
-			User_Data.Set( Session_ID, User_Key, KOW_Sec.To_Access( User_Object ) );
+			User_Data.Set( Session_ID, User_Key, User );
 		end;
 
 		Response := AWS.Response.URL( Redirect );
@@ -459,11 +455,11 @@ package body KOW_View.Security is
 
 		P : constant AWS.Parameters.List := AWS.Status.Parameters (Request);
 
-		Username	: String := AWS.Parameters.Get( P, "username" );
+		User_Identity : String := AWS.Parameters.Get( P, "user_identity" );
 
 
 		Session_ID  : AWS.Session.ID := AWS.Status.Session (Request);
-		The_User : KOW_Sec.User_Access := User_Data.Get( Session_ID, User_Key );
+		The_User : KOW_Sec.Logged_User_Type := User_Data.Get( Session_ID, User_Key );
 
 
 		function Redirect return String is
@@ -482,25 +478,25 @@ package body KOW_View.Security is
 		declare
 			use KOW_Sec;
 			use KOW_Sec.Authorization_Criterias;
-			Criteria_Object: Criteria'Class := Create_Expressions_Criteria(
-						Criteria_Descriptor(
-							Service.Criteria
-						)
-					);
+			Criteria: Criteria_Interface'Class := Create_Expressions_Criteria(
+							Criteria_Descriptor(
+								Service.Criteria
+							)
+						);
 		begin
-			if The_User = NULL then
+			if Is_Anonymous( The_User ) then
 				raise ACCESS_DENIED with "you need to be logged in to do this";
 			end if;
 			
-			Require( The_user.all, Criteria_Object );
+			Require( The_User.User, Criteria );
 		end;
 
 
 		-- if we got here then we can go on
 
 
-		if Username = "" then
-			raise CONSTRAINT_ERROR with "Username required for switch user service";
+		if User_Identity = "" then
+			raise CONSTRAINT_ERROR with "User Identity required for switch user service";
 		end if;
 
 
@@ -510,11 +506,14 @@ package body KOW_View.Security is
 
 		
 		declare
-			User_Object: KOW_Sec.User'Class := KOW_Sec.Get_User( Username );
+			User: KOW_Sec.Logged_User_Type := (
+							User		=> KOW_Sec.Get_User( User_Identity ),
+							Current_manager	=> The_user.Current_Manager
+						);
 		begin
 			Session_ID := AWS.Status.Session (Request);
 			-- new session now.. :D
-			User_Data.Set( Session_ID, User_Key, KOW_Sec.To_Access( User_Object ) );
+			User_Data.Set( Session_ID, User_Key, User );
 		end;
 
 
@@ -535,10 +534,10 @@ package body KOW_View.Security is
 		-- check if the user is logged in into the system
 		use KOW_Sec;
 	begin
-		return Get_User( Request ) /= Null;
+		return not Is_Anonymous( Get_User( Request ) );
 	end Is_Logged_In;
 
-	function Get_User( Request : in AWS.Status.Data ) return KOW_Sec.User_Access is
+	function Get_User( Request : in AWS.Status.Data ) return KOW_Sec.Logged_User_Type is
 		-- get the user object (or null) :)
 		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
 	begin

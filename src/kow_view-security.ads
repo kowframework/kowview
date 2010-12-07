@@ -38,8 +38,8 @@ package KOW_View.Security is
 
 
 	package User_Data is new AWS.Session.Generic_Data(
-			Data		=> KOW_Sec.User_Type,
-			Null_Data	=> KOW_Sec.Anonymous_User
+			Data		=> KOW_Sec.Logged_User_Type,
+			Null_Data	=> KOW_Sec.Logged_Anonymous_User
 		);
 
 	User_Key: constant String;
@@ -179,7 +179,7 @@ package KOW_View.Security is
 	function Is_Logged_In( Request : in AWS.Status.Data ) return Boolean;
 	-- check if the user is logged in into the system
 
-	function Get_User( Request : in AWS.Status.Data ) return KOW_Sec.User_Type;
+	function Get_User( Request : in AWS.Status.Data ) return KOW_Sec.Logged_User_Type;
 	-- get the user object (or null) :)
 
 
