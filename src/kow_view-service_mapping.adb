@@ -2,10 +2,9 @@
 
 
 
----------------
--- Ada Works --
----------------
-
+-------------------
+-- KOW Framework --
+-------------------
 with KOW_Config;
 with KOW_View.Components;
 with KOW_View.Components_Registry;

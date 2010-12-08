@@ -6,10 +6,9 @@
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
 
----------------
--- Ada Works --
----------------
-
+-------------------
+-- KOW Framework --
+-------------------
 with KOW_Config;
 with KOW_View.Components;		use KOW_View.Components;
 with KOW_View.Themes;

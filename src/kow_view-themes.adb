@@ -9,10 +9,9 @@ with Ada.Strings.Fixed;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 with ada.text_io;			use ada.text_io;
 
----------------
--- Ada Works --
----------------
-
+-------------------
+-- KOW Framework --
+-------------------
 with KOW_Config;
 with KOW_Lib.File_System;		use KOW_Lib.File_System;
 with KOW_Lib.String_Util;

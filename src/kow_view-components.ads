@@ -7,10 +7,9 @@ with Ada.Directories;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
 
----------------
--- Ada Works --
----------------
-
+-------------------
+-- KOW Framework --
+-------------------
 with KOW_Config;
 
 

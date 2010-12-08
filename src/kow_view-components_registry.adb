@@ -7,10 +7,9 @@ with Ada.IO_Exceptions;
 with Ada.Directories;			use Ada.Directories;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
----------------
--- Ada Works --
----------------
-
+-------------------
+-- KOW Framework --
+-------------------
 with KOW_Config;
 with KOW_Config.Generic_Registry;
 with KOW_Lib.File_System;

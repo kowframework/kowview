@@ -8,11 +8,9 @@ with Ada.Containers.Ordered_Maps;
 with Ada.Directories;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
-
----------------
--- Ada Works --
----------------
-
+-------------------
+-- KOW Framework --
+-------------------
 with KOW_Config;
 with KOW_Config.Generic_Registry;
 with KOW_View.Components;		use KOW_View.Components;
