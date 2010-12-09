@@ -62,7 +62,6 @@ with @_application_tasks_@.Spawn_Tasks;
 procedure @_project_name_@_Setup(spawn_tasks : in boolean := false ) is
 	Manager: KOW_Sec.Authentication_Manager_Access := new KOW_Sec.Authentication.Entities.Authentication_Manager;
 
-	Provider	: APQ_Provider.Connection_Provider_Ptr := new APQ_Provider.Connection_Provider_Type;
 begin
 
 	---------------------
@@ -133,9 +132,7 @@ begin
 	-- APQ and KOW_Ent Setup --
 	--------------------------
 
-	Provider.Setup( KOW_Config.New_Config_File( "kow_ent" ) );
-	
-	KOW_Ent.Set_Connection_Provider( Provider );
+	KOW_Ent.Setup;
 
 
 	-- now we get the labels :D
