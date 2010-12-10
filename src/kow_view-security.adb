@@ -475,13 +475,16 @@ package body KOW_View.Security is
 		declare
 			use KOW_Sec;
 			use KOW_Sec.Authorization_Criterias;
-			Criteria: Criteria_Interface'Class := Create_Expression_Criteria( Criteria_Descriptor( Service.Criteria ) );
+			Role_Criteria	: Criteria_Interface'Class := Create_Role_Criteria( To_Criteria_Descriptor( "kow_view.security::su" ) );
+			Extra_Criteria	: Criteria_Interface'Class := Create_Expression_Criteria( Criteria_Descriptor( Service.Criteria ) );
 		begin
 			if Is_Anonymous( The_User ) then
 				raise ACCESS_DENIED with "you need to be logged in to do this";
 			end if;
 			
-			KOW_Sec.Accounting.Require( Criteria, The_User, Accountant'Access );
+
+			KOW_Sec.Accounting.Require( Role_Criteria, The_User, Accountant'Access );
+			KOW_Sec.Accounting.Require( Extra_Criteria, The_User, Accountant'Access );
 		end;
 
 
@@ -685,5 +688,11 @@ package body KOW_View.Security is
 	end Authorization_Manager;
 
 
+begin
+
+	KOW_Sec.Roles_Registry.Register(
+				Application	=> "kow_view.security",
+				Role		=> "su"
+			);
 
 end KOW_View.Security;

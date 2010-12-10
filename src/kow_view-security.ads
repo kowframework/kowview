@@ -28,6 +28,7 @@ with Templates_Parser;
 
 
 package KOW_View.Security is
+pragma Elaborate_Body( KOW_View.Security );
 
 	---------------
 	-- Variables --
