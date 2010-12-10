@@ -5,7 +5,11 @@
 
 pragma License (Modified_GPL);
 
-package KOW_View is
-pragma Pure( KOW_View );
+-------------------
+-- KOW Framework --
+-------------------
+with KOW_Sec.Accounting;
 
+package KOW_View is
+	Accountant : aliased KOW_Sec.Accounting.Accountant_Type := KOW_Sec.Accounting.New_Accountant( "kow_sec" );
 end KOW_View;

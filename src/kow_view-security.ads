@@ -13,6 +13,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -------------------
 with KOW_Config;
 with KOW_Sec;
+with KOW_Sec.Accounting;
 with KOW_View.Components;		use KOW_View.Components;
 
 ---------
@@ -28,6 +29,13 @@ with Templates_Parser;
 
 package KOW_View.Security is
 
+	---------------
+	-- Variables --
+	---------------
+	
+	Accountant : aliased KOW_Sec.Accounting.Accountant_Type := KOW_Sec.Accounting.New_Accountant( "security", KOW_View.Accountant'Access );
+
+
 	----------------
 	-- Components --
 	----------------
@@ -37,7 +45,7 @@ package KOW_View.Security is
 
 
 	package User_Data is new AWS.Session.Generic_Data(
-			Data		=> KOW_Sec.Logged_User_Type,
+			Data		=> KOW_Sec.User_Type,
 			Null_Data	=> KOW_Sec.Logged_Anonymous_User
 		);
 
@@ -178,7 +186,7 @@ package KOW_View.Security is
 	function Is_Logged_In( Request : in AWS.Status.Data ) return Boolean;
 	-- check if the user is logged in into the system
 
-	function Get_User( Request : in AWS.Status.Data ) return KOW_Sec.Logged_User_Type;
+	function Get_User( Request : in AWS.Status.Data ) return KOW_Sec.User_Type;
 	-- get the user object (or null) :)
 
 

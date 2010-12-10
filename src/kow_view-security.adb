@@ -15,6 +15,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 with KOW_Config;
 with KOW_Lib.File_System;
 with KOW_Sec;
+with KOW_Sec.Accounting;
 with KOW_Sec.Authorization_Criterias;
 with KOW_View.Components_Registry;
 
@@ -32,11 +33,11 @@ with Templates_Parser;
 
 package body KOW_View.Security is
 
+
 	----------------
 	-- Components --
 	----------------
 	
-
 
 	overriding
 	procedure Initialize(
@@ -195,17 +196,13 @@ package body KOW_View.Security is
 		-- if it can't, then build a 'Location: access_denyed_page
 		use KOW_Sec;
 		use KOW_Sec.Authorization_Criterias;
-		Criteria_Object: Criteria_Interface'Class := Create_Expressions_Criteria(
-					Criteria_Descriptor(
-								Module.Expression
-							)
-						);
+		Criteria_Object: Criteria_Interface'Class := Create_Expression_Criteria( Criteria_Descriptor( Module.Expression ) );
 		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
-		User : KOW_Sec.Logged_User_Type := User_Data.Get( Session_ID, User_Key );
+		User : KOW_Sec.User_Type := User_Data.Get( Session_ID, User_Key );
 
 
 	begin
-		Require( User.User, Criteria_Object );
+		KOW_Sec.Accounting.Require( Criteria_Object, User, Accountant'Access );
 		-- notice: CONSTRAINT_ERROR shouldn't be raised as we've checked if
 		-- the user objectis null before calling this procedure!
 
@@ -251,7 +248,7 @@ package body KOW_View.Security is
 		use KOW_Sec;
 
 		My_Parameters	: Templates_Parser.Translate_Set := Parameters;
-		User	: KOW_Sec.Logged_User_Type := Get_User( Request );
+		User	: KOW_Sec.User_Type := Get_User( Request );
 
 	begin
 
@@ -304,7 +301,7 @@ package body KOW_View.Security is
 					My_Parameters,
 					Templates_Parser.Assoc(
 						"user_identity",
-						String( User.User.Identity )
+						String( User.Data.Identity )
 					)
 				);
 
@@ -312,7 +309,7 @@ package body KOW_View.Security is
 					My_Parameters,
 					Templates_Parser.Assoc(
 						"user_full_name",
-						KOW_Sec.Full_Name( User.User )
+						KOW_Sec.Full_Name( User.Data )
 					)
 				);
 
@@ -329,7 +326,7 @@ package body KOW_View.Security is
 					My_Parameters,
 					Templates_Parser.Assoc(
 						"user_gravatar_url",
-						Gravatar_URL( User.User )
+						Gravatar_URL( User.Data )
 					)
 				);
 
@@ -395,7 +392,7 @@ package body KOW_View.Security is
 		end if;
 		
 		declare
-			User: KOW_Sec.Logged_User_Type := KOW_Sec.Do_Login( Username, Password );
+			User: KOW_Sec.User_Type := KOW_Sec.Do_Login( Username, Password );
 
 
 			Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
@@ -459,7 +456,7 @@ package body KOW_View.Security is
 
 
 		Session_ID  : AWS.Session.ID := AWS.Status.Session (Request);
-		The_User : KOW_Sec.Logged_User_Type := User_Data.Get( Session_ID, User_Key );
+		The_User : KOW_Sec.User_Type := User_Data.Get( Session_ID, User_Key );
 
 
 		function Redirect return String is
@@ -478,17 +475,13 @@ package body KOW_View.Security is
 		declare
 			use KOW_Sec;
 			use KOW_Sec.Authorization_Criterias;
-			Criteria: Criteria_Interface'Class := Create_Expressions_Criteria(
-							Criteria_Descriptor(
-								Service.Criteria
-							)
-						);
+			Criteria: Criteria_Interface'Class := Create_Expression_Criteria( Criteria_Descriptor( Service.Criteria ) );
 		begin
 			if Is_Anonymous( The_User ) then
 				raise ACCESS_DENIED with "you need to be logged in to do this";
 			end if;
 			
-			Require( The_User.User, Criteria );
+			KOW_Sec.Accounting.Require( Criteria, The_User, Accountant'Access );
 		end;
 
 
@@ -506,8 +499,8 @@ package body KOW_View.Security is
 
 		
 		declare
-			User: KOW_Sec.Logged_User_Type := (
-							User		=> KOW_Sec.Get_User( User_Identity ),
+			User: KOW_Sec.User_Type := (
+							Data		=> KOW_Sec.Get_User( User_Identity ),
 							Current_manager	=> The_user.Current_Manager
 						);
 		begin
@@ -537,7 +530,7 @@ package body KOW_View.Security is
 		return not Is_Anonymous( Get_User( Request ) );
 	end Is_Logged_In;
 
-	function Get_User( Request : in AWS.Status.Data ) return KOW_Sec.Logged_User_Type is
+	function Get_User( Request : in AWS.Status.Data ) return KOW_Sec.User_Type is
 		-- get the user object (or null) :)
 		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
 	begin
