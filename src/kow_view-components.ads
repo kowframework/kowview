@@ -38,7 +38,7 @@ package KOW_View.Components is
 	-- Components --
 	----------------
 
-	type Component_Interface is abstract tagged record
+	type Component_Type is abstract tagged record
 		-- it encapsulates a set of functionalities provided by means of modules and services
 		-- there should be only one instance of this type each time.
 		Require_Configuration	: Boolean;
@@ -49,24 +49,24 @@ package KOW_View.Components is
 		-- the name of the component...
 	end record;
 
-	type Component_Access is not null access all Component_Interface'Class;
+	type Component_Access is not null access all Component_Type'Class;
 	-- whenever possible use Component_Access as your pointer type
 
-	type Component_Ptr is access all Component_Interface'Class;
+	type Component_Ptr is access all Component_Type'Class;
 	-- the component_ptr type was created so we could easily implement the
 	-- 	. service.component
 	-- 	. module.component
 	-- variables
 
 	function Locate_Resource(
-			Component	: in Component_Interface;
+			Component	: in Component_Type;
 			Resource	: in String;
 			Extension	: in String := "";
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
 		) return String;
 
 	procedure Initialize(
-			Component	: in out Component_Interface;
+			Component	: in out Component_Type;
 			Component_Name	: in     String;
 			Config		: in out KOW_Config.Config_File
 		) is abstract;
@@ -102,7 +102,7 @@ package KOW_View.Components is
 
 
 	function Create_Instance(
-			Component	: in Component_Interface;
+			Component	: in Component_Type;
 			Module_Name	: in String;
 			Config		: in KOW_Config.Config_File 
 		) return Module_Instance_Interface'Class is abstract;
@@ -198,7 +198,7 @@ package KOW_View.Components is
 
 
 	function Create_Instance(
-			Component	: in Component_Interface;
+			Component	: in Component_Type;
 			Service_Name	: in String;
 			Service_Mapping	: in String
 		) return Service_Instance_Interface'Class is abstract;

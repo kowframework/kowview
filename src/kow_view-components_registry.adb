@@ -57,7 +57,7 @@ package body KOW_View.Components_Registry is
 
 
 	
-	procedure Setup( Component : in out KOW_View.Components.Component_Interface'Class; Component_name : in String ) is
+	procedure Setup( Component : in out KOW_View.Components.Component_Type'Class; Component_name : in String ) is
 		Config		: KOW_Config.Config_File;
 	begin
 		Config := Load_Main_Configuration( Component_Name );

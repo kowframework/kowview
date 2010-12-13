@@ -50,7 +50,7 @@ package KOW_View.Themes is
 	---------------
 
 
-	type Component_Type is new KOW_View.Components.Component_Interface with private;
+	type Component_Type is new KOW_View.Components.Component_Type with private;
 
 	
 
@@ -280,7 +280,7 @@ package KOW_View.Themes is
 private
 
 
-	type Component_Type is new KOW_View.Components.Component_Interface with record
+	type Component_Type is new KOW_View.Components.Component_Type with record
 		Default_Theme_Name	: Unbounded_String; -- default
 		Name			: Unbounded_String;
 		Template_Extension	: Unbounded_String; -- html

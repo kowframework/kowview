@@ -31,7 +31,7 @@ package KOW_View.Navigation is
 	----------------
 
 
-	type Component_Type is new KOW_View.Components.Component_Interface with private;
+	type Component_Type is new KOW_View.Components.Component_Type with private;
 
 	overriding
 	procedure Initialize(
@@ -88,7 +88,7 @@ package KOW_View.Navigation is
 
 private
 
-	type Component_Type is new KOW_View.Components.Component_Interface with record
+	type Component_Type is new KOW_View.Components.Component_Type with record
 		Default_Menu_Template	: Unbounded_String	:= To_Unbounded_String( "default_menu" );
 		-- TODO: definir default_link_template
 	end record;

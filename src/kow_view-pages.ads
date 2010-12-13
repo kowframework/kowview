@@ -37,7 +37,7 @@ package KOW_View.Pages is
 	-- Components --
 	----------------
 
-	type Component_Type is new KOW_View.Components.Component_Interface with private;
+	type Component_Type is new KOW_View.Components.Component_Type with private;
 	-- This component is responsible for calling all other components in order
 	-- to render the page.
 	--
@@ -197,7 +197,7 @@ package KOW_View.Pages is
 private
 
 
-	type Component_Type is new KOW_View.Components.Component_Interface with record
+	type Component_Type is new KOW_View.Components.Component_Type with record
 		Theme_Component_Name: Unbounded_String;
 	end record;
 

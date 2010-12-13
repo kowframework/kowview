@@ -41,7 +41,7 @@ pragma Elaborate_Body( KOW_View.Security );
 	-- Components --
 	----------------
 
-	type Component_Type is new KOW_View.Components.Component_Interface with private;
+	type Component_Type is new KOW_View.Components.Component_Type with private;
 	
 
 
@@ -247,7 +247,7 @@ private
 
 	User_Key : constant String := "kow_sec.user";
 
-	type Component_Type is new KOW_View.Components.Component_Interface with record
+	type Component_Type is new KOW_View.Components.Component_Type with record
 		Default_Redirect	: Unbounded_String	:= To_Unbounded_String( "/" );
 		Access_Denied_Page	: Unbounded_String	:= To_Unbounded_String( "/theme/403" );
 		Login_Error_Page	: Unbounded_String	:= To_Unbounded_String( "/pages/login_error" );

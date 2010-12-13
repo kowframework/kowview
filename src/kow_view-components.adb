@@ -21,7 +21,7 @@ with KOW_View.Components_Registry;
 package body KOW_View.Components is
 
 	function Locate_Resource(
-			Component	: in Component_Interface;
+			Component	: in Component_Type;
 			Resource	: in String;
 			Extension	: in String := "";
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
