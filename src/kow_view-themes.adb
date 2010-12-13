@@ -47,7 +47,7 @@ with KOW_Lib.File_System;		use KOW_Lib.File_System;
 with KOW_Lib.String_Util;
 with KOW_Lib.UString_Vectors;
 with KOW_View.Components;
-with KOW_View.Components_Registry;
+with KOW_View.Components.Registry;
 
 ---------
 -- AWS --
@@ -72,7 +72,7 @@ package body KOW_View.Themes is
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
 		) return String is
 	begin
-		return KOW_View.Components_Registry.Locate_Resource(
+		return KOW_View.Components.Registry.Locate_Resource(
 				Component_Name	=> Component_Name,
 				Resource	=> Theme_Name & Separator & Resource,
 				Extension	=> Extension,
@@ -531,8 +531,8 @@ package body KOW_View.Themes is
 
 		URI		: constant string := AWS.Status.URI( Request );
 		Mapping		: constant string := To_String( Service.Mapping );
-		Extension	: constant string := KOW_View.Components_Registry.Get_Extension( URI );
-		Resource	: constant string := KOW_View.Components_Registry.Get_Resource( Mapping, URI, Extension );
+		Extension	: constant string := KOW_View.Components.Registry.Get_Extension( URI );
+		Resource	: constant string := KOW_View.Components.Registry.Get_Resource( Mapping, URI, Extension );
 		Component_Name	: constant string := To_String( Service.Component_Name );
 		Complete_Path	: constant string := Locate_Theme_Resource(
 				Component_Name	=> Component_Name,

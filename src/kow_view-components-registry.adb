@@ -49,7 +49,7 @@ with KOW_View.Components;		use KOW_View.Components;
 
 
 
-package body KOW_View.Components_Registry is
+package body KOW_View.Components.Registry is
 
 
 	--------------------------
@@ -365,4 +365,4 @@ package body KOW_View.Components_Registry is
 	end Load_Configuration;
 
 
-end KOW_View.Components_Registry;
+end KOW_View.Components.Registry;

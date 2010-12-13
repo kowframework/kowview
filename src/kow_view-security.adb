@@ -47,7 +47,7 @@ with KOW_Lib.File_System;
 with KOW_Sec;
 with KOW_Sec.Accounting;
 with KOW_Sec.Authorization_Criterias;
-with KOW_View.Components_Registry;
+with KOW_View.Components.Registry;
 
 
 ---------
@@ -116,7 +116,7 @@ package body KOW_View.Security is
 			Name : String := KOW_Config.Value( Config, Key, Default );
 		begin
 			return To_Unbounded_String(
-					KOW_View.Components_Registry.Locate_Resource(
+					KOW_View.Components.Registry.Locate_Resource(
 							Component_Name  => "security",
 							Resource        => Name,
 							Extension       => "html",

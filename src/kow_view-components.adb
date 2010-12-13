@@ -44,7 +44,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -------------------
 -- KOW Framework --
 -------------------
-with KOW_View.Components_Registry;
+with KOW_View.Components.Registry;
 
 
 
@@ -57,7 +57,7 @@ package body KOW_View.Components is
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
 		) return String is
 	begin
-		return KOW_View.Components_Registry.Locate_Resource(
+		return KOW_View.Components.Registry.Locate_Resource(
 					Component_Name	=> To_String( Component.Component_Name ),
 					Resource	=> Resource,
 					Extension	=> Extension,

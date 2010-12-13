@@ -47,7 +47,7 @@ with KOW_Lib.File_System;
 with KOW_Lib.String_Util;
 with KOW_Lib.UString_Vectors;
 with KOW_View.Components;		use KOW_View.Components;
-with KOW_View.Components_Registry;
+with KOW_View.Components.Registry;
 with KOW_View.Themes;			use KOW_View.Themes;
 
 ---------
@@ -71,7 +71,7 @@ package body KOW_View.Pages is
 	function Load_Page_Config( Config_Name : in String ) return KOW_Config.Config_File is
 		-- load a configuration from the page. ;)
 	begin
-		return KOW_View.Components_Registry.Load_Configuration(
+		return KOW_View.Components.Registry.Load_Configuration(
 				"pages",
 				"page" &
 					KOW_Lib.File_System.Separator &
@@ -234,7 +234,7 @@ package body KOW_View.Pages is
 		) is
 
 		use KOW_Config;
-		use KOW_View.Components_Registry;
+		use KOW_View.Components.Registry;
 
 		type Regions_Array is Array( Integer range<> ) of Unbounded_String;
 		type Values_Array is Array( Integer range<> ) of Unbounded_String;
@@ -311,7 +311,7 @@ package body KOW_View.Pages is
 
 	begin
 		Module.Processor := KOW_View.Themes.Template_Processor_Module(
-					KOW_View.Components_Registry.Load_Module(
+					KOW_View.Components.Registry.Load_Module(
 						Component_Name	=> Theme_Component_Name,
 						Module_Name	=> "template_processor"
 					)
@@ -493,7 +493,7 @@ package body KOW_View.Pages is
 	begin
 		begin
 			Path := To_Unbounded_String(
-					KOW_View.Components_Registry.Locate_Resource(
+					KOW_View.Components.Registry.Locate_Resource(
 							Component_Name		=> "pages",
 							Resource		=> Prefix & Resource,
 							Extension		=> Extension,
@@ -504,7 +504,7 @@ package body KOW_View.Pages is
 			when Ada.Directories.Name_Error =>
 				-- look for a index file
 				Path := To_Unbounded_String(
-						KOW_View.Components_Registry.Locate_Resource(
+						KOW_View.Components.Registry.Locate_Resource(
 								Component_Name		=> "pages",
 								Resource		=> Prefix & Resource & KOW_Lib.FIle_System.Separator & "index",
 								Extension		=> Extension,
@@ -548,10 +548,10 @@ package body KOW_View.Pages is
 		Parameters : Templates_Parser.Translate_Set;
 		-- a null set
 		
-		use KOW_View.Components_Registry;
+		use KOW_View.Components.Registry;
 
 		Module		: Module_Type'Class :=
-					KOW_View.Components_Registry.Load_Module(
+					KOW_View.Components.Registry.Load_Module(
 							Component_Name	=> "pages",
 							Module_Name	=> "page",
 							Config		=> Load_Page_Config(
@@ -611,7 +611,7 @@ package body KOW_View.Pages is
 		) is
 		-- This service acts like a standard web server, providing access
 		-- to static files.
-		use KOW_View.Components_Registry;
+		use KOW_View.Components.Registry;
 		
 		URI	: constant string := AWS.Status.URI( Request );
 		Mapping	: constant string := To_String( Service.Mapping );
@@ -628,7 +628,7 @@ package body KOW_View.Pages is
 	begin
 		begin
 			Path := To_Unbounded_String(
-					KOW_View.Components_Registry.Locate_Resource(
+					KOW_View.Components.Registry.Locate_Resource(
 							Component_Name		=> "pages",
 							Resource		=> Prefix & Resource,
 							Extension		=> Extension,
@@ -639,7 +639,7 @@ package body KOW_View.Pages is
 			when Ada.Directories.Name_Error =>
 				-- look for a index file
 				Path := To_Unbounded_String(
-						KOW_View.Components_Registry.Locate_Resource(
+						KOW_View.Components.Registry.Locate_Resource(
 								Component_Name		=> "pages",
 								Resource		=> Prefix & Resource & "." & Extension & KOW_Lib.FIle_System.Separator & "index",
 								Extension		=> "html",

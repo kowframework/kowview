@@ -64,19 +64,43 @@ package KOW_View.Components is
 	SERVICE_ERROR	: Exception;
 
 
+
+	-----------------------
+	-- Service Delegator --
+	-----------------------
+
+	type Service_Delegator_Interface is interface;
+	-- the service delegator is the object that actually process the request
+
+	type Service_Delegator_Access is access all Service_Delegator_Interface'Class;
+
+	procedure Process_Request(
+				Service : in out Service_Delegator_Interface;
+				Request	: in     AWS.Status.Data;
+				Response:    out AWS.Response.Data
+			) is abstract;
+	
+	package Service_Delegator_Maps is new Ada.Containers.Ordered_Maps(
+				Key_Type	=> Unbounded_String;
+				Element_Type	=> Service_Delegator_Access
+			);
+
 	----------------
 	-- Components --
 	----------------
 
 	type Component_Type is abstract tagged record
-		-- it encapsulates a set of functionalities provided by means of modules and services
-		-- there should be only one instance of this type each time.
-		Require_Configuration	: Boolean;
-
 
 		Component_Name		: Unbounded_String;
-		-- this one is set by the register method.
+		-- this one is set by the register method and is here so the user can read it.
 		-- the name of the component...
+
+
+		Service_Delegators	: Service_Delegator_Maps.Map;
+		-- where I look for my services..
+
+		Default_Service		: Unbounded_String;
+		-- default service to load
 	end record;
 
 	type Component_Access is not null access all Component_Type'Class;
@@ -105,6 +129,13 @@ package KOW_View.Components is
 	-- 	kowview/component_name
 
 
+	procedure Process_Request(
+			Component	: in out Component_Type;
+			Request		: in     AWS.Status.Data;
+			Response	:    out AWS.Response.Data
+		);
+	-- this is where the request processing takes place..
+	-- can be overriding for implementing default services and such
 
 	-------------
 	-- Modules --

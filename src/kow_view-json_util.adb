@@ -52,9 +52,10 @@ with AWS.Response;
 package body KOW_View.json_util is
 
 
-	function Build_Error(
+	function Build_Error_Response(
 			E		: Ada.Exceptions.Exception_Occurrence;
-			Status_Code	: AWS.Messages.Status_Code := AWS.Messages.S505
+			Status_Code	: AWS.Messages.Status_Code := AWS.Messages.S505;
+			Cache_Control	: AWS.Messages.Cache_Option := AWS.Messages.No_Cache
 		) return AWS.Response.Data is
 		
 		use Ada.Exceptions;
@@ -69,8 +70,40 @@ package body KOW_View.json_util is
 		return AWS.Response.Build(
 					Content_Type	=> "application/json", 
 					Message_Body	=> To_Json( Object ),
-					Status_Code	=> Status_Code
+					Status_Code	=> Status_Code,
+					Cache_Control	=> Cache_Control
 			);
-	end Build_Error;
+	end Build_Error_Response;
+
+
+	
+	function Build_Success_Response(
+			Object		: KOW_Lib.Json.Object_Type;
+			Status_Code	: AWS.Messages.Status_Code := AWS.Messsages.S200;
+			Cache_Control	: AWS.Messages.Cache_Option := AWS.Messages.No_Cache
+		) return AWS.Response.Data is
+
+		Response : Object_Type;
+	begin
+
+		KOW_Lib.Json.Set(
+				Object	=> Response,
+				Key	=> "status",
+				Value	=> "success"
+			);
+		KOW_Lib.Json.Set(
+				Object	=> Response,
+				Key	=> "response",
+				Value	=> Object 
+			);
+		return AWS.Response.Build(
+					Content_Type	=> "application/json", 
+					Message_Body	=> To_Json( Response ),
+					Status_Code	=> Status_Code
+					Cache_Control	=> Cache_Control
+			);
+	end Build_Sucess_Response;
+
+
 
 end KOW_View.json_util;

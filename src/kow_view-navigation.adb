@@ -42,7 +42,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -------------------
 
 with KOW_Config;
-with KOW_View.Components_Registry;
+with KOW_View.Components.Registry;
 with KOW_View.Pages;
 
 ---------
@@ -160,7 +160,7 @@ package body KOW_View.Navigation is
 		
 		use Templates_Parser;
 
-		Template_Path : String := KOW_View.Components_Registry.Locate_Resource(
+		Template_Path : String := KOW_View.Components.Registry.Locate_Resource(
 							Component_Name  => "navigation",
 							Resource        => To_String( Module.Template ),
 							Extension       => "html",
@@ -177,10 +177,10 @@ package body KOW_View.Navigation is
 
 
 		function Has_Page_Access( Page : in String ) return Boolean is
-			use KOW_View.Components_Registry;
+			use KOW_View.Components.Registry;
 
 	                Module : Module_Type'Class :=
-					KOW_View.Components_Registry.Load_Module(
+					KOW_View.Components.Registry.Load_Module(
 							Component_Name	=> "pages",
 							Module_Name	=> "page",
 							Config		=> KOW_View.Pages.Load_Page_Config( Page )

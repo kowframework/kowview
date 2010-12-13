@@ -28,13 +28,13 @@
 -- covered by the  GNU Public License.                                      --
 --                                                                          --
 ------------------------------------------------------------------------------
-with KOW_View.Components_Registry;
+with KOW_View.Components.Registry;
 
 
 
 procedure KOW_View.Security.Load is
 begin
-	KOW_View.Components_Registry.Register(
+	KOW_View.Components.Registry.Register(
 			Component_Name		=> "security",
 			Component		=> new KOW_View.Security.Component_Type,
 			Require_Configuration	=> true

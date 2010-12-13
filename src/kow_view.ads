@@ -35,6 +35,15 @@
 
 pragma License (Modified_GPL);
 
+
+
+
+---------
+-- AWS --
+---------
+with AWS.Status;
+with AWS.Response;
+
 -------------------
 -- KOW Framework --
 -------------------
@@ -42,4 +51,15 @@ with KOW_Sec.Accounting;
 
 package KOW_View is
 	Accountant : aliased KOW_Sec.Accounting.Accountant_Type := KOW_Sec.Accounting.New_Accountant( "kow_sec" );
+
+	type Available_Request_Type is(
+			Json_Request,
+			Custom_Request
+		);
+
+
+
+	function Process_Request( Request : in AWS.Status.Data ) return AWS.Response.Data;
+	-- this is the main function... it's the AWS callback used all around.
+	-- notice that in the v2.0 release the package KOW_View.Service_Mappings was extinguished
 end KOW_View;

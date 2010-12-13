@@ -29,7 +29,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with KOW_View.COmponents_Registry;
+with KOW_View.Components.Registry;
 
 
 
@@ -37,7 +37,7 @@ procedure KOW_View.Navigation.Load is
 
 begin
 
-	KOW_View.Components_Registry.Register(
+	KOW_View.Components.Registry.Register(
 		"navigation",
 		new KOW_View.Navigation.Component_Type,
 		true

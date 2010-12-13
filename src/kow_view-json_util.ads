@@ -47,8 +47,18 @@ with AWS.Messages;
 with AWS.Response;
 
 package KOW_View.json_util is
-	function Build_Error(
+	function Build_Error_Response(
 			E		: Ada.Exceptions.Exception_Occurrence;
-			Status_Code	: AWS.Messages.Status_Code := AWS.Messages.S505
+			Status_Code	: AWS.Messages.Status_Code := AWS.Messages.S505;
+			Cache_Control	: AWS.Messages.Cache_Option := AWS.Messages.No_Cache
 		) return AWS.Response.Data;
+
+
+	function Build_Success_Response(
+			Object		: KOW_Lib.Json.Object_Type;
+			Status_Code	: AWS.Messages.Status_Code.AWS.Messsages.S200;
+			Cache_Control	: AWS.Messages.Cache_Option := AWS.Messages.No_Cache
+		) return AWS.Response.Data;
+	
+
 end KOW_View.json_util;

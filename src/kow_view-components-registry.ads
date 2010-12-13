@@ -47,7 +47,7 @@ with KOW_View.Components;		use KOW_View.Components;
 
 
 
-package KOW_View.Components_Registry is
+package KOW_View.Components.Registry is
 
 	----------------
 	-- Exceptions --
@@ -179,4 +179,4 @@ private
 
 
 
-end KOW_View.Components_Registry;
+end KOW_View.Components.Registry;

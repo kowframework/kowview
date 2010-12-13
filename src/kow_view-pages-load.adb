@@ -30,11 +30,11 @@
 ------------------------------------------------------------------------------
 
 
-with KOW_View.Components_Registry;
+with KOW_View.Components.Registry;
 procedure KOW_View.Pages.Load is
 
 begin
-	KOW_View.Components_Registry.Register(
+	KOW_View.Components.Registry.Register(
 		"pages",
 		new KOW_View.Pages.Component_Type,
 		true
