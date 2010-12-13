@@ -79,7 +79,7 @@ package body KOW_View.Security is
 			Component	: in Component_Type;
 			Module_Name	: in String;
 			Config		: in KOW_Config.Config_File
-		) return Module_Instance_Interface'Class is
+		) return Module_Type'Class is
 		-- no matter what module we request, the Criteria_Module_Module will be always called
 
 		function Get_Resolved_Path( Key, Default : in String ) return Unbounded_String is

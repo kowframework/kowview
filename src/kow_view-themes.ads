@@ -68,7 +68,7 @@ package KOW_View.Themes is
 			Component	: in Component_Type;
 			Module_Name	: in String;
 			Config		: in KOW_Config.Config_File
-		) return Module_Instance_Interface'Class;
+		) return Module_Type'Class;
 	-- Creates a module instance
 	-- Available modules:
 	-- 	template_processor
@@ -89,7 +89,7 @@ package KOW_View.Themes is
 	-------------
 
 
-	type Template_Processor_Module is new Module_Instance_Interface with private;
+	type Template_Processor_Module is new Module_Type with private;
 	-- The template module represents any template
 	-- All it does is to load a string representing the AWS template as string
 	-- and provide methods for pa
@@ -294,7 +294,7 @@ private
 					"="		=> Templates_Parser."="
 				);
 
-	type Template_Processor_Module is new Module_Instance_Interface with record
+	type Template_Processor_Module is new Module_Type with record
 		Component_name		: Unbounded_String;
 		Default_Theme_Name	: Unbounded_String;
 		Theme_Name		: Unbounded_String;

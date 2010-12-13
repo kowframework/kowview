@@ -38,7 +38,7 @@ package body KOW_View.Components is
 
 
 	function Locate_Resource(
-			Module		: in Module_Instance_Interface;
+			Module		: in Module_Type;
 			Resource	: in String;
 			Extension	: in String := "";
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
@@ -55,7 +55,7 @@ package body KOW_View.Components is
 
 
 	procedure Generate_HTML_ID(
-				Module		: in out Module_Instance_Interface;
+				Module		: in out Module_Type;
 				The_ID		:    out Unbounded_String
 		) is
 		-- procedure used to generate a valid ID for HTML elements

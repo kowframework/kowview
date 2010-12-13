@@ -59,7 +59,7 @@ package KOW_View.Pages is
 			Component	: in Component_Type;
 			Module_Name	: in String;
 			Config		: in KOW_Config.Config_File
-		) return Module_Instance_Interface'Class;
+		) return Module_Type'Class;
 	-- Available modules:
 	-- 	. page
 
@@ -88,7 +88,7 @@ package KOW_View.Pages is
 	--
 
 
-	type Page_Module is new Module_Instance_Interface with private;
+	type Page_Module is new Module_Type with private;
 	-- Responsible for managing the page loading.
 	-- It's the engine for the Page_Service service.
 	-- Can also be used in your own components and pages.
@@ -136,7 +136,7 @@ package KOW_View.Pages is
 	-- Static Module
 	--
 	
-	type Static_Module is new Module_Instance_Interface with private;
+	type Static_Module is new Module_Type with private;
 
 	overriding
 	procedure Process_Request(
@@ -151,7 +151,7 @@ package KOW_View.Pages is
 	-- Void Module
 	--
 
-	type Void_Module is new Module_Instance_Interface with null record;
+	type Void_Module is new Module_Type with null record;
 	-- this module does nothing.. it's only to reserve slots in the page config
 
 
@@ -202,7 +202,7 @@ private
 	end record;
 
 
-	type Page_Module is new Module_Instance_Interface with record
+	type Page_Module is new Module_Type with record
 		Config			: KOW_Config.Config_File;
 		Processor		: KOW_View.Themes.Template_Processor_Module;
 		-- there is no processing of the config file before 
@@ -210,7 +210,7 @@ private
 		Theme_Component_Name	: Unbounded_String;
 	end record;
 
-	type Static_Module is new Module_Instance_interface with record
+	type Static_Module is new Module_Type with record
 		Resource		: Unbounded_String;
 		-- the resource (without extension) for the file to be queried
 		-- we use resources in here to allow extending this module to be multilingual

@@ -82,7 +82,7 @@ package KOW_View.Components is
 
 
 
-	type Module_Instance_Interface is abstract tagged record
+	type Module_Type is abstract tagged record
 		Module_ID	: Positive;
 		-- a number to identify the module in this request/page
 
@@ -95,7 +95,7 @@ package KOW_View.Components is
 
 	-- a module is something that can be accessed anywhere inside the system.
 
-	type Module_Instance_Access is not null access all Module_Instance_Interface'Class;
+	type Module_Instance_Access is not null access all Module_Type'Class;
 
 
 
@@ -105,7 +105,7 @@ package KOW_View.Components is
 			Component	: in Component_Type;
 			Module_Name	: in String;
 			Config		: in KOW_Config.Config_File 
-		) return Module_Instance_Interface'Class is abstract;
+		) return Module_Type'Class is abstract;
 	-- create a new module instance.
 	-- depending on the service, the instance object can represent different things and can, or not, even me extended
 	-- to implement additional functionality.
@@ -114,7 +114,7 @@ package KOW_View.Components is
 
 
 	procedure Initialize_Request(
-			Module		: in out Module_Instance_Interface;
+			Module		: in out Module_Type;
 			Request		: in     AWS.Status.Data;
 			Parameters	: in out Templates_Parser.Translate_Set;
 			Response	: in out AWS.Response.Data;
@@ -126,7 +126,7 @@ package KOW_View.Components is
 	-- Useful when handling secured modules or modules that require sending cookies
 
 	procedure Process_Header(
-			Module		: in out Module_Instance_Interface;
+			Module		: in out Module_Type;
 			Request		: in     AWS.Status.Data;
 			Parameters	: in out Templates_Parser.Translate_Set;
 			Response	: in out Unbounded_String
@@ -135,7 +135,7 @@ package KOW_View.Components is
 	-- it's assumed that 
 
 	procedure Process_Request(
-			Module		: in out Module_Instance_Interface;
+			Module		: in out Module_Type;
 			Request		: in     AWS.Status.Data;
 			Parameters	: in out Templates_Parser.Translate_Set;
 			Response	: in out Unbounded_String
@@ -144,7 +144,7 @@ package KOW_View.Components is
 	-- sometimes is useful for a module only to be created and released - such as in a page counter module
 
 	procedure Process_Footer(
-			Module		: in out Module_Instance_Interface;
+			Module		: in out Module_Type;
 			Request		: in     AWS.Status.Data;
 			Parameters	: in out Templates_Parser.Translate_Set;
 			Response	: in out Unbounded_String
@@ -153,7 +153,7 @@ package KOW_View.Components is
 	-- useful when creating benchmar modules
 
 	procedure Finalize_Request(
-			Module		: in out Module_Instance_Interface;
+			Module		: in out Module_Type;
 			Request		: in     AWS.Status.Data;
 			Parameters	: in out Templates_Parser.Translate_Set
 		) is null;
@@ -164,7 +164,7 @@ package KOW_View.Components is
 	-- Helper Module Methods that can be overriden if needed
 	
 	function Locate_Resource(
-			Module		: in Module_Instance_Interface;
+			Module		: in Module_Type;
 			Resource	: in String;
 			Extension	: in String := "";
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
@@ -173,7 +173,7 @@ package KOW_View.Components is
 
 
 	procedure Generate_HTML_ID(
-				Module		: in out Module_Instance_Interface;
+				Module		: in out Module_Type;
 				The_ID		:    out Unbounded_String
 		);
 	-- procedure used to generate a valid ID for HTML elements

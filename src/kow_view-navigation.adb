@@ -94,7 +94,7 @@ package body KOW_View.Navigation is
 			Component	: in Component_Type;
 			Module_Name	: in String;
 			Config		: in KOW_Config.Config_File
-		) return Module_Instance_Interface'Class is
+		) return Module_Type'Class is
 		-- no matter what module we request, the Menu_Module_Type_Module will be always called
 	begin
 		return Create_Menu_Module_Instance( Component, Config );
@@ -149,7 +149,7 @@ package body KOW_View.Navigation is
 		function Has_Page_Access( Page : in String ) return Boolean is
 			use KOW_View.Components_Registry;
 
-	                Module : Module_Instance_Interface'Class :=
+	                Module : Module_Type'Class :=
 					KOW_View.Components_Registry.Load_Module(
 							Component_Name	=> "pages",
 							Module_Name	=> "page",

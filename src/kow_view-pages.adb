@@ -73,7 +73,7 @@ package body KOW_View.Pages is
 			Component	: in Component_Type;
 			Module_Name	: in String;
 			Config		: in KOW_Config.Config_File
-		) return Module_Instance_Interface'Class is
+		) return Module_Type'Class is
 		-- Available modules:
 		-- 	. page
 
@@ -314,7 +314,7 @@ package body KOW_View.Pages is
 		for i in Modules_Cfg'Range loop
 			declare
 				Cfg		: Config_File := Modules_Cfg( i );
-				Inner_Module	: Module_Instance_Interface'Class
+				Inner_Module	: Module_Type'Class
 							:= Load_Module(
 								To_String( Element( cfg, "component" ) ),
 								To_String( Element( cfg, "module" ) ),
@@ -520,7 +520,7 @@ package body KOW_View.Pages is
 		
 		use KOW_View.Components_Registry;
 
-		Module		: Module_Instance_Interface'Class :=
+		Module		: Module_Type'Class :=
 					KOW_View.Components_Registry.Load_Module(
 							Component_Name	=> "pages",
 							Module_Name	=> "page",

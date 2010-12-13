@@ -74,7 +74,7 @@ pragma Elaborate_Body( KOW_View.Security );
 			Component	: in Component_Type;
 			Module_Name	: in String;
 			Config		: in KOW_Config.Config_File
-		) return Module_Instance_Interface'Class;
+		) return Module_Type'Class;
 	-- no matter what module we request, the Criteria_Module_Module will be always called
 
 
@@ -94,7 +94,7 @@ pragma Elaborate_Body( KOW_View.Security );
 	-- Criteria
 	--
 
-	type Criteria_Module is new Module_Instance_Interface with private;
+	type Criteria_Module is new Module_Type with private;
 	-- a module is something that can be accessed anywhere inside the system.
 
 
@@ -127,7 +127,7 @@ pragma Elaborate_Body( KOW_View.Security );
 	-- Login Form
 	--
 
-	type Login_Form_Module is new Module_Instance_Interface with private;
+	type Login_Form_Module is new Module_Type with private;
 
 	overriding
 	procedure Process_Request(
@@ -254,13 +254,13 @@ private
 	end record;
 
 
-	type Criteria_Module is new Module_Instance_Interface with record
+	type Criteria_Module is new Module_Type with record
 		Expression		: Unbounded_String;
 		Access_Denied_Page	: Unbounded_String;
 	end record;
 
 
-	type Login_Form_Module is new Module_Instance_Interface with record
+	type Login_Form_Module is new Module_Type with record
 		Username_Label		: Unbounded_String;
 		Password_Label		: Unbounded_String;
 		Login_Label		: Unbounded_String;

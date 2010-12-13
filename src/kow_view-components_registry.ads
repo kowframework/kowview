@@ -69,7 +69,7 @@ package KOW_View.Components_Registry is
 			Module_Name	: in Unbounded_String;
 			Config		: in KOW_Config.Config_File;
 			Module_ID	: in Positive := 1
-		) return Module_Instance_Interface'Class;
+		) return Module_Type'Class;
 	-- get a module instance
 	
 
@@ -78,7 +78,7 @@ package KOW_View.Components_Registry is
 			Module_Name	: in String;
 			Config		: in KOW_Config.Config_File;
 			Module_ID	: in Positive := 1
-		) return Module_Instance_Interface'Class;
+		) return Module_Type'Class;
 	-- get a module instance
 
 
@@ -88,7 +88,7 @@ package KOW_View.Components_Registry is
 			Component_Name	: in String;
 			Module_Name	: in String;
 			Module_ID	: in Positive := 1
-		) return Module_Instance_Interface'Class;
+		) return Module_Type'Class;
 	-- get the module, using the standard module configuration
 	
 

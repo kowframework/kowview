@@ -128,7 +128,7 @@ package body KOW_View.Themes is
 			Component	: in Component_Type;
 			Module_Name	: in String;
 			Config		: in KOW_Config.Config_File
-		) return Module_Instance_Interface'Class is
+		) return Module_Type'Class is
 		-- Creates a module instance
 		-- Available modules:
 		-- 	template_processor

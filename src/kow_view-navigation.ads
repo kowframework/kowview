@@ -54,7 +54,7 @@ package KOW_View.Navigation is
 			Component	: in Component_Type;
 			Module_Name	: in String;
 			Config		: in KOW_Config.Config_File
-		) return Module_Instance_Interface'Class;
+		) return Module_Type'Class;
 	-- no matter what module we request, the Menu_Module_Type  will always be created
 
 
@@ -71,7 +71,7 @@ package KOW_View.Navigation is
 	-- Modules --
 	-------------
 
-	type Menu_Module_Type is new Module_Instance_Interface with private;
+	type Menu_Module_Type is new Module_Type with private;
 	-- a module is something that can be accessed anywhere inside the system.
 
 
@@ -104,7 +104,7 @@ private
 					Index_Type	=> Natural
 				);
 
-	type Menu_Module_Type is new Module_Instance_Interface with record
+	type Menu_Module_Type is new Module_Type with record
 		Links		: Link_Vectors.Vector;
 		Template	: Unbounded_String;
 	end record;

@@ -134,10 +134,10 @@ package body KOW_View.Components_Registry is
 			Module_Name	: in Unbounded_String;
 			Config		: in KOW_Config.Config_File;
 			Module_ID	: in Positive := 1
-		) return Module_Instance_Interface'Class is
+		) return Module_Type'Class is
 		-- get a module instance
 		Component	: Component_Access := Load( Component_Name );
-		Module		: Module_Instance_Interface'Class := Create_Instance( Component.all, To_String( Module_Name ), Config );
+		Module		: Module_Type'Class := Create_Instance( Component.all, To_String( Module_Name ), Config );
 	begin
 		Module.Module_ID := Module_ID;
 		Module.Component := Component_Ptr( Component );
@@ -151,10 +151,10 @@ package body KOW_View.Components_Registry is
 			Module_Name	: in String;
 			Config		: in KOW_Config.Config_File;
 			Module_ID	: in Positive := 1
-		) return Module_Instance_Interface'Class is
+		) return Module_Type'Class is
 		-- get a module instance
 		Component	: Component_Access := Load( Component_Name );
-		Module		: Module_Instance_interface'Class := Create_Instance( Component.all, Module_Name, Config  );
+		Module		: Module_Type'Class := Create_Instance( Component.all, Module_Name, Config  );
 	begin
 		Module.Module_ID := Module_ID;
 		Module.Component := Component_Ptr( Component );
@@ -167,7 +167,7 @@ package body KOW_View.Components_Registry is
 			Component_Name	: in String;
 			Module_Name	: in String;
 			Module_ID	: in Positive := 1
-		) return Module_Instance_Interface'Class is
+		) return Module_Type'Class is
 		-- get the module, using the standard module configuration
 	begin
 		return Load_Module(
