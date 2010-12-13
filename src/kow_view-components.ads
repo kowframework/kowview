@@ -1,3 +1,33 @@
+------------------------------------------------------------------------------
+--                                                                          --
+--                          KOW Framework :: View                           --
+--                                                                          --
+--                              KOW Framework                               --
+--                                                                          --
+--                                 S p e c                                  --
+--                                                                          --
+--               Copyright (C) 2007-2011, KOW Framework Project             --
+--                                                                          --
+--                                                                          --
+-- KOWView is free software; you can redistribute it  and/or modify it under--
+-- terms of the  GNU General Public License as published  by the Free Soft- --
+-- ware  Foundation;  either version 2,  or (at your option) any later ver- --
+-- sion. KOWView is distributed in the hope that it will be useful,but WITH---
+-- OUT ANY WARRANTY;  without even the  implied warranty of MERCHANTABILITY --
+-- or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License --
+-- for  more details.  You should have  received  a copy of the GNU General --
+-- Public License distributed with KOWView; see file COPYING.  If not, write--
+-- to  the Free Software Foundation,  59 Temple Place - Suite 330,  Boston, --
+-- MA 02111-1307, USA.                                                      --
+--                                                                          --
+-- As a special exception,  if other files  instantiate  generics from this --
+-- unit, or you link  this unit with other files  to produce an executable, --
+-- this  unit  does not  by itself cause  the resulting  executable  to  be --
+-- covered  by the  GNU  General  Public  License.  This exception does not --
+-- however invalidate  any other reasons why  the executable file  might be --
+-- covered by the  GNU Public License.                                      --
+--                                                                          --
+------------------------------------------------------------------------------
 
 
 ---------
@@ -185,14 +215,14 @@ package KOW_View.Components is
 
 
 
-	type Service_Instance_Interface is abstract tagged record
+	type Service_Type is abstract tagged record
 		-- a service usually represents a module to the external world.
 		-- the service can be mapped to a base URI
 		--      . when mapped to /do, /do/something will call it
 		
 		Component	: Component_Ptr;
 	end record;
-	type Service_Instance_Access is not null access all Service_Instance_Interface'Class;
+	type Service_Instance_Access is not null access all Service_Type'Class;
 
 
 
@@ -201,7 +231,7 @@ package KOW_View.Components is
 			Component	: in Component_Type;
 			Service_Name	: in String;
 			Service_Mapping	: in String
-		) return Service_Instance_Interface'Class is abstract;
+		) return Service_Type'Class is abstract;
 	-- create a new service instance.
 	-- depending on the service, the instance object can represent different things and can, or not, even me extended
 	-- to implement additional functionality.
@@ -211,7 +241,7 @@ package KOW_View.Components is
 
 
 	procedure Setup_Service(
-			Service		: in out Service_Instance_Interface;
+			Service		: in out Service_Type;
 			Config		: in     KOW_Config.Config_File
 		) is null;
 	-- for those services that can be configured, this is where you implement the configuration calling
@@ -222,7 +252,7 @@ package KOW_View.Components is
 
 
 	procedure Process_Request(
-			Service		: in out Service_Instance_Interface;
+			Service		: in out Service_Type;
 			Request		: in     AWS.Status.Data;
 			Response	: in out AWS.Response.Data
 		) is null;
@@ -233,7 +263,7 @@ package KOW_View.Components is
 
 
 	function Locate_Resource(
-			Service		: in Service_Instance_Interface;
+			Service		: in Service_Type;
 			Resource	: in String;
 			Extension	: in String := "";
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
