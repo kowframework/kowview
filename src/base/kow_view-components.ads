@@ -30,10 +30,23 @@
 ------------------------------------------------------------------------------
 
 
+
+
+------------------------------------------------------------------------------
+-- Component type declaration                                               --
+--                                                                          --
+-- A component is an abstract idea of a grouping of services and modules    --
+--                                                                          --
+-- Your component type should be suffixed by _component                     --
+------------------------------------------------------------------------------
+
+
 ---------
 -- Ada --
 ---------
 with Ada.Directories;
+with Ada.Containers.Ordered_Maps;
+with Ada.Containers.Vectors;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
 
@@ -41,12 +54,12 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -- KOW Framework --
 -------------------
 with KOW_Config;
+with KOW_Lib.Json;
 
 
 ---------
 -- AWS --
 ---------
-
 with AWS.Response;
 with AWS.Status;
 with Templates_Parser;
@@ -88,7 +101,7 @@ package KOW_View.Components is
 
 	
 	package Service_Delegator_Maps is new Ada.Containers.Ordered_Maps(
-				Key_Type	=> Unbounded_String;
+				Key_Type	=> Unbounded_String,
 				Element_Type	=> Service_Delegator_Access
 			);
 
@@ -187,8 +200,6 @@ package KOW_View.Components is
 	-- can be overriding for implementing default services and such
 
 
-
-	function Get_Name( Component_Tag : in Ada.Tags.Tag ) return String;
 	function Get_Name( Component : in Component_Type'Class ) return String;
 
 	-------------

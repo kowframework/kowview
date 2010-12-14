@@ -80,12 +80,6 @@ package KOW_View.Components.Registry is
 	-- If Require_Configuration == true and there is no config file available raise 
 	-- COMPONENT_CONFIGURATION_ERROR
 
-	procedure Setup( Component_Name : in String );
-	-- tries to setup the component
-	-- if Require_Configuration = false and 
-	
-	procedure Setup_Components;
-	-- run setup for every registered component
 
 
 	function Get_Component( Component_Name: in String ) return KOW_View.Components.Component_Access;
@@ -130,50 +124,7 @@ package KOW_View.Components.Registry is
 	-- get the module, using the standard module configuration
 	
 
-	------------------------
-	-- Service Management --
-	------------------------
 
-	function Load_Service(
-			Component_Name	: in String;
-			Service_Name	: in String;
-			Service_Mapping	: in String
-		) return Service_Type'Class;
-	-- load a service by it's component name and it's name
-
-
-	--------------------------------
-	-- Component Helper Functions --
-	--------------------------------
-
-	function Get_Extension( URI: in String ) return String;
-	-- tries to compute the extension based on the URI
-	function Get_Resource( Mapping, URI, Extension: in String ) return String;
-
-	function Locate_Resource(
-			Component_Name	: in String;
-			Resource	: in String;
-			Extension	: in String;
-			Kind		: in Ada.Directories.File_Kind	
-		) return String;
-	-- locate a resource file for this component
-	-- this file should be placed at
-	-- 	[WORKING_DIR]/data/kowview/component_name/resource.extension
-	-- 	or
-	-- 	[WORKING_DIR]/applications/component_name/data/resource.extension
-	-- returning it's name if nothing has been found raise Ada.Directories.Name_Error if not found
-	-- TODO: Implement locale support at Locate_Resource function
-
-	function Load_Main_Configuration(
-			Component_Name	: in String
-		) return KOW_Config.Config_File;
-	-- load the main configuration for this component
-	
-	function Load_Configuration(
-			Component_Name		: in String;
-			Configuration_Name	: in String
-		) return KOW_Config.Config_File;
-	-- load a configuration file from this component's relative path
 
 private
 

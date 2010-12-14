@@ -47,6 +47,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 with KOW_Config;
 with KOW_Lib.File_System;
 with KOW_View.Components.Registry;
+with KOW_View.Components.Util;
 with KOW_View.Util;
 
 
@@ -163,17 +164,9 @@ package body KOW_View.Components is
 	end Process_Custom_Reques;
 
 
-	function Get_Name( Component_Tag : in Ada.Tags.Tag ) return String is
-	begin
-		return KOW_View.Util.Get_Type_Name(
-						Component_Tag,
-						"_service"
-					);
-	end Get_Name;
-	
 	function Get_Name( Component : in Component_Type'Class ) return String is
 	begin
-		return Get_Name( Component'Tag );
+		return KOW_View.Components.Util.Get_Name( Component'Tag );
 	end Get_Name;
 
 	------------

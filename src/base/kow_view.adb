@@ -36,6 +36,19 @@
 pragma License (Modified_GPL);
 
 
+--------------
+-- Ada 2005 --
+--------------
+with Ada.Tags;
+
+-------------------
+-- KOW Framework --
+-------------------
+with KOW_Lib.Json;
+with KOW_Sec.Accounting;
+with KOW_View.Components;		use KOW_View.Components;
+with KOW_View.Components.Registry;
+with KOW_View.Json_Util;
 
 
 ---------
@@ -45,14 +58,8 @@ with AWS.Parameters;
 with AWS.Status;
 with AWS.Response;
 
--------------------
--- KOW Framework --
--------------------
-with KOW_Sec.Accounting;
-with KOW_View.Components;		use KOW_View.Components;
-with KOW_View.Components.Registry;
 
-package KOW_View is
+package body KOW_View is
 
 
 	function Process_Request( Request : in AWS.Status.Data ) return AWS.Response.Data is
@@ -84,13 +91,9 @@ package KOW_View is
 						);
 
 					Response := KOW_View.Json_Util.Build_Success_Response( Object );
-					AWS.Response.Build(
-								Content_Type	=> "application/json",
-								Message_Body	=> To_JSon( Request_Response ),
-							);
 				exception
 					when e : others =>
-						KOW_View.Json_Util.Build_Error_Response( E );
+						Response := KOW_View.Json_Util.Build_Error_Response( E );
 				end;
 
 			when Custom_Request =>

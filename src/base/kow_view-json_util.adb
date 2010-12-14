@@ -79,7 +79,7 @@ package body KOW_View.json_util is
 	
 	function Build_Success_Response(
 			Object		: KOW_Lib.Json.Object_Type;
-			Status_Code	: AWS.Messages.Status_Code := AWS.Messsages.S200;
+			Status_Code	: AWS.Messages.Status_Code := AWS.Messages.S200;
 			Cache_Control	: AWS.Messages.Cache_Option := AWS.Messages.No_Cache
 		) return AWS.Response.Data is
 
