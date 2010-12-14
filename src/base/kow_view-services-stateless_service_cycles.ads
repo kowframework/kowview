@@ -54,7 +54,7 @@ with AWS.Status;
 
 
 generic
-	type Service_Type is new KOW_View.Components.Service_Type with private;
+	type Service_Type is new KOW_View.Services.Service_Type with private;
 	Component	: KOW_View.Components.Component_Access;
 package KOW_View.Services.Stateless_Service_Cycles is
 pragma Elaborate_Body( KOW_View.Services.Stateless_Service_Cycles );
@@ -71,7 +71,7 @@ pragma Elaborate_Body( KOW_View.Services.Stateless_Service_Cycles );
 	procedure Process_Json_Request(
 			Delegator	: in out Service_Delegator_Type;
 			Request		: in     AWS.Status.Data;
-			Response	:    out AWS.Response.Data
+			Response	:    out KOW_Lib.Json.Object_Type
 		);
 
 	overriding

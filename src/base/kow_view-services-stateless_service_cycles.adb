@@ -40,6 +40,7 @@
 ------------------
 with KOW_Lib.Json;
 with KOW_View.Components;
+with KOW_View.Services.Util;
 
 ---------
 -- AWS --
@@ -60,14 +61,14 @@ package body KOW_View.Services.Stateless_Service_Cycles is
 	procedure Process_Json_Request(
 			Delegator	: in out Service_Delegator_Type;
 			Request		: in     AWS.Status.Data;
-			Response	:    out AWS.Response.Data
+			Response	:    out KOW_Lib.Json.Object_Type
 		) is
 		Service : Service_Type;
 	begin
 		Setup_Service( Component, Service );
 
 		Process_Json_Request(
-				Service	=> Container.Service,
+				Service	=> Service,
 				Request	=> Request,
 				Response=> Response
 			);
@@ -84,7 +85,7 @@ package body KOW_View.Services.Stateless_Service_Cycles is
 	begin
 		Setup_Service( Component, Service );
 		Process_Custom_Request(
-				Service	=> Container.Service,
+				Service	=> Service,
 				Request	=> Request,
 				Response=> Response
 			);
@@ -97,7 +98,7 @@ begin
 	-------------------------------
 	KOW_View.Components.Register_Service_Delegator(
 				Component.all,
-				KOW_View.Services.Get_Name( Service_Type'Tag ),
+				KOW_View.Services.Util.Get_Name( Service_Type'Tag ),
 				Delegator'Unrestricted_Access
 			);
 end KOW_View.Services.Stateless_Service_Cycles;
