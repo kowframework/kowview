@@ -88,15 +88,15 @@ package KOW_View.Components is
 	type Service_Delegator_Access is access all Service_Delegator_Interface'Class;
 
 	procedure Process_Custom_Request(
-				Service : in out Service_Delegator_Interface;
-				Request	: in     AWS.Status.Data;
-				Response:    out AWS.Response.Data
+				Delegator	: in out Service_Delegator_Interface;
+				Request		: in     AWS.Status.Data;
+				Response	:    out AWS.Response.Data
 			) is abstract;
 
 	procedure Process_Json_Request(
-				Service	: in out Service_Delegator_Interface;
-				Request	: in     AWS.Status.Data;
-				Response:    out KOW_Lib.Json.Object_Type
+				Delegator	: in out Service_Delegator_Interface;
+				Request		: in     AWS.Status.Data;
+				Response	:    out KOW_Lib.Json.Object_Type
 			) is abstract;
 
 	

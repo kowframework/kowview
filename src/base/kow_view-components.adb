@@ -82,7 +82,7 @@ package body KOW_View.Components is
 		end;
 		Setup( Component, Config );
 		
-		Initialization_Trigger_Vectors.Iterate( Component.Initialization_Triggers, Trigger_Iterator );
+		Initialization_Trigger_Vectors.Iterate( Component.Initialization_Triggers, Trigger_Iterator'Access );
 	end Initialize;
 
 	function Locate_Resource(
@@ -92,8 +92,8 @@ package body KOW_View.Components is
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
 		) return String is
 	begin
-		return KOW_View.Components.Registry.Locate_Resource(
-					Component_Name	=> To_String( Component.Component_Name ),
+		return KOW_View.Components.Util.Locate_Resource(
+					Component_Name	=> Get_Name( Component ),
 					Resource	=> Resource,
 					Extension	=> Extension,
 					Kind		=> Kind
@@ -162,7 +162,7 @@ package body KOW_View.Components is
 		end if;
 
 		if Last < 0 then
-			Last := Res_of_Uri'Last;
+			Last := Rest_of_Uri'Last;
 		end if;
 
 		return Delegator( To_Unbounded_String( Rest_of_Uri( Rest_of_Uri'First .. Last ) ) );
@@ -176,10 +176,10 @@ package body KOW_View.Components is
 			) is
 
 	begin
-		if Initialization_Trigger_Vectors.Contains( Component, Initialization_Trigger ) then
+		if Initialization_Trigger_Vectors.Contains( Component.Initialization_Triggers, Initialization_Trigger ) then
 			raise CONSTRAINT_ERROR with "duplicated trigger detected at component " & Get_Name( Component );
 		else
-			Initialization_Trigger_Vectors.Append( Component, Initialization_Trigger );
+			Initialization_Trigger_Vectors.Append( Component.Initialization_Triggers, Initialization_Trigger );
 		end if;
 	end Register_Initialization_Trigger;
 
@@ -191,7 +191,7 @@ package body KOW_View.Components is
 		) is
 	begin
 		Process_Json_Request(
-				Delegator	=> Get_Delegator( Component, Request ).all,
+				Delegator	=> Get_Service_Delegator( Component, Request ).all,
 				Request		=> Request,
 				Response	=> Response
 			);
@@ -206,7 +206,7 @@ package body KOW_View.Components is
 		-- can be overriding for implementing default services and such
 	begin
 		Process_Custom_Request(
-				Delegator	=> Get_Delegator( Component, Request ),
+				Delegator	=> Get_Service_Delegator( Component, Request ).all,
 				Request		=> Request,
 				Response	=> Response
 			);
