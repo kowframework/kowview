@@ -30,69 +30,49 @@
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
--- Delegator implementation for singleton services                          --
+-- Utility functions for KOW View                                           --
 ------------------------------------------------------------------------------
 
 
 
-------------------
--- KOW Famework --
-------------------
-with KOW_Lib.Json;
-with KOW_View.Components;
-
----------
--- AWS --
----------
-with AWS.Response;
-with AWS.Status;
+--------------
+-- Ada 2005 --
+--------------
+with Ada.Characters.Handling;
+with Ada.Strings;
+with Ada.Strings.Fixed;
+with Ada.Strings.Unbounded;
+with Ada.Tags;
 
 
-package body KOW_View.Services.Singleton_Service_Cycles is
+
+package body KOW_View.Util is
 
 
-	-------------------
-	-- The Delegator --
-	-------------------
-
-
-	overriding
-	procedure Process_Json_Request(
-			Delegator	: in out Service_Delegator_Type;
-			Request		: in     AWS.Status.Data;
-			Response	:    out AWS.Response.Data
-		) is
+	function Get_Type_Name( Tag : Ada.Tags.Tag ) return String is
+		-- ge the naming component of the tag, giving the following naming conventions
+		-- 	Package1.Subpackage1.My_Element_Type
+		-- will return:
+		-- 	my_element (yes, lowercase)
+		use Ada.Strings;
+		T	: constant String := Ada.Tags.Expanded_name( Tag );
+		First	: constant String := Fixed.Index( T, ".", Backward );
+		Last	: constant Integer := T'Last - 5;
 	begin
-		Process_Json_Request(
-				Service	=> Service_Instance,
-				Request	=> Request,
-				Response=> Response
-			);
-	end Process_Json_Request;
+		if First < 0 then
+			-- it's not inside any package.. good
+			T := T'First;
+		else
+			First := First + 1;
+		end if;
+
+		return Ada.Characters.Handling.To_Lower( T( First .. Last ) );
+	end Get_Type_Name;
 
 
-	overriding
-	procedure Process_Custom_Request(
-			Delegator	: in out Service_Delegator_Type;
-			Request		: in     AWS.Status.Data;
-			Response	:    out AWS.Response.Data
-		) is
+
+	function Get_Type_Name( Tag : Ada.Tags.Tag ) return Ada.Strings.Unbounded.Unbounded_String is
 	begin
-		Process_Custom_Request(
-				Service	=> Service_Instance,
-				Request	=> Request,
-				Response=> Response
-			);
-	end Process_Custom_Request;
-
-
-begin
-	-------------------------------
-	-- we register the delegator --
-	-------------------------------
-	KOW_View.Components.Register_Service_Delegator(
-				Component.all,
-				KOW_View.Util.Get_Type_Name( Service_Type'Tag ),
-				Delegator'Unrestricted_Access
-			);
-end KOW_View.Services.Singleton_Service_Cycles;
+		return Ada.Strings.Unbounded.To_Unbounded_String( Get_Type_name( Tag ) );
+	end Get_Type_Name;
+end KOW_View.Util;

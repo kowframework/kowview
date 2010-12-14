@@ -30,69 +30,80 @@
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
--- Delegator implementation for singleton services                          --
+-- Main package for KOW_View                                                --
 ------------------------------------------------------------------------------
 
+pragma License (Modified_GPL);
 
 
-------------------
--- KOW Famework --
-------------------
-with KOW_Lib.Json;
-with KOW_View.Components;
+
 
 ---------
 -- AWS --
 ---------
-with AWS.Response;
+with AWS.Parameters;
 with AWS.Status;
+with AWS.Response;
+
+-------------------
+-- KOW Framework --
+-------------------
+with KOW_Sec.Accounting;
+with KOW_View.Components;		use KOW_View.Components;
+with KOW_View.Components.Registry;
+
+package KOW_View is
 
 
-package body KOW_View.Services.Singleton_Service_Cycles is
+	function Process_Request( Request : in AWS.Status.Data ) return AWS.Response.Data is
+		-- this is the main function... it's the AWS callback used all around.
+		-- notice that in the v2.0 release the package KOW_View.Service_Mappings was extinguished
 
 
-	-------------------
-	-- The Delegator --
-	-------------------
 
+		Response	: AWS.Response.Data;
+		Component	: Component_Access := Registry.Get_Component( Request );
 
-	overriding
-	procedure Process_Json_Request(
-			Delegator	: in out Service_Delegator_Type;
-			Request		: in     AWS.Status.Data;
-			Response	:    out AWS.Response.Data
-		) is
+		function Request_Mode return Request_Mode_Type is
+			Params	: AWS.Parameters.List := AWS.Status.Parameters( Request );
+		begin
+			return Request_Mode_Type'Value( AWS.Parameters.Get( Params, "mode" ) );
+		exception
+			when others => return Custom_Request;
+		end Request_Mode;
 	begin
-		Process_Json_Request(
-				Service	=> Service_Instance,
-				Request	=> Request,
-				Response=> Response
-			);
-	end Process_Json_Request;
+		case Request_Mode is
+			when Json_Request =>
+				declare
+					Object : KOW_Lib.Json.Object_Type;
+				begin
+					Process_JSon_Request(
+							Component	=> Component.all,
+							Request		=> Request,
+							Response	=> Object 
+						);
+
+					Response := KOW_View.Json_Util.Build_Success_Response( Object );
+					AWS.Response.Build(
+								Content_Type	=> "application/json",
+								Message_Body	=> To_JSon( Request_Response ),
+							);
+				exception
+					when e : others =>
+						KOW_View.Json_Util.Build_Error_Response( E );
+				end;
+
+			when Custom_Request =>
+				Process_Custom_Request(
+						Component	=> Component.all,
+						Request		=> Request,
+						Response	=> Response
+					);
+				-- TODO :: implement a nice exception page with some cool stuff, such as showing up a friendly error message to the user :)
+		end case;
+
+		return Response;
+	end Process_Request;
 
 
-	overriding
-	procedure Process_Custom_Request(
-			Delegator	: in out Service_Delegator_Type;
-			Request		: in     AWS.Status.Data;
-			Response	:    out AWS.Response.Data
-		) is
-	begin
-		Process_Custom_Request(
-				Service	=> Service_Instance,
-				Request	=> Request,
-				Response=> Response
-			);
-	end Process_Custom_Request;
-
-
-begin
-	-------------------------------
-	-- we register the delegator --
-	-------------------------------
-	KOW_View.Components.Register_Service_Delegator(
-				Component.all,
-				KOW_View.Util.Get_Type_Name( Service_Type'Tag ),
-				Delegator'Unrestricted_Access
-			);
-end KOW_View.Services.Singleton_Service_Cycles;
+end KOW_View;

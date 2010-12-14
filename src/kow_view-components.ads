@@ -135,6 +135,14 @@ package KOW_View.Components is
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
 		) return String;
 
+	procedure Register_Service_Delegator(
+			Component	: in out Component_Type;
+			Name		: in     Unbounded_String;
+			Delegator	: in     Service_Delegator_Access
+		);
+	-- register a new service delegator...
+	-- the name of this delegator is going to be calculated from the 
+
 	function Get_Service_Delegator(
 			Component	: in Component_Type;
 			Data		: in AWS.Status.Data

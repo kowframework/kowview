@@ -34,10 +34,7 @@
 -- Ada --
 ---------
 with Ada.IO_Exceptions;
-with Ada.Characters.Handling;
 with Ada.Directories;			use Ada.Directories;
-with Ada.Strings;
-with Ada.Strings.Fixed;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 with Ada.Tags;
 
@@ -50,6 +47,7 @@ with KOW_Lib.File_System;
 with KOW_Lib.String_Util;
 with KOW_Lib.UString_Vectors;
 with KOW_View.Components;		use KOW_View.Components;
+with KOW_View.Util;
 
 
 
@@ -73,35 +71,19 @@ package body KOW_View.Components.Registry is
 		-- If Require_Configuration == true and there is no config file available raise
 		-- COMPONENT_CONFIGURATION_ERROR
 
-		function Get_Component_Name return String is
-			The_Tag := Ada.Tags.Expanded_Name( Component.all'Tag );
-
-			Idx	: Integer := Ada.Strings.Fixed.Index(
-								Source		=> The_Tag,
-								Pattern		=> ".",
-								Direction	=> Ada.Strings.Backward
-							);
-		begin
-
-			return Ada.Characters.Handling.To_Lower(
-						The_Tag( Idx1 + 1 .. The_Tag'Last - 5 )
-					);
-		end Get_Component_Name;
-
-		Component_name	: constant String := Get_Component_Name;
-		CN		: constant Unbounded_String := To_Unbounded_String( Component_Name );
+		Component_name	: constant Unbounded_String := KOW_View.Util.Get_Type_name( Component.all'Tag );
 
 		use Component_Maps;
 	begin
 		-- the component is in the memory and is initialized:
-		if Contains( The_Registry, CN ) then
-			raise DUPLICATED_COMPONENT_ERROR with Component_Name & "@" & Ada.Tags.Expanded_Name( Componment.all'Tag );
+		if Contains( The_Registry, Component_Name ) then
+			raise DUPLICATED_COMPONENT_ERROR with To_String( Component_Name ) & "@" & Ada.Tags.Expanded_Name( Componment.all'Tag );
 		end if;
 
 		Component.all.Require_Configuration := Require_Configuration;
-		Component.all.Component_Name := CN;
+		Component.all.Component_Name := Component_Name;
 
-		Include( The_Registry, CN, Component );
+		Include( The_Registry, Component_Name, Component );
 		
 	end Register;
 

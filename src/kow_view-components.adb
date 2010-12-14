@@ -73,6 +73,25 @@ package body KOW_View.Components is
 	end Locate_Resource;
 
 
+
+	procedure Register_Service_Delegator(
+			Component	: in out Component_Type;
+			Name		: in     Unbounded_String;
+			Delegator	: in     Service_Delegator_Access
+		) is
+		-- register a new service delegator...
+		-- the name of this delegator is going to be calculated from the 
+		use Service_Delegator_Maps;
+	begin
+		if Contains( Component.Service_Delegators, Name ) then
+			raise CONSTRAINT_ERROR with "duplicated service :: " & To_String( Name );
+		end if;
+
+		Include( Component.Service_Delegators, Name, Delegator );
+	end Register_Service_Delegator;
+
+
+
 	function Get_Service_Delegator(
 			Component	: in Component_Type;
 			Data		: in AWS.Status.Data
