@@ -40,6 +40,7 @@
 ------------------
 with KOW_Lib.Json;
 with KOW_View.Components;
+with KOW_View.Services;
 
 ---------
 -- AWS --
@@ -49,7 +50,7 @@ with AWS.Status;
 
 
 generic
-	type Service_Type is new KOW_View.Components.Service_Type with private;
+	type Service_Type is new KOW_View.Services.Service_Type with private;
 	Component	: KOW_View.Components.Component_Access;
 package KOW_View.Services.Singleton_Service_Cycles is
 pragma Elaborate_Body( KOW_View.Services.Singleton_Service_Cycles );
