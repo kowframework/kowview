@@ -53,7 +53,7 @@ with KOW_View.Util;
 with AWS.Status;
 with AWS.Response;
 
-package KOW_View.Services is
+package body KOW_View.Services is
 
 	-------------
 	-- Service --
@@ -81,12 +81,12 @@ package KOW_View.Services is
 		) is
 		-- load the configuration file and run setup..
 	begin
-		Service.Component := Component;
+		Service.Component := Component_Ptr( Component );
 		declare
 			use KOW_Config;
 			use KOW_view.Util;
 			Config : Config_File := New_Config_File(
-							To_String( Component.all.Name ) / Get_Name( Service )
+							Get_Name( Component.all ) / Get_Name( Service )
 						);
 		begin
 			Setup_Service( Service, Config );
