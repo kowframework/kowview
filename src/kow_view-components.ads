@@ -92,6 +92,18 @@ package KOW_View.Components is
 				Element_Type	=> Service_Delegator_Access
 			);
 
+
+	--------------------------------------
+	-- Component Initialization Trigger --
+	--------------------------------------
+
+	type Initialization_Trigger_Access is not null access procedure;
+
+	package Initialization_Trigger_Vectors is new Ada.Containers.Vectors(
+				Index_Type	=> Positive,
+				Element_Type	=> Initialization_Trigger_Access
+			);
+
 	----------------
 	-- Components --
 	----------------
@@ -102,6 +114,10 @@ package KOW_View.Components is
 
 		Default_Service		: Unbounded_String;
 		-- default service to load
+
+		Initialization_Triggers	: Initialization_Trigger_Vectors.Vector;
+		-- durin elaboration your code can register initialization triggers
+		-- that will be called by the initialize 
 	end record;
 
 	type Component_Access is not null access all Component_Type'Class;
@@ -113,13 +129,24 @@ package KOW_View.Components is
 	-- 	. module.component
 	-- variables
 
-	procedure Initialize(
+
+
+	procedure Setup(
 			Component	: in out Component_Type;
 			Config		: in out KOW_Config.Config_File
-		) is abstract;
-	-- Initialize the component while starting up the server
+		) is null;
+	-- setup the component while starting up the server
 	-- Config is an already initialized configuration file located at:
 	-- 	kowview/component_name
+	--
+	-- override this procedure whenever you need to write your initialization code
+
+
+
+	procedure Initialize( Component : in out Component_Type );
+	-- initialize the request doind:
+	-- 	1. call the abstract setup procedure
+	-- 	2. runing all the initialization triggers
 
 
 	function Locate_Resource(

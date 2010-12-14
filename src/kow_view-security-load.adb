@@ -35,8 +35,7 @@ with KOW_View.Components.Registry;
 procedure KOW_View.Security.Load is
 begin
 	KOW_View.Components.Registry.Register(
-			Component_Name		=> "security",
-			Component		=> new KOW_View.Security.Component_Type,
+			Component		=> KOW_View.Security.Component'Access,
 			Require_Configuration	=> true
 		);
 

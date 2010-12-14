@@ -59,6 +59,12 @@ package body KOW_View.Components is
 	-- Component --
 	---------------
 
+
+
+	procedure Initialize( Component : in out Component_Type ) is
+	begin
+	end Initialize;
+
 	function Locate_Resource(
 			Component	: in Component_Type;
 			Resource	: in String;

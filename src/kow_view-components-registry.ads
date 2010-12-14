@@ -68,9 +68,8 @@ package KOW_View.Components.Registry is
 	--------------------------
 
 	procedure Register(
-			Component_Name		: in String;
-			Component		: in KOW_View.Components.Component_Access;
-			Require_Configuration	: in Boolean
+				Component		: in KOW_View.Components.Component_Access;
+				Require_Configuration	: in Boolean
 			);
 	-- A component, once registered, is never deallocated.
 	-- All components should be registered at startup.

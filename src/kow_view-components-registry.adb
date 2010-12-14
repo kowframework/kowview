@@ -59,8 +59,8 @@ package body KOW_View.Components.Registry is
 	--------------------------
 
 	procedure Register(
-			Component		: in KOW_View.Components.Component_Access;
-			Require_Configuration	: in Boolean
+				Component		: in KOW_View.Components.Component_Access;
+				Require_Configuration	: in Boolean
 			) is
 		-- A component, once registered, is never deallocated.
 		-- All components should be registered at startup.
@@ -94,6 +94,7 @@ package body KOW_View.Components.Registry is
 	begin
 		Config := Load_Main_Configuration( Component_Name );
 		Initialize( Component, Component_Name, Config );
+
 	exception
 		when KOW_Config.File_Not_Found =>
 			if Component.Require_Configuration then
