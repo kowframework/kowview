@@ -30,7 +30,7 @@
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
--- Delegator implementation for Stateful services                          --
+-- Delegator implementation for Stateless services                          --
 ------------------------------------------------------------------------------
 
 
@@ -49,29 +49,7 @@ with AWS.Session;
 with AWS.Status;
 
 
-package body KOW_View.Services.Stateful_Service_Cycles is
-
-	---------------------------
-	-- The Service Container --
-	---------------------------
-	function Get( Request : in AWS.Status.Data ) return Service_Container_Type is
-		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
-		Container : Service_Container_Type := Service_Container_Data.Get( Session_ID, Service_Container_Key );
-	begin
-		if Container.Is_Null then
-			Setup_Service( Component, Container.Service );
-		end if;
-
-		return Container;
-	end Get;
-
-	procedure Set( Request : in AWS.Status.Data; Container : in Service_Container_Type ) is
-		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
-	begin
-		Service_Container_Data.Set( Session_ID, Service_Container_Key, Container );
-	end Set;
-
-
+package body KOW_View.Services.Stateless_Service_Cycles is
 
 	-------------------
 	-- The Delegator --
@@ -84,15 +62,15 @@ package body KOW_View.Services.Stateful_Service_Cycles is
 			Request		: in     AWS.Status.Data;
 			Response	:    out AWS.Response.Data
 		) is
-		Container : Service_Container_Type := Get( Request );
+		Service : Service_Type;
 	begin
+		Setup_Service( Component, Service );
 
 		Process_Json_Request(
 				Service	=> Container.Service,
 				Request	=> Request,
 				Response=> Response
 			);
-		Set( Container );
 	end Process_Json_Request;
 
 
@@ -102,14 +80,14 @@ package body KOW_View.Services.Stateful_Service_Cycles is
 			Request		: in     AWS.Status.Data;
 			Response	:    out AWS.Response.Data
 		) is
-		Container : Service_Container_Type := Get( Request );
+		Service : Service_Type;
 	begin
+		Setup_Service( Component, Service );
 		Process_Custom_Request(
 				Service	=> Container.Service,
 				Request	=> Request,
 				Response=> Response
 			);
-		Set( Container );
 	end Process_Custom_Request;
 
 
@@ -122,4 +100,4 @@ begin
 				KOW_View.Util.Get_Type_Name( Service_Type'Tag ),
 				Delegator'Unrestricted_Access
 			);
-end KOW_View.Services.Stateful_Service_Cycles;
+end KOW_View.Services.Stateless_Service_Cycles;

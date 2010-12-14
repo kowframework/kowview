@@ -4,7 +4,7 @@
 --                                                                          --
 --                              KOW Framework                               --
 --                                                                          --
---                                 B o d y                                  --
+--                                 S p e c                                  --
 --                                                                          --
 --               Copyright (C) 2007-2011, KOW Framework Project             --
 --                                                                          --
@@ -30,10 +30,14 @@
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
--- Delegator implementation for Stateful services                          --
+-- Delegator implementation for Stateless services                          --
 ------------------------------------------------------------------------------
 
 
+--------------
+-- Ada 2005 --
+--------------
+with Ada.Finalization;
 
 ------------------
 -- KOW Famework --
@@ -49,33 +53,18 @@ with AWS.Session;
 with AWS.Status;
 
 
-package body KOW_View.Services.Stateful_Service_Cycles is
-
-	---------------------------
-	-- The Service Container --
-	---------------------------
-	function Get( Request : in AWS.Status.Data ) return Service_Container_Type is
-		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
-		Container : Service_Container_Type := Service_Container_Data.Get( Session_ID, Service_Container_Key );
-	begin
-		if Container.Is_Null then
-			Setup_Service( Component, Container.Service );
-		end if;
-
-		return Container;
-	end Get;
-
-	procedure Set( Request : in AWS.Status.Data; Container : in Service_Container_Type ) is
-		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
-	begin
-		Service_Container_Data.Set( Session_ID, Service_Container_Key, Container );
-	end Set;
-
+generic
+	type Service_Type is new KOW_View.Components.Service_Type with private;
+	Component	: KOW_View.Components.Component_Access;
+package KOW_View.Services.Stateless_Service_Cycles is
+pragma Elaborate_Body( KOW_View.Services.Stateless_Service_Cycles );
 
 
 	-------------------
 	-- The Delegator --
 	-------------------
+
+	type Service_Delegator_Type is new KOW_View.Components.Service_Delegator_Interface with null record;
 
 
 	overriding
@@ -83,43 +72,22 @@ package body KOW_View.Services.Stateful_Service_Cycles is
 			Delegator	: in out Service_Delegator_Type;
 			Request		: in     AWS.Status.Data;
 			Response	:    out AWS.Response.Data
-		) is
-		Container : Service_Container_Type := Get( Request );
-	begin
-
-		Process_Json_Request(
-				Service	=> Container.Service,
-				Request	=> Request,
-				Response=> Response
-			);
-		Set( Container );
-	end Process_Json_Request;
-
+		);
 
 	overriding
 	procedure Process_Custom_Request(
 			Delegator	: in out Service_Delegator_Type;
 			Request		: in     AWS.Status.Data;
 			Response	:    out AWS.Response.Data
-		) is
-		Container : Service_Container_Type := Get( Request );
-	begin
-		Process_Custom_Request(
-				Service	=> Container.Service,
-				Request	=> Request,
-				Response=> Response
-			);
-		Set( Container );
-	end Process_Custom_Request;
+		);
 
 
-begin
-	-------------------------------
-	-- we register the delegator --
-	-------------------------------
-	KOW_View.Components.Register_Service_Delegator(
-				Component.all,
-				KOW_View.Util.Get_Type_Name( Service_Type'Tag ),
-				Delegator'Unrestricted_Access
-			);
-end KOW_View.Services.Stateful_Service_Cycles;
+
+	---------------
+	-- Variables --
+	---------------
+	
+	Delegator : aliased Service_Delegator_Type;
+
+
+end KOW_View.Services.Stateless_Service_Cycles;
