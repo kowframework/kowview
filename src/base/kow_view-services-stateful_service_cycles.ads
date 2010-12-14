@@ -44,6 +44,9 @@ with Ada.Finalization;
 ------------------
 with KOW_Lib.Json;
 with KOW_View.Components;
+with KOW_View.Services;
+with KOW_View.Services.Util;
+with KOW_View.Util;
 
 ---------
 -- AWS --
@@ -54,7 +57,7 @@ with AWS.Status;
 
 
 generic
-	type Service_Type is new KOW_View.Components.Service_Type with private;
+	type Service_Type is new KOW_View.Services.Service_Type with private;
 	Component	: KOW_View.Components.Component_Access;
 package KOW_View.Services.Stateful_Service_Cycles is
 pragma Elaborate_Body( KOW_View.Services.Stateful_Service_Cycles );
@@ -68,20 +71,17 @@ pragma Elaborate_Body( KOW_View.Services.Stateful_Service_Cycles );
 	
 
 	type Service_Container_Type is record
-		Service	: Service_Type := ( Component => Component, others => <> );
+		Service	: Service_Type;
 		Is_Null	: Boolean := True;
 	end record;
 
 	Null_Service_Container	: constant Service_Container_Type := (
 							Is_null => true,
-							Service => (
-									Component	=> Component,
-									others		=> <>
-								)
+							Service => <>
 						);
 
 	Service_Container_Key	: constant String := 
-		KOW_View.Components.Get_Name( Component ) & "::" & KOW_View.Util.Get_Type_name( Service_Type'Tag ) & "::state";
+		KOW_View.Components.Get_Name( Component.all ) & "::" & KOW_View.Services.Util.Get_Name( Service_Type'Tag ) & "::state";
 	-- the key inside the session
 
 
@@ -106,7 +106,7 @@ pragma Elaborate_Body( KOW_View.Services.Stateful_Service_Cycles );
 	procedure Process_Json_Request(
 			Delegator	: in out Service_Delegator_Type;
 			Request		: in     AWS.Status.Data;
-			Response	:    out AWS.Response.Data
+			Response	:    out KOW_Lib.Json.Object_Type
 		);
 
 	overriding

@@ -107,14 +107,13 @@ package KOW_View.Services is
 		) return String;
 
 	procedure Setup_Service(
-			Component	: in out Component_Access;
+			Component	: in     Component_Access;
 			Service		: in out Service_Type'Class
 		);
 	-- load the configuration file and run setup..
 
 
 
-	function Get_Name( Service_Tag : in Ada.Tags.Tag ) return String;
 	function Get_Name( Service : in Service_Type'Class ) return String;
 
 

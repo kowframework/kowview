@@ -44,6 +44,7 @@ with KOW_Config;
 with KOW_Lib.File_System;		use KOW_Lib.File_System;
 with KOW_Lib.Json;
 with KOW_View.Components;		use KOW_View.Components;
+with KOW_View.Services.Util;
 with KOW_View.Util;
 
 
@@ -76,7 +77,7 @@ package body KOW_View.Services is
 
 
 	procedure Setup_Service(
-			Component	: in out Component_Access;
+			Component	: in     Component_Access;
 			Service		: in out Service_Type'Class
 		) is
 		-- load the configuration file and run setup..
@@ -97,15 +98,9 @@ package body KOW_View.Services is
 
 
 
-	function Get_Name( Service_Tag : in Ada.Tags.Tag ) return String is
-	begin
-		return KOW_View.Util.Get_Type_Name( Service_Tag, "_service" );
-	end Get_Name;
-
-
 	function Get_Name( Service : in Service_Type'Class ) return String is
 	begin
-		return Get_Name( Service'Tag );
+		return KOW_View.Services.Util.Get_Name( Service'Tag );
 	end Get_Name;
 
 

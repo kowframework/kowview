@@ -40,6 +40,7 @@
 ------------------
 with KOW_Lib.Json;
 with KOW_View.Components;
+with KOW_View.Services.Util;
 
 ---------
 -- AWS --
@@ -82,7 +83,7 @@ package body KOW_View.Services.Stateful_Service_Cycles is
 	procedure Process_Json_Request(
 			Delegator	: in out Service_Delegator_Type;
 			Request		: in     AWS.Status.Data;
-			Response	:    out AWS.Response.Data
+			Response	:    out KOW_lib.Json.Object_Type
 		) is
 		Container : Service_Container_Type := Get( Request );
 	begin
@@ -92,7 +93,7 @@ package body KOW_View.Services.Stateful_Service_Cycles is
 				Request	=> Request,
 				Response=> Response
 			);
-		Set( Container );
+		Set( Request, Container );
 	end Process_Json_Request;
 
 
@@ -109,7 +110,7 @@ package body KOW_View.Services.Stateful_Service_Cycles is
 				Request	=> Request,
 				Response=> Response
 			);
-		Set( Container );
+		Set( Request, Container );
 	end Process_Custom_Request;
 
 
@@ -119,7 +120,7 @@ begin
 	-------------------------------
 	KOW_View.Components.Register_Service_Delegator(
 				Component.all,
-				KOW_View.Services.Get_Name( Service_Type'Tag ),
+				KOW_View.Services.Util.Get_Name( Service_Type'Tag ),
 				Delegator'Unrestricted_Access
 			);
 end KOW_View.Services.Stateful_Service_Cycles;
