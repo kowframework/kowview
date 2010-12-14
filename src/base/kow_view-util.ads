@@ -59,6 +59,6 @@ package KOW_View.Util is
 	function Get_Type_Name(
 			Tag	: in Ada.Tags.Tag;
 			Sufix	: in String := "_type"
-		) return Ada.Strings.Unbounded.Unbounded_String is
+		) return Ada.Strings.Unbounded.Unbounded_String;
 
 end KOW_View.Util;
