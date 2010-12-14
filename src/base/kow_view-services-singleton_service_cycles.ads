@@ -87,5 +87,7 @@ pragma Elaborate_Body( KOW_View.Services.Singleton_Service_Cycles );
 	
 	Delegator : aliased Service_Delegator_Type;
 
+private
+	procedure Initialize_Service_Trigger;
 
 end KOW_View.Services.Singleton_Service_Cycles;

@@ -156,10 +156,18 @@ package KOW_View.Components is
 
 
 
-	procedure Initialize( Component : in out Component_Type );
+	procedure Initialize(
+			Component		: in out Component_Type;
+			Require_Configuration	: in     Boolean
+		);
 	-- initialize the request doind:
 	-- 	1. call the abstract setup procedure
 	-- 	2. runing all the initialization triggers
+	--
+	-- as a side note, if Require_Configuration = true and the configuration file is not found
+	-- raise COMPONENT_ERROR with a nice message
+	--
+	-- otherwise Setup is aways run, even if with an empty configuration file
 
 
 	function Locate_Resource(
@@ -183,6 +191,8 @@ package KOW_View.Components is
 	-- register a new service delegator...
 	-- the name of this delegator is going to be calculated from the 
 
+
+
 	function Get_Service_Delegator(
 			Component	: in Component_Type;
 			Data		: in AWS.Status.Data
@@ -190,6 +200,11 @@ package KOW_View.Components is
 	-- return the service delegator for this request..
 	-- you should override this method in case you want only one service in your component 
 		
+
+	procedure Register_Initialization_Trigger(
+				Component		: in out Component_Type;
+				Initialization_Trigger	: in     Initialization_Trigger_Access
+			);
 
 	procedure Process_Json_Request(
 			Component	: in out Component_Type;

@@ -58,7 +58,6 @@ package KOW_View.Components.Registry is
 	----------------
 
 
-	COMPONENT_CONFIGURATION_ERROR	: Exception;
 	DUPLICATED_COMPONENT_ERROR	: Exception;
 	UNKNOWN_COMPONENT_ERROR		: Exception;
 
@@ -78,7 +77,7 @@ package KOW_View.Components.Registry is
 	-- the component's configuration file.
 	--
 	-- If Require_Configuration == true and there is no config file available raise 
-	-- COMPONENT_CONFIGURATION_ERROR
+	-- COMPONENT_ERROR
 
 
 

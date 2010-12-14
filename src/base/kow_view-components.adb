@@ -60,10 +60,29 @@ package body KOW_View.Components is
 	-- Component --
 	---------------
 
+	procedure Initialize(
+			Component		: in out Component_Type;
+			Require_Configuration	: in     Boolean
+		) is
 
+		Config : KOW_Config.Config_File;
 
-	procedure Initialize( Component : in out Component_Type ) is
+		procedure Trigger_Iterator( C : in Initialization_Trigger_Vectors.Cursor ) is
+		begin
+			Initialization_Trigger_Vectors.Element( C ).all;
+		end Trigger_Iterator;
 	begin
+		begin
+			Config := KOW_View.Components.Util.Load_Main_Configuration( Get_name( Component ) );
+		exception
+			when KOW_Config.File_Not_Found =>
+				if Require_Configuration then
+					raise COMPONENT_ERROR with "Missing required configuration for component " & Get_Name( Component );
+				end if;
+		end;
+		Setup( Component, Config );
+		
+		Initialization_Trigger_Vectors.Iterate( Component.Initialization_Triggers, Trigger_Iterator );
 	end Initialize;
 
 	function Locate_Resource(
@@ -140,12 +159,29 @@ package body KOW_View.Components is
 	begin
 		if Rest_of_uri'Length = 0 then
 			return Delegator( Component.Default_Service );
+		end if;
+
 		if Last < 0 then
 			Last := Res_of_Uri'Last;
 		end if;
 
-		return Delegator( To_Unbounded_String( Rest_of_Uri( Rest_of_Uri'First .. Last ) );
+		return Delegator( To_Unbounded_String( Rest_of_Uri( Rest_of_Uri'First .. Last ) ) );
 	end Get_Service_Delegator;
+
+
+
+	procedure Register_Initialization_Trigger(
+				Component		: in out Component_Type;
+				Initialization_Trigger	: in     Initialization_Trigger_Access
+			) is
+
+	begin
+		if Initialization_Trigger_Vectors.Contains( Component, Initialization_Trigger ) then
+			raise CONSTRAINT_ERROR with "duplicated trigger detected at component " & Get_Name( Component );
+		else
+			Initialization_Trigger_Vectors.Append( Component, Initialization_Trigger );
+		end if;
+	end Register_Initialization_Trigger;
 
 
 	procedure Process_Json_Request(
@@ -174,7 +210,7 @@ package body KOW_View.Components is
 				Request		=> Request,
 				Response	=> Response
 			);
-	end Process_Custom_Reques;
+	end Process_Custom_Request;
 
 
 	function Get_Name( Component : in Component_Type'Class ) return String is
