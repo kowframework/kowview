@@ -59,7 +59,7 @@ package body KOW_View.Util is
 		-- 	my_element (yes, lowercase)
 		use Ada.Strings;
 		T	: constant String := Ada.Tags.Expanded_name( Tag );
-		First	: constant String := Fixed.Index( T, ".", Backward );
+		First	:          Integer := Fixed.Index( T, ".", Backward );
 		Last	: constant Integer := T'Last - Sufix'Length;
 	begin
 		if First < 0 then
