@@ -1,0 +1,20 @@
+
+
+
+
+with "ahven_lib.gpr";
+with "kowview.gpr";
+
+project kow_view_tests is
+
+
+
+	for Source_Dirs use ( "src" );
+
+	for Object_Dir use "obj";
+
+	for Exec_Dir use "bin";
+
+	for Main use ( "run_tests" );
+
+end kow_view_tests;
