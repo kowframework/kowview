@@ -47,6 +47,7 @@ with KOW_Lib.File_System;
 with KOW_Lib.String_Util;
 with KOW_Lib.UString_Vectors;
 with KOW_View.Components;		use KOW_View.Components;
+with KOW_View.Components.Util;
 with KOW_View.Util;
 
 
@@ -62,14 +63,6 @@ package body KOW_View.Components.Registry is
 				Component		: in KOW_View.Components.Component_Access;
 				Require_Configuration	: in Boolean
 			) is
-		-- A component, once registered, is never deallocated.
-		-- All components should be registered at startup.
-		--
-		-- This procedure also calls "Initialize" for each component. Is also responsible for locating
-		-- the component's configuration file.
-		--
-		-- If Require_Configuration == true and there is no config file available raise
-		-- COMPONENT_CONFIGURATION_ERROR
 
 		Component_name	: constant Unbounded_String := KOW_View.Util.Get_Type_name( Component.all'Tag, "_component" );
 
@@ -77,11 +70,10 @@ package body KOW_View.Components.Registry is
 	begin
 		-- the component is in the memory and is initialized:
 		if Contains( The_Registry, Component_Name ) then
-			raise DUPLICATED_COMPONENT_ERROR with To_String( Component_Name ) & "@" & Ada.Tags.Expanded_Name( Componment.all'Tag );
+			raise DUPLICATED_COMPONENT_ERROR with To_String( Component_Name ) & "@" & Ada.Tags.Expanded_Name( Component.all'Tag );
 		end if;
 
-		Component.all.Require_Configuration := Require_Configuration;
-		Component.all.Component_Name := Component_Name;
+		Initialize( Component.all, Require_Configuration );
 
 		Include( The_Registry, Component_Name, Component );
 		
@@ -102,7 +94,6 @@ package body KOW_View.Components.Registry is
 		declare
 			Component : Component_Access := Component_Maps.Element( The_Registry, Component_Name );
 		begin
-			pragma Assert( KOW_View.Components.Get_Name( Component ) = Component_Name, "tempering with component name..." );
 			return Component;
 		end;
 	exception
@@ -110,12 +101,18 @@ package body KOW_View.Components.Registry is
 			raise UNKNOWN_COMPONENT_ERROR with To_String( Component_Name );
 	end Get_Component;
 
+	
+
 	function Get_Component( Request : in AWS.Status.Data ) return KOW_View.Components.Component_Access is
 		-- get the component for the given request.
-		URI : constant String := AWS.Status.URI( Request );
-			
-	begin
 
+		URI : constant String := AWS.Status.URI( Request );
+	begin
+		if URI'Length = 1 then -- URI = '/'
+			raise KOW_View.REDIRECT_TO_HOME;
+		else
+			return Get_Component( KOW_View.Components.Util.Get_Name( AWS.Status.URI( Request ) ) );
+		end if;
 	end Get_Component;
 
 	-----------------------
@@ -129,7 +126,7 @@ package body KOW_View.Components.Registry is
 			Module_ID	: in Positive := 1
 		) return Module_Type'Class is
 		-- get a module instance
-		Component	: Component_Access := Load( Component_Name );
+		Component	: Component_Access := Get_Component( Component_Name );
 		Module		: Module_Type'Class := Create_Instance( Component.all, To_String( Module_Name ), Config );
 	begin
 		Module.Module_ID := Module_ID;
@@ -146,7 +143,7 @@ package body KOW_View.Components.Registry is
 			Module_ID	: in Positive := 1
 		) return Module_Type'Class is
 		-- get a module instance
-		Component	: Component_Access := Load( Component_Name );
+		Component	: Component_Access := Get_Component( Component_Name );
 		Module		: Module_Type'Class := Create_Instance( Component.all, Module_Name, Config  );
 	begin
 		Module.Module_ID := Module_ID;
@@ -166,7 +163,7 @@ package body KOW_View.Components.Registry is
 		return Load_Module(
 				Component_Name	=> Component_Name,
 				Module_Name	=> Module_Name,
-				Config		=> Load_Configuration(
+				Config		=> KOW_View.Components.Util.Load_Configuration(
 							Component_Name		=> Component_Name,
 							Configuration_Name	=> Module_Name
 						),

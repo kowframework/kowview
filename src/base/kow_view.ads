@@ -62,4 +62,9 @@ package KOW_View is
 	function Process_Request( Request : in AWS.Status.Data ) return AWS.Response.Data;
 	-- this is the main function... it's the AWS callback used all around.
 	-- notice that in the v2.0 release the package KOW_View.Service_Mappings was extinguished
+
+
+	REDIRECT_TO_HOME : Exception;
+	-- redirect to the home for this server
+	-- TODO :: implement REDIRECT_TO_HOME or the server wont work
 end KOW_View;
