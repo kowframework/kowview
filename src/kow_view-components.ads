@@ -168,6 +168,8 @@ package KOW_View.Components is
 	-- Modules --
 	-------------
 
+	-- TODO :: implement delegator for modules as well
+	-- and move the module type to it's own package
 
 
 	type Module_Type is abstract tagged record
@@ -266,65 +268,6 @@ package KOW_View.Components is
 		);
 	-- procedure used to generate a valid ID for HTML elements
 	-- it's a helper procedure so the user can produce unique IDs for their pages easily
-
-	--------------
-	-- Services --
-	--------------
-
-
-
-	type Service_Type is abstract tagged record
-		-- a service usually represents a module to the external world.
-		-- the service can be mapped to a base URI
-		--      . when mapped to /do, /do/something will call it
-
-		Component	: Component_Ptr;
-		-- used by the locate_resource method...
-
-	end record;
-
-
-
-	procedure Setup_Service(
-			Service		: in out Service_Type;
-			Config		: in     KOW_Config.Config_File
-		) is null;
-	-- for those services that can be configured, this is where you implement the configuration calling
-	-- this is usefull if you have two diferent instances of the same service, each one with
-	-- different setup...
-	--
-	-- this is new on kowview 2.0
-
-
-	procedure Process_Json_Request(
-			Service	: in out Service_Type;
-			Request	: in     AWS.Status.Data;
-			Response:    out KOW_Lib.Json.Object_Type
-		) is abstract;
-
-	procedure Process_Custom_Request(
-			Service		: in out Service_Type;
-			Request		: in     AWS.Status.Data;
-			Response	:    out AWS.Response.Data
-		) is abstract;
-	-- process a request to a service
-	-- the entire request is handled by the service
-	-- sometimes is useful for a service only to be created and released - such as in a counter service
-
-
-
-	function Locate_Resource(
-			Service		: in Service_Type;
-			Resource	: in String;
-			Extension	: in String := "";
-			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
-		) return String;
-
-	procedure Setup_Service(
-			Component	: in out Component_Access;
-			Service		: in out Service_Type'Class
-		);
-	-- load the configuration file and run setup..
 
 
 end KOW_View.Components;

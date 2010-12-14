@@ -92,7 +92,7 @@ begin
 	-------------------------------
 	KOW_View.Components.Register_Service_Delegator(
 				Component.all,
-				KOW_View.Util.Get_Type_Name( Service_Type'Tag ),
+				KOW_View.Services.Get_Name( Service_Type'Tag ),
 				Delegator'Unrestricted_Access
 			);
 end KOW_View.Services.Singleton_Service_Cycles;

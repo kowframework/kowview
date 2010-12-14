@@ -131,21 +131,6 @@ package body KOW_View.Navigation is
 	end Create_Instance;
 
 
-	type DUMB_SERVICE is new KOW_View.Components.Service_Type with null record;
-
-	overriding
-	function Create_Instance(
-			Component	: in Component_Type;
-			Service_Name	: in String;
-			Service_Mapping	: in String
-		) return Service_Type'Class is
-		D:DUMB_SERVICE;
-	begin
-		raise KOW_View.Components.SERVICE_ERROR with "no service " & Service_Name & " available";
-
-		return D;
-	end Create_Instance;
-
 
 
 

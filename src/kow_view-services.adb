@@ -4,7 +4,7 @@
 --                                                                          --
 --                              KOW Framework                               --
 --                                                                          --
---                                 B o d y                                  --
+--                                 S p e c                                  --
 --                                                                          --
 --               Copyright (C) 2007-2011, KOW Framework Project             --
 --                                                                          --
@@ -29,97 +29,84 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-------------------------------------------------------------------------------
--- Delegator implementation for Stateful services                          --
-------------------------------------------------------------------------------
 
 
+--------------
+-- Ada 2005 --
+--------------
+with Ada.Directories;
+with Ada.Tags;
 
-------------------
--- KOW Famework --
-------------------
+-------------------
+-- KOW Framework --
+-------------------
+with KOW_Config;
+with KOW_Lib.File_System;		use KOW_Lib.File_System;
 with KOW_Lib.Json;
-with KOW_View.Components;
+with KOW_View.Components;		use KOW_View.Components;
+with KOW_View.Util;
+
 
 ---------
 -- AWS --
 ---------
-with AWS.Response;
-with AWS.Session;
 with AWS.Status;
+with AWS.Response;
 
+package KOW_View.Services is
 
-package body KOW_View.Services.Stateful_Service_Cycles is
+	-------------
+	-- Service --
+	-------------
 
-	---------------------------
-	-- The Service Container --
-	---------------------------
-	function Get( Request : in AWS.Status.Data ) return Service_Container_Type is
-		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
-		Container : Service_Container_Type := Service_Container_Data.Get( Session_ID, Service_Container_Key );
+	function Locate_Resource(
+			Service		: in Service_Type;
+			Resource	: in String;
+			Extension	: in String := "";
+			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
+		) return String is
 	begin
-		if Container.Is_Null then
-			Setup_Service( Component, Container.Service );
-		end if;
-
-		return Container;
-	end Get;
-
-	procedure Set( Request : in AWS.Status.Data; Container : in Service_Container_Type ) is
-		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
-	begin
-		Service_Container_Data.Set( Session_ID, Service_Container_Key, Container );
-	end Set;
+		return Locate_Resource(
+					Component	=> Service.Component.all,
+					Resource	=> Resource,
+					Extension	=> Extension,
+					Kind		=> Kind
+				);
+	end Locate_Resource;
 
 
-
-	-------------------
-	-- The Delegator --
-	-------------------
-
-
-	overriding
-	procedure Process_Json_Request(
-			Delegator	: in out Service_Delegator_Type;
-			Request		: in     AWS.Status.Data;
-			Response	:    out AWS.Response.Data
+	procedure Setup_Service(
+			Component	: in out Component_Access;
+			Service		: in out Service_Type'Class
 		) is
-		Container : Service_Container_Type := Get( Request );
+		-- load the configuration file and run setup..
 	begin
+		Service.Component := Component;
+		declare
+			use KOW_Config;
+			use KOW_view.Util;
+			Config : Config_File := New_Config_File(
+							To_String( Component.all.Name ) / Get_Name( Service )
+						);
+		begin
+			Setup_Service( Service, Config );
+		end;
+	exception
+		when KOW_Config.FILE_NOT_FOUND => null;
+	end Setup_Service;
 
-		Process_Json_Request(
-				Service	=> Container.Service,
-				Request	=> Request,
-				Response=> Response
-			);
-		Set( Container );
-	end Process_Json_Request;
 
 
-	overriding
-	procedure Process_Custom_Request(
-			Delegator	: in out Service_Delegator_Type;
-			Request		: in     AWS.Status.Data;
-			Response	:    out AWS.Response.Data
-		) is
-		Container : Service_Container_Type := Get( Request );
+	function Get_Name( Service_Tag : in Ada.Tags.Tag ) return String is
 	begin
-		Process_Custom_Request(
-				Service	=> Container.Service,
-				Request	=> Request,
-				Response=> Response
-			);
-		Set( Container );
-	end Process_Custom_Request;
+		return KOW_View.Util.Get_Type_Name( Service_Tag, "_service" );
+	end Get_Name;
 
 
-begin
-	-------------------------------
-	-- we register the delegator --
-	-------------------------------
-	KOW_View.Components.Register_Service_Delegator(
-				Component.all,
-				KOW_View.Services.Get_Name( Service_Type'Tag ),
-				Delegator'Unrestricted_Access
-			);
-end KOW_View.Services.Stateful_Service_Cycles;
+	function Get_Name( Service : in Service_Type'Class ) return String is
+	begin
+		return Get_Name( Service'Tag );
+	end Get_Name;
+
+
+end KOW_View.Services;

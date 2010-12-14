@@ -4,7 +4,7 @@
 --                                                                          --
 --                              KOW Framework                               --
 --                                                                          --
---                                 B o d y                                  --
+--                                 S p e c                                  --
 --                                                                          --
 --               Copyright (C) 2007-2011, KOW Framework Project             --
 --                                                                          --
@@ -29,97 +29,94 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-------------------------------------------------------------------------------
--- Delegator implementation for Stateful services                          --
-------------------------------------------------------------------------------
 
 
-
-------------------
--- KOW Famework --
-------------------
-with KOW_Lib.Json;
-with KOW_View.Components;
+-------------------
+-- KOW Framework --
+-------------------
+with KOW_View.Services;			use KOW_View.Services;
 
 ---------
 -- AWS --
 ---------
-with AWS.Response;
-with AWS.Session;
-with AWS.Status;
 
 
-package body KOW_View.Services.Stateful_Service_Cycles is
-
-	---------------------------
-	-- The Service Container --
-	---------------------------
-	function Get( Request : in AWS.Status.Data ) return Service_Container_Type is
-		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
-		Container : Service_Container_Type := Service_Container_Data.Get( Session_ID, Service_Container_Key );
-	begin
-		if Container.Is_Null then
-			Setup_Service( Component, Container.Service );
-		end if;
-
-		return Container;
-	end Get;
-
-	procedure Set( Request : in AWS.Status.Data; Container : in Service_Container_Type ) is
-		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
-	begin
-		Service_Container_Data.Set( Session_ID, Service_Container_Key, Container );
-	end Set;
-
+package KOW_View.Security.Services is
 
 
 	-------------------
-	-- The Delegator --
+	-- Login Service --
 	-------------------
 
+	type Login_Service is new Service_Type with record
+		-- try to login the user and redirect to the correct status page
+		Default_Redirect	: Unbounded_String;
+		Login_Error_Page	: Unbounded_String;
+	end record;
+
+
+	
+	overriding
+	procedure Process_Custom_Request(
+			Service		: in out Login_Service;
+			Request		: in     AWS.Status.Data;
+			Response	: in out AWS.Response.Data
+		);
+
+	package Login_Service_Cycles is new KOW_View.Services.Singleton_Service_Cycles(
+				Component	=> KOW_View.Security.Component'Unrestricted_Access,,
+				Service_Type	=> Login_Service_Type
+			);
+
+
+	--------------------
+	-- Logout Service --
+	--------------------
+
+	type Logout_Service is new Service_Type with record
+		-- process the logout, if required, and redirect to some standard page
+		Default_Redirect	: Unbounded_String;
+	end record;
 
 	overriding
-	procedure Process_Json_Request(
-			Delegator	: in out Service_Delegator_Type;
+	procedure Process_Custom_Request(
+			Service		: in out Logout_Service;
 			Request		: in     AWS.Status.Data;
-			Response	:    out AWS.Response.Data
-		) is
-		Container : Service_Container_Type := Get( Request );
-	begin
+			Response	: in out AWS.Response.Data
+		);
 
-		Process_Json_Request(
-				Service	=> Container.Service,
-				Request	=> Request,
-				Response=> Response
+	package Logout_Service_Cycles is new KOW_View.Services.Singleton_Service_Cycles(
+				Component	=> KOW_View.Security.Component'Unrestricted_Access,,
+				Service_Type	=> Logout_Service_Type
 			);
-		Set( Container );
-	end Process_Json_Request;
+
+
+	-------------------------
+	-- Switch User Service --
+	-------------------------
+
+
+	type Switch_User_Service is new Service_Type with record
+		-- allow admins to become super users
+		-- TODO :: turn into a stateful service with logout method for getting back as admin
+		Default_Redirect	: Unbounded_String;
+		Criteria		: Unbounded_String;
+	end record;
 
 
 	overriding
 	procedure Process_Custom_Request(
-			Delegator	: in out Service_Delegator_Type;
+			Service		: in out Switch_User_Service;
 			Request		: in     AWS.Status.Data;
-			Response	:    out AWS.Response.Data
-		) is
-		Container : Service_Container_Type := Get( Request );
-	begin
-		Process_Custom_Request(
-				Service	=> Container.Service,
-				Request	=> Request,
-				Response=> Response
+			Response	: in out AWS.Response.Data
+		);
+
+	package Switch_User_Service_Cycles is new KOW_View.Services.Singleton_Service_Cycles(
+				Component	=> KOW_View.Security.Component'Unrestricted_Access,,
+				Service_Type	=> Switch_User_Service_Type
 			);
-		Set( Container );
-	end Process_Custom_Request;
 
 
-begin
-	-------------------------------
-	-- we register the delegator --
-	-------------------------------
-	KOW_View.Components.Register_Service_Delegator(
-				Component.all,
-				KOW_View.Services.Get_Name( Service_Type'Tag ),
-				Delegator'Unrestricted_Access
-			);
-end KOW_View.Services.Stateful_Service_Cycles;
+
+
+end KOW_View.Security.Services;

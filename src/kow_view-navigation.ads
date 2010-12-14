@@ -88,14 +88,6 @@ package KOW_View.Navigation is
 	-- no matter what module we request, the Menu_Module_Type  will always be created
 
 
-	overriding
-	function Create_Instance(
-			Component	: in Component_Type;
-			Service_Name	: in String;
-			Service_Mapping	: in String
-		) return Service_Type'Class;
-	-- there is no service, so.. an exception is raised
-
 
 	-------------
 	-- Modules --

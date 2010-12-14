@@ -45,6 +45,7 @@ with KOW_Config;
 with KOW_Sec;
 with KOW_Sec.Accounting;
 with KOW_View.Components;		use KOW_View.Components;
+with KOW_View.Services;			use KOW_View.Services;
 
 ---------
 -- AWS --
@@ -60,27 +61,24 @@ with Templates_Parser;
 package KOW_View.Security is
 pragma Elaborate_Body( KOW_View.Security );
 
-	---------------
-	-- Variables --
-	---------------
-	
-	Accountant : aliased KOW_Sec.Accounting.Accountant_Type := KOW_Sec.Accounting.New_Accountant( "security", KOW_View.Accountant'Access );
 
+	----------------
+	-- Accounting --
+	----------------
+	Accountant	: aliased KOW_Sec.Accounting.Accountant_Type := KOW_Sec.Accounting.New_Accountant( "security", KOW_View.Accountant'Access );
 
 	----------------
 	-- Components --
 	----------------
 
-	type Security_Component is new KOW_View.Components.Component_Type with private;
-	
+	type Security_Component is new KOW_View.Components.Component_Type with record
+		Default_Redirect	: Unbounded_String	:= To_Unbounded_String( "/" );
+		Access_Denied_Page	: Unbounded_String	:= To_Unbounded_String( "/theme/403" );
+		Login_Error_Page	: Unbounded_String	:= To_Unbounded_String( "/pages/login_error" );
+	end record;
 
 
-	package User_Data is new AWS.Session.Generic_Data(
-			Data		=> KOW_Sec.User_Type,
-			Null_Data	=> KOW_Sec.Logged_Anonymous_User
-		);
 
-	User_Key: constant String;
 
 
 	overriding
@@ -164,48 +162,6 @@ pragma Elaborate_Body( KOW_View.Security );
 
 
 
-	--------------
-	-- Services --
-	--------------
-
-
-	type Login_Service is new Service_Type with private;
-	-- try to login the user and redirect to the correct status page
-	
-	overriding
-	procedure Process_Request(
-			Service		: in out Login_Service;
-			Request		: in     AWS.Status.Data;
-			Response	: in out AWS.Response.Data
-		);
-
-	package Login_Service_Cycles is new KOW_View.Services.Singleton_Service_Cycles(
-				Component	=> Component,
-				Service_Type	=> Login_Service_Type
-			);
-
-
-
-	type Logout_Service is new Service_Type with private;
-	-- process the logout, if required, and redirect to some standard page
-
-	overriding
-	procedure Process_Request(
-			Service		: in out Logout_Service;
-			Request		: in     AWS.Status.Data;
-			Response	: in out AWS.Response.Data
-		);
-
-
-	type Switch_User_Service is new Service_Type with private;
-
-	overriding
-	procedure Process_Request(
-			Service		: in out Switch_User_Service;
-			Request		: in     AWS.Status.Data;
-			Response	: in out AWS.Response.Data
-		);
-	
 
 	-----------------------------
 	-- User Session Management --
@@ -270,16 +226,26 @@ pragma Elaborate_Body( KOW_View.Security );
 			);
 	-- tries to perform some change under some given authorization that should be granted before this call
 
+
+	---------------
+	-- Variables --
+	---------------
+	
+
+
+	User_Key	: constant String;
+	Service		: aliased Security_Component;
+
+	package User_Data is new AWS.Session.Generic_Data(
+			Data		=> KOW_Sec.User_Type,
+			Null_Data	=> KOW_Sec.Logged_Anonymous_User
+		);
+
+
 private
 
 
 	User_Key : constant String := "kow_sec.user";
-
-	type Component_Type is new KOW_View.Components.Component_Type with record
-		Default_Redirect	: Unbounded_String	:= To_Unbounded_String( "/" );
-		Access_Denied_Page	: Unbounded_String	:= To_Unbounded_String( "/theme/403" );
-		Login_Error_Page	: Unbounded_String	:= To_Unbounded_String( "/pages/login_error" );
-	end record;
 
 
 	type Criteria_Module is new Module_Type with record
@@ -300,19 +266,6 @@ private
 	end record;
 
 
-	type Login_Service is new Service_Type with record
-		Default_Redirect	: Unbounded_String;
-		Login_Error_Page	: Unbounded_String;
-	end record;
-
-	type Logout_Service is new Service_Type with record
-		Default_Redirect	: Unbounded_String;
-	end record;
-
-	type Switch_User_Service is new Service_Type with record
-		Default_Redirect	: Unbounded_String;
-		Criteria		: Unbounded_String;
-	end record;
 
 
 	---------------------------------------------------
