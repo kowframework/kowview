@@ -64,7 +64,7 @@ package body KOW_View.Util is
 	begin
 		if First < 0 then
 			-- it's not inside any package.. good
-			T := T'First;
+			First := T'First;
 		else
 			First := First + 1;
 		end if;
