@@ -52,7 +52,7 @@ with KOW_Sec.Accounting;
 package KOW_View is
 	Accountant : aliased KOW_Sec.Accounting.Accountant_Type := KOW_Sec.Accounting.New_Accountant( "kow_sec" );
 
-	type Available_Request_Type is(
+	type Request_Mode_Type is(
 			Json_Request,
 			Custom_Request
 		);

@@ -50,6 +50,12 @@ with KOW_View.Components.Registry;
 
 package body KOW_View.Components is
 
+
+
+	---------------
+	-- Component --
+	---------------
+
 	function Locate_Resource(
 			Component	: in Component_Type;
 			Resource	: in String;
@@ -65,6 +71,73 @@ package body KOW_View.Components is
 				);
 
 	end Locate_Resource;
+
+
+	function Get_Service_Delegator(
+			Component	: in Component_Type;
+			Data		: in AWS.Status.Data
+		) return Service_Delegator_Access is
+		-- return the service delegator for this request..
+		-- you should override this method in case you want only one service in your component 
+		
+		URI		: constant String := AWS.Status.URI( Data );
+		Rest_Of_URI	: constant String := URI( Length( Component.Name ) + 2 .. URI'Last );
+		Last		: Integer := Ada.Strings.Fixed.Index( Rest_of_Uri, "/" ) - 1;
+
+
+		function Delegator( Name : Unbounded_String ) return Service_Delegator_Access is
+		begin
+			return Service_Delegator_Maps.Element(
+						Component.Service_Delegators,
+						Name
+					);
+		exception
+			when CONSTRAINT_ERROR =>
+				raise SERVICE_ERROR with "unknown service: " & To_String( Name );
+		end Delegator;
+	begin
+		if Rest_of_uri'Length = 0 then
+			return Delegator( Component.Default_Service );
+		if Last < 0 then
+			Last := Res_of_Uri'Last;
+		end if;
+
+		return Delegator( To_Unbounded_String( Rest_of_Uri( Rest_of_Uri'First .. Last ) );
+	end Get_Service_Delegator;
+
+
+	procedure Process_Json_Request(
+			Component	: in out Component_Type;
+			Request		: in     AWS.Status.Data;
+			Response	:    out KOW_Lib.Json.Object_Type
+		) is
+	begin
+		Process_Json_Request(
+				Delegator	=> Get_Delegator( Component, Request ).all,
+				Request		=> Request,
+				Response	=> Response
+			);
+	end Process_Json_Request;
+
+	procedure Process_Custom_Request(
+			Component	: in out Component_Type;
+			Request		: in     AWS.Status.Data;
+			Response	:    out AWS.Response.Data
+		) is
+		-- this is where the request processing takes place..
+		-- can be overriding for implementing default services and such
+	begin
+		Process_Custom_Request(
+				Delegator	=> Get_Delegator( Component, Request ),
+				Request		=> Request,
+				Response	=> Response
+			);
+	end Process_Custom_Reques;
+
+
+	------------
+	-- Module --
+	------------
 
 
 	function Locate_Resource(
@@ -106,6 +179,10 @@ package body KOW_View.Components is
 
 
 
+
+	-------------
+	-- Service --
+	-------------
 
 	function Locate_Resource(
 			Service		: in Service_Type;

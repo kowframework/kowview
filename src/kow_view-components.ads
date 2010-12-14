@@ -74,11 +74,18 @@ package KOW_View.Components is
 
 	type Service_Delegator_Access is access all Service_Delegator_Interface'Class;
 
-	procedure Process_Request(
+	procedure Process_Custom_Request(
 				Service : in out Service_Delegator_Interface;
 				Request	: in     AWS.Status.Data;
 				Response:    out AWS.Response.Data
 			) is abstract;
+
+	procedure Process_Json_Request(
+				Service	: in out Service_Delegator_Interface;
+				Request	: in     AWS.Status.Data;
+				Response:    out AWS.Response.Data
+			) is abstract;
+
 	
 	package Service_Delegator_Maps is new Ada.Containers.Ordered_Maps(
 				Key_Type	=> Unbounded_String;
@@ -91,7 +98,7 @@ package KOW_View.Components is
 
 	type Component_Type is abstract tagged record
 
-		Component_Name		: Unbounded_String;
+		Name			: Unbounded_String;
 		-- this one is set by the register method and is here so the user can read it.
 		-- the name of the component...
 
@@ -112,16 +119,8 @@ package KOW_View.Components is
 	-- 	. module.component
 	-- variables
 
-	function Locate_Resource(
-			Component	: in Component_Type;
-			Resource	: in String;
-			Extension	: in String := "";
-			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
-		) return String;
-
 	procedure Initialize(
 			Component	: in out Component_Type;
-			Component_Name	: in     String;
 			Config		: in out KOW_Config.Config_File
 		) is abstract;
 	-- Initialize the component while starting up the server
@@ -129,7 +128,28 @@ package KOW_View.Components is
 	-- 	kowview/component_name
 
 
-	procedure Process_Request(
+	function Locate_Resource(
+			Component	: in Component_Type;
+			Resource	: in String;
+			Extension	: in String := "";
+			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
+		) return String;
+
+	function Get_Service_Delegator(
+			Component	: in Component_Type;
+			Data		: in AWS.Status.Data
+		) return Service_Delegator_Access;
+	-- return the service delegator for this request..
+	-- you should override this method in case you want only one service in your component 
+		
+
+	procedure Process_Json_Request(
+			Component	: in out Component_Type;
+			Request		: in     AWS.Status.Data;
+			Response	:    out KOW_Lib.Json.Object_Type
+		);
+
+	procedure Process_Custom_Request(
 			Component	: in out Component_Type;
 			Request		: in     AWS.Status.Data;
 			Response	:    out AWS.Response.Data
@@ -250,26 +270,11 @@ package KOW_View.Components is
 		-- a service usually represents a module to the external world.
 		-- the service can be mapped to a base URI
 		--      . when mapped to /do, /do/something will call it
-		
+
 		Component	: Component_Ptr;
+		-- used by the locate_resource metnod...
+
 	end record;
-	type Service_Instance_Access is not null access all Service_Type'Class;
-
-
-
-
-	function Create_Instance(
-			Component	: in Component_Type;
-			Service_Name	: in String;
-			Service_Mapping	: in String
-		) return Service_Type'Class is abstract;
-	-- create a new service instance.
-	-- depending on the service, the instance object can represent different things and can, or not, even me extended
-	-- to implement additional functionality.
-	-- A service can also have it's own state which can be saved in the session for later retrieval.
-	--
-	-- The service configuration should be handled by the Component Initialization
-
 
 	procedure Setup_Service(
 			Service		: in out Service_Type;
@@ -282,11 +287,17 @@ package KOW_View.Components is
 	-- this is new on kowview 2.0
 
 
-	procedure Process_Request(
+	procedure Process_Json_Request(
+			Service	: in out Service_Type;
+			Request	: in     AWS.Status.Data;
+			Response:    out KOW_Lib.Json.Object_Type
+		) is abstract;
+
+	procedure Process_Custom_Request(
 			Service		: in out Service_Type;
 			Request		: in     AWS.Status.Data;
-			Response	: in out AWS.Response.Data
-		) is null;
+			Response	:    out AWS.Response.Data
+		) is abstract;
 	-- process a request to a service
 	-- the entire request is handled by the service
 	-- sometimes is useful for a service only to be created and released - such as in a counter service

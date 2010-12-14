@@ -29,11 +29,15 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+
+---------
+-- AWS --
+---------
+with AWS.Status;
+
 ---------
 -- Ada --
 ---------
-
-
 with Ada.Containers.Ordered_Maps;
 with Ada.Directories;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
@@ -85,11 +89,16 @@ package KOW_View.Components.Registry is
 	-- run setup for every registered component
 
 
-	function Load( Component_Name: in String ) return KOW_View.Components.Component_Access;
-	-- Loads a component by it's name
+	function Get_Component( Component_Name: in String ) return KOW_View.Components.Component_Access;
+	-- get a component by it's name
 	-- There is only one instance for each component.
 
-	function Load( Component_Name: in Unbounded_String ) return KOW_View.Components.Component_Access;
+	function Get_Component( Component_Name: in Unbounded_String ) return KOW_View.Components.Component_Access;
+
+
+	function Get_Component( Request : in AWS.Status.Data ) return KOW_View.Components.Component_Access;
+	-- get the component for the given request.
+
 	-----------------------
 	-- Module Management --
 	-----------------------

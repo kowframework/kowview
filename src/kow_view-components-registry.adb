@@ -34,8 +34,12 @@
 -- Ada --
 ---------
 with Ada.IO_Exceptions;
+with Ada.Characters.Handling;
 with Ada.Directories;			use Ada.Directories;
+with Ada.Strings;
+with Ada.Strings.Fixed;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
+with Ada.Tags;
 
 -------------------
 -- KOW Framework --
@@ -57,7 +61,6 @@ package body KOW_View.Components.Registry is
 	--------------------------
 
 	procedure Register(
-			Component_Name		: in String;
 			Component		: in KOW_View.Components.Component_Access;
 			Require_Configuration	: in Boolean
 			) is
@@ -69,17 +72,34 @@ package body KOW_View.Components.Registry is
 		--
 		-- If Require_Configuration == true and there is no config file available raise
 		-- COMPONENT_CONFIGURATION_ERROR
-		CN	: Unbounded_String := To_Unbounded_String( Component_Name );
+
+		function Get_Component_Name return String is
+			The_Tag := Ada.Tags.Expanded_Name( Component.all'Tag );
+
+			Idx	: Integer := Ada.Strings.Fixed.Index(
+								Source		=> The_Tag,
+								Pattern		=> ".",
+								Direction	=> Ada.Strings.Backward
+							);
+		begin
+
+			return Ada.Characters.Handling.To_Lower(
+						The_Tag( Idx1 + 1 .. The_Tag'Last - 5 )
+					);
+		end Get_Component_Name;
+
+		Component_name	: constant String := Get_Component_Name;
+		CN		: constant Unbounded_String := To_Unbounded_String( Component_Name );
 
 		use Component_Maps;
 	begin
 		-- the component is in the memory and is initialized:
 		if Contains( The_Registry, CN ) then
-			raise DUPLICATED_COMPONENT_ERROR with Component_Name;
+			raise DUPLICATED_COMPONENT_ERROR with Component_Name & "@" & Ada.Tags.Expanded_Name( Componment.all'Tag );
 		end if;
 
 		Component.all.Require_Configuration := Require_Configuration;
-		Component.all.Component_Name := To_Unbounded_String( Component_Name );
+		Component.all.Component_Name := CN;
 
 		Include( The_Registry, CN, Component );
 		
@@ -138,22 +158,34 @@ package body KOW_View.Components.Registry is
 
 
 
-	function Load( Component_Name: in String ) return KOW_View.Components.Component_Access is
+	function Get_Component( Component_Name: in String ) return KOW_View.Components.Component_Access is
 		-- Loads a component by it's name
 		-- There is only one instance for each component.
 	begin
-		return Load( To_Unbounded_String( Component_Name ) );
-	end Load;
+		return Get_Component( To_Unbounded_String( Component_Name ) );
+	end Get_Component;
 
 
-	function Load( Component_Name: in Unbounded_String ) return KOW_View.Components.Component_Access is
+	function Get_Component( Component_Name: in Unbounded_String ) return KOW_View.Components.Component_Access is
 	begin
-		return Component_Maps.Element( The_Registry, Component_Name );
+		declare
+			Component : Component_Access := Component_Maps.Element( The_Registry, Component_Name );
+		begin
+			pragma Assert( Component.Name = Component_Name, "tempering with component name..." );
+			return Component;
+		end;
 	exception
 		when CONSTRAINT_ERROR =>
 			raise UNKNOWN_COMPONENT_ERROR with To_String( Component_Name );
-	end Load;
+	end Get_Component;
 
+	function Get_Component( Request : in AWS.Status.Data ) return KOW_View.Components.Component_Access is
+		-- get the component for the given request.
+		URI : constant String := AWS.Status.URI( Request );
+			
+	begin
+
+	end Get_Component;
 
 	-----------------------
 	-- Module Management --
