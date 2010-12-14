@@ -4,7 +4,7 @@
 --                                                                          --
 --                              KOW Framework                               --
 --                                                                          --
---                                 S p e c                                  --
+--                                 B o d y                                  --
 --                                                                          --
 --               Copyright (C) 2007-2011, KOW Framework Project             --
 --                                                                          --
@@ -29,37 +29,70 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+------------------------------------------------------------------------------
+-- Delegator implementation for singleton services                          --
+------------------------------------------------------------------------------
 
 
--- Interface for handling service life cycles
 
-
+------------------
+-- KOW Famework --
+------------------
+with KOW_Lib.Json;
+with KOW_View.Components;
 
 ---------
 -- AWS --
 ---------
-with AWS.Status;
 with AWS.Response;
+with AWS.Status;
 
 
--------------------
--- KOW Framework --
--------------------
-with KOW_View.Components;
+package body KOW_View.Services.Singleton_Service_Cycles is
 
 
-package KOW_View.Services.Life_Cycles is
+	-------------------
+	-- The Delegator --
+	-------------------
 
 
-	type Life_Cycle_Manager is interface;
+	overriding
+	procedure Process_Json_Request(
+			Delegator	: in out Service_Delegator_Type;
+			Request		: in     AWS.Status.Data;
+			Response	:    out AWS.Response.Data
+		) is
+	begin
+		Process_Json_Request(
+				Service	=> Service_Instance,
+				Request	=> Request,
+				Response=> Response
+			);
+	end Process_Json_Request;
 
 
-	procedure Process_Request(
-				Service : in out KOW_View.Components.Service_Type'Class;
-				Request	: in     AWS.Status.Data;
-				Response:    out AWS.Response.Data
-			) is abstract;
-	-- process the request...
+	overriding
+	procedure Process_Custom_Request(
+			Delegator	: in out Service_Delegator_Type;
+			Request		: in     AWS.Status.Data;
+			Response	:    out AWS.Response.Data
+		) is
+	begin
+		Process_Custom_Request(
+				Service	=> Service_Instance,
+				Request	=> Request,
+				Response=> Response
+			);
+	end Process_Custom_Request;
 
 
-end KOW_View.Services.Life_Cycles;
+begin
+	-------------------------------
+	-- we register the delegator --
+	-------------------------------
+	KOW_View.Components.Register_Service_Delegator(
+				Component.all,
+				Get_Service_Name( Service_Type'Tag ),
+				Delegator'Unrestricted_Access
+			);
+end KOW_View.Services.Singleton_Service_Cycles;
