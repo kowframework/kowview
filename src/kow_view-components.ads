@@ -97,12 +97,6 @@ package KOW_View.Components is
 	----------------
 
 	type Component_Type is abstract tagged record
-
-		Name			: Unbounded_String;
-		-- this one is set by the register method and is here so the user can read it.
-		-- the name of the component...
-
-
 		Service_Delegators	: Service_Delegator_Maps.Map;
 		-- where I look for my services..
 
@@ -164,6 +158,11 @@ package KOW_View.Components is
 		);
 	-- this is where the request processing takes place..
 	-- can be overriding for implementing default services and such
+
+
+
+	function Get_Name( Component_Tag : in Ada.Tags.Tag ) return String;
+	function Get_Name( Component : in Component_Type'Class ) return String;
 
 	-------------
 	-- Modules --

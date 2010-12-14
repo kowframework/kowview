@@ -71,7 +71,7 @@ package body KOW_View.Components.Registry is
 		-- If Require_Configuration == true and there is no config file available raise
 		-- COMPONENT_CONFIGURATION_ERROR
 
-		Component_name	: constant Unbounded_String := KOW_View.Util.Get_Type_name( Component.all'Tag );
+		Component_name	: constant Unbounded_String := KOW_View.Util.Get_Type_name( Component.all'Tag, "_component" );
 
 		use Component_Maps;
 	begin
@@ -153,7 +153,7 @@ package body KOW_View.Components.Registry is
 		declare
 			Component : Component_Access := Component_Maps.Element( The_Registry, Component_Name );
 		begin
-			pragma Assert( Component.Name = Component_Name, "tempering with component name..." );
+			pragma Assert( KOW_View.Components.Get_Name( Component ) = Component_Name, "tempering with component name..." );
 			return Component;
 		end;
 	exception

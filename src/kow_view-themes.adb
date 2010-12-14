@@ -133,7 +133,6 @@ package body KOW_View.Themes is
 		-- Initialize the Theme component, setting every variable required
 		use KOW_Config;
 	begin
-		Component.Name := To_Unbounded_String( Component_Name );
 		Component.Default_Theme_Name	:= Value( Config, "default_theme", "default" );
 		Component.Template_Extension	:= Value( Config, "template_extension", "html" );
 		
@@ -167,7 +166,7 @@ package body KOW_View.Themes is
 			declare
 				Module: Template_Processor_Module;
 			begin
-				Module.Component_Name		:= Component.Name;
+				Module.Component_Name		:= To_Unbounded_String( KOW_View.Components.Get_Name( Component ) );
 				Module.Default_Theme_Name	:= Component.Default_Theme_Name;
 				Module.Template_Extension	:= Component.Template_Extension;
 				-- todo: implement loading theme from user's session and profile
@@ -178,7 +177,7 @@ package body KOW_View.Themes is
 				with "Module """ &
 					Module_Name &
 					""" not available in component """ &
-					To_String( Component.Name ) & """";
+					Get_Name( Component ) & """";
 		end if;
 	end Create_Instance;
 
@@ -198,7 +197,6 @@ package body KOW_View.Themes is
 			declare
 				Service: Theme_Service;
 			begin
-				Service.Component_Name		:= Component.Name;
 				Service.Mapping			:= To_Unbounded_String( Service_Mapping );
 				Service.Default_Theme_Name	:= Component.Default_Theme_Name;
 				Service.Template_Extension	:= Component.Template_Extension;
@@ -209,7 +207,7 @@ package body KOW_View.Themes is
 				with "Service """ &
 					Service_Name &
 					""" not available in component """ &
-					To_String( Component.Name ) & """";
+					Get_Name( Component ) & """";
 		end if;
 	end Create_Instance;
 

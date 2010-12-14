@@ -71,7 +71,7 @@ pragma Elaborate_Body( KOW_View.Security );
 	-- Components --
 	----------------
 
-	type Component_Type is new KOW_View.Components.Component_Type with private;
+	type Security_Component is new KOW_View.Components.Component_Type with private;
 	
 
 
@@ -107,13 +107,6 @@ pragma Elaborate_Body( KOW_View.Security );
 		) return Module_Type'Class;
 	-- no matter what module we request, the Criteria_Module_Module will be always called
 
-
-	overriding
-	function Create_Instance(
-			Component	: in Component_Type;
-			Service_Name	: in String;
-			Service_Mapping	: in String
-		) return Service_Type'Class;
 
 
 	-------------
@@ -185,6 +178,11 @@ pragma Elaborate_Body( KOW_View.Security );
 			Request		: in     AWS.Status.Data;
 			Response	: in out AWS.Response.Data
 		);
+
+	package Login_Service_Cycles is new KOW_View.Services.Singleton_Service_Cycles(
+				Component	=> Component,
+				Service_Type	=> Login_Service_Type
+			);
 
 
 

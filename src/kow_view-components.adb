@@ -103,7 +103,7 @@ package body KOW_View.Components is
 		-- you should override this method in case you want only one service in your component 
 		
 		URI		: constant String := AWS.Status.URI( Data );
-		Rest_Of_URI	: constant String := URI( Length( Component.Name ) + 2 .. URI'Last );
+		Rest_Of_URI	: constant String := URI( Get_Name( Component )'Length + 2 .. URI'Last );
 		Last		: Integer := Ada.Strings.Fixed.Index( Rest_of_Uri, "/" ) - 1;
 
 
@@ -156,6 +156,19 @@ package body KOW_View.Components is
 			);
 	end Process_Custom_Reques;
 
+
+	function Get_Name( Component_Tag : in Ada.Tags.Tag ) return String is
+	begin
+		return KOW_View.Util.Get_Type_Name(
+						Component_Tag,
+						"_service"
+					);
+	end Get_Name;
+	
+	function Get_Name( Component : in Component_Type'Class ) return String is
+	begin
+		return Get_Name( Component'Tag );
+	end Get_Name;
 
 	------------
 	-- Module --

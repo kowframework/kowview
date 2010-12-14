@@ -49,7 +49,10 @@ with Ada.Tags;
 package body KOW_View.Util is
 
 
-	function Get_Type_Name( Tag : Ada.Tags.Tag ) return String is
+	function Get_Type_Name(
+				Tag	: in Ada.Tags.Tag;
+				Sufix	: in String := "_type"
+			) return String is
 		-- ge the naming component of the tag, giving the following naming conventions
 		-- 	Package1.Subpackage1.My_Element_Type
 		-- will return:
@@ -57,7 +60,7 @@ package body KOW_View.Util is
 		use Ada.Strings;
 		T	: constant String := Ada.Tags.Expanded_name( Tag );
 		First	: constant String := Fixed.Index( T, ".", Backward );
-		Last	: constant Integer := T'Last - 5;
+		Last	: constant Integer := T'Last - Sufix'Length;
 	begin
 		if First < 0 then
 			-- it's not inside any package.. good
@@ -71,8 +74,11 @@ package body KOW_View.Util is
 
 
 
-	function Get_Type_Name( Tag : Ada.Tags.Tag ) return Ada.Strings.Unbounded.Unbounded_String is
+	function Get_Type_Name(
+				Tag	: in Ada.Tags.Tag;
+				Sufix	: in String := "_type"
+			) return Ada.Strings.Unbounded.Unbounded_String is
 	begin
-		return Ada.Strings.Unbounded.To_Unbounded_String( Get_Type_name( Tag ) );
+		return Ada.Strings.Unbounded.To_Unbounded_String( Get_Type_name( Tag, Sufix ) );
 	end Get_Type_Name;
 end KOW_View.Util;
