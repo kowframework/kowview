@@ -44,7 +44,10 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -------------------
 -- KOW Framework --
 -------------------
+with KOW_Config;
+with KOW_Lib.File_System;
 with KOW_View.Components.Registry;
+with KOW_View.Util;
 
 
 
@@ -217,6 +220,27 @@ package body KOW_View.Components is
 					Kind		=> Kind
 				);
 	end Locate_Resource;
+
+
+	procedure Setup_Service(
+			Component	: in out Component_Access;
+			Service		: in out Service_Type'Class
+		) is
+		-- load the configuration file and run setup..
+	begin
+		declare
+			use KOW_Config;
+			use KOW_Lib.File_System;
+			use KOW_view.Util;
+			Config : Config_File := New_Config_File(
+							To_String( Component.all.Name ) / Get_Type_Name( Service'Tag )
+						);
+		begin
+			Setup_Service( Service, Config );
+		end;
+	exception
+		when KOW_Config.FILE_NOT_FOUND => null;
+	end Setup_Service;
 
 
 end KOW_View.Components;

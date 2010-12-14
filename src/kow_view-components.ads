@@ -280,9 +280,11 @@ package KOW_View.Components is
 		--      . when mapped to /do, /do/something will call it
 
 		Component	: Component_Ptr;
-		-- used by the locate_resource metnod...
+		-- used by the locate_resource method...
 
 	end record;
+
+
 
 	procedure Setup_Service(
 			Service		: in out Service_Type;
@@ -318,6 +320,12 @@ package KOW_View.Components is
 			Extension	: in String := "";
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
 		) return String;
+
+	procedure Setup_Service(
+			Component	: in out Component_Access;
+			Service		: in out Service_Type'Class
+		);
+	-- load the configuration file and run setup..
 
 
 end KOW_View.Components;
