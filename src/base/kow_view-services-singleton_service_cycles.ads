@@ -67,7 +67,7 @@ pragma Elaborate_Body( KOW_View.Services.Singleton_Service_Cycles );
 	procedure Process_Json_Request(
 			Delegator	: in out Service_Delegator_Type;
 			Request		: in     AWS.Status.Data;
-			Response	:    out AWS.Response.Data
+			Response	:    out KOW_Lib.Json.Object_Type
 		);
 
 	overriding

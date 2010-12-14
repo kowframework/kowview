@@ -83,6 +83,19 @@ package body KOW_View.Components is
 	end Locate_Resource;
 
 
+	procedure Register_Service_Delegator(
+			Component	: in out Component_Type;
+			Name		: in     String;
+			Delegator	: in     Service_Delegator_Access
+		) is
+	begin
+		Register_Service_Delegator(
+				Component	=> Component,
+				Name		=> To_Unbounded_String( Name ),
+				Delegator	=> Delegator
+			);
+	end Register_Service_Delegator;
+
 
 	procedure Register_Service_Delegator(
 			Component	: in out Component_Type;

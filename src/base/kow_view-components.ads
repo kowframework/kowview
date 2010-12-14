@@ -96,7 +96,7 @@ package KOW_View.Components is
 	procedure Process_Json_Request(
 				Service	: in out Service_Delegator_Interface;
 				Request	: in     AWS.Status.Data;
-				Response:    out AWS.Response.Data
+				Response:    out KOW_Lib.Json.Object_Type
 			) is abstract;
 
 	
@@ -168,6 +168,12 @@ package KOW_View.Components is
 			Extension	: in String := "";
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
 		) return String;
+
+	procedure Register_Service_Delegator(
+			Component	: in out Component_Type;
+			Name		: in     String;
+			Delegator	: in     Service_Delegator_Access
+		);
 
 	procedure Register_Service_Delegator(
 			Component	: in out Component_Type;

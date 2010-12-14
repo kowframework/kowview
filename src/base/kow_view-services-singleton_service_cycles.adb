@@ -60,7 +60,7 @@ package body KOW_View.Services.Singleton_Service_Cycles is
 	procedure Process_Json_Request(
 			Delegator	: in out Service_Delegator_Type;
 			Request		: in     AWS.Status.Data;
-			Response	:    out AWS.Response.Data
+			Response	:    out KOW_Lib.Json.Object_Type
 		) is
 	begin
 		Process_Json_Request(
@@ -68,6 +68,7 @@ package body KOW_View.Services.Singleton_Service_Cycles is
 				Request	=> Request,
 				Response=> Response
 			);
+
 	end Process_Json_Request;
 
 
