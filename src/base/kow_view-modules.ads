@@ -53,6 +53,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -------------------
 -- KOW Framework --
 -------------------
+with KOW_Config;
 with KOW_Lib.Json;
 with KOW_View.Components;		use KOW_View.Components;
 
@@ -61,8 +62,6 @@ with KOW_View.Components;		use KOW_View.Components;
 -- AWS --
 ---------
 with AWS.Status;
-with Templates_Parser;
-
 
 package KOW_View.Modules is
 
@@ -92,17 +91,17 @@ package KOW_View.Modules is
 	procedure Initialize_Request(
 			Module		: in out Module_Type;
 			Request		: in     AWS.Status.Data;
-			Parameters	: in out Templates_Parser.Translate_Set
+			Config		: in out KOW_Config.Config_File
 		) is null;
 	-- Initialize the processing of a request
 	-- Called before anything has been build.
-	-- If Is_Final = True than stop processing other modules and return Response
-	-- Useful when handling secured modules or modules that require sending cookies
+	-- Useful when handling secured modules and setting initial data
+
+
 
 	procedure Process_Header(
 			Module		: in out Module_Type;
 			Request		: in     AWS.Status.Data;
-			Parameters	: in out Templates_Parser.Translate_Set;
 			Response	:    out Unbounded_String
 		) is null;
 	-- process header of the response.
@@ -111,7 +110,6 @@ package KOW_View.Modules is
 	procedure Process_Request(
 			Module		: in out Module_Type;
 			Request		: in     AWS.Status.Data;
-			Parameters	: in out Templates_Parser.Translate_Set;
 			Response	:    out Unbounded_String
 		) is null;
 	-- process the request for a module.
@@ -120,11 +118,17 @@ package KOW_View.Modules is
 	procedure Process_Footer(
 			Module		: in out Module_Type;
 			Request		: in     AWS.Status.Data;
-			Parameters	: in out Templates_Parser.Translate_Set;
 			Response	:    out Unbounded_String
 		) is null;
 	-- process some footer of the module
 	-- useful when creating benchmar modules
+
+
+	procedure Process_Json_Request(
+			Module		: in out Module_Type;
+			Request		: in     AWS.Status.Data;
+			Response	: out    KOW_Lib.Json.Object_Type
+		) is null;
 
 	procedure Finalize_Request(
 			Module		: in out Module_Type;
