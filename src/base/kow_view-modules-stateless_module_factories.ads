@@ -67,8 +67,9 @@ pragma Elaborate_Body( KOW_View.Modules.Stateless_Module_Factories );
 	overriding
 	procedure Create(
 				Delegator	: in out Module_Factory_Type;
-				Module		:    out Module_Ptr;
-				Module_Id	: in     Positive
+				Context		: in     String;
+				Module_Id	: in     Positive;
+				Module		:    out Module_Ptr
 			);
 	-- create a module, setting it's ID if necessary
 

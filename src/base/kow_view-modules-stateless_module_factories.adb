@@ -35,7 +35,7 @@
 --------------
 -- Ada 2005 --
 --------------
-with Ada.Unchecked_Deallocation;
+with Ada.Strings.Unbounded;
 
 -------------------
 -- KOW Framework --
@@ -55,13 +55,15 @@ package body KOW_View.Modules.Stateless_Module_Factories is
 	overriding
 	procedure Create(
 				Delegator	: in out Module_Factory_Type;
-				Module		:    out Module_Ptr;
-				Module_Id	: in     Positive
+				Context		: in     String;
+				Module_Id	: in     Positive;
+				Module		:    out Module_Ptr
 			) is
 		-- create a module, setting it's ID if necessary
 		
 		The_Module : Module_Type_Access := new Module_Type;
 	begin
+		The_Module.Context := Ada.Strings.Unbounded.To_Unbounded_String( Context );
 		The_Module.ID := Module_id;
 		The_Module.ID_Count := 0;
 		The_Module.Component := Component;

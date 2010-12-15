@@ -72,6 +72,10 @@ package KOW_View.Modules is
 	-----------------
 
 	type Module_Type is abstract new KOW_View.Components.Module_Interface with record
+		Context		: Unbounded_String;
+		-- where it's bein created
+
+
 		ID		: Positive;
 		-- a number to identify the module in this request/page
 

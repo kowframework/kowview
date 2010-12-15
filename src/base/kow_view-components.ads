@@ -133,10 +133,13 @@ package KOW_View.Components is
 
 	procedure Create(
 				Delegator	: in out Module_Factory_Interface;
-				Module		:    out Module_Ptr;
-				Module_Id	: in     Positive
+				Context		: in     String;
+				Module_Id	: in     Positive;
+				Module		:    out Module_Ptr
 			) is abstract;
 	-- create a module, setting it's ID if necessary
+	-- Context	=> string representing something like the page where the module will be created
+	-- Module_ID	=> which module in sequence being created in the same context
 
 	procedure Destroy(
 				Delegator	: in out Module_Factory_Interface;
