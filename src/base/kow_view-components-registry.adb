@@ -115,61 +115,6 @@ package body KOW_View.Components.Registry is
 		end if;
 	end Get_Component;
 
-	-----------------------
-	-- Module Management --
-	-----------------------
-
-	function Load_Module(
-			Component_Name	: in Unbounded_String;
-			Module_Name	: in Unbounded_String;
-			Config		: in KOW_Config.Config_File;
-			Module_ID	: in Positive := 1
-		) return Module_Type'Class is
-		-- get a module instance
-		Component	: Component_Access := Get_Component( Component_Name );
-		Module		: Module_Type'Class := Create_Instance( Component.all, To_String( Module_Name ), Config );
-	begin
-		Module.Module_ID := Module_ID;
-		Module.Component := Component_Ptr( Component );
-
-		return Module;
-	end Load_Module;
-
-
-	function Load_Module(
-			Component_Name	: in String;
-			Module_Name	: in String;
-			Config		: in KOW_Config.Config_File;
-			Module_ID	: in Positive := 1
-		) return Module_Type'Class is
-		-- get a module instance
-		Component	: Component_Access := Get_Component( Component_Name );
-		Module		: Module_Type'Class := Create_Instance( Component.all, Module_Name, Config  );
-	begin
-		Module.Module_ID := Module_ID;
-		Module.Component := Component_Ptr( Component );
-
-		return Module;
-	end Load_Module;
-
-
-	function Load_Module(
-			Component_Name	: in String;
-			Module_Name	: in String;
-			Module_ID	: in Positive := 1
-		) return Module_Type'Class is
-		-- get the module, using the standard module configuration
-	begin
-		return Load_Module(
-				Component_Name	=> Component_Name,
-				Module_Name	=> Module_Name,
-				Config		=> KOW_View.Components.Util.Load_Configuration(
-							Component_Name		=> Component_Name,
-							Configuration_Name	=> Module_Name
-						),
-				Module_ID	=> Module_ID
-				);
-	end Load_Module;
 
 
 

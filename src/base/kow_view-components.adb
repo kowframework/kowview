@@ -126,7 +126,7 @@ package body KOW_View.Components is
 		use Service_Delegator_Maps;
 	begin
 		if Contains( Component.Service_Delegators, Name ) then
-			raise CONSTRAINT_ERROR with "duplicated service :: " & To_String( Name );
+			raise CONSTRAINT_ERROR with "duplicated service :: " & To_String( Name ) & "@" & Get_Name( Component );
 		end if;
 
 		Include( Component.Service_Delegators, Name, Delegator );
@@ -167,6 +167,35 @@ package body KOW_View.Components is
 
 		return Delegator( To_Unbounded_String( Rest_of_Uri( Rest_of_Uri'First .. Last ) ) );
 	end Get_Service_Delegator;
+
+
+
+
+	procedure Register_Module_Factory(
+			Component	: in out Component_Type;
+			Name		: in     Unbounded_String;
+			Factory		: in     Module_Factory_Access
+		) is
+		use Module_Factory_Maps;
+	begin
+		if Contains( Component.Module_Factories, Name ) then
+			raise CONSTRAINT_ERROR with "duplicated module :: " & To_String( Name ) & "@" & Get_Name( Component );
+		end if;
+
+		Include( Component.Module_Factories, Name, Factory );
+	end Register_Module_Factory;
+	
+	function Get_Module_Factory(
+			Component	: in Component_Type;
+			Name		: in Unbounded_String
+		) return Module_Factory_Access is
+	begin
+		return Module_Factory_Maps.Element( Component.Module_Factories, Name );
+	exception
+		when CONSTRAINT_ERROR =>
+			raise CONSTRAINT_ERROR with "module " & To_String( Name ) & " not found at component " & Get_Name( Component );
+	end Get_Module_Factory;
+
 
 
 
@@ -217,49 +246,6 @@ package body KOW_View.Components is
 	begin
 		return KOW_View.Components.Util.Get_Name( Component'Tag );
 	end Get_Name;
-
-	------------
-	-- Module --
-	------------
-
-
-	function Locate_Resource(
-			Module		: in Module_Type;
-			Resource	: in String;
-			Extension	: in String := "";
-			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
-		) return String is
-	begin
-		return Locate_Resource(
-					Component	=> Module.Component.all,
-					Resource	=> Resource,
-					Extension	=> Extension,
-					Kind		=> Kind
-				);
-	end Locate_Resource;
-
-
-
-	procedure Generate_HTML_ID(
-				Module		: in out Module_Type;
-				The_ID		:    out Unbounded_String
-		) is
-		-- procedure used to generate a valid ID for HTML elements
-		-- it's a helper procedure so the user can produce unique IDs for their pages easily
-
-		function T( N : in Natural ) return String is
-			use Ada.Strings, Ada.Strings.Fixed;
-		begin
-			return Trim( Natural'Image( N ), Both );
-		end T;
-
-	begin
-		Module.ID_Count := Module.ID_Count + 1;
-
-		The_ID := To_Unbounded_String( "module_" & T( Natural( Module.Module_ID ) ) & "_id_" & T( Module.ID_Count ) );
-				
-	end Generate_HTML_ID;
-
 
 
 

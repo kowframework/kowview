@@ -83,7 +83,8 @@ package KOW_View.Components is
 	-----------------------
 
 	type Service_Delegator_Interface is interface;
-	-- the service delegator is the object that actually process the request
+	-- the service delegator is a singleton object that calls the service type methods
+	-- see KOW_View.Services for more details.
 
 	type Service_Delegator_Access is access all Service_Delegator_Interface'Class;
 
@@ -106,6 +107,48 @@ package KOW_View.Components is
 			);
 
 
+
+	------------
+	-- Module --
+	------------
+
+	type Module_Interface is interface;
+	-- so we know there is something called "module" at this level...
+	-- this interface has no method
+
+	type Module_Access is not null access all Module_Interface'Class;
+	-- and where the module is actually stored..
+	
+	type Module_Ptr is access all Module_Interface'Class;
+
+	----------------------
+	-- Module Delegator --
+	----------------------
+
+	type Module_Factory_Interface is interface;
+	-- the module factory is a singleton object that produce and destroy modules
+	-- see KOW_View.Modules for more details
+
+	type Module_Factory_Access is not null access all Module_Factory_Interface;
+
+	procedure Create(
+				Delegator	: in out Module_Factory_Interface;
+				Module		: out    Module_Ptr
+			) is abstract;
+	-- create a module
+
+	procedure Destroy(
+				Delegator	: in out Module_Factory_Interface;
+				Module		: in out Module_Ptr
+			) is abstract;
+	-- free the module access type
+
+
+	package Module_Factory_Maps is new Ada.Containers.Ordered_Maps(
+				Key_Type	=> Unbounded_String,
+				Element_Type	=> Module_Factory_Access
+			);
+
 	--------------------------------------
 	-- Component Initialization Trigger --
 	--------------------------------------
@@ -125,8 +168,11 @@ package KOW_View.Components is
 		Service_Delegators	: Service_Delegator_Maps.Map;
 		-- where I look for my services..
 
+		Module_Factories	: Module_Factory_Maps.Map;
+		-- where I look for how to create and destroy modules
+
 		Default_Service		: Unbounded_String;
-		-- default service to load
+		-- TODO :: default service to load
 
 		Initialization_Triggers	: Initialization_Trigger_Vectors.Vector;
 		-- durin elaboration your code can register initialization triggers
@@ -192,7 +238,6 @@ package KOW_View.Components is
 	-- the name of this delegator is going to be calculated from the 
 
 
-
 	function Get_Service_Delegator(
 			Component	: in Component_Type;
 			Data		: in AWS.Status.Data
@@ -200,6 +245,18 @@ package KOW_View.Components is
 	-- return the service delegator for this request..
 	-- you should override this method in case you want only one service in your component 
 		
+
+
+	procedure Register_Module_Factory(
+			Component	: in out Component_Type;
+			Name		: in     Unbounded_String;
+			Factory		: in     Module_Factory_Access
+		);
+	
+	function Get_Module_Factory(
+			Component	: in Component_Type;
+			Name		: in Unbounded_String
+		) return Module_Factory_Access;
 
 	procedure Register_Initialization_Trigger(
 				Component		: in out Component_Type;
@@ -223,110 +280,6 @@ package KOW_View.Components is
 
 	function Get_Name( Component : in Component_Type'Class ) return String;
 
-	-------------
-	-- Modules --
-	-------------
-
-	-- TODO :: implement delegator for modules as well
-	-- and move the module type to it's own package
-
-
-	type Module_Type is abstract tagged record
-		Module_ID	: Positive;
-		-- a number to identify the module in this request/page
-
-
-		ID_Count	: Natural := 0;
-		-- count all the ids that have been generated for this module
-
-		Component	: Component_Ptr;
-	end record;
-
-	-- a module is something that can be accessed anywhere inside the system.
-
-	type Module_Instance_Access is not null access all Module_Type'Class;
-
-
-
-
-
-	function Create_Instance(
-			Component	: in Component_Type;
-			Module_Name	: in String;
-			Config		: in KOW_Config.Config_File 
-		) return Module_Type'Class is abstract;
-	-- create a new module instance.
-	-- depending on the service, the instance object can represent different things and can, or not, even me extended
-	-- to implement additional functionality.
-	-- A service can also have it's own state which can be saved in the session for later retrieval.
-
-
-
-	procedure Initialize_Request(
-			Module		: in out Module_Type;
-			Request		: in     AWS.Status.Data;
-			Parameters	: in out Templates_Parser.Translate_Set;
-			Response	: in out AWS.Response.Data;
-			Is_Final	: out    Boolean
-		) is null;
-	-- Initialize the processing of a request
-	-- Called before anything has been build.
-	-- If Is_Final = True than stop processing other modules and return Response
-	-- Useful when handling secured modules or modules that require sending cookies
-
-	procedure Process_Header(
-			Module		: in out Module_Type;
-			Request		: in     AWS.Status.Data;
-			Parameters	: in out Templates_Parser.Translate_Set;
-			Response	: in out Unbounded_String
-		) is null;
-	-- process header of the response.
-	-- it's assumed that 
-
-	procedure Process_Request(
-			Module		: in out Module_Type;
-			Request		: in     AWS.Status.Data;
-			Parameters	: in out Templates_Parser.Translate_Set;
-			Response	: in out Unbounded_String
-		) is null;
-	-- process the request for a module.
-	-- sometimes is useful for a module only to be created and released - such as in a page counter module
-
-	procedure Process_Footer(
-			Module		: in out Module_Type;
-			Request		: in     AWS.Status.Data;
-			Parameters	: in out Templates_Parser.Translate_Set;
-			Response	: in out Unbounded_String
-		) is null;
-	-- process some footer of the module
-	-- useful when creating benchmar modules
-
-	procedure Finalize_Request(
-			Module		: in out Module_Type;
-			Request		: in     AWS.Status.Data;
-			Parameters	: in out Templates_Parser.Translate_Set
-		) is null;
-	-- Finalize processing the request.
-	-- Called when the process has been finalized
-
-
-	-- Helper Module Methods that can be overriden if needed
-	
-	function Locate_Resource(
-			Module		: in Module_Type;
-			Resource	: in String;
-			Extension	: in String := "";
-			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
-		) return String;
-
-
-
-	procedure Generate_HTML_ID(
-				Module		: in out Module_Type;
-				The_ID		:    out Unbounded_String
-		);
-	-- procedure used to generate a valid ID for HTML elements
-	-- it's a helper procedure so the user can produce unique IDs for their pages easily
 
 
 end KOW_View.Components;

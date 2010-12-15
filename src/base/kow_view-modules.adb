@@ -4,7 +4,7 @@
 --                                                                          --
 --                              KOW Framework                               --
 --                                                                          --
---                                 S p e c                                  --
+--                                 B o d y                                  --
 --                                                                          --
 --               Copyright (C) 2007-2011, KOW Framework Project             --
 --                                                                          --
@@ -30,77 +30,77 @@
 ------------------------------------------------------------------------------
 
 
+--------------
+-- Ada 2005 --
+--------------
+with Ada.Strings.Fixed;
+with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
+
+
+-------------------
+-- KOW Framework --
+-------------------
+with KOW_Lib.Json;
+with KOW_View.Components;		use KOW_View.Components;
+with KOW_View.Modules.Util;
+
+
 ---------
 -- AWS --
 ---------
 with AWS.Status;
 
----------
--- Ada --
----------
-with Ada.Containers.Ordered_Maps;
-with Ada.Directories;
-with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
--------------------
--- KOW Framework --
--------------------
-with KOW_Config;
-with KOW_Config.Generic_Registry;
-with KOW_View.Components;		use KOW_View.Components;
+package body KOW_View.Modules is
 
 
 
-package KOW_View.Components.Registry is
-
-	----------------
-	-- Exceptions --
-	----------------
+	------------
+	-- Module --
+	------------
 
 
-	DUPLICATED_COMPONENT_ERROR	: Exception;
-	UNKNOWN_COMPONENT_ERROR		: Exception;
-
-
-	--------------------------
-	-- Component Management --
-	--------------------------
-
-	procedure Register(
-				Component		: in KOW_View.Components.Component_Access;
-				Require_Configuration	: in Boolean
-			);
-	-- A component, once registered, is never deallocated.
-	-- All components should be registered at startup.
-	--
-	-- This procedure also calls "Initialize" for each component. Is also responsible for locating
-	-- the component's configuration file.
-	--
-	-- If Require_Configuration == true and there is no config file available raise 
-	-- COMPONENT_ERROR
-
-
-
-	function Get_Component( Component_Name: in String ) return KOW_View.Components.Component_Access;
-	-- get a component by it's name
-	-- There is only one instance for each component.
-
-	function Get_Component( Component_Name: in Unbounded_String ) return KOW_View.Components.Component_Access;
-
-
-	function Get_Component( Request : in AWS.Status.Data ) return KOW_View.Components.Component_Access;
-	-- get the component for the given request.
-
-private
-
-
-	package Component_Maps is new Ada.Containers.Ordered_Maps(
-					Key_Type	=> Unbounded_String,
-					Element_Type	=> Component_Access
+	function Locate_Resource(
+			Module		: in Module_Type;
+			Resource	: in String;
+			Extension	: in String := "";
+			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
+		) return String is
+	begin
+		return Locate_Resource(
+					Component	=> Module.Component.all,
+					Resource	=> Resource,
+					Extension	=> Extension,
+					Kind		=> Kind
 				);
-
-	The_Registry: Component_Maps.Map;
-
+	end Locate_Resource;
 
 
-end KOW_View.Components.Registry;
+
+	procedure Generate_HTML_ID(
+				Module		: in out Module_Type;
+				The_ID		:    out Unbounded_String
+		) is
+		-- procedure used to generate a valid ID for HTML elements
+		-- it's a helper procedure so the user can produce unique IDs for their pages easily
+
+		function T( N : in Natural ) return String is
+			use Ada.Strings, Ada.Strings.Fixed;
+		begin
+			return Trim( Natural'Image( N ), Both );
+		end T;
+
+	begin
+		Module.ID_Count := Module.ID_Count + 1;
+
+		The_ID := To_Unbounded_String( "module_" & T( Natural( Module.Module_ID ) ) & "_id_" & T( Module.ID_Count ) );
+				
+	end Generate_HTML_ID;
+
+
+	function Get_Name( Module : in Module_Type'Class ) return String is
+	begin
+		return KOW_View.Modules.Util.Get_Name( Module'Tag );
+	end Get_Name;
+
+end KOW_View.Modules;

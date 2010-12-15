@@ -29,78 +29,19 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-
----------
--- AWS --
----------
-with AWS.Status;
-
----------
--- Ada --
----------
-with Ada.Containers.Ordered_Maps;
-with Ada.Directories;
-with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
-
--------------------
--- KOW Framework --
--------------------
-with KOW_Config;
-with KOW_Config.Generic_Registry;
-with KOW_View.Components;		use KOW_View.Components;
+------------------------------------------------------------------------------
+-- Utilities for modules                                                    --
+------------------------------------------------------------------------------
 
 
 
-package KOW_View.Components.Registry is
+--------------
+-- Ada 2005 --
+--------------
+with Ada.Tags;
 
-	----------------
-	-- Exceptions --
-	----------------
+package KOW_View.Modules.Util is
 
+	function Get_Name( Module_Tag : in Ada.Tags.Tag ) return String;
 
-	DUPLICATED_COMPONENT_ERROR	: Exception;
-	UNKNOWN_COMPONENT_ERROR		: Exception;
-
-
-	--------------------------
-	-- Component Management --
-	--------------------------
-
-	procedure Register(
-				Component		: in KOW_View.Components.Component_Access;
-				Require_Configuration	: in Boolean
-			);
-	-- A component, once registered, is never deallocated.
-	-- All components should be registered at startup.
-	--
-	-- This procedure also calls "Initialize" for each component. Is also responsible for locating
-	-- the component's configuration file.
-	--
-	-- If Require_Configuration == true and there is no config file available raise 
-	-- COMPONENT_ERROR
-
-
-
-	function Get_Component( Component_Name: in String ) return KOW_View.Components.Component_Access;
-	-- get a component by it's name
-	-- There is only one instance for each component.
-
-	function Get_Component( Component_Name: in Unbounded_String ) return KOW_View.Components.Component_Access;
-
-
-	function Get_Component( Request : in AWS.Status.Data ) return KOW_View.Components.Component_Access;
-	-- get the component for the given request.
-
-private
-
-
-	package Component_Maps is new Ada.Containers.Ordered_Maps(
-					Key_Type	=> Unbounded_String,
-					Element_Type	=> Component_Access
-				);
-
-	The_Registry: Component_Maps.Map;
-
-
-
-end KOW_View.Components.Registry;
+end KOW_View.Modules.Util;
