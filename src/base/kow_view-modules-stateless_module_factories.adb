@@ -77,4 +77,11 @@ package body KOW_View.Modules.Stateless_Module_Factories is
 	begin
 		Free( Module_Type_Access( Module ) );
 	end Destroy;
+begin
+	KOW_View.Components.Register_Module_Factory(
+				Component	=> Component.all,
+				Name		=> To_Unbounded_String( KOW_View.Modules.Util.Get_Name( Module_Type'Tag ),
+				Module_Factory	=> Factory_Instance'Access
+			);
+
 end KOW_View.Modules.Stateless_Module_Factories;

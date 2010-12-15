@@ -76,6 +76,14 @@ package KOW_View.Modules.Stateless_Module_Factories is
 				Module		: in out Module_Ptr
 			);
 	-- free the module access type
+
+
+	---------------
+	-- Variables --
+	---------------
+
+	Factory_Instance : aliased Module_Factory_Type;
+
 private
 	----------
 	-- Free --
