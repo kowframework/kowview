@@ -4,7 +4,7 @@
 --                                                                          --
 --                              KOW Framework                               --
 --                                                                          --
---                                 B o d y                                  --
+--                                 S p e c                                  --
 --                                                                          --
 --               Copyright (C) 2007-2011, KOW Framework Project             --
 --                                                                          --
@@ -30,12 +30,18 @@
 ------------------------------------------------------------------------------
 
 
+pragma License (Modified_GPL);
+
+
+------------------------------------------------------------------------------
+-- Factory for Stateful modules                                            --
+------------------------------------------------------------------------------
 
 
 --------------
 -- Ada 2005 --
 --------------
-with Ada.Strings.Unbounded;
+with Ada.Unchecked_Deallocation;
 
 -------------------
 -- KOW Framework --
@@ -48,13 +54,48 @@ with KOW_View.Modules.Util;
 -- AWS --
 ---------
 with AWS.Status;
+with AWS.Session;
 
-package body KOW_View.Modules.Stateless_Module_Factories is
+generic
+	type Module_Type is new KOW_View.Modules.Module_Type with private;
+	Component : KOW_View.Components.Component_Access;
+package KOW_View.Modules.Stateful_Module_Factories is
+pragma Elaborate_Body( KOW_View.Modules.Stateful_Module_Factories );
 
+	--------------
+	-- The Data --
+	--------------
+	Module_Container_Key_Prefix : constant String := 
+		KOW_View.Components.Get_Name( Component.all ) & "::" & KOW_View.Modules.Util.Get_Name( Module_Type'Tag ) & "::state::";
+	
+	Null_Module : Module_Type;
+
+
+	package Module_Data is new AWS.Session.Generic_Data(
+				Data		=> Module_Type,
+				Null_Data	=> Null_Module
+			);
+	
+
+	function Get_Key( Context : in String; Module_Id : in Positive ) return String;
+
+	function Get(
+			Request		: in AWS.Status.Data;
+			Context		: in String;
+			Module_Id	: in Positive
+		) return Module_Type;
+	
+	procedure Set(
+			Request		: in AWS.Status.Data;
+			Module		: in Module_Type
+		);
 
 	-----------------
 	-- The Factory --
 	-----------------
+
+
+	type Module_Factory_Type is new Module_Factory_Interface with null record;
 
 
 	overriding
@@ -64,34 +105,36 @@ package body KOW_View.Modules.Stateless_Module_Factories is
 				Context		: in     String;
 				Module_Id	: in     Positive;
 				Module		:    out Module_Ptr
-			) is
-		-- create a module, setting it's ID if necessary
-		
-		The_Module : Module_Type_Access := new Module_Type;
-	begin
-		The_Module.Context := Ada.Strings.Unbounded.To_Unbounded_String( Context );
-		The_Module.ID := Module_id;
-		The_Module.ID_Count := 0;
-		The_Module.Component := Component;
-
-		Module := Module_Ptr( The_Module );
-	end Create;
+			);
+	-- create a module, setting it's ID if necessary
 
 	overriding
 	procedure Destroy(
 				Delegator	: in out Module_Factory_Type;
 				Request		: in     AWS.Status.Data;
 				Module		: in out Module_Ptr
-			) is
-		-- free the module access type
-	begin
-		Free( Module_Type_Access( Module ) );
-	end Destroy;
-begin
-	KOW_View.Components.Register_Module_Factory(
-				Component	=> Component.all,
-				Name		=> To_Unbounded_String( KOW_View.Modules.Util.Get_Name( Module_Type'Tag ) ),
-				Factory		=> Factory_Instance'Access
 			);
+	-- free the module access type
 
-end KOW_View.Modules.Stateless_Module_Factories;
+
+	---------------
+	-- Variables --
+	---------------
+
+	Factory_Instance : aliased Module_Factory_Type;
+
+private
+	----------
+	-- Free --
+	----------
+	
+	type Module_Type_Access is access all Module_Type;
+
+	procedure Free is new Ada.Unchecked_Deallocation(
+					Object	=> Module_Type,
+					Name	=> Module_Type_Access
+				);
+
+
+
+end KOW_View.Modules.Stateful_Module_Factories;

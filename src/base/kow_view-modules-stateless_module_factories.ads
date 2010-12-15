@@ -49,6 +49,12 @@ with Ada.Unchecked_Deallocation;
 with KOW_View.Components;
 with KOW_View.Modules;
 
+---------
+-- AWS --
+---------
+with AWS.Status;
+
+
 generic
 	type Module_Type is new KOW_View.Modules.Module_Type with private;
 	Component : KOW_View.Components.Component_Access;
@@ -67,6 +73,7 @@ pragma Elaborate_Body( KOW_View.Modules.Stateless_Module_Factories );
 	overriding
 	procedure Create(
 				Delegator	: in out Module_Factory_Type;
+				Request		: in     AWS.Status.Data;
 				Context		: in     String;
 				Module_Id	: in     Positive;
 				Module		:    out Module_Ptr
@@ -76,6 +83,7 @@ pragma Elaborate_Body( KOW_View.Modules.Stateless_Module_Factories );
 	overriding
 	procedure Destroy(
 				Delegator	: in out Module_Factory_Type;
+				Request		: in     AWS.Status.Data;
 				Module		: in out Module_Ptr
 			);
 	-- free the module access type

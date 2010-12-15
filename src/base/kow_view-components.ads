@@ -133,6 +133,7 @@ package KOW_View.Components is
 
 	procedure Create(
 				Delegator	: in out Module_Factory_Interface;
+				Request		: in     AWS.Status.Data;
 				Context		: in     String;
 				Module_Id	: in     Positive;
 				Module		:    out Module_Ptr
@@ -143,6 +144,7 @@ package KOW_View.Components is
 
 	procedure Destroy(
 				Delegator	: in out Module_Factory_Interface;
+				Request		: in     AWS.Status.Data;
 				Module		: in out Module_Ptr
 			) is abstract;
 	-- free the module access type

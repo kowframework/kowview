@@ -35,6 +35,8 @@
 --------------
 -- Ada 2005 --
 --------------
+with Ada.Strings;
+with Ada.Strings.Fixed;
 with Ada.Strings.Unbounded;
 
 -------------------
@@ -49,7 +51,44 @@ with KOW_View.Modules.Util;
 ---------
 with AWS.Status;
 
-package body KOW_View.Modules.Stateless_Module_Factories is
+package body KOW_View.Modules.Stateful_Module_Factories is
+
+	--------------
+	-- The Data --
+	--------------
+
+
+	function Get_Key(
+				Context		: in String;
+				Module_Id	: in Positive
+			) return String is
+		ID_Str : constant String := Ada.Strings.Fixed.Trim( Positive'Image( Module_Id ), Ada.Strings.Both );
+	begin
+		return Module_Container_Key_Prefix & Context & "::" & ID_Str;
+	end Get_Key;
+
+	function Get(
+			Request		: in AWS.Status.Data;
+			Context		: in String;
+			Module_Id	: in Positive
+		) return Module_Type is
+		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
+	begin
+		return Module_Data.Get( Session_ID, Get_Key( Context, Module_ID ) );
+	end Get;
+	
+	procedure Set(
+			Request	: in AWS.Status.Data;
+			Module	: in Module_Type
+		) is
+		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
+	begin
+		Module_Data.Set(
+					SID	=> Session_Id,
+					Key	=> Get_Key( To_String( Module.Context ), Module.Id ),
+					Value	=> Module
+				);
+	end Set;
 
 
 	-----------------
@@ -67,7 +106,7 @@ package body KOW_View.Modules.Stateless_Module_Factories is
 			) is
 		-- create a module, setting it's ID if necessary
 		
-		The_Module : Module_Type_Access := new Module_Type;
+		The_Module : Module_Type_Access := new Module_Type'( Get( Request, Context, Module_ID ) );
 	begin
 		The_Module.Context := Ada.Strings.Unbounded.To_Unbounded_String( Context );
 		The_Module.ID := Module_id;
@@ -85,13 +124,14 @@ package body KOW_View.Modules.Stateless_Module_Factories is
 			) is
 		-- free the module access type
 	begin
-		Free( Module_Type_Access( Module ) );
+		Set( Request, Module_Type( Module.all ) );
 	end Destroy;
 begin
+
 	KOW_View.Components.Register_Module_Factory(
 				Component	=> Component.all,
 				Name		=> To_Unbounded_String( KOW_View.Modules.Util.Get_Name( Module_Type'Tag ) ),
 				Factory		=> Factory_Instance'Access
 			);
 
-end KOW_View.Modules.Stateless_Module_Factories;
+end KOW_View.Modules.Stateful_Module_Factories;
