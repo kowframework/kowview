@@ -4,7 +4,7 @@
 --                                                                          --
 --                              KOW Framework                               --
 --                                                                          --
---                                 B o d y                                  --
+--                                 S p e c                                  --
 --                                                                          --
 --               Copyright (C) 2007-2011, KOW Framework Project             --
 --                                                                          --
@@ -30,77 +30,64 @@
 ------------------------------------------------------------------------------
 
 
+
+
+------------------------------------------------------------------------------
+-- Factory for stateless modules                                            --
+------------------------------------------------------------------------------
+
+
 --------------
 -- Ada 2005 --
 --------------
-with Ada.Strings.Fixed;
-with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
-
+with Ada.Unchecked_Deallocation;
 
 -------------------
 -- KOW Framework --
 -------------------
-with KOW_Lib.Json;
-with KOW_View.Components;		use KOW_View.Components;
-with KOW_View.Modules.Util;
+with KOW_View.Components;
+with KOW_View.Modules;
+
+generic
+	type Module_Type is new KOW_View.Modules.Module_Type with private;
+	Component : KOW_View.Components.Component_Access;
+package KOW_View.Modules.Stateless_Module_Factories is
 
 
----------
--- AWS --
----------
-with AWS.Status;
+	-----------------
+	-- The Factory --
+	-----------------
 
 
-package body KOW_View.Modules is
+	type Module_Factory_Type is new Module_Factory_Interface with null record;
 
 
+	overriding
+	procedure Create(
+				Delegator	: in out Module_Factory_Type;
+				Module		:    out Module_Ptr;
+				Module_Id	: in     Positive
+			);
+	-- create a module, setting it's ID if necessary
 
-	------------
-	-- Module --
-	------------
+	overriding
+	procedure Destroy(
+				Delegator	: in out Module_Factory_Type;
+				Module		: in out Module_Ptr
+			);
+	-- free the module access type
+private
+	----------
+	-- Free --
+	----------
+	
+	type Module_Type_Access is access all Module_Type;
 
-
-	function Locate_Resource(
-			Module		: in Module_Type;
-			Resource	: in String;
-			Extension	: in String := "";
-			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
-		) return String is
-	begin
-		return Locate_Resource(
-					Component	=> Module.Component.all,
-					Resource	=> Resource,
-					Extension	=> Extension,
-					Kind		=> Kind
+	procedure Free is new Ada.Unchecked_Deallocation(
+					Object	=> Module_Type,
+					Name	=> Module_Type_Access
 				);
-	end Locate_Resource;
 
 
 
-	procedure Generate_HTML_ID(
-				Module		: in out Module_Type;
-				The_ID		:    out Unbounded_String
-		) is
-		-- procedure used to generate a valid ID for HTML elements
-		-- it's a helper procedure so the user can produce unique IDs for their pages easily
-
-		function T( N : in Natural ) return String is
-			use Ada.Strings, Ada.Strings.Fixed;
-		begin
-			return Trim( Natural'Image( N ), Both );
-		end T;
-
-	begin
-		Module.ID_Count := Module.ID_Count + 1;
-
-		The_ID := To_Unbounded_String( "module_" & T( Natural( Module.ID ) ) & "_id_" & T( Module.ID_Count ) );
-				
-	end Generate_HTML_ID;
-
-
-	function Get_Name( Module : in Module_Type'Class ) return String is
-	begin
-		return KOW_View.Modules.Util.Get_Name( Module'Tag );
-	end Get_Name;
-
-end KOW_View.Modules;
+end KOW_View.Modules.Stateless_Module_Factories;

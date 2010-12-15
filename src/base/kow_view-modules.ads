@@ -72,14 +72,14 @@ package KOW_View.Modules is
 	-----------------
 
 	type Module_Type is abstract new KOW_View.Components.Module_Interface with record
-		Module_ID	: Positive;
+		ID		: Positive;
 		-- a number to identify the module in this request/page
 
 
 		ID_Count	: Natural := 0;
 		-- count all the ids that have been generated for this module
 
-		Component	: Component_Ptr;
+		Component	: Component_Access;
 		-- the component that owns this module
 	end record;
 

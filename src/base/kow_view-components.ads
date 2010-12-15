@@ -121,9 +121,9 @@ package KOW_View.Components is
 	
 	type Module_Ptr is access all Module_Interface'Class;
 
-	----------------------
-	-- Module Delegator --
-	----------------------
+	--------------------
+	-- Module Factory --
+	--------------------
 
 	type Module_Factory_Interface is interface;
 	-- the module factory is a singleton object that produce and destroy modules
@@ -133,9 +133,10 @@ package KOW_View.Components is
 
 	procedure Create(
 				Delegator	: in out Module_Factory_Interface;
-				Module		: out    Module_Ptr
+				Module		:    out Module_Ptr;
+				Module_Id	: in     Positive
 			) is abstract;
-	-- create a module
+	-- create a module, setting it's ID if necessary
 
 	procedure Destroy(
 				Delegator	: in out Module_Factory_Interface;

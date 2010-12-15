@@ -30,77 +30,51 @@
 ------------------------------------------------------------------------------
 
 
+
+
 --------------
 -- Ada 2005 --
 --------------
-with Ada.Strings.Fixed;
-with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
-
+with Ada.Unchecked_Deallocation;
 
 -------------------
 -- KOW Framework --
 -------------------
-with KOW_Lib.Json;
-with KOW_View.Components;		use KOW_View.Components;
-with KOW_View.Modules.Util;
+with KOW_View.Components;
+with KOW_View.Modules;
+
+package body KOW_View.Modules.Stateless_Module_Factories is
 
 
----------
--- AWS --
----------
-with AWS.Status;
+	-----------------
+	-- The Factory --
+	-----------------
 
 
-package body KOW_View.Modules is
-
-
-
-	------------
-	-- Module --
-	------------
-
-
-	function Locate_Resource(
-			Module		: in Module_Type;
-			Resource	: in String;
-			Extension	: in String := "";
-			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
-		) return String is
+	overriding
+	procedure Create(
+				Delegator	: in out Module_Factory_Type;
+				Module		:    out Module_Ptr;
+				Module_Id	: in     Positive
+			) is
+		-- create a module, setting it's ID if necessary
+		
+		The_Module : Module_Type_Access := new Module_Type;
 	begin
-		return Locate_Resource(
-					Component	=> Module.Component.all,
-					Resource	=> Resource,
-					Extension	=> Extension,
-					Kind		=> Kind
-				);
-	end Locate_Resource;
+		The_Module.ID := Module_id;
+		The_Module.ID_Count := 0;
+		The_Module.Component := Component;
 
+		Module := Module_Ptr( The_Module );
+	end Create;
 
-
-	procedure Generate_HTML_ID(
-				Module		: in out Module_Type;
-				The_ID		:    out Unbounded_String
-		) is
-		-- procedure used to generate a valid ID for HTML elements
-		-- it's a helper procedure so the user can produce unique IDs for their pages easily
-
-		function T( N : in Natural ) return String is
-			use Ada.Strings, Ada.Strings.Fixed;
-		begin
-			return Trim( Natural'Image( N ), Both );
-		end T;
-
+	overriding
+	procedure Destroy(
+				Delegator	: in out Module_Factory_Type;
+				Module		: in out Module_Ptr
+			) is
+		-- free the module access type
 	begin
-		Module.ID_Count := Module.ID_Count + 1;
-
-		The_ID := To_Unbounded_String( "module_" & T( Natural( Module.ID ) ) & "_id_" & T( Module.ID_Count ) );
-				
-	end Generate_HTML_ID;
-
-
-	function Get_Name( Module : in Module_Type'Class ) return String is
-	begin
-		return KOW_View.Modules.Util.Get_Name( Module'Tag );
-	end Get_Name;
-
-end KOW_View.Modules;
+		Free( Module_Type_Access( Module ) );
+	end Destroy;
+end KOW_View.Modules.Stateless_Module_Factories;
