@@ -169,6 +169,35 @@ package body KOW_View.Components is
 	end Get_Service_Delegator;
 
 
+	procedure Process_Json_Request(
+			Component	: in out Component_Type;
+			Request		: in     AWS.Status.Data;
+			Response	:    out KOW_Lib.Json.Object_Type
+		) is
+	begin
+		Process_Json_Request(
+				Delegator	=> Get_Service_Delegator( Component, Request ).all,
+				Request		=> Request,
+				Response	=> Response
+			);
+	end Process_Json_Request;
+
+	procedure Process_Custom_Request(
+			Component	: in out Component_Type;
+			Request		: in     AWS.Status.Data;
+			Response	:    out AWS.Response.Data
+		) is
+		-- this is where the request processing takes place..
+		-- can be overriding for implementing default services and such
+	begin
+		Process_Custom_Request(
+				Delegator	=> Get_Service_Delegator( Component, Request ).all,
+				Request		=> Request,
+				Response	=> Response
+			);
+	end Process_Custom_Request;
+
+
 
 
 	procedure Register_Module_Factory(
@@ -213,33 +242,6 @@ package body KOW_View.Components is
 	end Register_Initialization_Trigger;
 
 
-	procedure Process_Json_Request(
-			Component	: in out Component_Type;
-			Request		: in     AWS.Status.Data;
-			Response	:    out KOW_Lib.Json.Object_Type
-		) is
-	begin
-		Process_Json_Request(
-				Delegator	=> Get_Service_Delegator( Component, Request ).all,
-				Request		=> Request,
-				Response	=> Response
-			);
-	end Process_Json_Request;
-
-	procedure Process_Custom_Request(
-			Component	: in out Component_Type;
-			Request		: in     AWS.Status.Data;
-			Response	:    out AWS.Response.Data
-		) is
-		-- this is where the request processing takes place..
-		-- can be overriding for implementing default services and such
-	begin
-		Process_Custom_Request(
-				Delegator	=> Get_Service_Delegator( Component, Request ).all,
-				Request		=> Request,
-				Response	=> Response
-			);
-	end Process_Custom_Request;
 
 
 	function Get_Name( Component : in Component_Type'Class ) return String is

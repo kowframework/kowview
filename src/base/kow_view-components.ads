@@ -246,6 +246,19 @@ package KOW_View.Components is
 	-- return the service delegator for this request..
 	-- you should override this method in case you want only one service in your component 
 		
+	procedure Process_Json_Request(
+			Component	: in out Component_Type;
+			Request		: in     AWS.Status.Data;
+			Response	:    out KOW_Lib.Json.Object_Type
+		);
+
+	procedure Process_Custom_Request(
+			Component	: in out Component_Type;
+			Request		: in     AWS.Status.Data;
+			Response	:    out AWS.Response.Data
+		);
+	-- this is where the request processing takes place..
+	-- can be overriding for implementing default services and such
 
 
 	procedure Register_Module_Factory(
@@ -264,19 +277,6 @@ package KOW_View.Components is
 				Initialization_Trigger	: in     Initialization_Trigger_Access
 			);
 
-	procedure Process_Json_Request(
-			Component	: in out Component_Type;
-			Request		: in     AWS.Status.Data;
-			Response	:    out KOW_Lib.Json.Object_Type
-		);
-
-	procedure Process_Custom_Request(
-			Component	: in out Component_Type;
-			Request		: in     AWS.Status.Data;
-			Response	:    out AWS.Response.Data
-		);
-	-- this is where the request processing takes place..
-	-- can be overriding for implementing default services and such
 
 
 	function Get_Name( Component : in Component_Type'Class ) return String;
