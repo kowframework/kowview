@@ -52,6 +52,7 @@ generic
 	type Module_Type is new KOW_View.Modules.Module_Type with private;
 	Component : KOW_View.Components.Component_Access;
 package KOW_View.Modules.Stateless_Module_Factories is
+pragma Elaborate_Body( KOW_View.Modules.Stateless_Module_Factories );
 
 
 	-----------------

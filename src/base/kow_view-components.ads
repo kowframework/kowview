@@ -129,7 +129,7 @@ package KOW_View.Components is
 	-- the module factory is a singleton object that produce and destroy modules
 	-- see KOW_View.Modules for more details
 
-	type Module_Factory_Access is not null access all Module_Factory_Interface;
+	type Module_Factory_Access is not null access all Module_Factory_Interface'Class;
 
 	procedure Create(
 				Delegator	: in out Module_Factory_Interface;

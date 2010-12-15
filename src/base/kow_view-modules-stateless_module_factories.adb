@@ -42,6 +42,7 @@ with Ada.Unchecked_Deallocation;
 -------------------
 with KOW_View.Components;
 with KOW_View.Modules;
+with KOW_View.Modules.Util;
 
 package body KOW_View.Modules.Stateless_Module_Factories is
 
@@ -80,8 +81,8 @@ package body KOW_View.Modules.Stateless_Module_Factories is
 begin
 	KOW_View.Components.Register_Module_Factory(
 				Component	=> Component.all,
-				Name		=> To_Unbounded_String( KOW_View.Modules.Util.Get_Name( Module_Type'Tag ),
-				Module_Factory	=> Factory_Instance'Access
+				Name		=> To_Unbounded_String( KOW_View.Modules.Util.Get_Name( Module_Type'Tag ) ),
+				Factory		=> Factory_Instance'Access
 			);
 
 end KOW_View.Modules.Stateless_Module_Factories;
