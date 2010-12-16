@@ -20,13 +20,6 @@
 -- to  the Free Software Foundation,  59 Temple Place - Suite 330,  Boston, --
 -- MA 02111-1307, USA.                                                      --
 --                                                                          --
--- As a special exception,  if other files  instantiate  generics from this --
--- unit, or you link  this unit with other files  to produce an executable, --
--- this  unit  does not  by itself cause  the resulting  executable  to  be --
--- covered  by the  GNU  General  Public  License.  This exception does not --
--- however invalidate  any other reasons why  the executable file  might be --
--- covered by the  GNU Public License.                                      --
---                                                                          --
 ------------------------------------------------------------------------------
 
 
@@ -75,7 +68,7 @@ package body KOW_View.Components.Registry is
 
 		Initialize( Component.all, Require_Configuration );
 
-		Include( The_Registry, Component_Name, Component );
+		Include( The_Registry, Component_Name, Component_Ptr( Component ) );
 		
 	end Register;
 
@@ -92,7 +85,7 @@ package body KOW_View.Components.Registry is
 	function Get_Component( Component_Name: in Unbounded_String ) return KOW_View.Components.Component_Access is
 	begin
 		declare
-			Component : Component_Access := Component_Maps.Element( The_Registry, Component_Name );
+			Component : Component_Access := Component_Access( Component_Maps.Element( The_Registry, Component_Name ) );
 		begin
 			return Component;
 		end;

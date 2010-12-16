@@ -20,14 +20,8 @@
 -- to  the Free Software Foundation,  59 Temple Place - Suite 330,  Boston, --
 -- MA 02111-1307, USA.                                                      --
 --                                                                          --
--- As a special exception,  if other files  instantiate  generics from this --
--- unit, or you link  this unit with other files  to produce an executable, --
--- this  unit  does not  by itself cause  the resulting  executable  to  be --
--- covered  by the  GNU  General  Public  License.  This exception does not --
--- however invalidate  any other reasons why  the executable file  might be --
--- covered by the  GNU Public License.                                      --
---                                                                          --
 ------------------------------------------------------------------------------
+pragma License (GPL);
 
 
 
@@ -130,6 +124,7 @@ package KOW_View.Components is
 	-- see KOW_View.Modules for more details
 
 	type Module_Factory_Access is not null access all Module_Factory_Interface'Class;
+	type Module_Factory_Ptr is access all Module_Factory_interface'Class;
 
 	procedure Create(
 				Delegator	: in out Module_Factory_Interface;
@@ -152,7 +147,7 @@ package KOW_View.Components is
 
 	package Module_Factory_Maps is new Ada.Containers.Ordered_Maps(
 				Key_Type	=> Unbounded_String,
-				Element_Type	=> Module_Factory_Access
+				Element_Type	=> Module_Factory_Ptr
 			);
 
 	--------------------------------------
@@ -160,10 +155,11 @@ package KOW_View.Components is
 	--------------------------------------
 
 	type Initialization_Trigger_Access is not null access procedure;
+	type Initialization_Trigger_Ptr is access procedure;
 
 	package Initialization_Trigger_Vectors is new Ada.Containers.Vectors(
 				Index_Type	=> Positive,
-				Element_Type	=> Initialization_Trigger_Access
+				Element_Type	=> Initialization_Trigger_Ptr
 			);
 
 	----------------

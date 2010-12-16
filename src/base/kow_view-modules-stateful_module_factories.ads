@@ -20,17 +20,10 @@
 -- to  the Free Software Foundation,  59 Temple Place - Suite 330,  Boston, --
 -- MA 02111-1307, USA.                                                      --
 --                                                                          --
--- As a special exception,  if other files  instantiate  generics from this --
--- unit, or you link  this unit with other files  to produce an executable, --
--- this  unit  does not  by itself cause  the resulting  executable  to  be --
--- covered  by the  GNU  General  Public  License.  This exception does not --
--- however invalidate  any other reasons why  the executable file  might be --
--- covered by the  GNU Public License.                                      --
---                                                                          --
 ------------------------------------------------------------------------------
+pragma License (GPL);
 
 
-pragma License (Modified_GPL);
 
 
 ------------------------------------------------------------------------------
@@ -68,12 +61,14 @@ pragma Elaborate_Body( KOW_View.Modules.Stateful_Module_Factories );
 	Module_Container_Key_Prefix : constant String := 
 		KOW_View.Components.Get_Name( Component.all ) & "::" & KOW_View.Modules.Util.Get_Name( Module_Type'Tag ) & "::state::";
 	
-	Null_Module : Module_Type;
+	package Values is
+		Null_Module : Module_Type;
+	end values;
 
 
 	package Module_Data is new AWS.Session.Generic_Data(
 				Data		=> Module_Type,
-				Null_Data	=> Null_Module
+				Null_Data	=> Values.Null_Module
 			);
 	
 

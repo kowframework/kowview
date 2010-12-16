@@ -20,13 +20,6 @@
 -- to  the Free Software Foundation,  59 Temple Place - Suite 330,  Boston, --
 -- MA 02111-1307, USA.                                                      --
 --                                                                          --
--- As a special exception,  if other files  instantiate  generics from this --
--- unit, or you link  this unit with other files  to produce an executable, --
--- this  unit  does not  by itself cause  the resulting  executable  to  be --
--- covered  by the  GNU  General  Public  License.  This exception does not --
--- however invalidate  any other reasons why  the executable file  might be --
--- covered by the  GNU Public License.                                      --
---                                                                          --
 ------------------------------------------------------------------------------
 
 
@@ -158,6 +151,7 @@ package body KOW_View.Components is
 		end Delegator;
 	begin
 		if Rest_of_uri'Length = 0 then
+			pragma Assert( Length( Component.Default_Service ) > 0, "there is no default component in the service " & Get_Name( Component ) );
 			return Delegator( Component.Default_Service );
 		end if;
 
@@ -211,7 +205,7 @@ package body KOW_View.Components is
 			raise CONSTRAINT_ERROR with "duplicated module :: " & To_String( Name ) & "@" & Get_Name( Component );
 		end if;
 
-		Include( Component.Module_Factories, Name, Factory );
+		Include( Component.Module_Factories, Name, Module_Factory_Ptr( Factory ) );
 	end Register_Module_Factory;
 	
 	function Get_Module_Factory(
@@ -219,7 +213,7 @@ package body KOW_View.Components is
 			Name		: in Unbounded_String
 		) return Module_Factory_Access is
 	begin
-		return Module_Factory_Maps.Element( Component.Module_Factories, Name );
+		return Module_Factory_Access( Module_Factory_Maps.Element( Component.Module_Factories, Name ) );
 	exception
 		when CONSTRAINT_ERROR =>
 			raise CONSTRAINT_ERROR with "module " & To_String( Name ) & " not found at component " & Get_Name( Component );
@@ -233,11 +227,12 @@ package body KOW_View.Components is
 				Initialization_Trigger	: in     Initialization_Trigger_Access
 			) is
 
+		Tr : Initialization_Trigger_Ptr := Initialization_Trigger_Ptr( Initialization_Trigger );
 	begin
-		if Initialization_Trigger_Vectors.Contains( Component.Initialization_Triggers, Initialization_Trigger ) then
+		if Initialization_Trigger_Vectors.Contains( Component.Initialization_Triggers, Tr ) then
 			raise CONSTRAINT_ERROR with "duplicated trigger detected at component " & Get_Name( Component );
 		else
-			Initialization_Trigger_Vectors.Append( Component.Initialization_Triggers, Initialization_Trigger );
+			Initialization_Trigger_Vectors.Append( Component.Initialization_Triggers, Tr );
 		end if;
 	end Register_Initialization_Trigger;
 
