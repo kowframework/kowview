@@ -82,14 +82,16 @@ package body KOW_View.Components is
 			Component	: in Component_Type;
 			Resource	: in String;
 			Extension	: in String := "";
-			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
+			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
+			Locale		: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
 		) return String is
 	begin
 		return KOW_View.Components.Util.Locate_Resource(
 					Component_Name	=> Get_Name( Component ),
 					Resource	=> Resource,
 					Extension	=> Extension,
-					Kind		=> Kind
+					Kind		=> Kind,
+					Locale_Code	=> Locale.Code
 				);
 
 	end Locate_Resource;

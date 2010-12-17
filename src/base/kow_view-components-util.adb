@@ -25,8 +25,11 @@
 --------------
 -- Ada 2005 --
 --------------
+with Ada.Characters.Handling;
 with Ada.Directories;
+with Ada.Exceptions;
 with Ada.IO_Exceptions;
+with Ada.Strings.Unbounded;
 with Ada.Tags;
 
 -------------------
@@ -34,6 +37,7 @@ with Ada.Tags;
 -------------------
 with KOW_Config;
 with KOW_Lib.File_System;
+with KOW_Lib.Locales;
 with KOW_Lib.String_Util;
 with KOW_View.Util;
 
@@ -76,7 +80,8 @@ package body KOW_View.Components.Util is
 			Component_Name	: in String;
 			Resource	: in String;
 			Extension	: in String;
-			Kind		: in Ada.Directories.File_Kind	
+			Kind		: in Ada.Directories.File_Kind;
+			Locale_Code	: in KOW_Lib.Locales.Locale_Code := Ada.Strings.Unbounded.Null_Unbounded_String
 		) return String is
 		-- locate a resource file for this component
 		-- this file should be placed at
@@ -84,7 +89,6 @@ package body KOW_View.Components.Util is
 		-- 	or
 		-- 	[WORKING_DIR]/applications/component_name/data/resource.extension
 		-- returning it's name if nothing has been found raise Ada.Directories.Name_Error if not found
-		-- TODO: Implement locale support at Locate_Resource function
 
 
 
@@ -95,7 +99,6 @@ package body KOW_View.Components.Util is
 
 		Name		: String		:= "data" / "kowview" / MComponent_Name / Resource & "." & Extension;
 		Default_Name	: String		:= "applications" / MComponent_Name / "data" / Resource & "." & Extension;
-
 
 
 
@@ -122,15 +125,81 @@ package body KOW_View.Components.Util is
 		end Check;
 
 
+
+		function Compute_Locale_Parts return Natural is
+			use Ada.Strings.Unbounded;
+			PL : Natural := Count( Locale_Code, "_" );
+		begin
+			if Locale_Code = "" then
+				return 0;
+			else
+				return PL + 1;
+			end if;
+		end Compute_Locale_Parts;
+
+
+		Locale_Parts : constant Natural := Compute_Locale_Parts;
+
+		function Check_Localized( FName : in String ) return String is
+			use Ada.Strings;
+			use Ada.Strings.Unbounded;
+			use KOW_Lib;
+
+
+			type Locale_Parts_Array is array( 0 .. Locale_Parts ) of Locales.Locale_Code;
+
+			Parts		: Locale_Parts_Array;
+			High_Index	: Integer := Length( Locale_Code ) + 1;
+		begin
+			for i in 0 .. Parts'Last - 1 loop -- at Parts'Last we leave empty representing no locale
+				Parts( i ) := Head( Locale_Code, High_Index - 1 );
+				High_Index := Index(
+							Source	=> Locale_Code,
+							Pattern	=> "_",
+							From	=> High_Index - 1,
+							Going	=> Backward
+						);
+				if High_Index = -1 then
+					pragma Assert( i = Parts'Last - 1, "Not found when needed the ""_"" character... bug here!" );
+					High_Index := Length( Locale_Code ) + 1;
+				end if;
+
+			end loop;
+
+			for i in Parts'Range loop
+				declare
+					function Suffix return String is
+						S : constant String := Ada.Characters.Handling.To_Lower( To_String( Parts( i ) ) );
+					begin
+						if S = "" then
+							return "." & Extension;
+						else
+							return "_" & S & "." & Extension;
+						end if;
+					end Suffix;
+
+					N : constant String := FName & Suffix;
+				begin
+					Check( N );
+					return N;
+				exception
+					when e : others =>
+						if i = Parts'Last then -- no localized file...
+							Ada.Exceptions.Reraise_Occurrence( E );
+						end if;
+				end;
+			end loop;
+
+			raise PROGRAM_ERROR with "seems like you found a bug in the resource localization code! Congratulations! :)";
+			return "";
+		end Check_Localized;
+	
+
 	begin
-
-		Check( Name );
-
-		return Name;
+		return Check_Localized( Name );
 	exception
 		when others =>
-			Check( Default_Name );
-			return Default_Name;
+			return Check_Localized( Default_Name );
 
 	end Locate_Resource;
 

@@ -49,6 +49,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -------------------
 with KOW_Config;
 with KOW_Lib.Json;
+with KOW_Lib.Locales;
 
 
 ---------
@@ -224,7 +225,8 @@ package KOW_View.Components is
 			Component	: in Component_Type;
 			Resource	: in String;
 			Extension	: in String := "";
-			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
+			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
+			Locale		: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
 		) return String;
 
 	procedure Register_Service_Delegator(

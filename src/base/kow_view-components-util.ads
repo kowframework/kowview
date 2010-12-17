@@ -33,12 +33,15 @@ pragma License (GPL);
 -- Ada 2005 --
 --------------
 with Ada.Directories;
+with Ada.Strings.Unbounded;
 with Ada.Tags;
 
 -------------------
 -- KOW Framework --
 -------------------
 with KOW_Config;
+with KOW_Lib.Locales;
+
 
 package KOW_View.Components.Util is
 
@@ -54,7 +57,8 @@ package KOW_View.Components.Util is
 			Component_Name	: in String;
 			Resource	: in String;
 			Extension	: in String;
-			Kind		: in Ada.Directories.File_Kind	
+			Kind		: in Ada.Directories.File_Kind;
+			Locale_Code	: in KOW_Lib.Locales.Locale_Code := Ada.Strings.Unbounded.Null_Unbounded_String
 		) return String;
 	-- locate a resource file for this component
 	-- this file should be placed at
@@ -62,7 +66,6 @@ package KOW_View.Components.Util is
 	-- 	or
 	-- 	[WORKING_DIR]/applications/component_name/data/resource.extension
 	-- returning it's name if nothing has been found raise Ada.Directories.Name_Error if not found
-	-- TODO: Implement locale support at Locate_Resource function
 
 	function Load_Main_Configuration(
 			Component_Name	: in String
