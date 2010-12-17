@@ -122,7 +122,7 @@ package body KOW_View.Components is
 			raise CONSTRAINT_ERROR with "duplicated service :: " & To_String( Name ) & "@" & Get_Name( Component );
 		end if;
 
-		Include( Component.Service_Delegators, Name, Delegator );
+		Include( Component.Service_Delegators, Name, Service_Delegator_Ptr( Delegator ) );
 	end Register_Service_Delegator;
 
 
@@ -141,9 +141,11 @@ package body KOW_View.Components is
 
 		function Delegator( Name : Unbounded_String ) return Service_Delegator_Access is
 		begin
-			return Service_Delegator_Maps.Element(
-						Component.Service_Delegators,
-						Name
+			return Service_Delegator_Access(
+				Service_Delegator_Maps.Element(
+							Component.Service_Delegators,
+							Name
+						)
 					);
 		exception
 			when CONSTRAINT_ERROR =>
@@ -151,8 +153,8 @@ package body KOW_View.Components is
 		end Delegator;
 	begin
 		if Rest_of_uri'Length = 0 then
-			pragma Assert( Length( Component.Default_Service ) > 0, "there is no default component in the service " & Get_Name( Component ) );
-			return Delegator( Component.Default_Service );
+			pragma Assert( Component.Default_Service /= null, "there is no default component in the service " & Get_Name( Component ) );
+			return Service_Delegator_Access( Component.Default_Service );
 		end if;
 
 		if Last < 0 then

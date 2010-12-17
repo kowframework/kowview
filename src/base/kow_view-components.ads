@@ -80,7 +80,8 @@ package KOW_View.Components is
 	-- the service delegator is a singleton object that calls the service type methods
 	-- see KOW_View.Services for more details.
 
-	type Service_Delegator_Access is access all Service_Delegator_Interface'Class;
+	type Service_Delegator_Access is not null access all Service_Delegator_Interface'Class;
+	type Service_Delegator_Ptr is access all Service_Delegator_Interface'Class;
 
 	procedure Process_Custom_Request(
 				Delegator	: in out Service_Delegator_Interface;
@@ -97,7 +98,7 @@ package KOW_View.Components is
 	
 	package Service_Delegator_Maps is new Ada.Containers.Ordered_Maps(
 				Key_Type	=> Unbounded_String,
-				Element_Type	=> Service_Delegator_Access
+				Element_Type	=> Service_Delegator_Ptr
 			);
 
 
@@ -173,8 +174,9 @@ package KOW_View.Components is
 		Module_Factories	: Module_Factory_Maps.Map;
 		-- where I look for how to create and destroy modules
 
-		Default_Service		: Unbounded_String;
-		-- TODO :: default service to load
+		Default_Service		: Service_Delegator_Ptr;
+		-- the component implementor must set this variable to whatever service he
+		-- wants as the default service. :)
 
 		Initialization_Triggers	: Initialization_Trigger_Vectors.Vector;
 		-- durin elaboration your code can register initialization triggers
