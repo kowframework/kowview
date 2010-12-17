@@ -39,6 +39,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 with KOW_Config;
 with KOW_Config.Generic_Registry;
 with KOW_Lib.File_System;		use KOW_Lib.File_System;
+with KOW_Lib.Locales;
 with KOW_Lib.UString_Vectors;
 with KOW_View.Components;		use KOW_View.Components;
 
@@ -66,7 +67,8 @@ package KOW_View.Themes is
 			Theme_Name	: in String;
 			Resource	: in String;
 			Extension	: in String;
-			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
+			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
+			Locale		: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
 		) return String;
 
 	---------------
@@ -74,39 +76,23 @@ package KOW_View.Themes is
 	---------------
 
 
-	type Component_Type is new KOW_View.Components.Component_Type with private;
+	type Themes_Component is new KOW_View.Components.Component_Type with record
+		Default_Theme_Name	: Unbounded_String; -- default
+		Name			: Unbounded_String;
+		Template_Extension	: Unbounded_String; -- html
+	end record;
+
+	Component : aliased Themes_Component;
+	-- the only component instance
 
 	
 
 	overriding
-	procedure Initialize(
+	procedure Setup(
 			Component	: in out Component_Type;
-			Component_Name	: in     String;
 			Config		: in out KOW_Config.Config_File
 		);
-	-- Initialize the Theme component, setting every variable required
-
-
-	overriding
-	function Create_Instance(
-			Component	: in Component_Type;
-			Module_Name	: in String;
-			Config		: in KOW_Config.Config_File
-		) return Module_Type'Class;
-	-- Creates a module instance
-	-- Available modules:
-	-- 	template_processor
-
-
-	overriding
-	function Create_Instance(
-			Component	: in Component_Type;
-			Service_Name	: in String;
-			Service_Mapping	: in String
-		) return Service_Type'Class;
-	-- create a service.
-	-- available services:
-	-- 	. theme
+	-- setup the theme variables
 
 	-------------
 	-- Modules --
@@ -128,16 +114,13 @@ package KOW_View.Themes is
 	procedure Initialize_Request(
 			Module		: in out Template_Processor_Module;
 			Request		: in     AWS.Status.Data;
-			Parameters	: in out Templates_Parser.Translate_Set;
-			Response	: in out AWS.Response.Data;
-			Is_Final	: out    Boolean
+			Config		: in out KOW_Config.Config_File
 		);
 	
 	overriding
 	procedure Process_Header(
 			Module		: in out Template_Processor_Module;
 			Request		: in     AWS.Status.Data;
-			Parameters	: in out Templates_Parser.Translate_Set;
 			Response	: in out Unbounded_String
 		);
 	-- process header of the response.
@@ -147,7 +130,6 @@ package KOW_View.Themes is
 	procedure Process_Request(
 			Module		: in out Template_Processor_Module;
 			Request		: in     AWS.Status.Data;
-			Parameters	: in out Templates_Parser.Translate_Set;
 			Response	: in out Unbounded_String
 		);
 	-- process the request for a module.
@@ -157,7 +139,6 @@ package KOW_View.Themes is
 	procedure Process_Footer(
 			Module		: in out Template_Processor_Module;
 			Request		: in     AWS.Status.Data;
-			Parameters	: in out Templates_Parser.Translate_Set;
 			Response	: in out Unbounded_String
 		);
 	-- process some footer of the module
@@ -166,8 +147,7 @@ package KOW_View.Themes is
 	overriding
 	procedure Finalize_Request(
 			Module		: in out Template_Processor_Module;
-			Request		: in     AWS.Status.Data;
-			Parameters	: in out Templates_Parser.Translate_Set
+			Request		: in     AWS.Status.Data
 		);
 	-- Finalize processing the request.
 	-- Called when the process has been finalized
@@ -304,11 +284,6 @@ package KOW_View.Themes is
 private
 
 
-	type Component_Type is new KOW_View.Components.Component_Type with record
-		Default_Theme_Name	: Unbounded_String; -- default
-		Name			: Unbounded_String;
-		Template_Extension	: Unbounded_String; -- html
-	end record;
 	
 
 

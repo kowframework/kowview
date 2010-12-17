@@ -29,8 +29,7 @@ with KOW_View.Components.Registry;
 procedure KOW_View.Themes.Load is
 begin
 	KOW_View.Components.Registry.Register(
-		"themes",
-		new KOW_View.Themes.Component_Type,
+		KOW_View.Themes.Component'Access,
 		true
 	);
 

@@ -62,14 +62,16 @@ package body KOW_View.Themes is
 			Theme_Name	: in String;
 			Resource	: in String;
 			Extension	: in String;
-			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
+			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
+			Locale		: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
 		) return String is
 	begin
 		return KOW_View.Components.Registry.Locate_Resource(
-				Component_Name	=> Component_Name,
+				Component	=> Component,
 				Resource	=> Theme_Name & Separator & Resource,
 				Extension	=> Extension,
-				Kind		=> Kind
+				Kind		=> Kind,
+				Locale		=> Locale
 			);
 	end Locate_Theme_Resource;
 
