@@ -36,6 +36,7 @@ with Ada.Tags;
 -------------------
 with KOW_Config;
 with KOW_Lib.Json;
+with KOW_Lib.Locales;
 with KOW_View.Components;		use KOW_View.Components;
 
 
@@ -97,7 +98,8 @@ package KOW_View.Services is
 			Service		: in Service_Type;
 			Resource	: in String;
 			Extension	: in String := "";
-			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
+			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
+			Locale		: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
 		) return String;
 
 	procedure Setup_Service(
