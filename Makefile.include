@@ -35,13 +35,13 @@ libs: pre_libs
 	@for project_file in $(PROJECT_FILES); do\
 		echo "Making $$project_file"; \
 		gnatprep "-Dversion=\"$(VERSION)\"" $$project_file.in $$project_file; \
-		gnatmake -P $$project_file; \
+		gprbuild -j5 $$project_file; \
 	done
 
 clean: gprclean extra_clean
 	@for project_file in $(PROJECT_FILES); do\
 		echo cleaning $$project_file ;\
-		gnatclean -P $$project_file; \
+		gprclean $$project_file; \
 		rm -f $(project_file); \
 	done
 	@rm -f $(PROJECT_FILES)
