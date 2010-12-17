@@ -31,6 +31,7 @@
 --------------
 -- Ada 2005 --
 --------------
+with Ada.Exceptions;
 with Ada.Tags;
 
 -------------------
@@ -94,10 +95,15 @@ package body KOW_View is
 						Request		=> Request,
 						Response	=> Response
 					);
-				-- TODO :: implement a nice exception page with some cool stuff, such as showing up a friendly error message to the user :)
 		end case;
 
 		return Response;
+	exception
+		when REDIRECT_TO_HOME =>
+			return AWS.Response.URL( To_String( Home ) );
+		when E : others =>
+			Ada.Exceptions.Reraise_Occurrence( E );
+			-- TODO :: implement a nice exception page with some cool stuff, such as showing up a friendly error message to the user :)
 	end Process_Request;
 
 

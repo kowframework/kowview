@@ -29,6 +29,12 @@ pragma License (GPL);
 
 
 
+with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
+
+-------------------
+-- KOW Framework --
+-------------------
+with KOW_Sec.Accounting;
 
 
 ---------
@@ -37,10 +43,6 @@ pragma License (GPL);
 with AWS.Status;
 with AWS.Response;
 
--------------------
--- KOW Framework --
--------------------
-with KOW_Sec.Accounting;
 
 package KOW_View is
 	Accountant : aliased KOW_Sec.Accounting.Accountant_Type := KOW_Sec.Accounting.New_Accountant( "kow_sec" );
@@ -59,5 +61,10 @@ package KOW_View is
 
 	REDIRECT_TO_HOME : Exception;
 	-- redirect to the home for this server
-	-- TODO :: implement REDIRECT_TO_HOME or the server wont work
+
+
+	Home	: Unbounded_String := To_Unbounded_String( "/page" );
+	-- a string representing the main service.. :)
+	-- default is the page component, but can be overriden
+
 end KOW_View;
