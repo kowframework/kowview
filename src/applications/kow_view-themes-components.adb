@@ -63,12 +63,13 @@ package body KOW_View.Themes.Components is
 
 
 	overriding
-	procedure Initialize(
+	procedure Setup(
 			Component	: in out Component_Type;
-			Component_Name	: in     String;
 			Config		: in out KOW_Config.Config_File
 		) is
-		-- Initialize the Theme component, setting every variable required
+	-- setup the theme variables
+
+
 		use KOW_Config;
 	begin
 		Component.Default_Theme_Name	:= Value( Config, "default_theme", "default" );
