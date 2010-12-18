@@ -52,43 +52,8 @@ with AWS.Session;
 with AWS.Status;
 with Templates_Parser;			use Templates_Parser;
 
-package body KOW_View.Themes is
+package body KOW_View.Themes.Components is
 	
-
-	function Template_Factory(
-			Name	: in String;
-			Config	: in KOW_Config.Config_File )
-		return Template_Descriptor_Type is
-		-- private method for loading the template descriptor from it's configuration
-		Descriptor : Template_Descriptor_Type;
-	begin
-		Descriptor.Name		:= To_Unbounded_String( Name );
-		Descriptor.Description	:= KOW_Config.Element( Config, "description" );
-
-		Descriptor.Regions	:= KOW_Lib.String_Util.Explode(
-							',',
-							To_String(
-								KOW_Config.Element( Config, "regions" )
-							)
-						);
-		return Descriptor;
-	end Template_Factory;
-
-
-	
-	function Theme_Factory(
-			Name	: in String;
-			Config	: in KOW_Config.Config_File )
-		return Theme_Descriptor_Type is
-		-- private method for loading the theme descriptor from it's configuration
-		Descriptor : Theme_Descriptor_Type;
-	begin
-		Descriptor.Name			:= To_Unbounded_String( Name );
-		Descriptor.Author		:= KOW_Config.Element( Config, "author" );
-		Descriptor.Creation_Date	:= KOW_Config.Element( Config, "creation_time" );
-
-		return Descriptor;
-	end Theme_Factory;
 
 
 	---------------
@@ -129,4 +94,4 @@ package body KOW_View.Themes is
 
 
 
-end KOW_View.Themes;
+end KOW_View.Themes.Components;

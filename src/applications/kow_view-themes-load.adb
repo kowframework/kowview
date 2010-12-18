@@ -24,12 +24,16 @@
 
 
 
+-------------------
+-- KOW Framework --
+-------------------
 with KOW_View.Components.Registry;
+with KOW_View.Themes.Components;
 
 procedure KOW_View.Themes.Load is
 begin
 	KOW_View.Components.Registry.Register(
-		KOW_View.Themes.Component'Access,
+		KOW_View.Themes.Components.Component'Access,
 		true
 	);
 

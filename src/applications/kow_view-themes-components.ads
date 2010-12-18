@@ -54,7 +54,7 @@ with Templates_Parser;
 -- TODO: create module for theme listing
 -- TODO: create service for theme selection
 
-package KOW_View.Themes is
+package KOW_View.Themes.Components is
 
 
 	---------------
@@ -81,47 +81,6 @@ package KOW_View.Themes is
 	-- setup the theme variables
 
 	
-	----------------------------------------
-	-- Theme Management and configuration --
-	----------------------------------------
-
-	-- The following methods and types are for internal use only.
-	--
-	-- That's what runs KOW_View.Themes component.
-
-
-	type Theme_Descriptor_Type is record
-		-- A record type for describing how a theme operates and other information.
-		Name		: Unbounded_String;
-		Author		: Unbounded_String;
-		Creation_Date	: Unbounded_String; -- TODO: store the creation date as Ada.Calendar.Time
-	end record;
-	
-
-	type Template_Descriptor_Type is record
-		-- A record type describing a template.
-		-- This is used to describe the templates that are expected to be found in
-		-- all themes.
-		--
-		-- Also, contains information about the author and why is this template required.
-		Name		: Unbounded_String;
-		Description	: Unbounded_String;
-		Regions		: KOW_Lib.UString_Vectors.Vector;
-	end record;
-
-	package Themes_Registry is new KOW_Config.Generic_Registry(
-				Element_Type	=> Theme_Descriptor_Type,
-				Relative_Path	=> "kowview" & Separator & "themes" & Separator & "themes"
-			);
-	-- Store all the available theme's descriptor.
-
-
-	package Templates_Registry is new KOW_Config.Generic_Registry(
-				Element_Type	=> Template_Descriptor_Type,
-				Relative_Path	=> "kowview" & Separator & "themes" & Separator & "templates"
-			);
-	-- Store all required templates.
-
 
 private
 
@@ -135,10 +94,4 @@ private
 					"="		=> Templates_Parser."="
 				);
 
-	type Theme_Service is new Service_Type with record
-		Mapping			: Unbounded_String;
-		Component_Name		: Unbounded_String;
-		Default_Theme_Name	: Unbounded_String;
-		Template_Extension	: Unbounded_String;
-	end record;
-end KOW_View.Themes;
+end KOW_View.Themes.Components;

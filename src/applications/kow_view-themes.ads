@@ -38,7 +38,11 @@ with Ada.Directories;
 -------------------
 -- KOW Framework --
 -------------------
+with KOW_Config;
+with KOW_Config.Generic_Registry;
+with KOW_Lib.File_System;		use KOW_Lib.File_System;
 with KOW_Lib.Locales;
+with KOW_Lib.UString_Vectors;
 
 
 package KOW_View.Themes is
@@ -56,6 +60,58 @@ package KOW_View.Themes is
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
 			Locale		: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
 		) return String;
+
+
+
+
+	-----------------------
+	-- Theme Descriptors --
+	-----------------------
+
+	type Theme_Type is record
+		-- A record type for describing how a theme operates and other information.
+		Name		: Unbounded_String;
+		Author		: Unbounded_String;
+		Creation_Date	: Unbounded_String; -- TODO: store the creation date as Ada.Calendar.Time
+	end record;
+
+	package Themes_Registry is new KOW_Config.Generic_Registry(
+				Element_Type	=> Theme_Type,
+				Relative_Path	=> "kowview" / "themes" / "themes"
+			);
+	-- Store all the available theme's descriptor.
+
+
+	
+	--------------------------
+	-- Template Descriptors --
+	--------------------------
+
+	type Template_Type is record
+		-- A record type describing a template.
+		-- This is used to describe the templates that are expected to be found in
+		-- all themes.
+		--
+		-- Also, contains information about the author and why is this template required.
+		Name		: Unbounded_String;
+		Description	: Unbounded_String;
+		Regions		: KOW_Lib.UString_Vectors.Vector;
+	end record;
+
+	function Template_Factory(
+				Name	: in String;
+				Config	: in KOW_Config.Config_File
+			) return Template_Type;
+
+
+
+
+	package Templates_Registry is new KOW_Config.Generic_Registry(
+				Element_Type	=> Template_Type,
+				Relative_Path	=> "kowview" / "themes" / "templates"
+			);
+	-- Store all required templates.
+
 
 
 end KOW_View.Themes;
