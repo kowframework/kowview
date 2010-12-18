@@ -68,19 +68,19 @@ package KOW_View.Themes.Components is
 		Template_Extension	: Unbounded_String; -- html
 	end record;
 
-	Component : aliased Themes_Component;
-	-- the only component instance
-
 	
 
 	overriding
 	procedure Setup(
-			Component	: in out Component_Type;
+			Component	: in out Themes_Component;
 			Config		: in out KOW_Config.Config_File
 		);
 	-- setup the theme variables
 
 	
+	Component : aliased Themes_Component;
+	-- the only component instance
+
 
 private
 

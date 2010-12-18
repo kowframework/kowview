@@ -64,7 +64,7 @@ package body KOW_View.Themes.Components is
 
 	overriding
 	procedure Setup(
-			Component	: in out Component_Type;
+			Component	: in out Themes_Component;
 			Config		: in out KOW_Config.Config_File
 		) is
 	-- setup the theme variables
@@ -87,12 +87,7 @@ package body KOW_View.Themes.Components is
 			);
 
 		Themes_Registry.Reload_Registry;
-	end Initialize;
-
-
-
-
-
+	end Setup;
 
 
 end KOW_View.Themes.Components;
