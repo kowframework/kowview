@@ -102,4 +102,15 @@ package body KOW_View.Themes.Services is
 	end Process_Custom_Request;
 
 
+	overriding
+	procedure Process_Json_Request(
+			Service		: in out Theme_Service;
+			Request		: in     AWS.Status.Data;
+			Response	:    out KOW_Lib.Json.Object_Type
+		) is
+		-- will raise program_error with nice message
+	begin
+		raise PROGRAM_ERROR with "can't handle json request in the theme service";
+	end Process_Json_Request;
+
 end KOW_View.Themes.Services;

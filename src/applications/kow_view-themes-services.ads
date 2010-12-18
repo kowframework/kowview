@@ -39,6 +39,8 @@ with Ada.Strings.Unbounded;			use Ada.Strings.Unbounded;
 -------------------
 with KOW_Lib.Json;
 with KOW_View.Services;
+with KOW_View.Services.Singleton_Service_Cycles;
+with KOW_View.Themes.Components;
 
 ---------
 -- AWS --
@@ -56,6 +58,7 @@ package KOW_View.Themes.Services is
 		Template_Extension	: Unbounded_String;
 	end record;
 
+
 	overriding
 	procedure Process_Custom_Request(
 			Service		: in out Theme_Service;
@@ -64,12 +67,19 @@ package KOW_View.Themes.Services is
 		);
 	-- process request for a theme's static file
 	-- only direct access to files that aren't template are alowed
+
 	overriding
 	procedure Process_Json_Request(
 			Service		: in out Theme_Service;
 			Request		: in     AWS.Status.Data;
 			Response	:    out KOW_Lib.Json.Object_Type
-		) is null;
+		);
+	-- will raise program_error with nice message
 
+
+	package Theme_Cycles is new KOW_View.Services.Singleton_Service_Cycles(
+					Service_Type	=> Theme_Service,
+					Component	=> KOW_View.Themes.Components.Component'Access
+				);
 
 end KOW_View.Themes.Services;

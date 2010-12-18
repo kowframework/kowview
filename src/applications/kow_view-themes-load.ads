@@ -24,5 +24,10 @@
 pragma License( GPL );
 
 
+-------------------
+-- KOW Framework --
+-------------------
+with KOW_View.Themes.Services;
+pragma Elaborate( KOW_View.Themes.Services );
 
 procedure KOW_View.Themes.Load;
