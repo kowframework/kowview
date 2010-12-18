@@ -79,7 +79,8 @@ package body KOW_View.Themes.Services is
 
 		URI		: constant string := AWS.Status.URI( Request );
 		Extension	: constant string := Ada.Directories.Extension( URI );
-		Resource	: constant string := KOW_View.Components.Util.Get_Resource( URI, Extension );
+		File_Name	: constant string := URI( URI'First .. URI'Last - Extension'Length - 1);
+		Resource	: constant string := Locate_Resource( Service, File_Name, Extension );
 		Component_Name	: constant string := To_String( Service.Component_Name );
 		Complete_Path	: constant string := Locate_Theme_Resource(
 				Component_Name	=> Component_Name,
