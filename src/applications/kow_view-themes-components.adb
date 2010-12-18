@@ -75,18 +75,6 @@ package body KOW_View.Themes.Components is
 		Component.Default_Theme_Name	:= Value( Config, "default_theme", "default" );
 		Component.Template_Extension	:= Value( Config, "template_extension", "html" );
 		
-		Templates_Registry.Factory_Registry.Register(
-				"template",
-				Template_Factory'Access
-			);
-		Templates_Registry.Reload_Registry;
-
-		Themes_Registry.Factory_Registry.Register(
-				"theme",
-				Theme_Factory'Access
-			);
-
-		Themes_Registry.Reload_Registry;
 	end Setup;
 
 

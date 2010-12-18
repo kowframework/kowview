@@ -64,9 +64,9 @@ package KOW_View.Themes is
 
 
 
-	-----------------------
-	-- Theme Descriptors --
-	-----------------------
+	------------
+	-- Themes --
+	------------
 
 	type Theme_Type is record
 		-- A record type for describing how a theme operates and other information.
@@ -74,6 +74,13 @@ package KOW_View.Themes is
 		Author		: Unbounded_String;
 		Creation_Date	: Unbounded_String; -- TODO: store the creation date as Ada.Calendar.Time
 	end record;
+
+
+	function Theme_Factory(
+				Name	: in String;
+				Config	: in KOW_Config.Config_File
+			) return Theme_Type;
+
 
 	package Themes_Registry is new KOW_Config.Generic_Registry(
 				Element_Type	=> Theme_Type,
@@ -83,9 +90,9 @@ package KOW_View.Themes is
 
 
 	
-	--------------------------
-	-- Template Descriptors --
-	--------------------------
+	---------------
+	-- Templates --
+	---------------
 
 	type Template_Type is record
 		-- A record type describing a template.

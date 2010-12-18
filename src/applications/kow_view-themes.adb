@@ -66,6 +66,30 @@ package body KOW_View.Themes is
 	-- Theme Management and configuration --
 	----------------------------------------
 
+	------------
+	-- Themes --
+	------------
+
+	function Theme_Factory(
+				Name	: in String;
+				Config	: in KOW_Config.Config_File
+			) return Theme_Type is
+		-- private method for loading the theme descriptor from it's configuration
+		Descriptor : Theme_Type;
+	begin
+		Descriptor.Name			:= To_Unbounded_String( Name );
+		Descriptor.Author		:= KOW_Config.Element( Config, "author" );
+		Descriptor.Creation_Date	:= KOW_Config.Element( Config, "creation_time" );
+
+		return Descriptor;
+	end Theme_Factory;
+
+
+
+	---------------
+	-- Templates --
+	---------------
+
 
 
 	function Template_Factory(
@@ -89,19 +113,5 @@ package body KOW_View.Themes is
 
 
 	
-	function Theme_Factory(
-				Name	: in String;
-				Config	: in KOW_Config.Config_File
-			) return Theme_Type is
-		-- private method for loading the theme descriptor from it's configuration
-		Descriptor : Theme_Type;
-	begin
-		Descriptor.Name			:= To_Unbounded_String( Name );
-		Descriptor.Author		:= KOW_Config.Element( Config, "author" );
-		Descriptor.Creation_Date	:= KOW_Config.Element( Config, "creation_time" );
-
-		return Descriptor;
-	end Theme_Factory;
-
 
 end KOW_View.Themes;

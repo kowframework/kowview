@@ -28,14 +28,39 @@
 -- KOW Framework --
 -------------------
 with KOW_View.Components.Registry;
+with KOW_View.Themes;			use KOW_View.Themes;
 with KOW_View.Themes.Components;
+
+
+
 
 procedure KOW_View.Themes.Load is
 begin
 	KOW_View.Components.Registry.Register(
-		KOW_View.Themes.Components.Component'Access,
+		Components.Component'Access,
 		true
 	);
 
+
+	----------------------------------
+	-- Setup the Templates Registry --
+	----------------------------------
+	Templates_Registry.Factory_Registry.Register(
+			"template",
+			Template_Factory'Access
+		);
+	Templates_Registry.Reload_Registry;
+
+
+
+	-------------------------------
+	-- Setup the Themes Registry --
+	-------------------------------
+	Themes_Registry.Factory_Registry.Register(
+			"theme",
+			Theme_Factory'Access
+		);
+
+	Themes_Registry.Reload_Registry;
 
 end KOW_View.Themes.Load;
