@@ -37,9 +37,9 @@ with KOW_View.Themes.Components;
 procedure KOW_View.Themes.Load is
 begin
 	KOW_View.Components.Registry.Register(
-		Components.Component'Access,
-		true
-	);
+			Components.Component'Access,
+			true
+		);
 
 
 	----------------------------------

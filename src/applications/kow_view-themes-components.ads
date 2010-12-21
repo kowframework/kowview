@@ -46,10 +46,8 @@ with KOW_View.Components;		use KOW_View.Components;
 ---------
 -- AWS --
 ---------
-
 with AWS.Response;
 with AWS.Status;
-with Templates_Parser;
 
 -- TODO: create module for theme listing
 -- TODO: create service for theme selection
@@ -81,17 +79,5 @@ package KOW_View.Themes.Components is
 	Component : aliased Themes_Component;
 	-- the only component instance
 
-
-private
-
-
-	
-
-
-	package Tag_Maps is new Ada.Containers.Ordered_Maps(
-					Key_Type	=> Unbounded_String,
-					Element_Type	=> Templates_Parser.Tag,
-					"="		=> Templates_Parser."="
-				);
 
 end KOW_View.Themes.Components;

@@ -34,6 +34,7 @@ pragma License( GPL );
 -------------------
 -- KOW Framework --
 -------------------
+with KOW_Config;
 with KOW_View.Components;
 
 package KOW_View.Pages.Components is

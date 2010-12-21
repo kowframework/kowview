@@ -36,9 +36,9 @@ with KOW_View.Pages.Components;
 procedure KOW_View.Pages.Load is
 begin
 	KOW_View.Components.Registry.Register(
-		Components.Component'Access,
-		true
-	);
+			Components.Component'Access,
+			False
+		);
 
 	
 end KOW_View.Pages.Load;
