@@ -118,7 +118,7 @@ package body KOW_View.Modules.Stateful_Module_Factories is
 		-- free the module access type
 	begin
 		Set( Request, Module_Type( Module.all ) );
-		Free( Module );
+		Free( Module_Type_Access( Module ) );
 	end Destroy;
 begin
 
