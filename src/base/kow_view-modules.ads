@@ -93,7 +93,7 @@ package KOW_View.Modules is
 
 
 
-	procedure Process_Header(
+	procedure Process_Head(
 			Module		: in out Module_Type;
 			Request		: in     AWS.Status.Data;
 			Response	:    out Unbounded_String
@@ -101,7 +101,7 @@ package KOW_View.Modules is
 	-- process header of the response.
 	-- it's assumed that 
 
-	procedure Process_Request(
+	procedure Process_Body(
 			Module		: in out Module_Type;
 			Request		: in     AWS.Status.Data;
 			Response	:    out Unbounded_String
@@ -109,7 +109,7 @@ package KOW_View.Modules is
 	-- process the request for a module.
 	-- sometimes is useful for a module only to be created and released - such as in a page counter module
 
-	procedure Process_Footer(
+	procedure Process_Foot(
 			Module		: in out Module_Type;
 			Request		: in     AWS.Status.Data;
 			Response	:    out Unbounded_String
