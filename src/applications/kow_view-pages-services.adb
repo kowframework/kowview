@@ -40,9 +40,11 @@ with Ada.Containers.Vectors;
 -------------------
 with KOW_Lib.File_System;
 with KOW_Lib.Json;
+with KOW_Lib.UString_Vectors;
 with KOW_View.Components;				use KOW_View.Components;
 with KOW_View.Components.Util;
 with KOW_View.Pages.Components;
+with KOW_View.Pages.Services.Util;
 with KOW_View.Modules;					use KOW_View.Modules;
 with KOW_View.Services;
 with KOW_View.Services.Stateless_Service_Cycles;
@@ -67,15 +69,12 @@ package body KOW_View.Pages.Services is
 	--------------------
 	procedure Iterate(
 				Modules		: in out Complete_Module_Array;
-				Iterator	: access procedure( Module : in out Complete_Module_Type );
-				Require_Region	: Boolean 
+				Iterator	: access procedure( Module : in out Complete_Module_Type )
 			) is
 		use KOW_View.Themes;
 	begin
 		for i in Modules'Range loop 
-			if not Require_Region OR ELSE Modules(i).Region /= "" then
-				Iterator.all( Modules( i ) );
-			end if;
+			Iterator.all( Modules( i ) );
 		end loop;
 	end Iterate;
 
@@ -97,10 +96,11 @@ package body KOW_View.Pages.Services is
 
 
 		Page		: constant String := Get_Page( Service, Request );
-		Config		: KOW_Config.Config_File := Get_Config_File( Page );
+		Config		: KOW_Config.Config_File := Util.Get_Config_File( Page );
+		Template	: KOW_View.Themes.Template_Type := Util.Get_Template( Config );
 
-		Modules		: Complete_Module_Array := Get_Modules( Config );
-		Processor	: Template_Processor_Type := New_Template_Processor( Service.Template );
+		Modules		: Complete_Module_Array := Util.Get_Modules( Config );
+		Processor	: Template_Processor_Type := New_Template_Processor( Template );
 
 		Module_Id	: Positive := 1;
 
@@ -150,13 +150,13 @@ package body KOW_View.Pages.Services is
 
 
 	begin
-		Iterate( Modules => Modules, Iterator => Create'Access,		Require_Region => False );
-		Iterate( Modules => Modules, Iterator => Initialize'Access,	Require_Region => False );
+		Iterate( Modules => Modules, Iterator => Create'Access );
+		Iterate( Modules => Modules, Iterator => Initialize'Access );
 
 		-- see wich json module should be called :)
 
-		Iterate( Modules => Modules, Iterator => Finalize'Access,	Require_Region => False );
-		Iterate( Modules => Modules, Iterator => Destroy'Access,	Require_Region => False );
+		Iterate( Modules => Modules, Iterator => Finalize'Access );
+		Iterate( Modules => Modules, Iterator => Destroy'Access );
 
 
 		Response := The_Response;
@@ -174,10 +174,16 @@ package body KOW_View.Pages.Services is
 		use KOW_View.Themes.Template_Processors;
 
 		Page		: constant String := Get_Page( Service, Request );
-		Config		: KOW_Config.Config_File := Get_Config_File( Page );
+		Config		: KOW_Config.Config_File := Util.Get_Config_File( Page );
+		Template	: KOW_View.Themes.Template_Type := Util.Get_Template( Config );
 
-		Modules		: Complete_Module_Array := Get_Modules( Config );
-		Processor	: Template_Processor_Type := New_Template_Processor( Service.Template );
+		Modules		: Complete_Module_Array := Util.Get_Modules( Config );
+		type Buffer_Array is Array( 1 .. Modules'Length ) of Unbounded_String;
+		Head_Buffers	: Buffer_Array;
+		Body_Buffers	: Buffer_Array;
+		Foot_Buffers	: Buffer_Array;
+
+		Processor	: Template_Processor_Type := New_Template_Processor( Template );
 
 		Module_Id	: Positive := 1;
 
@@ -208,34 +214,20 @@ package body KOW_View.Pages.Services is
 
 
 		procedure Process_Head( Complete : in out Complete_Module_Type ) is
-			Buffer : Unbounded_String;
 		begin
 			Process_Head(
 					Module		=> Complete.Module.all,
 					Request		=> Request,
-					Response	=> Buffer
-				);
-			Append_Head(
-					Processor	=> Processor,
-					Region		=> Complete.Region,
-					Module_ID	=> Get_ID( Complete.Module.all ),
-					Head_Buffer	=> Buffer
+					Response	=> Head_Buffers( Get_ID( Complete.Module.all ) )
 				);
 		end Process_Head;
 
 		procedure Process_Body( Complete : in out Complete_Module_Type ) is
-			Buffer : Unbounded_String;
 		begin
 			Process_Body(
 					Module		=> Complete.Module.all,
 					Request		=> Request,
-					Response	=> Buffer
-				);
-			Append_Body(
-					Processor	=> Processor,
-					Region		=> Complete.Region,
-					Module_ID	=> Get_ID( Complete.Module.all ),
-					Body_Buffer	=> Buffer
+					Response	=> Head_Buffers( Get_ID( Complete.Module.all ) )
 				);
 		end Process_Body;
 
@@ -245,13 +237,7 @@ package body KOW_View.Pages.Services is
 			Process_Foot(
 					Module		=> Complete.Module.all,
 					Request		=> Request,
-					Response	=> Buffer
-				);
-			Append_Foot(
-					Processor	=> Processor,
-					Region		=> Complete.Region,
-					Module_ID	=> Get_ID( Complete.Module.all ),
-					Foot_Buffer	=> Buffer
+					Response	=> Foot_Buffers( Get_ID (Complete.Module.all ) )
 				);
 		end Process_Foot;
 
@@ -273,21 +259,54 @@ package body KOW_View.Pages.Services is
 		end Destroy;
 
 
+
+
+		procedure Append_Region( C : in KOW_Lib.UString_Vectors.Cursor ) is
+			use KOW_View.Themes;
+			Region		: Region_Type := Region_Type( KOW_Lib.UString_Vectors.Element( C ) );
+			Module_IDs	: Index_Array := Util.Get_Module_IDs( Config, Region );
+			Module_ID	: Positive;
+		begin
+			for i in Modules'Range loop
+				Module_ID := Module_IDs( i );
+				Append_Head(
+						Processor	=> Processor,
+						Region		=> Region,
+						Module_Id	=> Module_ID,
+						Head_Buffer	=> Head_Buffers( Module_ID )
+					);
+				Append_Body(
+						Processor	=> Processor,
+						Region		=> Region,
+						Module_ID	=> Module_ID,
+						Body_Buffer	=> Body_Buffers( Module_ID )
+					);
+				Append_Foot(
+						Processor	=> Processor,
+						Region		=> Region,
+						Module_ID	=> Module_ID,
+						Foot_Buffer	=> Foot_Buffers( Module_ID )
+					);
+			end loop;
+		end Append_Region;
+
+
 	begin
 		-------------------------
 		-- Deal with modules.. --
 		-------------------------
-		Iterate( Modules => Modules, Iterator => Create'Access,		Require_Region => False );
-		Iterate( Modules => Modules, Iterator => Initialize'Access,	Require_Region => False );
-		Iterate( Modules => Modules, Iterator => Process_Head'Access,	Require_Region => True );
-		Iterate( Modules => Modules, Iterator => Process_Body'Access,	Require_Region => True );
-		Iterate( Modules => Modules, Iterator => Process_Foot'Access,	Require_Region => True );
-		Iterate( Modules => Modules, Iterator => Finalize'Access,	Require_Region => False );
-		Iterate( Modules => Modules, Iterator => Destroy'Access,	Require_Region => False );
+		Iterate( Modules => Modules, Iterator => Create'Access );
+		Iterate( Modules => Modules, Iterator => Initialize'Access );	
+		Iterate( Modules => Modules, Iterator => Process_Head'Access );
+		Iterate( Modules => Modules, Iterator => Process_Body'Access );
+		Iterate( Modules => Modules, Iterator => Process_Foot'Access );
+		Iterate( Modules => Modules, Iterator => Finalize'Access );
+		Iterate( Modules => Modules, Iterator => Destroy'Access );
 
 		--------------------------------
 		-- Assemble the final request --
 		--------------------------------
+		KOW_Lib.UString_Vectors.Iterate( Template.Regions, Append_Region'Access );
 		Process( Processor, Response );
 	end Process_Custom_Request;
 
@@ -305,26 +324,6 @@ package body KOW_View.Pages.Services is
 		return KOW_View.Services.Util.Local_URI( Service, AWS.Status.URI( Request ) );
 	end Get_Page;
 
-	function Get_Config_File( Page : in String ) return KOW_Config.Config_File is
-		-- get the config file for the given page..
-		
-		use KOW_Lib.File_System;
-
-	begin
-		return KOW_View.Components.Util.Load_Configuration(
-						Component_Name		=> KOW_View.Components.Get_Name( KOW_View.Pages.Components.Component ),
-						Configuration_Name	=> "page" / Page
-					);
-	end Get_Config_File;
-
-
-
-	function Get_Modules( Config : in KOW_Config.Config_File ) return Complete_Module_Array is
-		Empty : Complete_Module_Array( 1 .. 0 );
-	begin
-		-- TODO :: Get_Modules
-		return Empty;
-	end Get_Modules;
 
 
 end KOW_View.Pages.Services;

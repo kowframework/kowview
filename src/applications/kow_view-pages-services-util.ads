@@ -25,90 +25,35 @@ pragma License( GPL );
 
 
 ------------------------------------------------------------------------------
--- Main package for the Pages services                                      --
+-- Utility for handling page services                                       --
 ------------------------------------------------------------------------------
 
 
-
---------------
--- Ada 2005 --
---------------
-with Ada.Containers.Vectors;
 
 -------------------
 -- KOW Framework --
 -------------------
 with KOW_Config;
-with KOW_Lib.Json;
-with KOW_View.Components;
-with KOW_View.Pages.Components;
-with KOW_View.Services;
-with KOW_View.Services.Stateless_Service_Cycles;
 with KOW_View.Themes;
 
+package KOW_View.Pages.Services.Util is
+	function Get_Config_File( Page : in String ) return KOW_Config.Config_File;
+	-- get the config file for the given page..
 
----------
--- AWS --
----------
-with AWS.Status;
-with AWS.Response;
-
-
-package KOW_View.Pages.Services is
+	function Get_Template( Config : in KOW_Config.Config_File ) return KOW_View.Themes.Template_Type;
+	-- get the template for the given configuration file
 
 
-	-------------------------------
-	-- Helper Types and Packages --
-	-------------------------------
-
-	type Complete_Module_Type is record
-		Module	: KOW_View.Components.Module_Ptr;
-		Factory	: KOW_View.Components.Module_Factory_Ptr;
-		Config	: KOW_Config.Config_File;
-	end record;
-
-	type Complete_Module_Array is array( Positive range <> ) of Complete_Module_Type;
-
-	type Index_Array is array( Natural range <> ) of Positive;
-
-	----------------------
-	-- The Page Service --
-	----------------------
-
-	type Page_Service is new KOW_View.Services.Service_Type with null record;
+	function Get_Modules( Config : in KOW_Config.Config_File ) return Complete_Module_Array;
+	-- get all the complete_module_type types initializing the properties:
+	-- 	factory
+	-- 	region
+	-- 	config
+	-- in the order they are declared inside the configuration file.
 
 
-	overriding
-	procedure Process_Json_Request(
-			Service	: in out Page_Service;
-			Request	: in     AWS.Status.Data;
-			Response:    out KOW_Lib.Json.Object_Type
-		);
-	-- run initialize for each one of the modules in the page
-	-- then call Process_Json_Request for a given module or group of modules.
-
-	overriding
-	procedure Process_Custom_Request(
-			Service		: in out Page_Service;
-			Request		: in     AWS.Status.Data;
-			Response	:    out AWS.Response.Data
-		);
-	-- process the entire module cycle returning a HTML page
-
-
-	function Get_Page(
-				Service	: in Page_Service;
-				Request	: in AWS.Status.Data
-			) return String;
-	-- retrieve the page name :)
-
-
-	
-
-
-	package Service_Cycle is new KOW_View.Services.Stateless_Service_Cycles(
-						Service_Type	=> Page_Service,
-						Component	=> KOW_View.Pages.Components.Component'Access
-					);
-
-end KOW_View.Pages.Services;
+	function Get_Module_IDs(
+				Config	: in KOW_Config.Config_File;
+				Region	: in KOW_View.Themes.Region_Type
+			) return Index_Array;
+end KOW_View.Pages.Services.Util;
