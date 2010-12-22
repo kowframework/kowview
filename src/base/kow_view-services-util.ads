@@ -39,4 +39,11 @@ package KOW_View.Services.Util is
 
 	function Get_Name( Service_Tag : in Ada.Tags.Tag ) return String;
 
+
+	function Local_URI(
+				Service	: in KOW_View.Services.Service_Type'Class;
+				URI	: in String
+			) return String;
+	-- get the URI stripping the service mapping
+
 end KOW_View.Services.Util;

@@ -117,6 +117,63 @@ package KOW_View.Components is
 	
 	type Module_Ptr is access all Module_Interface'Class;
 
+
+
+
+	procedure Initialize_Request(
+			Module		: in out Module_Interface;
+			Request		: in     AWS.Status.Data;
+			Config		: in out KOW_Config.Config_File
+		) is null;
+	-- Initialize the processing of a request
+	-- Called before anything has been build.
+	-- Useful when handling secured modules and setting initial data
+
+
+
+	procedure Process_Head(
+			Module		: in out Module_Interface;
+			Request		: in     AWS.Status.Data;
+			Response	:    out Unbounded_String
+		) is null;
+	-- process header of the response.
+	-- it's assumed that 
+
+	procedure Process_Body(
+			Module		: in out Module_Interface;
+			Request		: in     AWS.Status.Data;
+			Response	:    out Unbounded_String
+		) is null;
+	-- process the request for a module.
+	-- sometimes is useful for a module only to be created and released - such as in a page counter module
+
+	procedure Process_Foot(
+			Module		: in out Module_Interface;
+			Request		: in     AWS.Status.Data;
+			Response	:    out Unbounded_String
+		) is null;
+	-- process some footer of the module
+	-- useful when creating benchmar modules
+
+
+	procedure Process_Json_Request(
+			Module		: in out Module_Interface;
+			Request		: in     AWS.Status.Data;
+			Response	: out    KOW_Lib.Json.Object_Type
+		) is null;
+
+	procedure Finalize_Request(
+			Module		: in out Module_Interface;
+			Request		: in     AWS.Status.Data
+		) is null;
+	-- Finalize processing the request.
+	-- Called when the process has been finalized
+
+
+
+	function Get_ID( Module : in Module_Interface ) return Positive is abstract;
+	-- get the module ID inside a given page
+
 	--------------------
 	-- Module Factory --
 	--------------------
@@ -129,7 +186,7 @@ package KOW_View.Components is
 	type Module_Factory_Ptr is access all Module_Factory_interface'Class;
 
 	procedure Create(
-				Delegator	: in out Module_Factory_Interface;
+				Factory		: in out Module_Factory_Interface;
 				Request		: in     AWS.Status.Data;
 				Context		: in     String;
 				Module_Id	: in     Positive;
@@ -140,7 +197,7 @@ package KOW_View.Components is
 	-- Module_ID	=> which module in sequence being created in the same context
 
 	procedure Destroy(
-				Delegator	: in out Module_Factory_Interface;
+				Factory		: in out Module_Factory_Interface;
 				Request		: in     AWS.Status.Data;
 				Module		: in out Module_Ptr
 			) is abstract;

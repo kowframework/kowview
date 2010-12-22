@@ -32,6 +32,7 @@ with Ada.Tags;
 -------------------
 -- KOW Framework --
 -------------------
+with KOW_View.Components;
 with KOW_View.Util;
 
 package body KOW_View.Services.Util is
@@ -40,5 +41,20 @@ package body KOW_View.Services.Util is
 	begin
 		return KOW_View.Util.Get_Type_Name( Service_Tag, "_service" );
 	end Get_Name;
+
+
+	function Local_URI(
+				Service	: in KOW_View.Services.Service_Type'Class;
+				URI	: in String
+			) return String is
+		-- get the URI stripping the service mapping
+
+		use KOW_View.Components;
+		Mapping : constant String := '/' & Get_Name( Service.Component.all ) & '/' & Get_Name( Service'Tag );
+	begin
+		pragma Assert( Mapping'Length <= URI'Length, "this is not a valid URI for this service.. expect something inside " & Mapping );
+
+		return URI( URI'First + Mapping'Length .. URI'Last );
+	end Local_URI;
 
 end KOW_View.Services.Util;

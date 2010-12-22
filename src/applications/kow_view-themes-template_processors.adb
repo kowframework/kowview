@@ -190,12 +190,12 @@ package body KOW_View.Themes.Template_Processors is
 
 	procedure Process(
 				Processor	: in out Template_Processor_Type;
-				Output		:    out Unbounded_String
+				Output		:    out AWS.Response.Data
 			) is
 	begin
 		-- TODO :: the process template procedure...
 		-- TODO :: I'll implement it later so I can test the logic implementing the page service
-		Output := TO_Unbounded_String( "oie" );
+		Output := AWS.Response.Build( "text/html",  "oie" );
 	end Process;
 
 

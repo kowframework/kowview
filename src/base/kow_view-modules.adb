@@ -53,6 +53,11 @@ package body KOW_View.Modules is
 	-- Module --
 	------------
 
+	overriding
+	function Get_ID( Module : in Module_Type ) return Positive is
+	begin
+		return Module.ID;
+	end Get_ID;
 
 	function Locate_Resource(
 			Module		: in Module_Type;

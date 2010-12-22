@@ -94,6 +94,10 @@ package KOW_View.Themes is
 	-- Templates --
 	---------------
 
+
+	type Region_Type is new Unbounded_String;
+
+
 	type Template_Type is record
 		-- A record type describing a template.
 		-- This is used to describe the templates that are expected to be found in

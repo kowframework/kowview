@@ -44,6 +44,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 ---------
 -- AWS --
 ---------
+with AWS.Response;
 with Templates_Parser;			use Templates_Parser;
 
 
@@ -60,8 +61,6 @@ package KOW_View.Themes.Template_Processors is
 	-----------------------
 	-- The Region Buffer --
 	-----------------------
-	type Region_Type is new Unbounded_String;
-
 	
 	type Region_Buffer_Type is record
 		Region		: Region_Type;
@@ -146,7 +145,7 @@ package KOW_View.Themes.Template_Processors is
 
 	procedure Process(
 				Processor	: in out Template_Processor_Type;
-				Output		:    out Unbounded_String
+				Output		:    out AWS.Response.Data
 			);
 
 

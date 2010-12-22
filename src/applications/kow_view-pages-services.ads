@@ -21,90 +21,98 @@
 -- MA 02111-1307, USA.                                                      --
 --                                                                          --
 ------------------------------------------------------------------------------
-pragma License (GPL);
+pragma License( GPL );
+
 
 ------------------------------------------------------------------------------
--- Base package for modules in KOW View                                     --
---                                                                          --
--- A module is a isolated piece of information that can be embeded into a   --
--- web page.                                                                --
---                                                                          --
--- The module type should be suffixed _Module                               --
+-- Main package for the Pages services                                      --
 ------------------------------------------------------------------------------
-
-
 
 
 
 --------------
 -- Ada 2005 --
 --------------
-with Ada.Directories;
-with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
-
+with Ada.Containers.Vectors;
 
 -------------------
 -- KOW Framework --
 -------------------
 with KOW_Config;
 with KOW_Lib.Json;
-with KOW_Lib.Locales;
-with KOW_View.Components;		use KOW_View.Components;
+with KOW_View.Components;
+with KOW_View.Pages.Components;
+with KOW_View.Services;
+with KOW_View.Services.Stateless_Service_Cycles;
+with KOW_View.Themes;
 
 
 ---------
 -- AWS --
 ---------
 with AWS.Status;
-
-package KOW_View.Modules is
-
-	
-	-----------------
-	-- Module Type --
-	-----------------
-
-	type Module_Type is abstract new KOW_View.Components.Module_Interface with record
-		Context		: Unbounded_String;
-		-- where it's bein created
+with AWS.Response;
 
 
-		ID		: Positive;
-		-- a number to identify the module in this request/page
+package KOW_View.Pages.Services is
 
 
-		ID_Count	: Natural := 0;
-		-- count all the ids that have been generated for this module
+	-------------------------------
+	-- Helper Types and Packages --
+	-------------------------------
 
-		Component	: Component_Access;
-		-- the component that owns this module
+	type Complete_Module_Type is record
+		Module	: KOW_View.Components.Module_Ptr;
+		Factory	: KOW_View.Components.Module_Factory_Ptr;
+		Region	: KOW_View.Themes.Region_Type;
+		Config	: KOW_Config.Config_File;
+	end record;
+
+	type Complete_Module_Array is array( Positive range <> ) of Complete_Module_Type;
+
+	----------------------
+	-- The Page Service --
+	----------------------
+
+	type Page_Service is new KOW_View.Services.Service_Type with record
+		Template	: KOW_View.Themes.Template_Type;
 	end record;
 
 
 	overriding
-	function Get_ID( Module : in Module_Type ) return Positive;
-
-
-	
-	function Locate_Resource(
-			Module		: in Module_Type;
-			Resource	: in String;
-			Extension	: in String := "";
-			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
-			Locale		: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
-		) return String;
-
-
-
-	procedure Generate_HTML_ID(
-				Module		: in out Module_Type;
-				The_ID		:    out Unbounded_String
+	procedure Process_Json_Request(
+			Service	: in out Page_Service;
+			Request	: in     AWS.Status.Data;
+			Response:    out KOW_Lib.Json.Object_Type
 		);
-	-- procedure used to generate a valid ID for HTML elements
-	-- it's a helper procedure so the user can produce unique IDs for their pages easily
+	-- run initialize for each one of the modules in the page
+	-- then call Process_Json_Request for a given module or group of modules.
+
+	overriding
+	procedure Process_Custom_Request(
+			Service		: in out Page_Service;
+			Request		: in     AWS.Status.Data;
+			Response	:    out AWS.Response.Data
+		);
+	-- process the entire module cycle returning a HTML page
 
 
+	function Get_Page(
+				Service	: in Page_Service;
+				Request	: in AWS.Status.Data
+			) return String;
+	-- retrieve the page name :)
 
-	function Get_Name( Module : in Module_Type'Class ) return String;
 
-end KOW_View.Modules;
+	function Get_Config_File( Page : in String ) return KOW_Config.Config_File;
+	-- get the config file for the given page..
+
+	function Get_Modules( Config : in KOW_Config.Config_File ) return Complete_Module_Array;
+	
+
+	package Service_Cycle is new KOW_View.Services.Stateless_Service_Cycles(
+						Service_Type	=> Page_Service,
+						Component	=> KOW_View.Pages.Components.Component'Access
+					);
+
+end KOW_View.Pages.Services;
