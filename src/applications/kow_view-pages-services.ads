@@ -75,7 +75,10 @@ package KOW_View.Pages.Services is
 	-- The Page Service --
 	----------------------
 
-	type Page_Service is new KOW_View.Services.Service_Type with null record;
+	type Page_Service is new KOW_View.Services.Service_Type with record
+		Page_Title	: Unbounded_String;
+		Author		: Unbounded_String;
+	end record;
 
 
 	overriding
@@ -103,7 +106,10 @@ package KOW_View.Pages.Services is
 	-- retrieve the page name :)
 
 
-	
+	procedure Setup(
+				Service	: in out Page_Service;
+				Config	: in out KOW_Config.Config_File
+			);
 
 
 	package Service_Cycle is new KOW_View.Services.Stateless_Service_Cycles(

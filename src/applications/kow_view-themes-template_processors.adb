@@ -38,11 +38,13 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -- KOW Framework --
 -------------------
 with KOW_Lib.UString_Vectors;
+with KOW_View.Themes.Components;
 
 
 ---------
 -- AWS --
 ---------
+with AWS.Status;
 with Templates_Parser;			use Templates_Parser;
 
 package body KOW_View.Themes.Template_Processors is
@@ -97,6 +99,34 @@ package body KOW_View.Themes.Template_Processors is
 		Region_Buffer.Foot_IDs		:= Region_Buffer.Foot_IDs & Id( Region_Buffer, Foot_Block, Module_ID );
 		Region_Buffer.Foot_Buffer	:= Region_Buffer.Foot_Buffer & Foot_Buffer;
 	end Append_Foot;
+
+
+	procedure Insert(
+				Parameters	: in out Templates_Parser.Translate_Set;
+				Region_Buffer	: in     Region_Buffer_Type
+			) is
+		use Templates_Parser;
+
+		Preffix : constant String := To_String( Region_Buffer.Region ) & '_';
+
+
+		procedure I( Name : in String; What : in Templates_Parser.Tag ) is
+		begin
+			Insert( Parameters, Assoc( Preffix & Name, What ) );
+		end I;
+
+	begin
+		I( "head_ids",	Region_Buffer.Head_IDs );
+		I( "heads",	Region_Buffer.Head_Buffer );
+
+		I( "body_ids",	Region_Buffer.Body_IDs );
+		I( "bodies",	Region_Buffer.Body_Buffer );
+
+		I( "foot_ids",	Region_Buffer.Foot_IDs );
+		I( "feet",	Region_Buffer.Foot_Buffer );
+	end Insert;
+		
+
 
 
 	-----------------------------
@@ -190,12 +220,29 @@ package body KOW_View.Themes.Template_Processors is
 
 	procedure Process(
 				Processor	: in out Template_Processor_Type;
+				Request		: in     AWS.Status.Data;
 				Output		:    out AWS.Response.Data
 			) is
+		use Templates_Parser;
+		Parameters	: Templates_Parser.Translate_Set;
+		Template_File	: constant String := Get_File_Name( Processor.Template, Request );
+
+		procedure Insert_Regions_Iterator( C : Region_Index_Maps.Cursor ) is
+		begin
+			Insert( Parameters, Processor.Buffers( Region_Index_Maps.Element( C ) ) );
+		end Insert_Regions_Iterator;
 	begin
-		-- TODO :: the process template procedure...
-		-- TODO :: I'll implement it later so I can test the logic implementing the page service
-		Output := AWS.Response.Build( "text/html",  "oie" );
+		Insert( Parameters, Assoc( "page_title", Processor.Page_Title ) );
+		Insert( Parameters, Assoc( "author", Processor.Author ) );
+
+		Region_Index_Maps.Iterate( Processor.Index_Map, Insert_Regions_Iterator'Access );
+
+
+		declare
+			contents : constant String := Templates_Parser.Parse( Template_File, Parameters );
+		begin
+			Output := AWS.Response.Build( "text/html", contents );
+		end;
 	end Process;
 
 

@@ -77,5 +77,19 @@ package body KOW_View.Themes.Components is
 		
 	end Setup;
 
+	function Get_Theme_Name(
+			Component	: in Themes_Component;
+			Request		: in AWS.Status.Data
+		) return String is
+		Session_ID	: constant AWS.Session.ID := AWS.Status.Session (Request);
+		User_Theme : constant string := AWS.Session.Get( Session_ID, theme_name_session_key );
+	begin
+		if User_Theme /= "" then
+			return User_Theme;
+		else
+			return To_String( Component.Default_Theme_Name );
+		end if;
+	end Get_Theme_Name;
+
 
 end KOW_View.Themes.Components;

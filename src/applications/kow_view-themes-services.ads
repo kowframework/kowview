@@ -54,7 +54,6 @@ package KOW_View.Themes.Services is
 	type Theme_Service is new KOW_View.Services.Service_Type with record
 		-- Map a URI to theme resources
 		Component_Name		: Unbounded_String;
-		Default_Theme_Name	: Unbounded_String;
 		Template_Extension	: Unbounded_String;
 	end record;
 

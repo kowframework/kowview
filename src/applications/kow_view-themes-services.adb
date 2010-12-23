@@ -65,27 +65,15 @@ package body KOW_View.Themes.Services is
 
 		-- process request for a theme's static file
 		-- only direct access to files that aren't template are alowed
-		Session_ID	: constant AWS.Session.ID := AWS.Status.Session (Request);
 	
-		function Theme_Name return string is
-			User_Theme : constant string := AWS.Session.Get( Session_ID, theme_name_session_key );
-		begin
-			if User_Theme /= "" then
-				return User_Theme;
-			else
-				return To_String( Service.Default_Theme_Name );
-			end if;
-		end Theme_Name;
+		Theme_Name : constant String := Get_Theme_Name( Request );
 
 		URI		: constant string := AWS.Status.URI( Request );
 		Extension	: constant string := Ada.Directories.Extension( URI );
 		File_Name	: constant string := URI( URI'First .. URI'Last - Extension'Length - 1);
-		Resource	: constant string := Locate_Resource( Service, File_Name, Extension );
-		Component_Name	: constant string := To_String( Service.Component_Name );
 		Complete_Path	: constant string := Locate_Theme_Resource(
-				Component_Name	=> Component_Name,
 				Theme_Name	=> Theme_Name,
-				Resource	=> Resource,
+				Resource	=> File_Name,
 				Extension	=> Extension,
 				Kind		=> Ada.Directories.Ordinary_File
 			);

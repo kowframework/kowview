@@ -76,6 +76,12 @@ package KOW_View.Themes.Components is
 	-- setup the theme variables
 
 	
+	function Get_Theme_Name(
+			Component	: in Themes_Component;
+			Request		: in AWS.Status.Data
+		) return String;
+	
+
 	Component : aliased Themes_Component;
 	-- the only component instance
 

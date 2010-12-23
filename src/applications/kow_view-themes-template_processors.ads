@@ -92,6 +92,11 @@ package KOW_View.Themes.Template_Processors is
 				Module_Id	: in     Positive;
 				Foot_Buffer	: in     Unbounded_String
 			);
+	
+	procedure Insert(
+				Parameters	: in out Templates_Parser.Translate_Set;
+				Region_Buffer	: in     Region_Buffer_Type
+			);
 
 
 	-----------------------------
@@ -112,6 +117,10 @@ package KOW_View.Themes.Template_Processors is
 		Buffers		: Region_Buffer_Array;
 
 		Template	: KOW_View.Themes.Template_Type;
+
+
+		Page_Title	: Unbounded_String;
+		Author		: Unbounded_String;
 	end record;
 
 
@@ -145,6 +154,7 @@ package KOW_View.Themes.Template_Processors is
 
 	procedure Process(
 				Processor	: in out Template_Processor_Type;
+				Request		: in     AWS.Status.Data;
 				Output		:    out AWS.Response.Data
 			);
 

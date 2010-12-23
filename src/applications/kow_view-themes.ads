@@ -44,6 +44,11 @@ with KOW_Lib.File_System;		use KOW_Lib.File_System;
 with KOW_Lib.Locales;
 with KOW_Lib.UString_Vectors;
 
+---------
+-- AWS --
+---------
+with AWS.Status;
+
 
 package KOW_View.Themes is
 	--------------------
@@ -53,7 +58,6 @@ package KOW_View.Themes is
 	theme_name_session_key: constant string := "KOW_view::theme_name";
 
 	function Locate_Theme_Resource(
-			Component_Name	: in String;
 			Theme_Name	: in String;
 			Resource	: in String;
 			Extension	: in String;
@@ -61,8 +65,9 @@ package KOW_View.Themes is
 			Locale		: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
 		) return String;
 
+	
 
-
+	function Get_Theme_Name( Request : in AWS.Status.Data ) return String;
 
 	------------
 	-- Themes --
@@ -72,7 +77,7 @@ package KOW_View.Themes is
 		-- A record type for describing how a theme operates and other information.
 		Name		: Unbounded_String;
 		Author		: Unbounded_String;
-		Creation_Date	: Unbounded_String; -- TODO: store the creation date as Ada.Calendar.Time
+		Creation_Date	: Unbounded_String;
 	end record;
 
 
@@ -108,6 +113,14 @@ package KOW_View.Themes is
 		Description	: Unbounded_String;
 		Regions		: KOW_Lib.UString_Vectors.Vector;
 	end record;
+
+
+	function Get_File_Name(
+				Template	: in Template_Type;
+				Request		: in AWS.Status.Data
+			) return String;
+	-- locate the filename for the current template in current theme
+
 
 	function Template_Factory(
 				Name	: in String;

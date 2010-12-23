@@ -150,6 +150,8 @@ package body KOW_View.Pages.Services is
 
 
 	begin
+		Setup( Service, Config );
+
 		Iterate( Modules => Modules, Iterator => Create'Access );
 		Iterate( Modules => Modules, Iterator => Initialize'Access );
 
@@ -292,6 +294,7 @@ package body KOW_View.Pages.Services is
 
 
 	begin
+		Setup( Service, Config );
 		-------------------------
 		-- Deal with modules.. --
 		-------------------------
@@ -307,7 +310,11 @@ package body KOW_View.Pages.Services is
 		-- Assemble the final request --
 		--------------------------------
 		KOW_Lib.UString_Vectors.Iterate( Template.Regions, Append_Region'Access );
-		Process( Processor, Response );
+
+		Processor.Page_Title := Service.Page_Title;
+		Processor.Author := Service.Author;
+
+		Process( Processor, Request, Response );
 	end Process_Custom_Request;
 
 
@@ -323,6 +330,16 @@ package body KOW_View.Pages.Services is
 	begin
 		return KOW_View.Services.Util.Local_URI( Service, AWS.Status.URI( Request ) );
 	end Get_Page;
+
+
+	procedure Setup(
+				Service	: in out Page_Service;
+				Config	: in out KOW_Config.Config_File
+			) is
+	begin
+		Service.Page_Title	:= KOW_Config.Element( Config, "page_title" );
+		Service.Author		:= KOW_Config.Element( Config, "author" );
+	end Setup;
 
 
 

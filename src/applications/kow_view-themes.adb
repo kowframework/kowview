@@ -31,6 +31,7 @@ pragma License( GPL );
 -------------------
 with KOW_Lib.String_Util;
 with KOW_View.Components.Registry;
+with KOW_View.Locales;
 with KOW_View.Themes.Components;
 
 
@@ -42,7 +43,6 @@ package body KOW_View.Themes is
 	--------------------
 
 	function Locate_Theme_Resource(
-			Component_Name	: in String;
 			Theme_Name	: in String;
 			Resource	: in String;
 			Extension	: in String;
@@ -60,6 +60,11 @@ package body KOW_View.Themes is
 	end Locate_Theme_Resource;
 
 
+	function Get_Theme_Name( Request : in AWS.Status.Data ) return String is
+		use KOW_View.Themes.Components;
+	begin
+		return Get_Theme_Name( Component, Request );
+	end Get_Theme_Name;
 
 
 	----------------------------------------
@@ -89,6 +94,24 @@ package body KOW_View.Themes is
 	---------------
 	-- Templates --
 	---------------
+
+	function Get_File_Name(
+				Template	: in Template_Type;
+				Request		: in AWS.Status.Data
+			) return String is
+
+		File_Name	: constant string := To_String( Template.Name );
+		Extension	: constant string := "html";
+		Complete_Path	: constant string := Locate_Theme_Resource(
+				Theme_Name	=> Get_Theme_Name( Request ),
+				Resource	=> File_Name,
+				Extension	=> Extension,
+				Kind		=> Ada.Directories.Ordinary_File,
+				Locale		=> KOW_View.Locales.Get_Locale( Request )
+			);
+	begin
+		return Complete_Path;
+	end Get_File_Name;
 
 
 
