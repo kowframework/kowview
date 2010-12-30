@@ -171,11 +171,27 @@ package body KOW_View.Pages.Services is
 			Request		: in     AWS.Status.Data;
 			Response	:    out AWS.Response.Data
 		) is
+	begin
+		Process_Custom_Request(
+					Service		=> Service,
+					Request		=> Request,
+					Response	=> Response,
+					Page		=> Get_Page( Service, Request ),
+					Initialize_Only	=> False
+				);
+	end Process_Custom_Request;
+
+	procedure Process_Custom_Request(
+			Service		: in out Page_Service;
+			Request		: in     AWS.Status.Data;
+			Response	:    out AWS.Response.Data;
+			Page		: in     String;
+			Initialize_Only	: in     Boolean
+		) is
 		-- process the entire module cycle returning a HTML page
 
 		use KOW_View.Themes.Template_Processors;
 
-		Page		: constant String := Get_Page( Service, Request );
 		Config		: KOW_Config.Config_File := Util.Get_Config_File( Page );
 		Template	: KOW_View.Themes.Template_Type := Util.Get_Template( Config );
 
@@ -253,11 +269,13 @@ package body KOW_View.Pages.Services is
 
 		procedure Destroy( Complete : in out Complete_Module_Type ) is
 		begin
-			Destroy(
-					Factory		=> Complete.Factory.all,
-					Request		=> Request,
-					Module		=> Complete.Module
-				);
+			if Complete.Module /= null then
+				Destroy(
+						Factory		=> Complete.Factory.all,
+						Request		=> Request,
+						Module		=> Complete.Module
+					);
+			end if;
 		end Destroy;
 
 
@@ -300,9 +318,11 @@ package body KOW_View.Pages.Services is
 		-------------------------
 		Iterate( Modules => Modules, Iterator => Create'Access );
 		Iterate( Modules => Modules, Iterator => Initialize'Access );	
-		Iterate( Modules => Modules, Iterator => Process_Head'Access );
-		Iterate( Modules => Modules, Iterator => Process_Body'Access );
-		Iterate( Modules => Modules, Iterator => Process_Foot'Access );
+		if not Initialize_Only then
+			Iterate( Modules => Modules, Iterator => Process_Head'Access );
+			Iterate( Modules => Modules, Iterator => Process_Body'Access );
+			Iterate( Modules => Modules, Iterator => Process_Foot'Access );
+		end if;
 		Iterate( Modules => Modules, Iterator => Finalize'Access );
 		Iterate( Modules => Modules, Iterator => Destroy'Access );
 
@@ -315,6 +335,10 @@ package body KOW_View.Pages.Services is
 		Processor.Author := Service.Author;
 
 		Process( Processor, Request, Response );
+	exception
+		when others =>
+			-- remember to destroy...
+			Iterate( Modules => Modules, Iterator => Destroy'Access );
 	end Process_Custom_Request;
 
 

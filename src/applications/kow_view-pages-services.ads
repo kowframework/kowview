@@ -99,6 +99,21 @@ package KOW_View.Pages.Services is
 	-- process the entire module cycle returning a HTML page
 
 
+	procedure Process_Custom_Request(
+			Service		: in out Page_Service;
+			Request		: in     AWS.Status.Data;
+			Response	:    out AWS.Response.Data;
+			Page		: in     String;
+			Initialize_Only	: in     Boolean
+		);
+	-- this is the actual procedure for processing the page and is here for
+	-- the navigation component
+	-- if initialize_only = true don't process head, body or foot...
+	-- only tries to run initialize and then finalize..
+	--
+	-- IF any exception is raised during any of the procedures, simply jump to destroy
+	-- all modules..
+
 	function Get_Page(
 				Service	: in Page_Service;
 				Request	: in AWS.Status.Data
