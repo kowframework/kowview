@@ -23,6 +23,20 @@
 ------------------------------------------------------------------------------
 
 
+-------------------
+-- KOW Framework --
+-------------------
+with KOW_View.Modules;
+with KOW_View.Modules.Stateless_Module_Factories;
+
+with KOW_View_Tests.Components;
+
 
 package KOW_View_Tests.Modules is
+	type Meu_Modulo_Module is new KOW_View.Modules.Module_Type with null record;
+	package Meu_Modulo_Factories is new KOW_View.Modules.Stateless_Module_Factories(
+					Module_Type	=> Meu_Modulo_Module,
+					Component	=> KOW_View_Tests.Components.Component'Access
+				);
+
 end KOW_View_Tests.Modules;

@@ -42,7 +42,7 @@ package KOW_View_Tests.Modules.Util is
 	procedure Initialize( T : in out Test_Type );
 
 
-	procedure Test_Get_Name_Object;
+	procedure Test_Create_Module;
 	procedure Test_Get_Name_Tag;
 
 

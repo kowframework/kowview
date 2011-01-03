@@ -27,8 +27,16 @@
 ------------------------------------------------------------------------------
 
 
+-------------------
+-- KOW Framework --
+-------------------
+with KOW_View.Components;
 
 
 package KOW_View_Tests.Components is
 
+
+	type Meu_Componente_Component is new KOW_View.Components.Component_Type with null record;
+
+	Component : aliased Meu_Componente_Component;
 end KOW_View_Tests.Components;

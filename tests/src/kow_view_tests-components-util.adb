@@ -50,13 +50,10 @@ package body KOW_View_Tests.Components.Util is
 	end Initialize;
 
 
-	type Meu_Componente_Component is new KOW_View.Components.Component_Type with null record;
 
 	procedure Test_Get_Name_Object is
-		C : Meu_Componente_Component;
-
 		Expected_Name : constant String := "meu_componente";
-		Computed_Name : constant String := KOW_View.Components.Get_Name( C );
+		Computed_Name : constant String := KOW_View.Components.Get_Name( Component ); 
 	begin
 		Ahven.Assert(
 				Condition	=> Expected_Name = Computed_Name,

@@ -23,19 +23,32 @@
 ------------------------------------------------------------------------------
 
 
+
+--------------
+-- Ada 2005 --
+--------------
+with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
+
 -----------
 -- Ahven --
 -----------
 with Ahven;
 with Ahven.Framework;
 
-
-
 -------------------
 -- KOW Framework --
 -------------------
+with KOW_View.Components;
 with KOW_View.Modules;
 with KOW_View.Modules.Util;		use KOW_View.Modules.Util;
+
+
+with KOW_View_Tests.Components;
+
+---------
+-- AWS --
+---------
+with AWS.Status;
 
 package body KOW_View_Tests.Modules.Util is
 
@@ -44,24 +57,50 @@ package body KOW_View_Tests.Modules.Util is
 	procedure Initialize( T : in out Test_Type ) is
 	begin
 		Set_Name( T, "KOW_View.Modules.Util" );
-		Ahven.Framework.Add_Test_Routine( T, Test_Get_Name_Object'Access, "Get_Name( object )" );
+		Ahven.Framework.Add_Test_Routine( T, Test_Create_Module'Access, "Create_Module" ); 
 		Ahven.Framework.Add_Test_Routine( T, Test_Get_Name_Tag'Access, "Get_Name( tag )" );
 	end Initialize;
 
 
-	type Meu_Modulo_Module is new KOW_View.Modules.Module_Type with null record;
+	procedure Test_Create_Module is
+		use KOW_View.Components;
+		Dumb_Request	: AWS.Status.Data;
 
-	procedure Test_Get_Name_Object is
-		C : Meu_Modulo_Module;
-
+		Module		: KOW_View.Components.Module_Ptr;
 		Expected_Name : constant String := "meu_modulo";
-		Computed_Name : constant String := KOW_View.Modules.Get_Name( C );
 	begin
-		Ahven.Assert(
-				Condition	=> Expected_Name = Computed_Name,
-				Message		=> Computed_Name & " is not valid (expected " & Expected_name & ")"
+		Create(
+					Factory		=> KOW_View_Tests.Components.Get_Module_Factory(
+									KOW_View_Tests.Components.Component,
+									To_Unbounded_String( Expected_Name )
+								).all,
+					Request		=> Dumb_Request,
+					Context		=> "/some/page",
+					Module_Id	=> 1,
+					Module		=> module
 			);
-	end Test_Get_Name_Object;
+		Ahven.Assert(
+				Condition	=> Module /= null,
+				Message		=> "Can not create module... returning null pointer for some reason"
+			);
+
+		Ahven.Assert(
+				Condition	=> Module.all in Meu_Modulo_Module'Class,
+				Message		=> "Returned invalid module type"
+			);
+
+
+		declare
+			Computed_Name : constant String := KOW_View.Modules.Get_Name( KOW_View.Modules.Module_type'Class( Module.all ) );
+		begin
+			Ahven.Assert(
+					Condition	=> Expected_Name = Computed_Name,
+					Message		=> Computed_Name & " is not valid (expected " & Expected_name & ")"
+				);
+		end;
+
+	end Test_Create_Module;
+
 
 	procedure Test_Get_Name_Tag is
 		Expected_Name : constant String := "meu_modulo";
