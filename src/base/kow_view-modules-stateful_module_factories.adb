@@ -104,7 +104,7 @@ package body KOW_View.Modules.Stateful_Module_Factories is
 		The_Module.Context := Ada.Strings.Unbounded.To_Unbounded_String( Context );
 		The_Module.ID := Module_id;
 		The_Module.ID_Count := 0;
-		The_Module.Component := Component;
+		The_Module.Component := Component_Ptr( Component );
 
 		Module := Module_Ptr( The_Module );
 	end Create;

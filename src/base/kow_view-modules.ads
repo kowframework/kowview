@@ -76,7 +76,7 @@ package KOW_View.Modules is
 		ID_Count	: Natural := 0;
 		-- count all the ids that have been generated for this module
 
-		Component	: Component_Access;
+		Component	: Component_Ptr;
 		-- the component that owns this module
 	end record;
 
