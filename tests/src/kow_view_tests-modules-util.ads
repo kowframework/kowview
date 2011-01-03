@@ -43,7 +43,9 @@ package KOW_View_Tests.Modules.Util is
 
 
 	procedure Test_Create_Module;
+	procedure Test_Get_Name_Object;
 	procedure Test_Get_Name_Tag;
+	procedure Test_Component;
 
 
 end KOW_View_Tests.Modules.Util;
