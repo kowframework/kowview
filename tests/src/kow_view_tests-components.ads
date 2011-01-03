@@ -4,7 +4,7 @@
 --                                                                          --
 --                              KOW Framework                               --
 --                                                                          --
---                                 B o d y                                  --
+--                                 S p e c                                  --
 --                                                                          --
 --               Copyright (C) 2007-2011, KOW Framework Project             --
 --                                                                          --
@@ -22,31 +22,13 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+------------------------------------------------------------------------------
+-- Tests for the components package                                         --
+------------------------------------------------------------------------------
 
 
 
------------
--- Ahven --
------------
-with Ahven.Framework;
-with Ahven.Text_Runner;
 
------------
--- Tests --
------------
-with KOW_View_Tests;			use KOW_View_Tests;
-with KOW_View_Tests.Util;
-with KOW_View_Tests.Components.Util;
+package KOW_View_Tests.Components is
 
-
-
-procedure Run_Tests is
-begin
-	Suite := Ahven.Framework.Create_Suite( "KOW View Tests" );
-
-	Ahven.Framework.Add_Test( Suite.all, new KOW_View_Tests.Util.Test_Type );
-	Ahven.Framework.Add_Test( Suite.all, new KOW_View_Tests.Components.Util.Test_Type );
-
-	Ahven.Text_Runner.Run( KOW_View_Tests.Suite );
-	Ahven.Framework.Release_Suite( KOW_View_Tests.Suite );
-end Run_Tests;
+end KOW_View_Tests.Components;

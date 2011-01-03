@@ -4,7 +4,7 @@
 --                                                                          --
 --                              KOW Framework                               --
 --                                                                          --
---                                 B o d y                                  --
+--                                 S p e c                                  --
 --                                                                          --
 --               Copyright (C) 2007-2011, KOW Framework Project             --
 --                                                                          --
@@ -22,31 +22,29 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-
+------------------------------------------------------------------------------
+-- Tests for the utility package                                            --
+------------------------------------------------------------------------------
 
 
 -----------
 -- Ahven --
 -----------
 with Ahven.Framework;
-with Ahven.Text_Runner;
-
------------
--- Tests --
------------
-with KOW_View_Tests;			use KOW_View_Tests;
-with KOW_View_Tests.Util;
-with KOW_View_Tests.Components.Util;
 
 
 
-procedure Run_Tests is
-begin
-	Suite := Ahven.Framework.Create_Suite( "KOW View Tests" );
+package KOW_View_Tests.Components.Util is
 
-	Ahven.Framework.Add_Test( Suite.all, new KOW_View_Tests.Util.Test_Type );
-	Ahven.Framework.Add_Test( Suite.all, new KOW_View_Tests.Components.Util.Test_Type );
+	type Test_Type is new Ahven.Framework.Test_case with null record;
 
-	Ahven.Text_Runner.Run( KOW_View_Tests.Suite );
-	Ahven.Framework.Release_Suite( KOW_View_Tests.Suite );
-end Run_Tests;
+	overriding
+	procedure Initialize( T : in out Test_Type );
+
+
+	procedure Test_Get_Name_Object;
+	procedure Test_Get_Name_Tag;
+	procedure Test_Get_Name_URI;
+
+
+end KOW_View_Tests.Components.Util;

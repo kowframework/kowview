@@ -20,13 +20,6 @@
 -- to  the Free Software Foundation,  59 Temple Place - Suite 330,  Boston, --
 -- MA 02111-1307, USA.                                                      --
 --                                                                          --
--- As a special exception,  if other files  instantiate  generics from this --
--- unit, or you link  this unit with other files  to produce an executable, --
--- this  unit  does not  by itself cause  the resulting  executable  to  be --
--- covered  by the  GNU  General  Public  License.  This exception does not --
--- however invalidate  any other reasons why  the executable file  might be --
--- covered by the  GNU Public License.                                      --
---                                                                          --
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
@@ -40,7 +33,6 @@
 with Ahven.Framework;
 
 package KOW_View_Tests is
-pragma Elaborate_Body( KOW_View_Tests );
 
 	Suite : Ahven.Framework.Test_Suite_Access;
 
