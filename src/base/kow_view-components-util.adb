@@ -71,8 +71,14 @@ package body KOW_View.Components.Util is
 
                 end Last_URI_Boundary;
 
+		First : Positive := URI'First;
+
         begin
-		return URI( URI'First .. Last_URI_Boundary );
+		if URI( First ) = '/' then
+			First := First + 1;
+		end if;
+
+		return URI( First .. Last_URI_Boundary );
 	end Get_Name;
 
 

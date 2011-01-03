@@ -2,6 +2,6 @@
 
 
 all:
-	gprbuild kow_view_tests.gpr
+	gprbuild -gnat05 kow_view_tests.gpr
 clean:
 	gprclean kow_view_tests.gpr
