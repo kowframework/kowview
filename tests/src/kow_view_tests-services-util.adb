@@ -23,34 +23,76 @@
 ------------------------------------------------------------------------------
 
 
-
-
 -----------
 -- Ahven --
 -----------
+with Ahven;
 with Ahven.Framework;
-with Ahven.Text_Runner;
-
------------
--- Tests --
------------
-with KOW_View_Tests;			use KOW_View_Tests;
-with KOW_View_Tests.Util;
-with KOW_View_Tests.Components.Util;
-with KOW_View_Tests.Modules.Util;
-with KOW_View_Tests.Services.Util;
 
 
 
-procedure Run_Tests is
-begin
-	Suite := Ahven.Framework.Create_Suite( "KOW View Tests" );
+-------------------
+-- KOW Framework --
+-------------------
+with KOW_Lib.Json;
+with KOW_View.Services;
+with KOW_View.Services.Util;		use KOW_View.Services.Util;
 
-	Ahven.Framework.Add_Test( Suite.all, new KOW_View_Tests.Util.Test_Type );
-	Ahven.Framework.Add_Test( Suite.all, new KOW_View_Tests.Components.Util.Test_Type );
-	Ahven.Framework.Add_Test( Suite.all, new KOW_View_Tests.Modules.Util.Test_Type );
-	Ahven.Framework.Add_Test( Suite.all, new KOW_View_Tests.Services.Util.Test_Type );
 
-	Ahven.Text_Runner.Run( KOW_View_Tests.Suite );
-	Ahven.Framework.Release_Suite( KOW_View_Tests.Suite );
-end Run_Tests;
+---------
+-- AWS --
+---------
+with AWS.Status;
+with AWS.Response;
+
+package body KOW_View_Tests.Services.Util is
+
+
+	overriding
+	procedure Initialize( T : in out Test_Type ) is
+	begin
+		Set_Name( T, "KOW_View.Services.Util" );
+		Ahven.Framework.Add_Test_Routine( T, Test_Get_Name_Object'Access, "Get_Name( object )" );
+		Ahven.Framework.Add_Test_Routine( T, Test_Get_Name_Tag'Access, "Get_Name( tag )" );
+	end Initialize;
+
+
+	type Meu_Servico_Service is new KOW_View.Services.Service_Type with null record;
+
+	procedure Process_Json_Request(
+			Service	: in out Meu_Servico_Service;
+			Request	: in     AWS.Status.Data;
+			Response:    out KOW_Lib.Json.Object_Type
+		) is null;
+
+	procedure Process_Custom_Request(
+			Service		: in out Meu_Servico_Service;
+			Request		: in     AWS.Status.Data;
+			Response	:    out AWS.Response.Data
+		) is null;
+
+
+	procedure Test_Get_Name_Object is
+		C : meu_servico_Service;
+
+		Expected_Name : constant String := "meu_servico";
+		Computed_Name : constant String := KOW_View.Services.Get_Name( C );
+	begin
+		Ahven.Assert(
+				Condition	=> Expected_Name = Computed_Name,
+				Message		=> Computed_Name & " is not valid (expected " & Expected_name & ")"
+			);
+	end Test_Get_Name_Object;
+
+	procedure Test_Get_Name_Tag is
+		Expected_Name : constant String := "meu_servico";
+		Computed_Name : Constant String := KOW_View.Services.Util.Get_Name( meu_servico_Service'Tag );
+	begin
+		Ahven.Assert(
+				Condition	=> Expected_Name = Computed_Name,
+				Message		=> Computed_Name & " is not valid (expected" & Expected_Name & ")"
+			);
+	end Test_Get_Name_Tag;
+
+
+end KOW_View_Tests.Services.Util;

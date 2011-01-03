@@ -23,34 +23,54 @@
 ------------------------------------------------------------------------------
 
 
-
-
 -----------
 -- Ahven --
 -----------
+with Ahven;
 with Ahven.Framework;
-with Ahven.Text_Runner;
-
------------
--- Tests --
------------
-with KOW_View_Tests;			use KOW_View_Tests;
-with KOW_View_Tests.Util;
-with KOW_View_Tests.Components.Util;
-with KOW_View_Tests.Modules.Util;
-with KOW_View_Tests.Services.Util;
 
 
 
-procedure Run_Tests is
-begin
-	Suite := Ahven.Framework.Create_Suite( "KOW View Tests" );
+-------------------
+-- KOW Framework --
+-------------------
+with KOW_View.Modules;
+with KOW_View.Modules.Util;		use KOW_View.Modules.Util;
 
-	Ahven.Framework.Add_Test( Suite.all, new KOW_View_Tests.Util.Test_Type );
-	Ahven.Framework.Add_Test( Suite.all, new KOW_View_Tests.Components.Util.Test_Type );
-	Ahven.Framework.Add_Test( Suite.all, new KOW_View_Tests.Modules.Util.Test_Type );
-	Ahven.Framework.Add_Test( Suite.all, new KOW_View_Tests.Services.Util.Test_Type );
+package body KOW_View_Tests.Modules.Util is
 
-	Ahven.Text_Runner.Run( KOW_View_Tests.Suite );
-	Ahven.Framework.Release_Suite( KOW_View_Tests.Suite );
-end Run_Tests;
+
+	overriding
+	procedure Initialize( T : in out Test_Type ) is
+	begin
+		Set_Name( T, "KOW_View.Modules.Util" );
+		Ahven.Framework.Add_Test_Routine( T, Test_Get_Name_Object'Access, "Get_Name( object )" );
+		Ahven.Framework.Add_Test_Routine( T, Test_Get_Name_Tag'Access, "Get_Name( tag )" );
+	end Initialize;
+
+
+	type Meu_Modulo_Module is new KOW_View.Modules.Module_Type with null record;
+
+	procedure Test_Get_Name_Object is
+		C : Meu_Modulo_Module;
+
+		Expected_Name : constant String := "meu_modulo";
+		Computed_Name : constant String := KOW_View.Modules.Get_Name( C );
+	begin
+		Ahven.Assert(
+				Condition	=> Expected_Name = Computed_Name,
+				Message		=> Computed_Name & " is not valid (expected " & Expected_name & ")"
+			);
+	end Test_Get_Name_Object;
+
+	procedure Test_Get_Name_Tag is
+		Expected_Name : constant String := "meu_modulo";
+		Computed_Name : Constant String := KOW_View.Modules.Util.Get_Name( Meu_Modulo_Module'Tag );
+	begin
+		Ahven.Assert(
+				Condition	=> Expected_Name = Computed_Name,
+				Message		=> Computed_Name & " is not valid (expected" & Expected_Name & ")"
+			);
+	end Test_Get_Name_Tag;
+
+end KOW_View_Tests.Modules.Util;
