@@ -39,6 +39,4 @@ begin
 			Components.Component'Access,
 			False
 		);
-
-	
 end KOW_View.Navigation.Load;

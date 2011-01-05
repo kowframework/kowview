@@ -127,7 +127,7 @@ package KOW_View.Pages.Services is
 			);
 
 
-	package Service_Cycle is new KOW_View.Services.Stateless_Service_Cycles(
+	package Page_Service_Cycle is new KOW_View.Services.Stateless_Service_Cycles(
 						Service_Type	=> Page_Service,
 						Component	=> KOW_View.Pages.Components.Component'Access
 					);
