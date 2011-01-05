@@ -42,7 +42,7 @@ package KOW_View_Tests.URI_Util is
 	procedure Initialize( T : in out Test_Type );
 
 
-	procedure Test_Is_Page_URL;
+	procedure Test_Is_Page_URN;
 	procedure Test_Get_Page_Name;
 	procedure Test_To_Page_URI;
 

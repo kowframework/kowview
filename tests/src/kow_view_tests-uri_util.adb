@@ -43,7 +43,7 @@ package body KOW_View_Tests.URI_Util is
 	procedure Initialize( T : in out Test_Type ) is
 	begin
 		Set_Name( T, "KOW_View.URI_Util" );
-		Ahven.Framework.Add_Test_Routine( T, Test_Is_Page_URL'Access, "Is_Page_URL" );
+		Ahven.Framework.Add_Test_Routine( T, Test_Is_Page_URN'Access, "Is_Page_URN" );
 		Ahven.Framework.Add_Test_Routine( T, Test_Get_Page_Name'Access, "Get_Page_Name" );
 		Ahven.Framework.Add_Test_Routine( T, Test_To_Page_URI'Access, "To_Page_URI" );
 	end Initialize;
@@ -51,29 +51,29 @@ package body KOW_View_Tests.URI_Util is
 
 
 	Page_Name	: constant String := "some_page/at_some_place";
-	Page_URL	: constant String := "page://" & Page_Name;
+	Page_URN	: constant String := "page:" & Page_Name;
 	Page_URI	: constant String := "/pages/page/" & Page_Name;
 
 
 
-	procedure Test_Is_Page_URL is
+	procedure Test_Is_Page_URN is
 	begin
 		Ahven.Assert(
-				Condition	=> Is_Page_URL( Page_URL ),
-				Message		=> "Failed validating valid page URL"
+				Condition	=> Is_Page_URN( Page_URN ),
+				Message		=> "Failed validating valid page URN"
 			);
 		Ahven.Assert(
-				Condition	=> not Is_Page_URL( "http://framework.kow.com.br" ),
-				Message		=> "Failed validation invalid page URL"
+				Condition	=> not Is_Page_URN( "http://framework.kow.com.br" ),
+				Message		=> "Failed validation invalid page URN"
 			);
-	end Test_Is_Page_URL;
+	end Test_Is_Page_URN;
 
 
 	procedure Test_Get_Page_Name is
 	begin
 		Ahven.Assert(
-				Condition	=> Page_Name = Get_Page_Name( Page_URL ),
-				Message		=> "Can't get page name from URL :: expected """ & Page_Name & """ received """ & Get_Page_Name( Page_URL ) & """"
+				Condition	=> Page_Name = Get_Page_Name( Page_URN ),
+				Message		=> "Can't get page name from URN :: expected """ & Page_Name & """ received """ & Get_Page_Name( Page_URN ) & """"
 			);
 	end Test_Get_Page_Name;
 
@@ -81,8 +81,8 @@ package body KOW_View_Tests.URI_Util is
 	procedure Test_To_Page_URI is
 	begin
 		Ahven.Assert(
-				Condition	=> Page_URI = To_Page_URI( Page_URL ),
-				Message		=> "Can't get page URI from URL :: expected """ & Page_URI & """ received """ & To_Page_URI( Page_URL ) & """"
+				Condition	=> Page_URI = To_Page_URI( Page_URN ),
+				Message		=> "Can't get page URI from URN :: expected """ & Page_URI & """ received """ & To_Page_URI( Page_URN ) & """"
 			);
 	end Test_To_Page_URI;
 

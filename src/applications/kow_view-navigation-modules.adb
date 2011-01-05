@@ -112,7 +112,7 @@ package body KOW_View.Navigation.Modules is
 					Href	: constant String := KOW_Config.Element( Items( i ), "href" );
 					Menu_Item : Menu_Item_Type;
 				begin
-					if Is_Page_URL( Href ) and then Has_Access( Href ) then
+					if Is_Page_URN( Href ) and then Has_Access( Href ) then
 						Menu_Item.Label := KOW_Config.Element(
 										F		=> Items( i ),
 										Key		=> To_Unbounded_String( "label" ),

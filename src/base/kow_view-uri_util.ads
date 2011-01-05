@@ -30,19 +30,22 @@ pragma License( GPL );
 
 
 
-
+-- examples of page Name, URI and URN
+-- 	page name	: some_page/at_some_place		(used by the page service)
+-- 	URI		: /pages/page/some_page/at_some_place	(used by your browser)
+--	URN		: page:some_page/at_some_place		(used by developers)
 
 package KOW_View.URI_Util is
 
-	function Is_Page_URL( URL : in String ) return Boolean;
-	-- check if it's page://
+	function Is_Page_URN( URN : in String ) return Boolean;
+	-- check if it's page:
 	
 
-	function Get_Page_Name( URL : in String ) return String;
-	-- return the page name from the page:// URL (without starting forward slash)
+	function Get_Page_Name( URN : in String ) return String;
+	-- return the page name from the page: URL (without starting forward slash)
 
-	function To_Page_URI( URL : in String ) return String;
-	-- convert the given page:// URL into an URI that can be used to access a page
+	function To_Page_URI( URN : in String ) return String;
+	-- convert the given page: URN into an URI that can be used to access a page
 
 
 end KOW_View.URI_Util;

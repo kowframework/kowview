@@ -28,30 +28,33 @@
 
 package body KOW_View.URI_Util is
 
-	Page_Protocol : constant String := "page://";
+	Page_URN_Identifier	: constant String := "page:";
+	Page_Service_URI	: constant String := "/pages/page/";
 
-	function Is_Page_URL( URL : in String ) return Boolean is
-		-- check if it's page://
+
+	function Is_Page_URN( URN : in String ) return Boolean is
+		-- check if it's page:
 	begin
-		return URL'Length > Page_Protocol'Length and then URL( URL'First .. URL'First + Page_Protocol'Length - 1 ) = Page_Protocol;
-	end Is_Page_URL;
+		return URN'Length > Page_URN_Identifier'Length and then URN( URN'First .. URN'First + Page_URN_Identifier'Length - 1 ) = Page_URN_Identifier;
+	end Is_Page_URN;
 
 
-	function Get_Page_Name( URL : in String ) return String is
-		-- return the page name from the page:// URL (starting with forward slash)
+	function Get_Page_Name( URN : in String ) return String is
+		-- return the page name from the page:// URN (starting with forward slash)
 	begin
-		if not Is_Page_URL( URL ) then
-			raise CONSTRAINT_ERROR with "can't get page name from URL " & URL;
+		if not Is_Page_URN( URN ) then
+			raise CONSTRAINT_ERROR with "can't get page name from URN " & URN;
 		end if;
 
-		return URL( URL'First + Page_protocol'Length .. URL'Last );
+		return URN( URN'First + Page_URN_Identifier'Length .. URN'Last );
 	end Get_Page_Name;
 
 
-	function To_Page_URI( URL : in String ) return String is
-	-- convert the given page:// URL into an URI that can be used to access a page
+	function To_Page_URI( URN : in String ) return String is
+	-- convert the given page:// URN into an URI that can be used to access a page
 	begin
-		return "/pages/page/" & Get_Page_Name( URL );
+		return Page_Service_URI & Get_Page_Name( URN );
 	end To_Page_URI;
+
 
 end KOW_View.URI_Util;
