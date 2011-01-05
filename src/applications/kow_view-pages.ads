@@ -28,7 +28,15 @@ pragma License( GPL );
 -- Main package for the Pages application                                   --
 ------------------------------------------------------------------------------
 
+-------------------
+-- KOW Framework --
+-------------------
+with KOW_Sec.Accounting;
+with KOW_View;
+
 package KOW_View.Pages is
 	-- not much in here :)
 
+	Accountant : aliased KOW_Sec.Accounting.Accountant_Type := KOW_Sec.Accounting.New_Accountant( "pages", KOW_View.Accountant'Access );
+	-- TODO :: implement accounting support in here
 end KOW_View.Pages;

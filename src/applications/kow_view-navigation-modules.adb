@@ -47,6 +47,7 @@ with KOW_View.Locales;
 with KOW_View.Modules;
 with KOW_View.Modules.Stateful_Module_Factories;
 with KOW_View.Pages.Services;
+with KOW_View.URI_Util;
 
 ---------
 -- AWS --
@@ -78,15 +79,10 @@ package body KOW_View.Navigation.Modules is
 		
 		declare
 			Items	: KOW_Config.Config_File_Array := KOW_Config.Elements_Array( Config, "item" );
-			Page_Protocol : constant String := "page://";
-
-			function Is_Page( Str : in String ) return Boolean is
-			begin
-				return Str'Length > Page_Protocol'Length and then Str( Str'First .. Str'First + Page_Protocol'Length - 1 ) = Page_Protocol;
-			end Is_Page;
 
 			function Has_Access( Str : in String ) return Boolean is
-				Page : constant String := Str( Str'First + Page_protocol'Length .. Str'Last );
+				
+				Page : constant String := KOW_View.URI_Util.Get_Page_Name( Str );
 				
 				use KOW_View.Pages.Services;
 				Service : Page_Service;
@@ -112,10 +108,11 @@ package body KOW_View.Navigation.Modules is
 		begin
 			for i in Items'Range loop
 				declare
+					use KOW_View.URI_Util;
 					Href	: constant String := KOW_Config.Element( Items( i ), "href" );
 					Menu_Item : Menu_Item_Type;
 				begin
-					if Is_Page( Href ) and then Has_Access( Href ) then
+					if Is_Page_URL( Href ) and then Has_Access( Href ) then
 						Menu_Item.Label := KOW_Config.Element(
 										F		=> Items( i ),
 										Key		=> To_Unbounded_String( "label" ),
@@ -123,7 +120,7 @@ package body KOW_View.Navigation.Modules is
 										Dump_On_Error	=> True
 									);
 						Menu_Item.Href  := To_Unbounded_String( "/pages/page/" );
-						Append( Menu_Item.Href, Href( Href'First + Page_Protocol'Length .. Href'Last ) );
+						Append( Menu_Item.Href, To_Page_URI( Href ) );
 
 						Menu_Item_Vectors.Append( Module.Items, Menu_Item );
 					else
