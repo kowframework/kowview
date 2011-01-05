@@ -151,12 +151,13 @@ package body KOW_View.Navigation.Modules is
 				Response	:    out Unbounded_String
 			) is
 		-- return a html list (ul) with the given menu
-		Buffer : Unbounded_String := To_Unbounded_String( "<ul>" );
+		Buffer : Unbounded_String := To_Unbounded_String( "<ul class=""menu"">" );
+	
 
 		procedure Iterator( C : in Menu_Item_Vectors.Cursor ) is
 			Menu_Item : Menu_Item_Type := Menu_Item_Vectors.Element( C );
 		begin
-			Append( Buffer, "<li>" );
+			Append( Buffer, "<li class=""menu"">" );
 			Append( Buffer, "<a href=""" );
 				Append( Buffer, KOW_Lib.String_Util.Scriptify( To_String( Menu_Item.Href ) ) );
 			Append( Buffer, """>" );
