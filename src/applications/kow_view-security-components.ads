@@ -25,7 +25,7 @@ pragma License( GPL );
 
 
 ------------------------------------------------------------------------------
--- Root package for KOW Sec integration in KOW View                         --
+-- Components package for KOW Sec integration in KOW View                   --
 ------------------------------------------------------------------------------
 
 
@@ -58,6 +58,7 @@ package KOW_View.Security.Components is
 	type Security_Component is new KOW_View.Components.Component_Type with record
 		Default_Redirect_URI	: Unbounded_String;
 		Access_Denied_URI	: Unbounded_String;
+		Login_Required_URI	: Unbounded_String;
 	end record;
 
 	overriding
@@ -68,6 +69,7 @@ package KOW_View.Security.Components is
 	-- the setup expects for the values of:
 	-- 	default_redirect	=> where to redirect when the login call doesn't specify (empty causes to redirect to caller)
 	-- 	access_denied		=> where to redirect when the access has been denied
+	-- 	login_required		=> where to redirect when the user needs to be logged in to proceed
 	--
 	-- Both can be any kind of URI (including URL and URN).
 	-- See KOW_View.URI_Util for more details

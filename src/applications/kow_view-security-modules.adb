@@ -4,7 +4,7 @@
 --                                                                          --
 --                              KOW Framework                               --
 --                                                                          --
---                                 B o d y                                  --
+--                                 S p e c                                  --
 --                                                                          --
 --               Copyright (C) 2007-2011, KOW Framework Project             --
 --                                                                          --
@@ -24,59 +24,84 @@
 pragma License( GPL );
 
 
+------------------------------------------------------------------------------
+-- Modules package for KOW Sec integration in KOW View                      --
+------------------------------------------------------------------------------
+
+
 --------------
 -- Ada 2005 --
 --------------
 with Ada.Strings.Unbounded;			use Ada.Strings.Unbounded;
 
-
-
 -------------------
 -- KOW Framework --
 -------------------
 with KOW_Config;
+with KOW_Lib.Json;
 with KOW_Sec.Accounting;
-with KOW_View.Components;
-with KOW_View.URI_Util;				use KOW_View.URI_Util;
+with KOW_View.Modules;
+with KOW_View.Security.Components;
+
+---------
+-- AWS --
+---------
+with AWS.Status;
+
+package body KOW_View.Security.Modules is
 
 
-package body KOW_View.Security.Components is
+
 
 	overriding
-	procedure Setup(
-			Component	: in out Security_Component;
-			Config		: in out KOW_Config.Config_File
-		) is
-		use KOW_Config;
-
-		My_Action : KOW_Sec.Accounting.Base_Action_Type'Class := KOW_Sec.Accounting.New_Action(
-										Name		=> "setup",
-										Root_Accountant	=> Accountant'Access
-									);
-
-		Default_Redirect	: constant String := Value( Config, "default_redirect", "" );
-		Access_Denied		: constant String := Element( Config, "access_denied" );
-		Login_Required		: constant String := Element( Config, "login_required" );
-
-
-		function URI( N : in String ) return Unbounded_String is
-		begin
-			if Is_Page_URN( N ) then
-				return To_Unbounded_String( To_Page_URI( N ) );
-			else
-				return To_Unbounded_String( N );
-			end if;
-		end URI;
+	procedure Initialize_Request(
+				Module	: in out Login_Controller_Module;
+				Request	: in     AWS.Status.Data;
+				Config	: in out KOW_Config.Config_File
+			) is
 	begin
-		Component.Default_Redirect_URI	:= URI( Default_Redirect );
-		Component.Access_Denied_URI	:= URI( Access_Denied );
-		Component.Login_Required_URI	:= URI( Login_Required );
+		-- TODO :: initialize_request
+		null;
+	end Initialize_Request;
+	
+	overriding
+	procedure Process_Head(
+				Module	: in out Login_Controller_Module;
+				Request	: in     AWS.Status.Data;
+				Response:    out Unbounded_String
+			) is
+		-- get the JavaScript functions for submiting login/logout information
+	begin
+		-- TODO :: process_head
+		Response := Null_Unbounded_String;
+	end Process_Head;
 
-		KOW_Sec.Accounting.Set_Exit_Status(
-					My_Action,
-					KOW_Sec.Accounting.Exit_Success,
-					"security component setup completed"
-				);
-	end Setup;
 
-end KOW_View.Security.Components;
+	overriding
+	procedure Process_Body(
+				Module	: in out Login_Controller_Module;
+				Request	: in     AWS.Status.Data;
+				Response:    out Unbounded_String
+			) is
+		-- render the login form/logged user information
+	begin
+		-- TODO :: process_body
+		Response := Null_Unbounded_String;
+	end Process_Body;
+
+
+	overriding
+	procedure Process_JSon_Request(
+				Module	: in out Login_Controller_Module;
+				Request	: in     AWS.Status.Data;
+				Response:    out KOW_Lib.Json.Object_Type
+			) is
+		-- process the login/logout returing a redirect string or error message
+
+		Object : KOW_Lib.Json.Object_Type;
+	begin
+		Response := Object;
+	end Process_Json_Request;
+
+	
+end KOW_View.Security.Modules;
