@@ -41,6 +41,7 @@ with KOW_Config;
 with KOW_Lib.Json;
 with KOW_Sec.Accounting;
 with KOW_View.Modules;
+with KOW_View.Modules.Stateless_Module_Factories;
 with KOW_View.Security.Components;
 
 ---------
@@ -91,6 +92,10 @@ package KOW_View.Security.Modules is
 			);
 	-- process the login/logout returing a redirect string or error message
 
+	package Login_Controller_Factories is new KOW_View.Modules.Stateless_Module_Factories(
+							Module_Type	=> Login_Controller_Module,
+							Component	=> KOW_View.Security.Components.Component'Access
+						);
 
 	
 end KOW_View.Security.Modules;
