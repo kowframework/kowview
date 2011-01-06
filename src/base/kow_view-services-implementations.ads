@@ -60,7 +60,7 @@ package KOW_View.Services.Implementations is
 	-- access to file resources, such as images and static HTML data.
 
 	overriding
-	procedure Process_Request(
+	procedure Process_Custom_Request(
 				Service		: in out Resource_Service;
 				Request		: in     AWS.Status.Data;
 				Response	:    out AWS.Response.Data

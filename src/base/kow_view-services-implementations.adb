@@ -49,16 +49,17 @@ with AWS.Response;
 package body KOW_View.Services.Implementations is
 
 	overriding
-	procedure Process_Request(
+	procedure Process_Custom_Request(
 				Service		: in out Resource_Service;
 				Request		: in     AWS.Status.Data;
 				Response	:    out AWS.Response.Data
 			) is
 		-- serve a given file inside the service resource page
-		Resource_URI	: KOW_View.Services.Util.Local_URI( Servie, AWS.Status.URI( Request ) );
-		Locale		: KOW_Lib.Locales.Locale := KOW_View.Locales.Get_Locale( Request );
+		Resource_URI	: constant String := KOW_View.Services.Util.Local_URI( Service, AWS.Status.URI( Request ) );
+		Locale		: constant KOW_Lib.Locales.Locale := KOW_View.Locales.Get_Locale( Request );
 
 		Resource	: constant String := Ada.Directories.Containing_Directory( Resource_URI ) & '/' &
+							Ada.Directories.Base_Name( Resource_URI );
 		Extension	: constant String := Ada.Directories.Extension( Resource_URI );
 
 		Resource_Path	: constant String := Locate_Resource(
@@ -72,7 +73,7 @@ package body KOW_View.Services.Implementations is
 				Content_Type    => AWS.MIME.Content_Type( Resource_Path ),
 				Filename        => Resource_Path
 			);
-	end Process_Request;
+	end Process_Custom_Request;
 
 
 	overriding
