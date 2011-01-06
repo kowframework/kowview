@@ -27,6 +27,7 @@ pragma License (GPL);
 --------------
 -- Ada 2005 --
 --------------
+with Ada.Directories;
 with Ada.Strings.Unbounded;			use Ada.Strings.Unbounded;
 with Ada.Text_IO;
 
@@ -34,6 +35,8 @@ with Ada.Text_IO;
 -- KOW Framework --
 -------------------
 with KOW_Config;
+with KOW_Lib.Locales;
+with KOW_View.Locales;
 with KOW_View.Modules;
 
 ---------
@@ -71,12 +74,13 @@ package body KOW_View.Modules.Implementations is
 		Extension	: constant String := Ada.Directories.Extension( Resource_URI );
 
 		Resource_Path	: constant String := Locate_Resource(
-								Service		=> Service,
+								Module		=> Module,
 								Resource	=> Resource,
 								Extension	=> Extension,
 								Locale		=> Locale
 							);
 		File : Ada.Text_IO.File_Type;
+		Char : Character;
 	begin
 
 		-- TODO :: use streams as it's a lot faster than text_io
@@ -86,7 +90,7 @@ package body KOW_View.Modules.Implementations is
 			Append( Response, Char );
 		end loop;
 	exception
-		when End_Error =>
+		when Ada.Text_IO.End_Error =>
 			Ada.Text_IO.Close( File );
 			Response := Buffer;
 
