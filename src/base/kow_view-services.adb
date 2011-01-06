@@ -61,10 +61,11 @@ package body KOW_View.Services is
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
 			Locale		: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
 		) return String is
+		Prefix : constant String := Get_Name( Service ) & "_service";
 	begin
 		return Locate_Resource(
 					Component	=> Service.Component.all,
-					Resource	=> Resource,
+					Resource	=> Prefix / Resource,
 					Extension	=> Extension,
 					Kind		=> Kind,
 					Locale		=> Locale

@@ -33,6 +33,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -------------------
 -- KOW Framework --
 -------------------
+with KOW_Lib.File_System;
 with KOW_Lib.Json;
 with KOW_Lib.Locales;
 with KOW_View.Components;		use KOW_View.Components;
@@ -66,10 +67,13 @@ package body KOW_View.Modules is
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
 			Locale		: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
 		) return String is
+		use KOW_Lib.File_System;
+
+		Prefix : constant String := Get_Name( Module ) & "_module";
 	begin
 		return Locate_Resource(
 					Component	=> Module.Component.all,
-					Resource	=> Resource,
+					Resource	=> Prefix / Resource,
 					Extension	=> Extension,
 					Kind		=> Kind,
 					Locale		=> Locale
