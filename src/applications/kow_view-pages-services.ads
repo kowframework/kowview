@@ -43,6 +43,7 @@ with KOW_Lib.Json;
 with KOW_View.Components;
 with KOW_View.Pages.Components;
 with KOW_View.Services;
+with KOW_View.Services.Implementations;
 with KOW_View.Services.Stateless_Service_Cycles;
 with KOW_View.Themes;
 
@@ -127,9 +128,21 @@ package KOW_View.Pages.Services is
 			);
 
 
-	package Page_Service_Cycle is new KOW_View.Services.Stateless_Service_Cycles(
+	package Page_Service_Cycles is new KOW_View.Services.Stateless_Service_Cycles(
 						Service_Type	=> Page_Service,
 						Component	=> KOW_View.Pages.Components.Component'Access
 					);
+
+	------------------------
+	-- The Static Service --
+	------------------------
+
+	type Static_Service is new KOW_View.Services.Implementations.Resource_Service with null record;
+	package Static_Service_Cycles is new KOW_View.Services.Stateless_Service_Cycles(
+						Service_Type	=> Static_Service,
+						Component	=> KOW_View.Pages.Components.Component'Access
+					);
+
+
 
 end KOW_View.Pages.Services;
