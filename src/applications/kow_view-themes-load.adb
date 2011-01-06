@@ -31,7 +31,8 @@ with KOW_View.Components.Registry;
 with KOW_View.Themes;			use KOW_View.Themes;
 with KOW_View.Themes.Components;
 
-
+with KOW_View.Themes.Services;
+pragma Elaborate( KOW_View.Themes.Services );
 
 
 procedure KOW_View.Themes.Load is

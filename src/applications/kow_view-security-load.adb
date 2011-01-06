@@ -32,6 +32,11 @@ with KOW_View.Components.Registry;
 with KOW_View.Security;			use KOW_View.Security;
 with KOW_View.Security.Components;
 
+with KOW_View.Security.Modules;
+pragma Elaborate( KOW_View.Security.Modules );
+
+--with KOW_View.Security.Services;
+--pragma Elaborate( KOW_View.Security.Services );
 
 procedure KOW_View.Security.Load is
 begin

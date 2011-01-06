@@ -4,7 +4,7 @@
 --                                                                          --
 --                              KOW Framework                               --
 --                                                                          --
---                                 B o d y                                  --
+--                                 S p e c                                  --
 --                                                                          --
 --               Copyright (C) 2007-2011, KOW Framework Project             --
 --                                                                          --
@@ -24,20 +24,34 @@
 pragma License( GPL );
 
 
+------------------------------------------------------------------------------
+-- Main package for the Pages application                                   --
+------------------------------------------------------------------------------
+
+
 
 -------------------
 -- KOW Framework --
 -------------------
-with KOW_View.Components.Registry;
-with KOW_View.Navigation;			use KOW_View.Navigation;
-with KOW_View.Navigation.Components;
-with KOW_View.Navigation.Modules;
-pragma Elaborate( KOW_View.Navigation.Modules );
+with KOW_View.Modules;
+with KOW_View.Modules.Implementations;
+with KOW_View.Modules.Stateless_Module_Factories;
+with KOW_View.Pages.Components;
 
-procedure KOW_View.Navigation.Load is
-begin
-	KOW_View.Components.Registry.Register(
-			Components.Component'Access,
-			False
-		);
-end KOW_View.Navigation.Load;
+---------
+-- AWS --
+---------
+with AWS.Response;
+with AWS.Status;
+
+package KOW_View.Pages.Modules is
+
+	type Static_Module is new KOW_View.Modules.Implementations.Resource_Module with null record;
+	-- serve static content...
+
+	package Static_Module_Factories is new KOW_View.Modules.Stateless_Module_Factories(
+					Module_Type	=> Static_Module,
+					Component	=> KOW_View.Pages.Components.Component'Access
+				);
+
+end KOW_View.Pages.Modules;

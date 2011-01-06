@@ -32,6 +32,11 @@ with KOW_View.Components.Registry;
 with KOW_View.Pages;			use KOW_View.Pages;
 with KOW_View.Pages.Components;
 
+with KOW_View.Pages.Modules;
+pragma Elaborate( KOW_View.Pages.Modules );
+with KOW_View.Pages.Services;
+pragma Elaborate( KOW_View.Pages.Services );
+
 
 procedure KOW_View.Pages.Load is
 begin
