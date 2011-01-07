@@ -50,6 +50,10 @@ package KOW_View.json_util is
 			Status_Code	: AWS.Messages.Status_Code := AWS.Messages.S505;
 			Cache_Control	: AWS.Messages.Cache_Option := AWS.Messages.No_Cache
 		) return AWS.Response.Data;
+	-- return a json encoded object with:
+	-- 	'status' : 'error'
+	-- 	'error'  : Ada.Exceptions.Exception_Name( e )
+	-- 	'message': Ada.Exceptions.Exception_Message( e )
 
 
 	function Build_Success_Response(
@@ -57,6 +61,21 @@ package KOW_View.json_util is
 			Status_Code	: AWS.Messages.Status_Code := AWS.Messages.S200;
 			Cache_Control	: AWS.Messages.Cache_Option := AWS.Messages.No_Cache
 		) return AWS.Response.Data;
+	-- return a json encoded object with
+	-- 	'status'  : 'success'
+	-- 	'response': To_JSon(object)
 	
 
+	function Build_Redirect_Response(
+			URI		: String;
+			Status_Code	: AWS.Messages.Status_Code := AWS.Messages.S200;
+			Cache_Control	: AWS.Messages.Cache_Option := AWS.Messages.No_Cache
+		) return AWS.Response.Data;
+	-- return a json encoded object with
+	-- 	'status'  : 'redirect'
+	-- 	'to'      : URI
+	-- given that URI can be a page URN such as:
+	-- 	page:some/page
+	--
+	-- or anything else, in wich case isn't touched at all
 end KOW_View.json_util;

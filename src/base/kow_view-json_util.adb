@@ -35,6 +35,7 @@ with Ada.Exceptions;
 -------------------
 with KOW_Lib.Json;			use KOW_Lib.Json;
 with KOW_Lib.String_Util;
+with KOW_View.URI_Util;
 
 ---------
 -- AWS --
@@ -97,6 +98,42 @@ package body KOW_View.json_util is
 			);
 	end Build_Success_Response;
 
+
+	function Build_Redirect_Response(
+			URI		: String;
+			Status_Code	: AWS.Messages.Status_Code := AWS.Messages.S200;
+			Cache_Control	: AWS.Messages.Cache_Option := AWS.Messages.No_Cache
+		) return AWS.Response.Data is
+		use KOW_View.URI_Util;
+		Response : Object_Type;
+	begin
+		KOW_Lib.Json.Set(
+				Object	=> Response,
+				Key	=> "status",
+				Value	=> "redirect"
+			);
+
+		if Is_Page_URN( URI ) then
+			KOW_Lib.Json.Set(
+					Object	=> Response,
+					Key	=> "to",
+					Value	=> To_Page_URI( URI )
+				);
+		else
+			KOW_Lib.Json.Set(
+					Object	=> Response,
+					Key	=> "to",
+					Value	=> URI
+				);
+		end if;
+
+		return AWS.Response.Build(
+					Content_Type	=> "application/json",
+					Message_Body	=> To_Json( Response ),
+					Status_Code	=> Status_Code,
+					Cache_Control	=> Cache_Control
+				);
+	end Build_Redirect_Response;
 
 
 end KOW_View.json_util;
