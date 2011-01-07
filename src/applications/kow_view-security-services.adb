@@ -64,8 +64,7 @@ package body KOW_View.Security.Services is
 	--------------------
 
 	procedure Insert_REST_Providers(
-				P 		: in out Templates_Parser.Translate_Set;
-				Icon_Size	: in     KOW_View.Security.REST.Icon_Size_Type
+				P 		: in out Templates_Parser.Translate_Set
 			) is
 		use Templates_Parser;
 		use KOW_View.Security.REST;
@@ -74,14 +73,14 @@ package body KOW_View.Security.Services is
 		REST_Labels_Tag	: Tag;
 		REST_Icons_Tag	: Tag;
 
-		Providers : REST_Login_Povider_Vectors.Vector := Get_Providers;
+		Providers : REST_Login_Provider_Vectors.Vector := Get_Providers;
 
 		procedure Iterator( C : in REST_Login_Provider_Vectors.Cursor ) is
 			Provider : Rest_Login_Provider_Type := REST_Login_Provider_Vectors.Element( C );
 		begin
 			REST_Links_Tag	:= REST_Links_Tag	& Get_Link( Provider );
-			REST_Labels_Tag	:= REST_Labels_Tag	& Get_Label( Provider );
-			REST_Icons_Tag	:= REST_Icons_Tag	& Get_Icon( Provider, Icon_Size );
+			REST_Labels_Tag	:= REST_Labels_Tag	& Provider.Label;
+			REST_Icons_Tag	:= REST_Icons_Tag	& Get_Icon( Provider, Big_Icon );
 		end Iterator;
 	begin
 		REST_Login_Provider_Vectors.Iterate( Providers, Iterator'Access );
@@ -125,7 +124,7 @@ package body KOW_View.Security.Services is
 	begin
 
 		if Username = "" and then Password = "" then
-			Insert_REST_Providers( Params, Big_Icon );
+			Insert_REST_Providers( Params );
 			Response := AWS.Response.Build(
 						"text/html",
 						Parse_Template(
@@ -160,7 +159,7 @@ package body KOW_View.Security.Services is
 			declare	
 				use Templates_Parser;
 			begin
-				Insert_REST_Providers( Params, Big_Icon );
+				Insert_REST_Providers( Params );
 				Response := AWS.Response.Build(
 							"text/html",
 							Parse_Template(

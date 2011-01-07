@@ -99,12 +99,12 @@ package KOW_View.Security.REST is
 	-- REST Login provider registration --
 	--------------------------------------
 	
-	package REST_Login_Povider_Vectors is new Ada.Containers.Vectors(
+	package REST_Login_Provider_Vectors is new Ada.Containers.Vectors(
 						Index_Type	=> Positive,
 						Element_Type	=> REST_Login_Provider_Type
 					);
 
-	function Get_Providers return REST_Login_Povider_Vectors.Vector;
+	function Get_Providers return REST_Login_Provider_Vectors.Vector;
 	-- return a copy of the providers vector
 
 	procedure Register_Provider(
@@ -116,7 +116,7 @@ package KOW_View.Security.REST is
 
 
 private
-	Providers : REST_Login_Povider_Vectors.Vector;
+	Providers : REST_Login_Provider_Vectors.Vector;
 	-- do not access directly because the server is multi-tasking.. containers do not like it
 
 end KOW_View.Security.REST;

@@ -76,7 +76,7 @@ package body KOW_View.Security.REST is
 	-- REST Login provider registration --
 	--------------------------------------
 	
-	function Get_Providers return REST_Login_Povider_Vectors.Vector is
+	function Get_Providers return REST_Login_Provider_Vectors.Vector is
 		-- return a copy of the providers vector
 	begin
 		return Providers;
@@ -95,7 +95,7 @@ package body KOW_View.Security.REST is
 					Label		=> To_Unbounded_String( Label )
 				);
 	begin
-		REST_Login_Povider_Vectors.Append( Providers, provider );
+		REST_Login_Provider_Vectors.Append( Providers, provider );
 	end Register_Provider;
 
 
