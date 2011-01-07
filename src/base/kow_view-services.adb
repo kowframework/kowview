@@ -47,6 +47,7 @@ with KOW_View.Util;
 ---------
 with AWS.Status;
 with AWS.Response;
+with Templates_Parser;
 
 package body KOW_View.Services is
 
@@ -93,6 +94,28 @@ package body KOW_View.Services is
 		when KOW_Config.FILE_NOT_FOUND => null;
 	end Setup_Service;
 
+
+
+	function Parse_Template(
+			Service			: in Service_Type;
+			Template_Resource	: in String;
+			Template_Extension	: in String := "";
+			Parameters		: in Templates_Parser.Translate_Set;
+			Locale			: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
+		) return String is
+		-- helper method for calling templates parser's parse method and locate_resource
+
+		
+		Resource : constant String := Locate_Resource(
+						Service		=> Service_Type'Class( Service ),
+						Resource	=> Template_Resource,
+						Extension	=> Template_Extension,
+						Kind		=> Ada.Directories.Ordinary_File,
+						Locale		=> Locale
+					);
+	begin
+		return Templates_Parser.Parse( Resource, Parameters );
+	end Parse_Template;
 
 
 	function Get_Name( Service : in Service_Type'Class ) return String is

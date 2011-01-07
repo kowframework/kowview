@@ -55,11 +55,10 @@ package KOW_View.Security.Components is
 
 
 
-	type Security_Component is new KOW_View.Components.Component_Type with record
-		Default_Redirect_URI	: Unbounded_String;
-		Access_Denied_URI	: Unbounded_String;
-		Login_Required_URI	: Unbounded_String;
-	end record;
+	type Security_Component is new KOW_View.Components.Component_Type with null record;
+	Default_Redirect_URI	: Unbounded_String;
+	Access_Denied_URI	: Unbounded_String;
+	Login_Required_URI	: Unbounded_String;
 
 	overriding
 	procedure Setup(
@@ -67,7 +66,7 @@ package KOW_View.Security.Components is
 			Config		: in out KOW_Config.Config_File
 		);
 	-- the setup expects for the values of:
-	-- 	default_redirect	=> where to redirect when the login call doesn't specify (empty causes to redirect to caller)
+	-- 	default_redirect	=> where to redirect when the login call doesn't specify (empty causes to redirect to home)
 	-- 	access_denied		=> where to redirect when the access has been denied
 	-- 	login_required		=> where to redirect when the user needs to be logged in to proceed
 	--

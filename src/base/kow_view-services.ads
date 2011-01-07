@@ -46,6 +46,7 @@ with KOW_View.Components;		use KOW_View.Components;
 ---------
 with AWS.Status;
 with AWS.Response;
+with Templates_Parser;
 
 package KOW_View.Services is
 
@@ -108,6 +109,16 @@ package KOW_View.Services is
 			Service		: in out Service_Type'Class
 		);
 	-- load the configuration file and run setup..
+
+
+	function Parse_Template(
+			Service			: in Service_Type;
+			Template_Resource	: in String;
+			Template_Extension	: in String := "";
+			Parameters		: in Templates_Parser.Translate_Set;
+			Locale			: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
+		) return String;
+	-- helper method for calling templates parser's parse method and locate_resource
 
 
 

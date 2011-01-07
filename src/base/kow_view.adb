@@ -104,8 +104,11 @@ package body KOW_View is
 	
 
 				exception
-					when e : REDIRECT_TO_HOME | KOW_Sec.LOGIN_REQUIRED =>
-						Ada.Exceptions.Reraise_Occurrence( e );
+					when e : REDIRECT =>
+						Response := KOW_View.Json_Util.Build_Redirect_Response( Ada.Exceptions.Exception_Message( e ) );
+					--when e : REDIRECT_TO_HOME | KOW_Sec.LOGIN_REQUIRED =>
+					-- NOTICE:: json responses should be treated as .. well... JSON!
+					-- so we don't reraise any occurence here.. simply return it to JS to handle
 					when e : others =>
 						Response := KOW_View.Json_Util.Build_Error_Response( E );
 						KOW_Sec.Accounting.Set_Exit_Status(
@@ -133,6 +136,15 @@ package body KOW_View is
 
 		return Response;
 	exception
+
+		when e : REDIRECT =>
+			KOW_Sec.Accounting.Set_Exit_Status(
+					My_Action,
+					KOW_Sec.Accounting.Exit_Warning,
+					"redirecting to " & Ada.Exceptions.Exception_Message( e )
+				);
+			return AWS.Response.URL( Ada.Exceptions.Exception_Message( e ) );
+
 		when REDIRECT_TO_HOME =>
 			KOW_Sec.Accounting.Set_Exit_Status(
 					My_Action,

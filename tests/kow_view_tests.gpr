@@ -15,6 +15,6 @@ project kow_view_tests is
 
 	for Exec_Dir use "bin";
 
-	for Main use ( "run_tests" );
+	for Main use ( "run_tests", "emailtest" );
 
 end kow_view_tests;

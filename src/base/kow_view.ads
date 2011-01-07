@@ -88,6 +88,9 @@ package KOW_View is
 
 	
 
+	REDIRECT : Exception;
+	-- whenever you need you can raise this exception to get your application redirected somewhere
+	-- example:	raise REDIRECT with "http://www.google.com";
 
 	REDIRECT_TO_HOME : Exception;
 	-- redirect to the home for this server
@@ -97,7 +100,7 @@ package KOW_View is
 	-- a string representing the main service.. :)
 	-- default is the page component, but can be overriden
 
-	Login_Page	: Unbounded_String := To_Unbounded_String( "/security/login" );
+	Login_Page		: Unbounded_String := To_Unbounded_String( "/security/login" );
 	-- the URI for the login page
 
 

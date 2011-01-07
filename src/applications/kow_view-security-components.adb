@@ -68,9 +68,9 @@ package body KOW_View.Security.Components is
 			end if;
 		end URI;
 	begin
-		Component.Default_Redirect_URI	:= URI( Default_Redirect );
-		Component.Access_Denied_URI	:= URI( Access_Denied );
-		Component.Login_Required_URI	:= URI( Login_Required );
+		Default_Redirect_URI	:= URI( Default_Redirect );
+		Access_Denied_URI	:= URI( Access_Denied );
+		Login_Required_URI	:= URI( Login_Required );
 
 		KOW_Sec.Accounting.Set_Exit_Status(
 					My_Action,

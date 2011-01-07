@@ -56,9 +56,14 @@ package KOW_View.Security.Modules is
 
 
 	type Login_Controller_Module is new KOW_View.Modules.Module_Type with record
-		Username_Label	: Unbounded_String;
-		Password_Label	: Unbounded_String;
-		Template_Name	: Unbounded_String;
+		Username_Label		: Unbounded_String;
+		Password_Label		: Unbounded_String;
+
+		Logged_as_Label		: Unbounded_String;
+		Logout_Label		: Unbounded_String;
+
+		Login_Template_Name	: Unbounded_String;
+		Logout_Template_Name	: Unbounded_String;
 	end record;
 
 	overriding

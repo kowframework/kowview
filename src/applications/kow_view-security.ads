@@ -54,6 +54,7 @@ with KOW_View;
 ---------
 -- AWS --
 ---------
+with AWS.Session;
 with AWS.Status;
 
 package KOW_View.Security is
