@@ -4,7 +4,7 @@
 --                                                                          --
 --                              KOW Framework                               --
 --                                                                          --
---                                 S p e c                                  --
+--                                 B o d y                                  --
 --                                                                          --
 --               Copyright (C) 2007-2011, KOW Framework Project             --
 --                                                                          --
@@ -24,25 +24,6 @@
 pragma License( GPL );
 
 
-------------------------------------------------------------------------------
--- Root package for KOW Sec integration in KOW View                         --
-------------------------------------------------------------------------------
-
-
-------------------------------------------------------------------------------
--- The security inside KOW View is managed by KOW Sec. It's  this in every  --
--- layer.                                                                   --
---                                                                          --
--- This is a higher level layer with some modules and services for handling --
--- some aspects of the application security, such as login                  --
-------------------------------------------------------------------------------
-
-
--------------------
--- Login Process --
--------------------
-
-
 -------------------
 -- KOW Framework --
 -------------------
@@ -54,27 +35,14 @@ with KOW_View;
 ---------
 -- AWS --
 ---------
+with AWS.Session;
 with AWS.Status;
 
-package KOW_View.Security is
-	Accountant      : aliased KOW_Sec.Accounting.Accountant_Type := KOW_Sec.Accounting.New_Accountant( "security", KOW_View.Accountant'Access );
+package body KOW_View.Security is
 
-
-
-
-	User_Key	: constant String;
-	package User_Data is new AWS.Session.Generic_Data(
-			Data		=> KOW_Sec.User_Type,
-			Null_Data	=> KOW_Sec.Logged_Anonymous_User
-		);
-	
-
-	function Get_User( Request : in AWS.Status.Data ) return KOW_Sec.User_Type;
-	-- get the user information using the request...
-private
-
-
-	User_Key : constant String := "kow_sec.user";
-
-
+	function Get_User( Request : in AWS.Status.Data ) return KOW_Sec.User_Type is
+		-- get the user information using the request...
+	begin
+		return User_Data.Get( AWS.Status.Session( Request ), User_Key );
+	end Get_User;
 end KOW_View.Security;
