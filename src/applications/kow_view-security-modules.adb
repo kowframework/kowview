@@ -121,6 +121,7 @@ package body KOW_View.Security.Modules is
 
 		Object : KOW_Lib.Json.Object_Type;
 	begin
+		raise CONSTRAINT_ERROR with "no JSON for security login controller module";
 		Response := Object;
 	end Process_Json_Request;
 
