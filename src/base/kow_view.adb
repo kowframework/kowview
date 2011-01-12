@@ -53,8 +53,10 @@ with KOW_View.Json_Util;
 -- AWS --
 ---------
 with AWS.Parameters;
-with AWS.Status;
 with AWS.Response;
+with AWS.SMTP;
+with AWS.SMTP.Client;
+with AWS.Status;
 with Templates_Parser;
 
 
@@ -191,8 +193,6 @@ package body KOW_View is
 		-- 	./data/exceptions/package.otherpackage.exception	=> page for the given exception
 		-- 	./data/exceptions/others.html				=> fallback
 		--
-		-- TODO :: Also, when exceptions falls in "others" an email is sent to the server admin with complete exception information.
-		
 		use Templates_Parser;
 		use Ada.Exceptions;
 		Parameters	: Translate_Set;
@@ -221,11 +221,48 @@ package body KOW_View is
 						Message_Body	=> Templates_Parser.Parse( Specific_Path, Parameters )
 					);
 		elsif Ada.Directories.Exists( Others_Path ) then
-			-- TODO :: send email from here :)
 			Answer := AWS.Response.Build(
 						Content_Type	=> "text/html",
 						Message_Body	=> Templates_Parser.Parse( Others_Path, Parameters )
 					);
+			if E_Mail_On_Exceptions then
+				declare
+					function T( U : in Unbounded_String ) return String renames To_String;
+					My_Action : KOW_Sec.Accounting.Base_Action_Type'Class := KOW_Sec.Accounting.New_Action(
+											Name		=> "exception email",
+											Root_Accountant	=> Accountant'Access
+										);
+
+
+					Server		: AWS.SMTP.Receiver := AWS.SMTP.Initialize( T( E_Mail_SMTP_Server ) );
+					Attachments	: AWS.SMTP.Client.Attachment_Set( 2 .. 1 );
+					Status		: AWS.SMTP.Status;
+				begin
+					AWS.SMTP.Client.Send(
+							Server		=> Server,
+							From		=> AWS.SMTP.E_Mail( T( E_Mail_From_Name ), T( E_Mail_From_Address ) ),
+							To		=> AWS.SMTP.E_Mail( T( E_Mail_To_Name ), T( E_Mail_To_Address ) ),
+							Subject		=> T( E_Mail_Subject ) & Exception_Name( E ),
+							Message		=> Exception_Information( E ), -- TODO :: maybe there is a better exception message I can send
+							Attachments	=> Attachments,
+							Status		=> Status
+						);
+					if AWS.SMTP.Is_OK( Status ) then
+						KOW_Sec.Accounting.Set_Exit_Status(
+								My_Action,
+								KOW_Sec.Accounting.Exit_Success,
+								"e-mail sent"
+							);
+					else
+						KOW_Sec.Accounting.Set_Exit_Status(
+								My_Action,
+								KOW_Sec.Accounting.Exit_Error,
+								"e-mail not sent"
+							);
+					end if;
+				end;
+			end if;
+
 		else
 			Answer := AWS.Response.Build(
 						Content_Type	=> "text/html",

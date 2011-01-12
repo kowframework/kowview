@@ -104,4 +104,17 @@ package KOW_View is
 	-- the URI for the login page
 
 
+	E_Mail_On_Exceptions	: Boolean := False;
+	-- send email with information about excetpions that aren't expected
+	-- disabled by default on development environments
+
+	E_Mail_From_Name	: Unbounded_String := To_Unbounded_String( "Marcelo" );
+	E_Mail_From_Address	: Unbounded_String := To_Unbounded_String( "marcelo@kow.com.br" );
+
+	E_Mail_To_Name		: Unbounded_String := To_Unbounded_String( "Marcelo" );
+	E_Mail_To_Address	: Unbounded_String := To_Unbounded_String( "marcelo@kow.com.br" );
+
+	E_Mail_Subject		: Unbounded_String := To_Unbounded_String( "[Unhandled Exception] " );
+	E_Mail_SMTP_Server	: Unbounded_String := To_Unbounded_String( "localhost" );
+
 end KOW_View;
