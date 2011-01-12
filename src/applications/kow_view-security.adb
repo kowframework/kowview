@@ -24,6 +24,12 @@
 pragma License( GPL );
 
 
+--------------
+-- Ada 2005 --
+--------------
+with Ada.Strings;
+with Ada.Strings.Fixed;
+
 -------------------
 -- KOW Framework --
 -------------------
@@ -37,6 +43,7 @@ with KOW_View;
 ---------
 with AWS.Session;
 with AWS.Status;
+with Templates_Parser;
 
 package body KOW_View.Security is
 
@@ -45,4 +52,41 @@ package body KOW_View.Security is
 	begin
 		return User_Data.Get( AWS.Status.Session( Request ), User_Key );
 	end Get_User;
+
+
+	procedure Insert(
+				Params	: in out Templates_Parser.Translate_Set;
+				User	: in     KOW_Sec.User_Type
+			) is
+	begin
+		Insert( Params, User.Data );
+	end Insert;
+	
+
+	procedure Insert(
+				Params	: in out Templates_Parser.Translate_Set;
+				User	: in     KOW_Sec.User_Data_Type
+			) is
+
+		procedure Set( Key, Value : in String ) is
+			pragma Inline( Set );
+			use Templates_Parser;
+		begin
+			Insert(
+					Params,
+					Assoc( Key, Ada.Strings.Fixed.Trim( Value, Ada.Strings.Both ) )
+				);
+		end Set;
+	begin
+		Set( "identity",		String( User.Identity ) );
+		Set( "account_status",		KOW_Sec.Account_Status_type'Image( User.Account_Status ) );
+		Set( "account_status_message",	User.Account_Status_Message );
+		Set( "first_name",		User.First_Name );
+		Set( "last_name",		User.Last_Name );
+		Set( "nickname",		User.Nickname );
+		Set( "primary_email",		User.Primary_Email );
+	end Insert;
+
+
+
 end KOW_View.Security;

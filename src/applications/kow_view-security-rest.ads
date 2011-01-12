@@ -44,6 +44,10 @@ with Ada.Strings.Unbounded;			use Ada.Strings.Unbounded;
 with KOW_View.Components;
 with KOW_View.Security.Components;
 
+---------
+-- AWS --
+---------
+with Templates_Parser;
 
 
 package KOW_View.Security.REST is
@@ -115,6 +119,13 @@ package KOW_View.Security.REST is
 	-- register a new provider.... pleace only call it in the main task
 
 
+	--------------------
+	-- Helper Methods --
+	--------------------
+
+	procedure Insert_REST_Providers(
+				P 		: in out Templates_Parser.Translate_Set
+			);
 private
 	Providers : REST_Login_Provider_Vectors.Vector;
 	-- do not access directly because the server is multi-tasking.. containers do not like it

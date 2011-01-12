@@ -59,38 +59,6 @@ package body KOW_View.Security.Services is
 
 
 
-	--------------------
-	-- Helper methods --
-	--------------------
-
-	procedure Insert_REST_Providers(
-				P 		: in out Templates_Parser.Translate_Set
-			) is
-		use Templates_Parser;
-		use KOW_View.Security.REST;
-
-		REST_Links_Tag	: Tag;
-		REST_Labels_Tag	: Tag;
-		REST_Icons_Tag	: Tag;
-
-		Providers : REST_Login_Provider_Vectors.Vector := Get_Providers;
-
-		procedure Iterator( C : in REST_Login_Provider_Vectors.Cursor ) is
-			Provider : Rest_Login_Provider_Type := REST_Login_Provider_Vectors.Element( C );
-		begin
-			REST_Links_Tag	:= REST_Links_Tag	& Get_Link( Provider );
-			REST_Labels_Tag	:= REST_Labels_Tag	& Provider.Label;
-			REST_Icons_Tag	:= REST_Icons_Tag	& Get_Icon( Provider, Big_Icon );
-		end Iterator;
-	begin
-		REST_Login_Provider_Vectors.Iterate( Providers, Iterator'Access );
-
-		Insert( P, Assoc( "REST_links", REST_Links_Tag ) );
-		Insert( P, Assoc( "REST_labels", REST_Labels_Tag ) );
-		Insert( P, Assoc( "REST_icons", REST_Icons_Tag ) );
-
-	end Insert_Rest_Providers;
-
 	-------------------
 	-- Login Service --
 	-------------------
@@ -124,7 +92,7 @@ package body KOW_View.Security.Services is
 	begin
 
 		if Username = "" and then Password = "" then
-			Insert_REST_Providers( Params );
+			KOW_View.Security.REST.Insert_REST_Providers( Params );
 			Response := AWS.Response.Build(
 						"text/html",
 						Parse_Template(
@@ -159,7 +127,7 @@ package body KOW_View.Security.Services is
 			declare	
 				use Templates_Parser;
 			begin
-				Insert_REST_Providers( Params );
+				KOW_View.Security.REST.Insert_REST_Providers( Params );
 				Response := AWS.Response.Build(
 							"text/html",
 							Parse_Template(
@@ -271,22 +239,8 @@ package body KOW_View.Security.Services is
 	
 		User	: User_Data_Type := Get_User( Request ).Data;
 		Params	: Translate_Set;
-		procedure Set( Key, Value : in String ) is
-			pragma Inline( Set );
-		begin
-			Insert(
-					Params,
-					Assoc( Key, Ada.Strings.Fixed.Trim( Value, Ada.Strings.Both ) )
-				);
-		end Set;
 	begin
-		Set( "identity",		String( User.Identity ) );
-		Set( "account_status",		Account_Status_type'Image( User.Account_Status ) );
-		Set( "account_status_message",	User.Account_Status_Message );
-		Set( "first_name",		User.First_Name );
-		Set( "last_name",		User.Last_Name );
-		Set( "nickname",		User.Nickname );
-		Set( "primary_email",		User.Primary_Email );
+		Insert( Params, User );
 
 		Response := AWS.Response.Build(
 					"text/html",

@@ -56,6 +56,7 @@ with KOW_View;
 ---------
 with AWS.Session;
 with AWS.Status;
+with Templates_Parser;
 
 package KOW_View.Security is
 	Accountant      : aliased KOW_Sec.Accounting.Accountant_Type := KOW_Sec.Accounting.New_Accountant( "security", KOW_View.Accountant'Access );
@@ -72,6 +73,21 @@ package KOW_View.Security is
 
 	function Get_User( Request : in AWS.Status.Data ) return KOW_Sec.User_Type;
 	-- get the user information using the request...
+
+
+
+
+	procedure Insert(
+				Params	: in out Templates_Parser.Translate_Set;
+				User	: in     KOW_Sec.User_Type
+			);
+
+	procedure Insert(
+				Params	: in out Templates_Parser.Translate_Set;
+				User	: in     KOW_Sec.User_Data_Type
+			);
+
+	
 private
 
 

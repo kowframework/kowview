@@ -44,6 +44,7 @@ with KOW_View.Modules.Util;
 -- AWS --
 ---------
 with AWS.Status;
+with Templates_Parser;
 
 
 package body KOW_View.Modules is
@@ -101,6 +102,51 @@ package body KOW_View.Modules is
 		The_ID := To_Unbounded_String( "module_" & T( Natural( Module.ID ) ) & "_id_" & T( Module.ID_Count ) );
 				
 	end Generate_HTML_ID;
+
+
+	function Parse_Template(
+			Module			: in Module_Type;
+			Template_Resource	: in String;
+			Template_Extension	: in String := "";
+			Parameters		: in Templates_Parser.Translate_Set;
+			Locale			: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
+		) return String is
+		-- helper method for calling templates parser's parse method and locate_resource
+
+		
+		Resource : constant String := Locate_Resource(
+						Module		=> Module_Type'Class( Module ),
+						Resource	=> Template_Resource,
+						Extension	=> Template_Extension,
+						Kind		=> Ada.Directories.Ordinary_File,
+						Locale		=> Locale
+					);
+	begin
+		return Templates_Parser.Parse( Resource, Parameters );
+	end Parse_Template;
+
+
+	function Parse_Template(
+			Module			: in Module_Type;
+			Template_Resource	: in String;
+			Template_Extension	: in String := "";
+			Parameters		: in Templates_Parser.Translate_Set;
+			Locale			: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
+		) return Unbounded_String is
+		-- helper method for calling templates parser's parse method and locate_resource
+
+		
+		Resource : constant String := Locate_Resource(
+						Module		=> Module_Type'Class( Module ),
+						Resource	=> Template_Resource,
+						Extension	=> Template_Extension,
+						Kind		=> Ada.Directories.Ordinary_File,
+						Locale		=> Locale
+					);
+	begin
+		return Templates_Parser.Parse( Resource, Parameters );
+	end Parse_Template;
+
 
 
 	function Get_Name( Module : in Module_Type'Class ) return String is

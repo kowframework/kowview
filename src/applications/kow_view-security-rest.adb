@@ -40,7 +40,10 @@ with Ada.Strings.Unbounded;			use Ada.Strings.Unbounded;
 with KOW_View.Components;
 with KOW_View.Security.Components;
 
-
+---------
+-- AWS --
+---------
+with Templates_Parser;
 
 package body KOW_View.Security.REST is
 
@@ -97,6 +100,39 @@ package body KOW_View.Security.REST is
 	begin
 		REST_Login_Provider_Vectors.Append( Providers, provider );
 	end Register_Provider;
+
+
+
+	--------------------
+	-- Helper Methods --
+	--------------------
+
+	procedure Insert_REST_Providers(
+				P 		: in out Templates_Parser.Translate_Set
+			) is
+		use Templates_Parser;
+
+		REST_Links_Tag	: Tag;
+		REST_Labels_Tag	: Tag;
+		REST_Icons_Tag	: Tag;
+
+		Providers : REST_Login_Provider_Vectors.Vector := Get_Providers;
+
+		procedure Iterator( C : in REST_Login_Provider_Vectors.Cursor ) is
+			Provider : Rest_Login_Provider_Type := REST_Login_Provider_Vectors.Element( C );
+		begin
+			REST_Links_Tag	:= REST_Links_Tag	& Get_Link( Provider );
+			REST_Labels_Tag	:= REST_Labels_Tag	& Provider.Label;
+			REST_Icons_Tag	:= REST_Icons_Tag	& Get_Icon( Provider, Big_Icon );
+		end Iterator;
+	begin
+		REST_Login_Provider_Vectors.Iterate( Providers, Iterator'Access );
+
+		Insert( P, Assoc( "REST_links", REST_Links_Tag ) );
+		Insert( P, Assoc( "REST_labels", REST_Labels_Tag ) );
+		Insert( P, Assoc( "REST_icons", REST_Icons_Tag ) );
+
+	end Insert_Rest_Providers;
 
 
 end KOW_View.Security.REST;

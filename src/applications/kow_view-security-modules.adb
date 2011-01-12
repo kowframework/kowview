@@ -37,8 +37,10 @@ with Ada.Strings.Unbounded;			use Ada.Strings.Unbounded;
 with KOW_Config;
 with KOW_Lib.Json;
 with KOW_Sec.Accounting;
+with KOW_View.Locales;
 with KOW_View.Modules;
 with KOW_View.Security.Components;
+with KOW_View.Security.REST;
 
 ---------
 -- AWS --
@@ -49,6 +51,7 @@ package body KOW_View.Security.Modules is
 
 
 
+	HTML : constant String := "html";
 
 	overriding
 	procedure Initialize_Request(
@@ -57,8 +60,8 @@ package body KOW_View.Security.Modules is
 				Config	: in out KOW_Config.Config_File
 			) is
 	begin
-		-- TODO :: initialize_request
-		null;
+		Module.Login_Template := KOW_Config.Value( Config, "login_template", Default_Login_Template );
+		Module.Logout_Template:= KOW_Config.Value( Config, "logout_template", Default_Logout_Template );
 	end Initialize_Request;
 	
 	overriding
@@ -69,7 +72,6 @@ package body KOW_View.Security.Modules is
 			) is
 		-- get the JavaScript functions for submiting login/logout information
 	begin
-		-- TODO :: process_head
 		Response := Null_Unbounded_String;
 	end Process_Head;
 
@@ -81,9 +83,31 @@ package body KOW_View.Security.Modules is
 				Response:    out Unbounded_String
 			) is
 		-- render the login form/logged user information
+
+		use Templates_Parser;
+
+		User 	: KOW_Sec.User_Type := KOW_View.Security.Get_User( Request );
+		Params	: Templates_Parser.Translate_Set;
 	begin
-		-- TODO :: process_body
-		Response := Null_Unbounded_String;
+		if KOW_Sec.Is_Anonymous( User ) then
+			KOW_View.Security.REST.Insert_REST_Providers( Params );
+			Response := Parse_Template(
+							Module			=> Module,
+							Template_Resource	=> To_String( Module.Login_Template ),
+							Template_Extension	=> HTML,
+							Parameters		=> Params,
+							Locale			=> KOW_View.Locales.Get_Locale( Request )
+						);
+		else
+			KOW_View.Security.Insert( Params, User );
+			Response := Parse_Template(
+							Module			=> Module,
+							Template_Resource	=> To_String( Module.Logout_Template ),
+							Template_Extension	=> HTML,
+							Parameters		=> Params,
+							Locale			=> KOW_View.Locales.Get_Locale( Request )
+						);
+		end if;
 	end Process_Body;
 
 

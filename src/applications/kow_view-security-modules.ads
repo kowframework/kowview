@@ -62,8 +62,8 @@ package KOW_View.Security.Modules is
 		Logged_as_Label		: Unbounded_String;
 		Logout_Label		: Unbounded_String;
 
-		Login_Template_Name	: Unbounded_String;
-		Logout_Template_Name	: Unbounded_String;
+		Login_Template	: Unbounded_String;
+		Logout_Template	: Unbounded_String;
 	end record;
 
 	overriding
@@ -102,5 +102,9 @@ package KOW_View.Security.Modules is
 							Component	=> KOW_View.Security.Components.Component'Access
 						);
 
+private
+
+	Default_Login_Template	: constant Unbounded_String := To_Unbounded_String( "login" );
+	Default_Logout_Template	: constant Unbounded_String := To_Unbounded_String( "info" );
 	
 end KOW_View.Security.Modules;
