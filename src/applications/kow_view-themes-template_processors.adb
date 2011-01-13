@@ -129,9 +129,67 @@ package body KOW_View.Themes.Template_Processors is
 
 
 
-	-----------------------------
-	-- Region Buffer and Index --
-	-----------------------------
+	---------------------
+	-- Include Buffers --
+	---------------------
+	
+	procedure Insert(
+			Parameters	: in out Translate_Set;
+			Include_Buffers	: in     Include_Buffers_Type
+		) is
+	
+		procedure Append_All(
+				From	: in     KOW_Lib.UString_Vectors.Vector;
+				To	: in out Templates_Parser.Tag
+			) is
+			use Templates_Parser;
+			procedure Iterator( C : in KOW_Lib.UString_Vectors.Cursor ) is
+			begin
+				To := To & KOW_Lib.UString_Vectors.Element( C );
+			end Iterator;
+		begin
+			KOW_Lib.UString_Vectors.Iterate( From, Iterator'Access );
+		end Append_All;
+
+		procedure Insert_All(
+					Name	: in String;
+					From	: in KOW_Lib.UString_Vectors.Vector
+				) is
+			The_Tag : Templates_Parser.Tag;
+		begin
+			Append_all( From => From, To => The_Tag );
+			Insert( Parameters, Assoc( Name, The_Tag ) );
+		end Insert_All;
+	begin
+		Insert_All( "script_includes", Include_Buffers.Script_Includes );
+		Insert_All( "dojo_packages", Include_Buffers.Dojo_Packages );
+		Insert_All( "script_triggers", Include_Buffers.Script_Triggers );
+		Insert_All( "css_includes", Include_Buffers.CSS_Includes );
+	end Insert;
+
+	
+	procedure Append_Unique(
+				From	: in     KOW_Lib.UString_Vectors.Vector;
+				To	: in out KOW_Lib.UString_Vectors.Vector
+			) is
+		use KOW_Lib.UString_Vectors;
+		procedure Append_Iterator( C : in Cursor ) is
+			E : Unbounded_String := Element( C );
+		begin
+			if not Contains( To, E ) then
+				Append( To, E );
+			end if;
+		end Append_Iterator;
+	begin
+		Iterate( From, Append_Iterator'Access );
+	end Append_Unique;
+	
+	------------------------
+	-- Template Processor --
+	------------------------
+
+
+
 
 
 	function New_Template_Processor( Template : in KOW_View.Themes.Template_Type ) return Template_Processor_Type is
@@ -156,6 +214,53 @@ package body KOW_View.Themes.Template_Processors is
 
 		return Processor;
 	end New_Template_Processor;
+
+
+	procedure Append_Script_Includes(
+				Processor	: in out Template_Processor_Type;
+				Script_Includes	: in     KOW_Lib.UString_Vectors.Vector
+			) is
+	begin
+		Append_Unique(
+				From	=> Script_Includes,
+				To	=> Processor.Include_Buffers.Script_Includes
+			);
+	end Append_Script_Includes;
+
+	procedure Append_Dojo_Packages(
+				Processor	: in out Template_Processor_Type;
+				Dojo_Packages	: in     KOW_Lib.UString_Vectors.Vector
+			) is
+	begin
+		Append_Unique(
+				From	=> Dojo_Packages,
+				To	=> Processor.Include_Buffers.Dojo_Packages
+			);
+	end Append_Dojo_Packages;
+
+	procedure Append_Script_Triggers(
+				Processor	: in out Template_Processor_Type;
+				Script_Triggers	: in     KOW_Lib.UString_Vectors.Vector
+			) is
+	begin
+		Append_Unique(
+				From	=> Script_Triggers,
+				To	=> Processor.Include_Buffers.Script_Triggers
+			);
+	end Append_Script_Triggers;
+
+	procedure Append_CSS_Includes(
+				Processor	: in out Template_Processor_Type;
+				CSS_Includes	: in     KOW_Lib.UString_Vectors.Vector
+			) is
+	begin
+		Append_Unique(
+				From	=> CSS_Includes,
+				To	=> Processor.Include_Buffers.CSS_Includes
+			);
+	end Append_CSS_Includes;
+
+
 
 
 
@@ -234,6 +339,7 @@ package body KOW_View.Themes.Template_Processors is
 	begin
 		Insert( Parameters, Assoc( "page_title", Processor.Page_Title ) );
 		Insert( Parameters, Assoc( "author", Processor.Author ) );
+		Insert( Parameters, Processor.Include_Buffers );
 
 		Region_Index_Maps.Iterate( Processor.Index_Map, Insert_Regions_Iterator'Access );
 

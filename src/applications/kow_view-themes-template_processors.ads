@@ -111,10 +111,35 @@ package KOW_View.Themes.Template_Processors is
 					Key_Type	=> Region_Type,
 					Element_Type	=> Positive
 			);
+
+	---------------------
+	-- Include Buffers --
+	---------------------
 	
+	type Include_Buffers_Type is record
+		Script_Includes	: KOW_Lib.UString_Vectors.Vector;
+		Dojo_Packages	: KOW_Lib.UString_Vectors.Vector;
+		Script_Triggers	: KOW_Lib.UString_Vectors.Vector;
+		CSS_Includes	: KOW_Lib.UString_Vectors.Vector;
+	end record;
+
+	procedure Insert(
+			Parameters	: in out Translate_Set;
+			Include_Buffers	: in     Include_Buffers_Type
+		);
+	
+	procedure Append_Unique(
+				From	: in     KOW_Lib.UString_Vectors.Vector;
+				To	: in out KOW_Lib.UString_Vectors.Vector
+			);
+	
+	------------------------
+	-- Template Processor --
+	------------------------
 	type Template_Processor_Type is record
 		Index_Map	: Region_Index_Maps.Map;
 		Buffers		: Region_Buffer_Array;
+		Include_Buffers	: Include_Buffers_Type;
 
 		Template	: KOW_View.Themes.Template_Type;
 
@@ -126,6 +151,28 @@ package KOW_View.Themes.Template_Processors is
 
 	function New_Template_Processor( Template : in KOW_View.Themes.Template_Type ) return Template_Processor_Type;
 	-- return an initialized template processor object.. ready to use :)
+
+
+	procedure Append_Script_Includes(
+				Processor	: in out Template_Processor_Type;
+				Script_Includes	: in     KOW_Lib.UString_Vectors.Vector
+			);
+
+	procedure Append_Dojo_Packages(
+				Processor	: in out Template_Processor_Type;
+				Dojo_Packages	: in     KOW_Lib.UString_Vectors.Vector
+			);
+
+	procedure Append_Script_Triggers(
+				Processor	: in out Template_Processor_Type;
+				Script_Triggers	: in     KOW_Lib.UString_Vectors.Vector
+			);
+
+	procedure Append_CSS_Includes(
+				Processor	: in out Template_Processor_Type;
+				CSS_Includes	: in     KOW_Lib.UString_Vectors.Vector
+			);
+
 
 
 	procedure Append_Head(
