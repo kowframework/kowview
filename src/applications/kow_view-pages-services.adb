@@ -56,8 +56,9 @@ with KOW_View.Themes.Template_Processors;
 ---------
 -- AWS --
 ---------
-with AWS.Status;
+with AWS.Parameters;
 with AWS.Response;
+with AWS.Status;
 
 
 package body KOW_View.Pages.Services is
@@ -94,8 +95,11 @@ package body KOW_View.Pages.Services is
 
 		use KOW_View.Themes.Template_Processors;
 
+		Params		: AWS.Parameters.List := AWS.Status.Parameters( Request );
+
 
 		Page		: constant String := Get_Page( Service, Request );
+		Json_Module_Str	: constant String := AWS.Parameters.Get( Params, "module_id" );
 		Config		: KOW_Config.Config_File := Util.Get_Config_File( Page );
 		Template	: KOW_View.Themes.Template_Type := Util.Get_Template( Config );
 
@@ -150,18 +154,33 @@ package body KOW_View.Pages.Services is
 
 
 	begin
-		Setup( Service, Config );
+		if Json_Module_Str = "" then
+			raise CONSTRAINT_ERROR with "I don't know which Json request to process! Sorry!";
+		end if;
 
-		Iterate( Modules => Modules, Iterator => Create'Access );
-		Iterate( Modules => Modules, Iterator => Initialize'Access );
-
-		-- see wich json module should be called :)
-
-		Iterate( Modules => Modules, Iterator => Finalize'Access );
-		Iterate( Modules => Modules, Iterator => Destroy'Access );
-
-
-		Response := The_Response;
+		begin
+			-- we put this begin block here so the exception above won't be cauch:
+			Setup( Service, Config );
+	
+			Iterate( Modules => Modules, Iterator => Create'Access );
+			Iterate( Modules => Modules, Iterator => Initialize'Access );
+	
+			-- TODO :: see wich json module should be called :)
+	
+			KOW_View.Components.Process_Json_Request(
+						Module	=> Modules( Integer'Value( Json_Module_Str ) ).Module.all,
+						Request	=> Request,
+						Response=> Response
+					);
+		
+			Iterate( Modules => Modules, Iterator => Finalize'Access );
+			Iterate( Modules => Modules, Iterator => Destroy'Access );
+		
+		exception
+			when e : others =>
+				Iterate( Modules => Modules, Iterator => Destroy'Access );
+				Ada.Exceptions.Reraise_Occurrence( e );
+		end;	
 	end Process_Json_Request;
 
 

@@ -35,6 +35,7 @@ with Ada.Characters.Handling;
 with Ada.Directories;
 with Ada.Exceptions;
 with Ada.Tags;
+with Ada.Text_IO;
 
 -------------------
 -- KOW Framework --
@@ -264,6 +265,7 @@ package body KOW_View is
 			end if;
 
 		else
+			Ada.Text_IO.Put_Line( "BIG WARNING :: there is no default exception page template!" );
 			Answer := AWS.Response.Build(
 						Content_Type	=> "text/html",
 						Message_Body	=> "<html><head><title>Oops...</title><body>the server isn't exactly well configured...</body></html>"
