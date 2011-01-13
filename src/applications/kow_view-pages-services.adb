@@ -253,29 +253,6 @@ package body KOW_View.Pages.Services is
 
 
 
-		procedure Process_Script_Includes( Complete : in out Complete_Module_Type ) is
-		begin
-			Append_Script_Includes(
-					Processor	=> Processor,
-					Script_Includes	=> Get_Script_Includes( Complete.Module.all )
-				);
-		end Process_Script_Includes;
-
-		procedure Process_Dojo_Packages( Complete : in out Complete_Module_Type ) is
-		begin
-			Append_Dojo_Packages(
-					Processor	=> Processor,
-					Dojo_Packages	=> Get_Dojo_Packages( Complete.Module.all )
-				);
-		end Process_Dojo_Packages;
-
-		procedure Process_CSS_Includes( Complete : in out Complete_Module_Type ) is
-		begin
-			Append_CSS_Includes(
-					Processor	=> Processor,
-					CSS_Includes	=> Get_CSS_Includes( Complete.Module.all )
-				);
-		end Process_CSS_Includes;
 
 		procedure Process_Head( Complete : in out Complete_Module_Type ) is
 		begin
@@ -304,6 +281,31 @@ package body KOW_View.Pages.Services is
 					Response	=> Foot_Buffers( Get_ID (Complete.Module.all ) )
 				);
 		end Process_Foot;
+
+		procedure Process_Script_Includes( Complete : in out Complete_Module_Type ) is
+		begin
+			Append_Script_Includes(
+					Processor	=> Processor,
+					Script_Includes	=> Get_Script_Includes( Complete.Module.all )
+				);
+		end Process_Script_Includes;
+
+		procedure Process_Dojo_Packages( Complete : in out Complete_Module_Type ) is
+		begin
+			Append_Dojo_Packages(
+					Processor	=> Processor,
+					Dojo_Packages	=> Get_Dojo_Packages( Complete.Module.all )
+				);
+		end Process_Dojo_Packages;
+
+		procedure Process_CSS_Includes( Complete : in out Complete_Module_Type ) is
+		begin
+			Append_CSS_Includes(
+					Processor	=> Processor,
+					CSS_Includes	=> Get_CSS_Includes( Complete.Module.all )
+				);
+		end Process_CSS_Includes;
+
 
 		procedure Finalize( Complete : in out Complete_Module_Type ) is
 		begin
@@ -365,13 +367,13 @@ package body KOW_View.Pages.Services is
 		Iterate( Modules => Modules, Iterator => Create'Access );
 		Iterate( Modules => Modules, Iterator => Initialize'Access );	
 		if not Initialize_Only then
-			Iterate( Modules => Modules, Iterator => Process_Script_Includes'Access );
-			Iterate( Modules => Modules, Iterator => Process_Dojo_Packages'Access );
-			Iterate( Modules => Modules, Iterator => Process_CSS_Includes'Access );
-
 			Iterate( Modules => Modules, Iterator => Process_Head'Access );
 			Iterate( Modules => Modules, Iterator => Process_Body'Access );
 			Iterate( Modules => Modules, Iterator => Process_Foot'Access );
+
+			Iterate( Modules => Modules, Iterator => Process_Script_Includes'Access );
+			Iterate( Modules => Modules, Iterator => Process_Dojo_Packages'Access );
+			Iterate( Modules => Modules, Iterator => Process_CSS_Includes'Access );
 		end if;
 		Iterate( Modules => Modules, Iterator => Finalize'Access );
 		Iterate( Modules => Modules, Iterator => Destroy'Access );
