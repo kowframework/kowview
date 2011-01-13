@@ -34,12 +34,14 @@ pragma License( GPL );
 -- Ada 2005 --
 --------------
 with Ada.Containers.Vectors;
+with Ada.Directories;
 
 -------------------
 -- KOW Framework --
 -------------------
 with KOW_Config;
 with KOW_Lib.Json;
+with KOW_Lib.Locales;
 with KOW_View.Components;
 with KOW_View.Pages.Components;
 with KOW_View.Services;
@@ -145,4 +147,48 @@ package KOW_View.Pages.Services is
 
 
 
+	--------------------------------------
+	-- The Module Resource Service Type --
+	--------------------------------------
+
+
+	type Component_Resource_Service_Type is abstract new KOW_View.Services.Implementations.Resource_Service with null record;
+	-- the type is abstract as it shouldn't be instanciated
+
+	overriding
+	function Locate_Resource(
+			Service		: in Component_Resource_Service_Type;
+			Resource	: in String;
+			Extension	: in String := "";
+			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
+			Locale		: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
+		) return String;
+	-- locate resource given:
+	-- 	when resource is a URN using:
+	-- 		component:component/somefile
+	-- use the locate resource implementation for the given component, prefixing the resource by get_name(service)
+	--
+	-- or else use the locate resource for the current component
+
+
+
+	----------------
+	-- JS Service --
+	----------------
+
+	type JS_Service is new Component_Resource_Service_Type with null record;
+	package JS_Service_Cycles is new KOW_View.Services.Stateless_Service_Cycles(
+						Service_Type	=> JS_Service,
+						Component	=> KOW_View.Pages.Components.Component'Access
+					);
+	
+	-----------------
+	-- CSS Service --
+	-----------------
+
+	type CSS_Service is new Component_Resource_Service_Type with null record;
+	package CSS_Service_Cycles is new KOW_View.Services.Stateless_Service_Cycles(
+						Service_Type	=> CSS_Service,
+						Component	=> KOW_View.Pages.Components.Component'Access
+					);
 end KOW_View.Pages.Services;

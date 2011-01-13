@@ -34,6 +34,7 @@ pragma License( GPL );
 -- Ada 2005 --
 --------------
 with Ada.Containers.Vectors;
+with Ada.Strings.Fixed;
 
 -------------------
 -- KOW Framework --
@@ -42,6 +43,7 @@ with KOW_Lib.File_System;
 with KOW_Lib.Json;
 with KOW_Lib.UString_Vectors;
 with KOW_View.Components;				use KOW_View.Components;
+with KOW_View.Components.Registry;
 with KOW_View.Components.Util;
 with KOW_View.Pages.Components;
 with KOW_View.Pages.Services.Util;
@@ -250,6 +252,31 @@ package body KOW_View.Pages.Services is
 		end Initialize;
 
 
+
+		procedure Process_Script_Includes( Complete : in out Complete_Module_Type ) is
+		begin
+			Append_Script_Includes(
+					Processor	=> Processor,
+					Script_Includes	=> Get_Script_Includes( Complete.Module.all )
+				);
+		end Process_Script_Includes;
+
+		procedure Process_Dojo_Packages( Complete : in out Complete_Module_Type ) is
+		begin
+			Append_Dojo_Packages(
+					Processor	=> Processor,
+					Dojo_Packages	=> Get_Dojo_Packages( Complete.Module.all )
+				);
+		end Process_Dojo_Packages;
+
+		procedure Process_CSS_Includes( Complete : in out Complete_Module_Type ) is
+		begin
+			Append_CSS_Includes(
+					Processor	=> Processor,
+					CSS_Includes	=> Get_CSS_Includes( Complete.Module.all )
+				);
+		end Process_CSS_Includes;
+
 		procedure Process_Head( Complete : in out Complete_Module_Type ) is
 		begin
 			Process_Head(
@@ -338,6 +365,10 @@ package body KOW_View.Pages.Services is
 		Iterate( Modules => Modules, Iterator => Create'Access );
 		Iterate( Modules => Modules, Iterator => Initialize'Access );	
 		if not Initialize_Only then
+			Iterate( Modules => Modules, Iterator => Process_Script_Includes'Access );
+			Iterate( Modules => Modules, Iterator => Process_Dojo_Packages'Access );
+			Iterate( Modules => Modules, Iterator => Process_CSS_Includes'Access );
+
 			Iterate( Modules => Modules, Iterator => Process_Head'Access );
 			Iterate( Modules => Modules, Iterator => Process_Body'Access );
 			Iterate( Modules => Modules, Iterator => Process_Foot'Access );
@@ -384,7 +415,62 @@ package body KOW_View.Pages.Services is
 		Service.Author		:= KOW_Config.Element( Config, "author" );
 	end Setup;
 
+	--------------------------------------
+	-- The Module Resource Service Type --
+	--------------------------------------
 
+
+	overriding
+	function Locate_Resource(
+			Service		: in Component_Resource_Service_Type;
+			Resource	: in String;
+			Extension	: in String := "";
+			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
+			Locale		: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
+		) return String is
+		-- locate resource given:
+		-- 	when resource is a URN using:
+		-- 		component:component/somefile
+		-- use the locate resource implementation for the given component, prefixing the resource by get_name(service)
+		--
+		-- or else use the locate resource for the current component
+		use KOW_Lib.File_System;
+		
+		Comp	: constant String := "component:";
+		Last	: constant Integer := Ada.Strings.Fixed.Index( Source => Resource, Pattern => "/" );
+		Prefix	: constant String := KOW_View.Services.Get_Name( Service );
+
+
+		function Get_Component return Component_Access is
+			Comp_Name : constant String := Resource( Resource'First + Comp'Length .. Last - 1 );
+		begin
+			return KOW_View.Components.Registry.Get_Component( Comp_Name );
+		end Get_Component;
+
+		function Get_Resource return String is
+		begin
+			return Resource( Last + 1 .. Resource'Last );
+		end Get_Resource;
+	begin
+
+		if Resource( Resource'First .. Resource'First + Comp'Length - 1 ) = Comp then
+			return Locate_Resource(
+						Component	=> Get_Component.all,
+						Resource	=> Prefix / Get_Resource,
+						Extension	=> Extension,
+						Kind		=> Kind,
+						Locale		=> Locale
+					);
+		else
+			return Locate_Resource(
+						Component	=> Service.Component.all,
+						Resource	=> Prefix / Resource,
+						Extension	=> Extension,
+						Kind		=> Kind,
+						Locale		=> Locale
+					);
+		end if;
+	end Locate_Resource;
 
 
 

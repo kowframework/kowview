@@ -50,6 +50,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 with KOW_Config;
 with KOW_Lib.Json;
 with KOW_Lib.Locales;
+with KOW_Lib.UString_Vectors;
 
 
 ---------
@@ -129,6 +130,17 @@ package KOW_View.Components is
 	-- Called before anything has been build.
 	-- Useful when handling secured modules and setting initial data
 
+	function Get_Script_Includes(
+			Module		: in     Module_Interface
+		) return KOW_Lib.UString_Vectors.Vector is abstract;
+
+	function Get_Dojo_Packages(
+			Module		: in     Module_Interface
+		) return KOW_Lib.UString_Vectors.Vector is abstract;
+
+	function Get_CSS_Includes(
+			Module		: in     Module_Interface
+		) return KOW_Lib.UString_Vectors.Vector is abstract;
 
 
 	procedure Process_Head(

@@ -63,7 +63,7 @@ package body KOW_View.Services.Implementations is
 		Extension	: constant String := Ada.Directories.Extension( Resource_URI );
 
 		Resource_Path	: constant String := Locate_Resource(
-								Service		=> Service,
+								Service		=> Resource_Service'Class( Service ),
 								Resource	=> Resource,
 								Extension	=> Extension,
 								Locale		=> Locale

@@ -163,7 +163,6 @@ package body KOW_View.Themes.Template_Processors is
 	begin
 		Insert_All( "script_includes", Include_Buffers.Script_Includes );
 		Insert_All( "dojo_packages", Include_Buffers.Dojo_Packages );
-		Insert_All( "script_triggers", Include_Buffers.Script_Triggers );
 		Insert_All( "css_includes", Include_Buffers.CSS_Includes );
 	end Insert;
 
@@ -238,16 +237,6 @@ package body KOW_View.Themes.Template_Processors is
 			);
 	end Append_Dojo_Packages;
 
-	procedure Append_Script_Triggers(
-				Processor	: in out Template_Processor_Type;
-				Script_Triggers	: in     KOW_Lib.UString_Vectors.Vector
-			) is
-	begin
-		Append_Unique(
-				From	=> Script_Triggers,
-				To	=> Processor.Include_Buffers.Script_Triggers
-			);
-	end Append_Script_Triggers;
 
 	procedure Append_CSS_Includes(
 				Processor	: in out Template_Processor_Type;

@@ -49,6 +49,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 with KOW_Config;
 with KOW_Lib.Json;
 with KOW_Lib.Locales;
+with KOW_Lib.UString_Vectors;
 with KOW_View.Components;		use KOW_View.Components;
 
 
@@ -79,6 +80,10 @@ package KOW_View.Modules is
 
 		Component	: Component_Ptr;
 		-- the component that owns this module
+
+		Script_Includes	: KOW_Lib.UString_Vectors.Vector;
+		Dojo_Packages	: KOW_Lib.UString_Vectors.Vector;
+		CSS_Includes	: KOW_Lib.UString_Vectors.Vector;
 	end record;
 
 
@@ -86,6 +91,37 @@ package KOW_View.Modules is
 	function Get_ID( Module : in Module_Type ) return Positive;
 
 
+	overriding
+	function Get_Script_Includes(
+			Module		: in     Module_Type
+		) return KOW_Lib.UString_Vectors.Vector;
+
+	overriding
+	function Get_Dojo_Packages(
+			Module		: in     Module_Type
+		) return KOW_Lib.UString_Vectors.Vector;
+
+	overriding
+	function Get_CSS_Includes(
+			Module		: in     Module_Type
+		) return KOW_Lib.UString_Vectors.Vector;
+
+
+	procedure Include_Module_Script(
+			Module		: in out Module_Type;
+			Script		: in     String
+		);
+	
+	procedure Include_Dojo_Package(
+			Module		: in out Module_Type;
+			Dojo_Package	: in     String
+		);
+
+	procedure Include_Module_CSS(
+			Module		: in out Module_Type;
+			CSS		: in     String
+		);
+	
 	
 	function Locate_Resource(
 			Module		: in Module_Type;
