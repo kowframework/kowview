@@ -326,7 +326,7 @@ package body KOW_View.Themes.Template_Processors is
 			Insert( Parameters, Processor.Buffers( Region_Index_Maps.Element( C ) ) );
 		end Insert_Regions_Iterator;
 	begin
-		Insert( Parameters, Assoc( "page_title", Processor.Page_Title ) );
+		Insert( Parameters, Assoc( "Title", Processor.Title ) );
 		Insert( Parameters, Assoc( "author", Processor.Author ) );
 		Insert( Parameters, Processor.Include_Buffers );
 

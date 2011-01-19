@@ -143,7 +143,7 @@ package KOW_View.Themes.Template_Processors is
 		Template	: KOW_View.Themes.Template_Type;
 
 
-		Page_Title	: Unbounded_String;
+		Title	: Unbounded_String;
 		Author		: Unbounded_String;
 	end record;
 

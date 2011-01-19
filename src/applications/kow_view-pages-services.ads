@@ -79,7 +79,7 @@ package KOW_View.Pages.Services is
 	----------------------
 
 	type Page_Service is new KOW_View.Services.Service_Type with record
-		Page_Title	: Unbounded_String;
+		Title	: Unbounded_String;
 		Author		: Unbounded_String;
 	end record;
 

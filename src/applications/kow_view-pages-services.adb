@@ -384,7 +384,7 @@ package body KOW_View.Pages.Services is
 		KOW_Config.Set_Section( Config, "positions" );
 		KOW_Lib.UString_Vectors.Iterate( Template.Regions, Append_Region'Access );
 
-		Processor.Page_Title := Service.Page_Title;
+		Processor.Title := Service.Title;
 		Processor.Author := Service.Author;
 
 		Process( Processor, Request, Response );
@@ -420,7 +420,7 @@ package body KOW_View.Pages.Services is
 				Config	: in out KOW_Config.Config_File
 			) is
 	begin
-		Service.Page_Title	:= KOW_Config.Element( Config, "page_title" );
+		Service.Title	:= KOW_Config.Element( Config, "title" );
 		Service.Author		:= KOW_Config.Element( Config, "author" );
 	end Setup;
 
