@@ -57,8 +57,6 @@ package KOW_View.Security.Components is
 
 	type Security_Component is new KOW_View.Components.Component_Type with null record;
 	Default_Redirect_URI	: Unbounded_String;
-	Access_Denied_URI	: Unbounded_String;
-	Login_Required_URI	: Unbounded_String;
 
 	overriding
 	procedure Setup(

@@ -381,6 +381,7 @@ package body KOW_View.Pages.Services is
 		--------------------------------
 		-- Assemble the final request --
 		--------------------------------
+		KOW_Config.Set_Section( Config, "positions" );
 		KOW_Lib.UString_Vectors.Iterate( Template.Regions, Append_Region'Access );
 
 		Processor.Page_Title := Service.Page_Title;

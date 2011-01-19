@@ -54,9 +54,7 @@ package body KOW_View.Security.Components is
 										Root_Accountant	=> Accountant'Access
 									);
 
-		Default_Redirect	: constant String := Value( Config, "default_redirect", "" );
-		Access_Denied		: constant String := Element( Config, "access_denied" );
-		Login_Required		: constant String := Element( Config, "login_required" );
+		Default_Redirect		: constant String := Value( Config, "default_redirect", "" );
 
 
 		function URI( N : in String ) return Unbounded_String is
@@ -68,9 +66,7 @@ package body KOW_View.Security.Components is
 			end if;
 		end URI;
 	begin
-		Default_Redirect_URI	:= URI( Default_Redirect );
-		Access_Denied_URI	:= URI( Access_Denied );
-		Login_Required_URI	:= URI( Login_Required );
+		Default_Redirect_URI := URI( Default_Redirect );
 
 		KOW_Sec.Accounting.Set_Exit_Status(
 					My_Action,
