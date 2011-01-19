@@ -191,4 +191,15 @@ package KOW_View.Pages.Services is
 						Service_Type	=> CSS_Service,
 						Component	=> KOW_View.Pages.Components.Component'Access
 					);
+
+	--------------------
+	-- Images Service --
+	--------------------
+
+	type Images_Service is new Component_Resource_Service_Type with null record;
+	package Images_Service_Cycles is new KOW_View.Services.Stateless_Service_Cycles(
+						Service_Type	=> Images_Service,
+						Component	=> KOW_View.Pages.Components.Component'Access
+					);
+
 end KOW_View.Pages.Services;
