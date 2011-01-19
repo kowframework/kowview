@@ -53,5 +53,13 @@ package KOW_View.Pages.Modules is
 					Module_Type	=> Static_Module,
 					Component	=> KOW_View.Pages.Components.Component'Access
 				);
+	
+
+	type Void_Module is new KOW_View.Modules.Module_type with null record;
+
+	package Void_Module_Factories is new KOW_View.Modules.Stateless_Module_Factories(
+					Module_type	=> Void_Module,
+					Component	=> KOW_View.Pages.Components.Component'Access
+				);
 
 end KOW_View.Pages.Modules;
