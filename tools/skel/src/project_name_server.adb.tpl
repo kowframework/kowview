@@ -20,7 +20,6 @@ with Ada.Text_IO;		use Ada.Text_IO;
 -- KOW Framework --
 -------------------
 with KOW_View;
-with KOW_View.Service_Mapping;
 
 
 ---------
@@ -53,15 +52,23 @@ begin
 	----------------------------
 
 
+	------------------------------------------
+	-- Set the Unexpected Exception handler --
+	------------------------------------------
+	AWS.Server.Set_Unexpected_Exception_Handler(
+			Web_Server,
+			KOW_View.Handle_Exception'Unrestricted_Access
+		);
+	
 	-----------------
 	-- AWS Startup --
 	-----------------
 	AWS.Server.Start(
-		Web_Server,
-		KOW_View.Service_Mapping.AWS_Callback'Unrestricted_Access,
-		Conf
-	);
-	
+			Web_Server,
+			KOW_View.Process_Request'Unrestricted_Access,
+			Conf
+		);
+
 	AWS.Server.Wait( AWS.Server.Forever );
 
 

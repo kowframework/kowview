@@ -10,7 +10,7 @@
 --------------
 with Ada.Directories;
 with Ada.Exceptions;
-with Ada.Text_IO;		use Ada.Text_IO;
+with Ada.Text_IO;					use Ada.Text_IO;
 
 
 -------------------
@@ -25,17 +25,10 @@ with KOW_Config;
 with KOW_Ent;
 with KOW_Lib.Log;
 with KOW_Sec;
-with KOW_Sec.Authentication.Entities;
-pragma Elaborate( KOW_Sec.Authentication.Entities );
+with KOW_Sec.Entities;
+pragma Elaborate( KOW_Sec.Entities );
 with KOW_Sec.Authorization_Criterias;
-with KOW_View.Components_Registry;	use KOW_View.Components_Registry;
-with KOW_View.Components;		use KOW_View.Components;
-with KOW_View.Entities;
-with KOW_View.Navigation;
-with KOW_View.Pages;
-with KOW_View.Security;
-with KOW_View.Service_Mapping;
-with KOW_View.Themes;
+pragma Elaborate( KOW_Sec.Authorization_Criterias);
 
 
 
@@ -61,7 +54,6 @@ with @_application_tasks_@.Spawn_Tasks;
 
 procedure @_project_name_@_Setup(spawn_tasks : in boolean := false ) is
 	Manager: KOW_Sec.Authentication_Manager_Access := new KOW_Sec.Authentication.Entities.Authentication_Manager;
-
 begin
 
 	---------------------
@@ -169,10 +161,6 @@ begin
 		@@END_TABLE@@
 	end if;
 
-	
-	KOW_View.Components_Registry.Setup_Components;
-	KOW_View.Service_Mapping.Reload_Mappings;
-
 exception
 	when E : Others =>
 		Ada.Text_IO.Put_Line( "=======================================" );
@@ -182,10 +170,4 @@ exception
 		Ada.Text_IO.Put_Line( "=======================================" );
 		Ada.Text_IO.Put_Line( "=======================================" );
 		Ada.Text_IO.Put_Line( "=======================================" );
-
-
-
-
-
-
 end @_project_name_@_Setup;

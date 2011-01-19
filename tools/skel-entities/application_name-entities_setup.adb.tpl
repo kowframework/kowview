@@ -12,9 +12,6 @@ with KOW_Ent.Extra_Properties;
 with KOW_Ent.Properties;
 
 
-with KOW_View.Entity_Properties;
-
-
 -------------------------
 -- Getters and Setters --
 -------------------------
