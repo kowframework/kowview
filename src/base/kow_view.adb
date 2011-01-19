@@ -71,7 +71,7 @@ package body KOW_View is
 
 
 		Response	: AWS.Response.Data;
-		Component	: Component_Access := Registry.Get_Component( Request );
+		Component	: Component_Ptr;
 
 		function Request_Mode return Request_Mode_Type is
 			Params	: AWS.Parameters.List := AWS.Status.Parameters( Request );
@@ -87,6 +87,11 @@ package body KOW_View is
 										Root_Accountant	=> Accountant'Access
 									);
 	begin
+		if AWS.Status.URI( Request ) = "/favicon.ico" then
+			raise REDIRECT with "/themes/theme/favicon.ico";
+		end if;
+
+		Component := Component_Ptr( Registry.Get_Component( Request ) );
 		case Request_Mode is
 			when Json_Request =>
 				declare
