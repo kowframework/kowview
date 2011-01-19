@@ -45,16 +45,23 @@ package body KOW_View.Services.Util is
 
 	function Local_URI(
 				Service	: in KOW_View.Services.Service_Type'Class;
-				URI	: in String
+				URI	: in String;
+				No_Slash: in Boolean := False
 			) return String is
 		-- get the URI stripping the service mapping
 
 		use KOW_View.Components;
 		Mapping : constant String := '/' & Get_Name( Service.Component.all ) & '/' & Get_Name( Service'Tag );
+
+		First : integer := Mapping'Length + URI'First;
 	begin
 		pragma Assert( Mapping'Length <= URI'Length, "this is not a valid URI for this service.. expect something inside " & Mapping );
 
-		return URI( URI'First + Mapping'Length .. URI'Last );
+		if No_Slash then
+			First := First + 1;
+		end if;
+
+		return URI( First .. URI'Last );
 	end Local_URI;
 
 end KOW_View.Services.Util;

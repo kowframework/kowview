@@ -103,8 +103,8 @@ package body KOW_View.Components.Util is
 
 		MComponent_Name	: String		:= KOW_Lib.String_Util.Str_Replace( From => '.', To => '-', Str => Component_Name );
 
-		Name		: String		:= "data" / "kowview" / MComponent_Name / Resource & "." & Extension;
-		Default_Name	: String		:= "applications" / MComponent_Name / "data" / Resource & "." & Extension;
+		Name		: String		:= "data" / "kowview" / MComponent_Name / Resource; --& "." & Extension;
+		Default_Name	: String		:= "applications" / MComponent_Name / "data" / Resource;-- & "." & Extension;
 
 
 

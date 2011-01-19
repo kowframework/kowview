@@ -42,8 +42,10 @@ package KOW_View.Services.Util is
 
 	function Local_URI(
 				Service	: in KOW_View.Services.Service_Type'Class;
-				URI	: in String
+				URI	: in String;
+				No_Slash: in Boolean := False
 			) return String;
 	-- get the URI stripping the service mapping
+	-- if no_slash then tries to strip the forward slash in the begining
 
 end KOW_View.Services.Util;
