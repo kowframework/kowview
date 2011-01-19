@@ -4,7 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="pt" lang="pt">
 	<head>
-		<title>@_page_title_@</title>
+		<title>@_title_@</title>
 		<meta http-equiv="Content-type" content="text/html;charset=UTF-8" /> 
 		<link rel="stylesheet" type="text/css" href="/themes/theme/style.css" />
 
@@ -13,7 +13,10 @@
 			@import "/pages/js/dojo/dijit/themes/tundra/tundra.css";
 		</style>
 
-		<script type="text/javascript" src="/pages/js/dojo/dojo/dojo.js" />
+		<script type="text/javascript" 
+				src="/pages/js/dojo/dojo/dojo.js"
+				djConfig="parseOnLoad:true, isDebug:false"></script>
+
 
 		<script type="text/javascript">
 			@@TABLE@@
@@ -54,14 +57,14 @@
 
 <div id="top_menu">
 	@@TABLE@@
-		<span id="top_menu_@_top_menu_ids_@">@_top_menu_contents_@</span>
+		<span id="top_menu_@_top_menu_body_ids_@">@_top_menu_bodies_@</span>
 	@@END_TABLE@@
 </div>
 
 <div id="left_menu">
 	@@TABLE@@
-		<div class="contents" id="left_menu_@_left_menu_ids_@">
-			@_left_menu_contents_@
+		<div class="contents" id="left_menu_@_left_menu_body_ids_@">
+			@_left_menu_bodies_@
 		</div>
 	@@END_TABLE@@
 </div>
@@ -69,8 +72,8 @@
 
 <div id="main" class="soria">
 	@@TABLE@@
-		<div id="main_@_main_ids_@">
-			@_main_contents_@
+		<div id="main_@_main_body_ids_@">
+			@_main_bodies_@
 		</div>
 	@@END_TABLE@@
 </div>
@@ -78,8 +81,8 @@
 
 <div id="right_menu">
 	@@TABLE@@
-		<div id="right_menu_@_right_menu_ids_@">
-			@_right_menu_contents_@
+		<div id="right_menu_@_right_menu_body_ids_@">
+			@_right_menu_bodies_@
 		</div>
 	@@END_TABLE@@
 </div>
