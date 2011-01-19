@@ -388,9 +388,10 @@ package body KOW_View.Pages.Services is
 
 		Process( Processor, Request, Response );
 	exception
-		when others =>
+		when e : others =>
 			-- remember to destroy...
 			Iterate( Modules => Modules, Iterator => Destroy'Access );
+			Ada.Exceptions.Reraise_Occurrence( e );
 	end Process_Custom_Request;
 
 
@@ -403,8 +404,13 @@ package body KOW_View.Pages.Services is
 				Request	: in AWS.Status.Data
 			) return String is
 		-- retrieve the page name :)
+		Page : constant string := KOW_View.Services.Util.Local_URI( Service, AWS.Status.URI( Request ) );
 	begin
-		return KOW_View.Services.Util.Local_URI( Service, AWS.Status.URI( Request ) );
+		if page = "" then
+			return "main";
+		else
+			return page;
+		end if;
 	end Get_Page;
 
 

@@ -22,9 +22,6 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-with ada.text_io;
-
-
 
 --------------
 -- Ada 2005 --
@@ -155,9 +152,6 @@ package body KOW_View.Components is
 				raise SERVICE_ERROR with "unknown service: " & To_String( Name );
 		end Delegator;
 	begin
-		Ada.Text_IO.Put_Line( Rest_of_URI & "lol");
-		Ada.Text_IO.Put_Line( Integer'IMage( Rest_of_URI'Last ) );
-		Ada.Text_IO.Put_Line( Integer'IMage( Last ) );
 
 		if Rest_of_uri'Length = 0 then
 			pragma Assert( Component.Default_Service /= null, "there is no default service in the component " & Get_Name( Component ) );
