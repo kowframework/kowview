@@ -1,0 +1,21 @@
+
+This folder is for you to serve your own JS files through the Pages' component JS Service.
+
+The URI for this is:
+
+
+/pages/js/your_app_name:your_js_file.js
+
+
+given your_js_file.js exists in the current folder.
+
+
+Remember the code support localization, so given the user has selected the pt_BR locale it will look for:
+
+
+your_js_file_pt_br.js
+your_js_file_pt.js
+your_js_file.js
+
+
+raising exception only if none of those files can be found

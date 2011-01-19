@@ -1,0 +1,21 @@
+
+This folder is for you to serve your own image files through the Pages' component Images Service.
+
+The URI for this is:
+
+
+/pages/images/your_app_name:somefile.png
+
+
+given somefile.png exists in the current folder.
+
+
+Remember the code support localization, so given the user has selected the pt_BR locale it will look for:
+
+
+somefile_pt_br.png
+somefile_pt.png
+somefile.png
+
+
+raising exception only if none of those files can be found
