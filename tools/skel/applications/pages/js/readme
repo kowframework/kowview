@@ -1,0 +1,18 @@
+Contents in this folder are served by the JS_Service in the Pages component.
+
+Can be accessed by the URIs:
+
+/pages/js/page:thejs_file.js
+
+OR
+
+/pages/js/thejs_file.js
+
+
+
+the 'page:' URN can be used to specify your own javascript to be served from your own application, such as:
+
+
+/pages/js/community:messages.js 
+
+will serve tge ./js/messages.js file inside the community's base app folder.
