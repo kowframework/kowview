@@ -28,8 +28,6 @@ pragma License( GPL );
 -- Main package for the Pages services                                      --
 ------------------------------------------------------------------------------
 
-
-
 --------------
 -- Ada 2005 --
 --------------
@@ -268,7 +266,7 @@ package body KOW_View.Pages.Services is
 			Process_Body(
 					Module		=> Complete.Module.all,
 					Request		=> Request,
-					Response	=> Head_Buffers( Get_ID( Complete.Module.all ) )
+					Response	=> Body_Buffers( Get_ID( Complete.Module.all ) )
 				);
 		end Process_Body;
 
@@ -335,7 +333,7 @@ package body KOW_View.Pages.Services is
 			Module_IDs	: Index_Array := Util.Get_Module_IDs( Config, Region );
 			Module_ID	: Positive;
 		begin
-			for i in Modules'Range loop
+			for i in Module_IDs'Range loop
 				Module_ID := Module_IDs( i );
 				Append_Head(
 						Processor	=> Processor,
@@ -367,6 +365,7 @@ package body KOW_View.Pages.Services is
 		Iterate( Modules => Modules, Iterator => Create'Access );
 		Iterate( Modules => Modules, Iterator => Initialize'Access );	
 		if not Initialize_Only then
+	
 			Iterate( Modules => Modules, Iterator => Process_Head'Access );
 			Iterate( Modules => Modules, Iterator => Process_Body'Access );
 			Iterate( Modules => Modules, Iterator => Process_Foot'Access );

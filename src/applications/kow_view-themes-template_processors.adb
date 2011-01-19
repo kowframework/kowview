@@ -24,6 +24,7 @@
 pragma License( GPL );
 
 
+with Ada.Text_IO;
 
 --------------
 -- Ada 2005 --
@@ -86,7 +87,7 @@ package body KOW_View.Themes.Template_Processors is
 			) is
 	begin
 		Region_Buffer.Body_IDs		:= Region_Buffer.Body_IDs & ID( Region_Buffer, Body_Block, Module_ID );
-		Region_Buffer.Body_Buffer	:= Region_Buffer.Body_IDs & Body_Buffer;
+		Region_Buffer.Body_Buffer	:= Region_Buffer.Body_Buffer & Body_Buffer;
 	end Append_Body;
 	
 
@@ -326,7 +327,7 @@ package body KOW_View.Themes.Template_Processors is
 			Insert( Parameters, Processor.Buffers( Region_Index_Maps.Element( C ) ) );
 		end Insert_Regions_Iterator;
 	begin
-		Insert( Parameters, Assoc( "Title", Processor.Title ) );
+		Insert( Parameters, Assoc( "title", Processor.Title ) );
 		Insert( Parameters, Assoc( "author", Processor.Author ) );
 		Insert( Parameters, Processor.Include_Buffers );
 

@@ -76,7 +76,7 @@ package body KOW_View is
 		function Request_Mode return Request_Mode_Type is
 			Params	: AWS.Parameters.List := AWS.Status.Parameters( Request );
 		begin
-			return Request_Mode_Type'Value( AWS.Parameters.Get( Params, "mode" ) );
+			return Request_Mode_Type'Value( AWS.Parameters.Get( Params, "mode" ) & "_request" );
 		exception
 			when others => return Custom_Request;
 		end Request_Mode;

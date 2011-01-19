@@ -71,7 +71,7 @@ package body KOW_View.Pages.Services.Util is
 	function Get_Modules( Config : in KOW_Config.Config_File ) return Complete_Module_Array is
 		use KOW_Config;
 		use KOW_View.Components;
-		Elements	: Config_File_Array := Elements_Array( Config, "module" );
+		Elements	: Config_File_Array := Elements_Array( Config, "modules" );
 		Modules		: Complete_Module_Array( Elements'Range );
 		Component_Name	: Unbounded_String;
 	begin
