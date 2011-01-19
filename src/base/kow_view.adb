@@ -177,7 +177,7 @@ package body KOW_View is
 			KOW_Sec.Accounting.Set_Exit_Status(
 					My_Action,
 					KOW_Sec.Accounting.Exit_Fatal,
-					"Fatal error reraised to AWS.Server! " & Ada.Exceptions.Exception_Name( e )
+					"Fatal error reraised to AWS.Server! " & Ada.Exceptions.Exception_Name( e ) & '(' & Ada.Exceptions.Exception_Message( e ) & ')'
 				);
 
 

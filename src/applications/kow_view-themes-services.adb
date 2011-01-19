@@ -37,6 +37,7 @@ with KOW_View.Components;
 with KOW_View.Components.Registry;
 with KOW_View.Components.Util;
 with KOW_View.Services;
+with KOW_View.Services.Util;
 
 
 ---------
@@ -68,7 +69,7 @@ package body KOW_View.Themes.Services is
 	
 		Theme_Name : constant String := Get_Theme_Name( Request );
 
-		URI		: constant string := AWS.Status.URI( Request );
+		URI		: constant string := KOW_View.Services.Util.Local_URI( Service, AWS.Status.URI( Request ) );
 		Extension	: constant string := Ada.Directories.Extension( URI );
 		File_Name	: constant string := URI( URI'First .. URI'Last - Extension'Length - 1);
 		Complete_Path	: constant string := Locate_Theme_Resource(

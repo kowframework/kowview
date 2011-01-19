@@ -22,6 +22,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
+with ada.text_io;
 
 
 
@@ -73,7 +74,7 @@ package body KOW_View.Components is
 					raise COMPONENT_ERROR with "Missing required configuration for component " & Get_Name( Component );
 				end if;
 		end;
-		Setup( Component, Config );
+		Setup( Component_Type'Class( Component ), Config );
 		
 		Initialization_Trigger_Vectors.Iterate( Component.Initialization_Triggers, Trigger_Iterator'Access );
 	end Initialize;
@@ -137,7 +138,7 @@ package body KOW_View.Components is
 		-- you should override this method in case you want only one service in your component 
 		
 		URI		: constant String := AWS.Status.URI( Data );
-		Rest_Of_URI	: constant String := URI( Get_Name( Component )'Length + 2 .. URI'Last );
+		Rest_Of_URI	: constant String := URI( Get_Name( Component )'Length + 3 .. URI'Last );
 		Last		: Integer := Ada.Strings.Fixed.Index( Rest_of_Uri, "/" ) - 1;
 
 
@@ -154,8 +155,12 @@ package body KOW_View.Components is
 				raise SERVICE_ERROR with "unknown service: " & To_String( Name );
 		end Delegator;
 	begin
+		Ada.Text_IO.Put_Line( Rest_of_URI & "lol");
+		Ada.Text_IO.Put_Line( Integer'IMage( Rest_of_URI'Last ) );
+		Ada.Text_IO.Put_Line( Integer'IMage( Last ) );
+
 		if Rest_of_uri'Length = 0 then
-			pragma Assert( Component.Default_Service /= null, "there is no default component in the service " & Get_Name( Component ) );
+			pragma Assert( Component.Default_Service /= null, "there is no default service in the component " & Get_Name( Component ) );
 			return Service_Delegator_Access( Component.Default_Service );
 		end if;
 
