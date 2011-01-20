@@ -42,6 +42,7 @@ with Ada.Directories;
 with KOW_Config;
 with KOW_Lib.Json;
 with KOW_Lib.Locales;
+with KOW_Lib.Ustring_Vectors;
 with KOW_View.Components;
 with KOW_View.Pages.Components;
 with KOW_View.Services;
@@ -202,4 +203,10 @@ package KOW_View.Pages.Services is
 						Component	=> KOW_View.Pages.Components.Component'Access
 					);
 
+
+private
+
+	Page_Script_Includes	: KOW_Lib.UString_Vectors.Vector;
+	-- initialized by the body elaboration, includes all the script includes required by the
+	-- page service except for dojo main package (as it requires configuration in HTML part)
 end KOW_View.Pages.Services;

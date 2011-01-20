@@ -359,6 +359,15 @@ package body KOW_View.Pages.Services is
 
 	begin
 		Setup( Service, Config );
+
+		------------------------------------------------------
+		-- Deal with required Page includes except for dojo --
+		------------------------------------------------------
+		Append_Script_Includes(
+				Processor	=> Processor,
+				Script_Includes	=> Page_Script_Includes
+			);
+
 		-------------------------
 		-- Deal with modules.. --
 		-------------------------
@@ -461,7 +470,7 @@ package body KOW_View.Pages.Services is
 		end Get_Resource;
 	begin
 
-		if Resource( Resource'First .. Resource'First + Comp'Length - 1 ) = Comp then
+		if Resource'Length > Comp'Length and then Resource( Resource'First .. Resource'First + Comp'Length - 1 ) = Comp then
 			return Locate_Resource(
 						Component	=> Get_Component.all,
 						Resource	=> Prefix / Get_Resource,
@@ -483,4 +492,11 @@ package body KOW_View.Pages.Services is
 
 
 
+	procedure include( Str : in String ) is
+	begin
+		KOW_Lib.UString_Vectors.Append( Page_Script_Includes, To_Unbounded_String( Str ) );
+	end include;
+begin
+	include( "/pages/js/kowview.js" );
+	include( "/pages/js/kowview-modules.js" );
 end KOW_View.Pages.Services;

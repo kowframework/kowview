@@ -58,9 +58,16 @@ package body KOW_View.Services.Implementations is
 		Resource_URI	: constant String := KOW_View.Services.Util.Local_URI( Service, AWS.Status.URI( Request ), True );
 		Locale		: constant KOW_Lib.Locales.Locale := KOW_View.Locales.Get_Locale( Request );
 
-		Resource	: constant String := Ada.Directories.Containing_Directory( Resource_URI ) & '/' &
-							Ada.Directories.Base_Name( Resource_URI );
 		Extension	: constant String := Ada.Directories.Extension( Resource_URI );
+
+		function resource return String is
+		begin
+			if Extension'Length > 0 then
+				return Resource_URI( Resource_URI'First .. Resource_URI'Last - Extension'Length - 1);
+			else
+				return Resource_URI;
+			end if;
+		end resource;
 
 		Resource_Path	: constant String := Locate_Resource(
 								Service		=> Resource_Service'Class( Service ),
