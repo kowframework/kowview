@@ -11,6 +11,10 @@
 		<style type="text/css">
 			@import "/pages/js/dojo/dojo/resources/dojo.css";
 			@import "/pages/js/dojo/dijit/themes/tundra/tundra.css";
+
+			@@TABLE@@
+				@import "@_css_includes_@";
+			@@END_TABLE@@
 		</style>
 
 		<script type="text/javascript" 
@@ -24,6 +28,9 @@
 			@@END_TABLE@@
 		</script>
 
+		@@TABLE@@
+			<script type="text/javascript" src="@_script_includes_@"/></script>
+		@@END_TABLE@@
 
 		@_header_@
 	</head>
