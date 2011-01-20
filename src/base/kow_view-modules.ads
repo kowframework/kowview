@@ -117,7 +117,7 @@ package KOW_View.Modules is
 			Dojo_Package	: in     String
 		);
 
-	procedure Include_Module_CSS(
+	procedure Include_Component_CSS(
 			Module		: in out Module_Type;
 			CSS		: in     String
 		);

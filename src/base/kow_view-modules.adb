@@ -108,7 +108,7 @@ package body KOW_View.Modules is
 		KOW_Lib.UString_Vectors.Append( Module.Dojo_Packages, To_Unbounded_String( Dojo_Package ) );
 	end Include_Dojo_Package;
 
-	procedure Include_Module_CSS(
+	procedure Include_Component_CSS(
 			Module		: in out Module_Type;
 			CSS		: in     String
 		) is
@@ -118,7 +118,7 @@ package body KOW_View.Modules is
 		Append( CSS_Path, CSS );
 
 		KOW_Lib.UString_Vectors.Append( Module.CSS_Includes, CSS_Path );
-	end Include_Module_CSS;
+	end Include_Component_CSS;
 
 
 
