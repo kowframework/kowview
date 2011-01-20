@@ -1,5 +1,13 @@
 <div dojoType="dijit.TitlePane" title="Hello there!">
-	I have been acessed @_counter_@ times so far.<br/>
+	I have been acessed <span id="counter_@_module_id_@">@_counter_@</span> times so far.<br/>
 	You can also check my singleton service working in the <a href="/hello_world/hello">HTML</a> or <a href="/hello_world/hello?mode=json">JSON</a> mode.
-	Also, <button dojoType="dijit.form.Button" onClick="Hello_World_Info()">clicking here</a> you can see some information about this module.
+	<span class="highlight">Also</span>, <button dojoType="dijit.form.Button" onClick="Hello_World_Info()">clicking here</button> you can see some information about this module.
+	<br/>
+	You can also update this counter via JSON using <button dojoType="dijit.form.Button" onClick="POST_Update_Hello_World_Counter(@_module_id_@)">POST</button> or <button dojoType="dijit.form.Button" onClick="GET_Update_Hello_World_Counter(@_module_id_@)">GET</button> request.
+
+
+
+	<form id="form_@_module_id_@" action="www.google.com">
+		<input type="text" name="lala" value="lol" />
+	</form>
 </div>
