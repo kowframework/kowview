@@ -1,7 +1,7 @@
 
 
 
-
+with KOW_View.Locales;
 with KOW_View.Modules;
 with KOW_View.Modules.Stateful_Module_Factories;
 
@@ -9,7 +9,9 @@ with KOW_View.Modules.Stateful_Module_Factories;
 with Hello_World.Components;
 
 with Ada.Strings.Unbounded;				use Ada.Strings.Unbounded;
+
 with AWS.Status;
+with Templates_Parser;
 
 
 package body Hello_World.Modules is
@@ -25,7 +27,8 @@ package body Hello_World.Modules is
 				Request	: in     AWS.Status.Data;
 				Response:    out Unbounded_String
 			) is
-		Buffer : Unbounded_String;
+		use Templates_Parser;
+		Parameters : Translate_Set;
 	begin
 
 		Incrementor.Increment( Module.Counter );
@@ -41,14 +44,21 @@ package body Hello_World.Modules is
 		-- but please don't do that :)
 
 
-		Append( Buffer, "<div dojoType=""dijit.TitlePane"" title=""Hello there!"">" );
-			Append( Buffer, "I have been acessed " );
-			Append( Buffer, natural'image( Module.Counter ) );
-			Append( Buffer, " times. But also check my singleton service as <a href=""/hello_world/hello"">HTML</a>" );
-			Append( Buffer, " and <a href=""/hello_world/hello?mode=json"">JSON</a>." );
-		Append( Buffer, "</div>" );
+		Include_Dojo_Package( Module, "dijit.Dialog" );
+		Include_Dojo_Package( Module, "dijit.form.Button" );
 
-		Response := Buffer;
+		Include_Component_Script( Module, "information.js" );
+
+
+		Insert( Parameters, Assoc( "counter", Natural'Image( Module.Counter ) ) );
+
+		Response := Parse_Template(
+						Module			=> Module,
+						Template_Resource	=> "the_view",
+						Template_Extension	=> "html",
+						Parameters		=> Parameters,
+						Locale			=> KOW_View.Locales.Get_Locale( Request )
+				);
 	end Process_Body;
 
 
