@@ -87,7 +87,7 @@ package body KOW_View.Modules is
 	end Get_CSS_Includes;
 
 
-	procedure Include_Module_Script(
+	procedure Include_Component_Script(
 			Module		: in out Module_Type;
 			Script		: in     String
 		) is
@@ -98,7 +98,7 @@ package body KOW_View.Modules is
 		Append( Script_Path, Script );
 
 		KOW_Lib.UString_Vectors.Append( Module.Script_Includes, Script_Path );
-	end Include_Module_Script;
+	end Include_Component_Script;
 	
 	procedure Include_Dojo_Package(
 			Module		: in out Module_Type;

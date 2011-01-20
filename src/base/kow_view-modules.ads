@@ -107,7 +107,7 @@ package KOW_View.Modules is
 		) return KOW_Lib.UString_Vectors.Vector;
 
 
-	procedure Include_Module_Script(
+	procedure Include_Component_Script(
 			Module		: in out Module_Type;
 			Script		: in     String
 		);

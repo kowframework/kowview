@@ -55,7 +55,7 @@ package body KOW_View.Services.Implementations is
 				Response	:    out AWS.Response.Data
 			) is
 		-- serve a given file inside the service resource page
-		Resource_URI	: constant String := KOW_View.Services.Util.Local_URI( Service, AWS.Status.URI( Request ) );
+		Resource_URI	: constant String := KOW_View.Services.Util.Local_URI( Service, AWS.Status.URI( Request ), True );
 		Locale		: constant KOW_Lib.Locales.Locale := KOW_View.Locales.Get_Locale( Request );
 
 		Resource	: constant String := Ada.Directories.Containing_Directory( Resource_URI ) & '/' &
