@@ -220,6 +220,9 @@ package body KOW_View.Pages.Services is
 		Body_Buffers	: Buffer_Array;
 		Foot_Buffers	: Buffer_Array;
 
+		type Process_Module_Array is array( Buffer_Array'Range ) of Boolean;
+		Process_Module	: Process_Module_Array := ( others => false );
+
 		Processor	: Template_Processor_Type := New_Template_Processor( Template );
 
 		Module_Id	: Positive := 1;
@@ -238,6 +241,15 @@ package body KOW_View.Pages.Services is
 		end Create;
 
 
+		procedure Initialize_Process_Module( C : in KOW_Lib.UString_Vectors.Cursor ) is
+			use KOW_View.Themes;
+			Region		: Region_Type := Region_Type( KOW_Lib.UString_Vectors.Element( C ) );
+			Module_IDs	: Index_Array := Util.Get_Module_IDs( Config, Region );
+		begin
+			for i in Module_IDs'Range loop
+				Process_Module( Module_IDs( i ) ) := true;
+			end loop;
+		end Initialize_Process_Module;
 
 
 		procedure Initialize( Complete : in out Complete_Module_Type ) is
@@ -253,31 +265,39 @@ package body KOW_View.Pages.Services is
 
 
 		procedure Process_Head( Complete : in out Complete_Module_Type ) is
+			Id : constant Natural := Get_ID( Complete.Module.all );
 		begin
-			Process_Head(
-					Module		=> Complete.Module.all,
-					Request		=> Request,
-					Response	=> Head_Buffers( Get_ID( Complete.Module.all ) )
-				);
+			if Process_Module( id ) then
+				Process_Head(
+						Module		=> Complete.Module.all,
+						Request		=> Request,
+						Response	=> Head_Buffers( Id )
+					);
+			end if;
 		end Process_Head;
 
 		procedure Process_Body( Complete : in out Complete_Module_Type ) is
+			Id : constant Natural := Get_ID( Complete.Module.all );
 		begin
-			Process_Body(
-					Module		=> Complete.Module.all,
-					Request		=> Request,
-					Response	=> Body_Buffers( Get_ID( Complete.Module.all ) )
-				);
+			if Process_Module( id ) then
+				Process_Body(
+						Module		=> Complete.Module.all,
+						Request		=> Request,
+						Response	=> Body_Buffers( id )
+					);
+			end if;
 		end Process_Body;
 
 		procedure Process_Foot( Complete : in out Complete_Module_Type ) is
-			Buffer : Unbounded_String;
+			Id : constant Natural := Get_ID( Complete.Module.all );
 		begin
-			Process_Foot(
-					Module		=> Complete.Module.all,
-					Request		=> Request,
-					Response	=> Foot_Buffers( Get_ID (Complete.Module.all ) )
-				);
+			if Process_Module( id ) then
+				Process_Foot(
+						Module		=> Complete.Module.all,
+						Request		=> Request,
+						Response	=> Foot_Buffers( Id )
+					);
+			end if;
 		end Process_Foot;
 
 		procedure Process_Script_Includes( Complete : in out Complete_Module_Type ) is
@@ -373,6 +393,12 @@ package body KOW_View.Pages.Services is
 		-------------------------
 		Iterate( Modules => Modules, Iterator => Create'Access );
 		Iterate( Modules => Modules, Iterator => Initialize'Access );	
+
+		KOW_Config.Set_Section( Config, "positions" );
+		KOW_Lib.UString_Vectors.Iterate( Template.Regions, Initialize_Process_Module'Access );
+		-- this will initialize the Process_Module array which will tell
+		-- what modules should have head, body and foot processed
+
 		if not Initialize_Only then
 	
 			Iterate( Modules => Modules, Iterator => Process_Head'Access );
@@ -389,7 +415,6 @@ package body KOW_View.Pages.Services is
 		--------------------------------
 		-- Assemble the final request --
 		--------------------------------
-		KOW_Config.Set_Section( Config, "positions" );
 		KOW_Lib.UString_Vectors.Iterate( Template.Regions, Append_Region'Access );
 
 		Processor.Title := Service.Title;
@@ -429,7 +454,7 @@ package body KOW_View.Pages.Services is
 			) is
 	begin
 		Service.Title	:= KOW_Config.Element( Config, "title" );
-		Service.Author		:= KOW_Config.Element( Config, "author" );
+		Service.Author	:= KOW_Config.Element( Config, "author" );
 	end Setup;
 
 	--------------------------------------
