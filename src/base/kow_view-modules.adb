@@ -175,16 +175,19 @@ package body KOW_View.Modules is
 		) return String is
 		-- helper method for calling templates parser's parse method and locate_resource
 
+		use Templates_Parser;
 		
-		Resource : constant String := Locate_Resource(
+		Resource 	: constant String := Locate_Resource(
 						Module		=> Module_Type'Class( Module ),
 						Resource	=> Template_Resource,
 						Extension	=> Template_Extension,
 						Kind		=> Ada.Directories.Ordinary_File,
 						Locale		=> Locale
 					);
+		My_Parameters	: Translate_Set := Parameters;
 	begin
-		return Templates_Parser.Parse( Resource, Parameters );
+		Insert( My_Parameters, Assoc( "module_id", Get_ID( Module ) ) );
+		return Templates_Parser.Parse( Resource, My_Parameters );
 	end Parse_Template;
 
 
