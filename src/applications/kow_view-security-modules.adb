@@ -111,19 +111,4 @@ package body KOW_View.Security.Modules is
 	end Process_Body;
 
 
-	overriding
-	procedure Process_JSon_Request(
-				Module	: in out Login_Controller_Module;
-				Request	: in     AWS.Status.Data;
-				Response:    out KOW_Lib.Json.Object_Type
-			) is
-		-- process the login/logout returing a redirect string or error message
-
-		Object : KOW_Lib.Json.Object_Type;
-	begin
-		raise CONSTRAINT_ERROR with "no JSON for security login controller module";
-		Response := Object;
-	end Process_Json_Request;
-
-	
 end KOW_View.Security.Modules;

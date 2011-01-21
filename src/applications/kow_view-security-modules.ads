@@ -89,18 +89,12 @@ package KOW_View.Security.Modules is
 			);
 	-- render the login form/logged user information
 
-	overriding
-	procedure Process_JSon_Request(
-				Module	: in out Login_Controller_Module;
-				Request	: in     AWS.Status.Data;
-				Response:    out KOW_Lib.Json.Object_Type
-			);
-	-- process the login/logout returing a redirect string or error message
-
 	package Login_Controller_Factories is new KOW_View.Modules.Stateless_Module_Factories(
 							Module_Type	=> Login_Controller_Module,
 							Component	=> KOW_View.Security.Components.Component'Access
 						);
+
+	-- TODO :: implement switch user
 
 private
 

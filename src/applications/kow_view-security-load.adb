@@ -35,6 +35,9 @@ with KOW_View.Security.Components;
 with KOW_View.Security.Modules;
 pragma Elaborate( KOW_View.Security.Modules );
 
+with KOW_View.Security.Services;
+pragma Elaborate( KOW_View.Security.Services );
+
 --with KOW_View.Security.Services;
 --pragma Elaborate( KOW_View.Security.Services );
 
@@ -44,4 +47,6 @@ begin
 			Components.Component'Access,
 			True
 		);
+	
+	KOW_Sec.Roles_Registry.Register( "security", "switch_user" );
 end KOW_View.Security.Load;

@@ -123,11 +123,18 @@ package body KOW_View.Security.Services is
 		end if;
 
 	exception
+		when e : KOW_View.REDIRECT | KOW_View.REDIRECT_TO_HOME =>
+			Ada.Exceptions.Reraise_Occurrence( e );
 		when e : others =>
 			declare	
 				use Templates_Parser;
 			begin
 				KOW_View.Security.REST.Insert_REST_Providers( Params );
+
+				Insert( Params, Assoc( "exception_name", Ada.Exceptions.Exception_Name( e ) ) );
+				Insert( Params, Assoc( "exception_message", Ada.Exceptions.Exception_Message( e ) ) );
+				Insert( Params, Assoc( "exception_information", Ada.Exceptions.Exception_Information( e ) ) );
+				
 				Response := AWS.Response.Build(
 							"text/html",
 							Parse_Template(
