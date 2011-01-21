@@ -43,3 +43,31 @@ function GET_Update_Hello_World_Counter( module_id ) {
 		);
 
 }
+
+
+
+var timeout = 0;
+
+function auto_update( module_id ) {
+
+	POST_Update_Hello_World_Counter( module_id );
+
+	timeout = setTimeout( 'auto_update( ' + module_id + ')', 1000 );
+}
+
+function cancel_auto_update() {
+	clearTimeout( timeout );
+	timeout = 0;
+}
+
+function toggle_auto_update( module_id ) {
+	button = dojo.byId( "auto_update_" + module_id );
+
+	if( timeout == 0 ) {
+		auto_update( module_id );
+		button.innerHTML = "disable auto update";
+	} else {
+		cancel_auto_update();
+		button.innerHTML = "enable auto update";
+	}
+}
