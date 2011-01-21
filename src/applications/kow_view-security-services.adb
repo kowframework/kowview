@@ -221,8 +221,15 @@ package body KOW_View.Security.Services is
 				Request		: in     AWS.Status.Data;
 				Response	:    out KOW_Lib.Json.Object_Type
 			) is
+		Session_ID	: constant AWS.Session.ID      := AWS.Status.Session( Request );
+		Resp		: AWS.Response.Data := AWS.Response.URL ( "/" );
+		Obj		: KOW_Lib.Json.Object_Type;
 	begin
-		raise CONSTRAINT_ERROR with "no json logout";
+
+		AWS.Session.Delete( Session_ID );
+		AWS.Response.Set.Clear_Session( Resp );
+
+		Response := Obj;
 	end Process_Json_Request;
 
 

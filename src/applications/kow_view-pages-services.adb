@@ -524,4 +524,5 @@ package body KOW_View.Pages.Services is
 begin
 	include( "/pages/js/kowview.js" );
 	include( "/pages/js/kowview-modules.js" );
+	include( "/pages/js/kowview-services.js" );
 end KOW_View.Pages.Services;

@@ -32,7 +32,8 @@ project @_project_name_@ is
 			"@_lower_project_name_@_create_tables",
 			"@_lower_project_name_@_dump_create_tables",
 			"@_lower_project_name_@_useradd",
-			"@_lower_project_name_@_groupadd"
+			"@_lower_project_name_@_groupadd",
+			"@_lower_project_name_@_userstatus"
 		);
 	
 	package Linker renames KOWLib.Linker;
