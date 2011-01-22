@@ -5,32 +5,17 @@
 
 kowview.services = {
 
-	buildParams	: function( parameters ) {
-				param = new Object();
+	jsonURL		: function( component, service ) {
+				url = '/' + component + '/' + service + "?mode=json";
 
-				param.form = parameters.form;
-
-				theHref = '/' + parameters.component + '/' + parameters.service + "?mode=json";
-				console.log( theHref );
-
-				param.url = theHref;
-				param.handleAs = 'json';
-
-				param.load = function( responseObject, ioArgs ) {
-						parameters.load( responseObject );
-					};
-				param.error = function( data ) {
-						parameters.error( dojo.fromJson( data.responseText ) );
-					};
-
-				return param;
+				return url;
 			},
 
-	postJson	: function ( parameters ) {
-				dojo.xhrPost( this.buildParams( parameters ) );
+	postJson	: function ( component, service, parameters ) {
+				kowview.postJson( parameters, this.jsonURL( component, service ) );
 			},
-	getJson		: function ( parameters ) {
-				dojo.xhrGet( this.buildParams( parameters ) );
+	getJson		: function ( component, service, parameters ) {
+				kowview.getJson( parameters, this.jsonURL( component, service ) );
 			}
 
 }

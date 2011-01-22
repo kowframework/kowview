@@ -5,35 +5,23 @@
 
 kowview.modules = {
 
-	buildParams	: function( module_id, parameters ) {
-				param = new Object();
 
-				param.form = parameters.form;
-
-				theHref = document.location.href;
-				if( theHref.indexOf( "?" ) > -1 )
-					theHref += "&";
+	jsonURL		: function( module_id ) {
+				url = document.location.href;
+				if( url.indexOf( "?" ) > -1 )
+					url += "&";
 				else
-					theHref += "?";
-				theHref += "mode=json&module_id="+module_id;
-				param.url = theHref;
-				param.handleAs = 'json';
+					url += "?";
+				url += "mode=json&module_id="+module_id;
 
-				param.load = function( responseObject, ioArgs ) {
-						parameters.load( responseObject );
-					};
-				param.error = function( data ) {
-						parameters.error( dojo.fromJson( data.responseText ) );
-					};
-
-				return param;
+				return url;
 			},
 
 	postJson	: function ( module_id, parameters ) {
-				dojo.xhrPost( this.buildParams( module_id, parameters ) );
+				kowview.postJson( parameters, kowview.modules.jsonURL( module_id ) );
 			},
 	getJson		: function ( module_id, parameters ) {
-				dojo.xhrGet( this.buildParams( module_id, parameters ) );
+				kowview.getJson( parameters, kowview.modules.jsonURL( module_id ) );
 			}
 
 }

@@ -533,6 +533,7 @@ package body KOW_View.Pages.Services is
 	end include_dojo;
 begin
 	include( "/pages/js/kowview.js" );
+	include( "/pages/js/kowview-messages.js" );
 	include( "/pages/js/kowview-modules.js" );
 	include( "/pages/js/kowview-services.js" );
 
