@@ -388,6 +388,11 @@ package body KOW_View.Pages.Services is
 				Script_Includes	=> Page_Script_Includes
 			);
 
+		Append_Dojo_Packages(
+				Processor	=> processor,
+				Dojo_Packages	=> Page_Dojo_Packages
+			);
+
 		-------------------------
 		-- Deal with modules.. --
 		-------------------------
@@ -521,8 +526,17 @@ package body KOW_View.Pages.Services is
 	begin
 		KOW_Lib.UString_Vectors.Append( Page_Script_Includes, To_Unbounded_String( Str ) );
 	end include;
+
+	procedure include_dojo( Str : in String ) is
+	begin
+		KOW_Lib.UString_Vectors.Append( Page_Dojo_Packages, To_Unbounded_String( Str ) );
+	end include_dojo;
 begin
 	include( "/pages/js/kowview.js" );
 	include( "/pages/js/kowview-modules.js" );
 	include( "/pages/js/kowview-services.js" );
+
+
+	include_dojo( "dijit.Dialog" );
+	include_dojo( "dijit.ProgressBar" );
 end KOW_View.Pages.Services;
