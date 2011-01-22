@@ -24,8 +24,6 @@
 pragma License( GPL );
 
 
-
-
 --------------
 -- Ada 2005 --
 --------------
@@ -50,14 +48,10 @@ package body KOW_View.Pages.Services.Util is
 
 	function Get_Config_File( Page : in String ) return KOW_Config.Config_File is
 		-- get the config file for the given page..
-		
-		use KOW_Lib.File_System;
-
+		Config : KOW_Config.Config_File;
 	begin
-		return KOW_View.Components.Util.Load_Configuration(
-						Component_Name		=> KOW_View.Components.Get_Name( KOW_View.Pages.Components.Component ),
-						Configuration_Name	=> "page" / Page
-					);
+		Page_Config_Cache.Get_Config_File( Config, Page );
+		return Config;
 	end Get_Config_File;
 
 
@@ -108,6 +102,34 @@ package body KOW_View.Pages.Services.Util is
 		Iterate( IDs_Vector, Iterator'Access );
 		return Results;
 	end Get_Module_IDs;
+
+
+
+-- private
+
+
+	protected body Page_Config_Cache is
+		procedure Get_Config_File( Config : out KOW_Config.Config_File; Page : in String ) is
+		-- check if the config file is in the map... if not, read it into the map
+		-- return the config file if available
+			use KOW_Lib.File_System;
+			
+			UPage : constant Unbounded_String := To_Unbounded_String( Page );
+		begin
+			Config := Config_File_Maps.Element( Cache, UPage );
+		exception
+			when CONSTRAINT_ERROR =>
+				declare
+					My_Config : constant KOW_Config.Config_File := KOW_View.Components.Util.Load_Configuration(
+												Component_Name		=> KOW_View.Components.Get_Name( KOW_View.Pages.Components.Component ),
+												Configuration_Name	=> "page" / Page
+											);
+				begin
+					Config_File_Maps.Include( Cache, UPage, My_Config );
+					Config := My_Config;
+				end;
+		end Get_Config_File;
+	end Page_Config_Cache;
 
 
 end KOW_View.Pages.Services.Util;

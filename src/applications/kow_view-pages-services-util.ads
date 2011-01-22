@@ -29,6 +29,11 @@ pragma License( GPL );
 ------------------------------------------------------------------------------
 
 
+--------------
+-- Ada 2005 --
+--------------
+with Ada.Containers.Ordered_Maps;
+with Ada.Strings.Unbounded;			use Ada.Strings.Unbounded;
 
 -------------------
 -- KOW Framework --
@@ -56,4 +61,24 @@ package KOW_View.Pages.Services.Util is
 				Config	: in KOW_Config.Config_File;
 				Region	: in KOW_View.Themes.Region_Type
 			) return Index_Array;
+
+private
+	Enable_Cache : Boolean := True;
+
+
+	package Config_File_Maps is new Ada.Containers.Ordered_Maps(
+				Key_Type	=> Unbounded_String,
+				Element_Type	=> KOW_Config.Config_File,
+				"="		=> KOW_Config."="
+			);
+
+	protected Page_Config_Cache is
+		procedure Get_Config_File( Config : out KOW_Config.Config_File; Page : in String );
+		-- check if the config file is in the map... if not, read it into the map
+		-- return the config file if available
+	private
+		Cache : Config_File_Maps.Map;
+	end Page_Config_Cache;
+
+
 end KOW_View.Pages.Services.Util;
