@@ -377,6 +377,9 @@ package body KOW_View.Pages.Services is
 		end Append_Region;
 
 
+		-- I copy those to avoid pointer madness
+		Page_Scr : KOW_Lib.UString_Vectors.Vector := Page_Script_Includes;
+		Dojo_Pkg : KOW_Lib.UString_Vectors.Vector := Page_Dojo_Packages;
 	begin
 		Setup( Service, Config );
 
@@ -385,12 +388,12 @@ package body KOW_View.Pages.Services is
 		------------------------------------------------------
 		Append_Script_Includes(
 				Processor	=> Processor,
-				Script_Includes	=> Page_Script_Includes
+				Script_Includes	=> Page_Scr
 			);
 
 		Append_Dojo_Packages(
 				Processor	=> processor,
-				Dojo_Packages	=> Page_Dojo_Packages
+				Dojo_Packages	=> Dojo_Pkg
 			);
 
 		-------------------------

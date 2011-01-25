@@ -84,7 +84,6 @@ package KOW_View is
 	-- 	./data/exceptions/package.otherpackage.exception	=> page for the given exception
 	-- 	./data/exceptions/others.html				=> fallback
 	--
-	-- TODO :: Also, when exceptions falls in "others" an email is sent to the server admin with complete exception information.
 
 	
 

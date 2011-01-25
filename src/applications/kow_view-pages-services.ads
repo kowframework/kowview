@@ -47,6 +47,7 @@ with KOW_View.Components;
 with KOW_View.Pages.Components;
 with KOW_View.Services;
 with KOW_View.Services.Implementations;
+with KOW_View.Services.Singleton_Service_Cycles;
 with KOW_View.Services.Stateless_Service_Cycles;
 with KOW_View.Themes;
 
@@ -81,7 +82,7 @@ package KOW_View.Pages.Services is
 
 	type Page_Service is new KOW_View.Services.Service_Type with record
 		Title	: Unbounded_String;
-		Author		: Unbounded_String;
+		Author	: Unbounded_String;
 	end record;
 
 
@@ -141,7 +142,7 @@ package KOW_View.Pages.Services is
 	------------------------
 
 	type Static_Service is new KOW_View.Services.Implementations.Resource_Service with null record;
-	package Static_Service_Cycles is new KOW_View.Services.Stateless_Service_Cycles(
+	package Static_Service_Cycles is new KOW_View.Services.Singleton_Service_Cycles(
 						Service_Type	=> Static_Service,
 						Component	=> KOW_View.Pages.Components.Component'Access
 					);
@@ -188,7 +189,7 @@ package KOW_View.Pages.Services is
 	-----------------
 
 	type CSS_Service is new Component_Resource_Service_Type with null record;
-	package CSS_Service_Cycles is new KOW_View.Services.Stateless_Service_Cycles(
+	package CSS_Service_Cycles is new KOW_View.Services.Singleton_Service_Cycles(
 						Service_Type	=> CSS_Service,
 						Component	=> KOW_View.Pages.Components.Component'Access
 					);
@@ -198,7 +199,7 @@ package KOW_View.Pages.Services is
 	--------------------
 
 	type Images_Service is new Component_Resource_Service_Type with null record;
-	package Images_Service_Cycles is new KOW_View.Services.Stateless_Service_Cycles(
+	package Images_Service_Cycles is new KOW_View.Services.Singleton_Service_Cycles(
 						Service_Type	=> Images_Service,
 						Component	=> KOW_View.Pages.Components.Component'Access
 					);
