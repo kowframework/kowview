@@ -20,12 +20,12 @@ with @_project_name_@_setup;
 
 
 
-procedure @_project_name_@_useradd is
+procedure @_project_name_@_groupadd is
 	The_User	: KOW_Sec.User_Data_Type;
 	Groups		: KOW_Sec.Group_Vectors.Vector;
 begin
 
-	if Argument_Count /= 2 then
+	if Argument_Count /= 2 and then Argument_Count /= 3 then
 		Put_Line( "Usage : " );
 		Put_line( Command_Name & " user_identity group" );
 		return;
@@ -36,11 +36,19 @@ begin
 
 
 	The_User	:= KOW_Sec.Get_User( Argument( 1 ) );
-	Groups		:= KOW_Sec.Get_Groups( The_User );
+	Groups		:= KOW_Sec.Get_All_Groups( The_User );
 
 	declare
 		use KOW_Sec;
-		The_Group : constant Group_Type := To_Group( Argument( 2 ) );
+		function Context return String is
+		begin
+			if Argument_Count /= 3 then
+				return "";
+			else
+				return Argument( 3 );
+			end if;
+		end Context;
+		The_Group : constant Group_Type := To_Group( Argument( 2 ), Context );
 	begin
 		if Group_Vectors.Contains( Groups, The_Group ) then
 			raise PROGRAM_ERROR with "user already in group";
@@ -57,4 +65,4 @@ begin
 
 
 
-end @_project_name_@_useradd;
+end @_project_name_@_groupadd;
