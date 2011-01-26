@@ -27,7 +27,7 @@ begin
 
 	if Argument_Count /= 2 and then Argument_Count /= 3 then
 		Put_Line( "Usage : " );
-		Put_line( Command_Name & " user_identity group" );
+		Put_line( Command_Name & " user_identity group [context]" );
 		return;
 	end if;
 
