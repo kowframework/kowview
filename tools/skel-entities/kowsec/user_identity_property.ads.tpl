@@ -2,7 +2,7 @@
 
 with KOW_Ent;
 with KOW_Ent.Properties;	use KOW_Ent.Properties;
-with KOW_Sec;
+with KOW_Sec;			use KOW_Sec;
 
 
 
