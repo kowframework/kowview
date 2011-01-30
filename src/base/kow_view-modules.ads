@@ -111,6 +111,13 @@ package KOW_View.Modules is
 			Module		: in out Module_Type;
 			Script		: in     String
 		);
+
+	procedure Include_Component_Script(
+			Module		: in out Module_Type;
+			Component	: in     KOW_View.Components.Component_Type'Class;
+			Script		: in     String
+		);
+
 	
 	procedure Include_Dojo_Package(
 			Module		: in out Module_Type;
@@ -122,6 +129,12 @@ package KOW_View.Modules is
 			CSS		: in     String
 		);
 	
+	procedure Include_Component_CSS(
+			Module		: in out Module_Type;
+			Component	: in     KOW_View.Components.Component_Type'Class;
+			CSS		: in     String
+		);
+
 	
 	function Locate_Resource(
 			Module		: in Module_Type;

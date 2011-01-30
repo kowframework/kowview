@@ -92,15 +92,28 @@ package body KOW_View.Modules is
 			Module		: in out Module_Type;
 			Script		: in     String
 		) is
+	begin
+		Include_Component_Script(
+				Module		=> Module,
+				Component	=> Module.Component.all,
+				Script		=> Script
+			);
+	end Include_Component_Script;
+
+	procedure Include_Component_Script(
+			Module		: in out Module_Type;
+			Component	: in     KOW_View.Components.Component_Type'Class;
+			Script		: in     String
+		) is
 		Script_Path : Unbounded_String := To_Unbounded_String( "/pages/js/component:" );
 	begin
-		Append( Script_Path, KOW_View.Components.Get_Name( Module.Component.all ) );
+		Append( Script_Path, KOW_View.Components.Get_Name( Component ) );
 		Append( Script_Path, '/' );
 		Append( Script_Path, Script );
 
 		KOW_Lib.UString_Vectors.Append( Module.Script_Includes, Script_Path );
 	end Include_Component_Script;
-	
+
 	procedure Include_Dojo_Package(
 			Module		: in out Module_Type;
 			Dojo_Package	: in     String
@@ -113,15 +126,26 @@ package body KOW_View.Modules is
 			Module		: in out Module_Type;
 			CSS		: in     String
 		) is
+	begin
+		Include_Component_CSS(
+				Module		=> Module,
+				Component	=> Module.Component.all,
+				CSS		=> CSS
+			);
+	end Include_Component_CSS;
+
+	procedure Include_Component_CSS(
+			Module		: in out Module_Type;
+			Component	: in     KOW_View.Components.Component_Type'Class;
+			CSS		: in     String
+		) is
 		CSS_Path : Unbounded_String := To_Unbounded_String( "/pages/css/component:" );
-	begin	Append( CSS_Path, KOW_View.Components.Get_Name( Module.Component.all ) );
+	begin	Append( CSS_Path, KOW_View.Components.Get_Name( Component ) );
 		Append( CSS_Path, '/' );
 		Append( CSS_Path, CSS );
 
 		KOW_Lib.UString_Vectors.Append( Module.CSS_Includes, CSS_Path );
 	end Include_Component_CSS;
-
-
 
 
 	function Locate_Resource(
