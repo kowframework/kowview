@@ -1,6 +1,6 @@
 	KOW_Ent.Entity_Registry.Add_Property(
 			Entity_Tag	=> @_application_@.entities.@_entity_@'Tag,
-			Property	=> KOW_View.Entity_Properties.New_Rich_Text_Property(
+			Property	=> KOW_View.Entities.Properties.New_Rich_Text_Property(
 							Column_Name	=> "@_column_name_@",
 							Getter		=> @_getter_@'Unrestricted_Access,
 							Setter		=> @_setter_@'Unrestricted_Access

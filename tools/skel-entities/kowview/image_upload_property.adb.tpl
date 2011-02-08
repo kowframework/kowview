@@ -2,7 +2,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
 
 with KOW_Ent;
-with KOW_View.Entity_Properties;	use KOW_View.Entity_Properties;
+with KOW_View.Entities.Properties;	use KOW_View.Entities.Properties;
 
 
 
