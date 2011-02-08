@@ -12,7 +12,7 @@ with KOW_Ent.Extra_Properties;
 with KOW_Ent.Properties;
 with KOW_Sec;
 with KOW_Sec.Entities;
-with KOW_View.Entities;
+with KOW_View.Entities.Properties;
 
 -------------------------
 -- Getters and Setters --
