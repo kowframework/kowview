@@ -81,6 +81,9 @@ package KOW_View.Modules is
 		Component	: Component_Ptr;
 		-- the component that owns this module
 
+		Request_Mode	: Request_Mode_Type;
+		-- json or custom request?
+
 		Script_Includes	: KOW_Lib.UString_Vectors.Vector;
 		Dojo_Packages	: KOW_Lib.UString_Vectors.Vector;
 		CSS_Includes	: KOW_Lib.UString_Vectors.Vector;

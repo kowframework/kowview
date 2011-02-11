@@ -117,6 +117,7 @@ package body KOW_View.Pages.Services is
 					Request		=> Request,
 					Context		=> Page,
 					Module_ID	=> Module_ID,
+					Request_Mode	=> Json_Request,
 					Module		=> Complete.Module
 				);
 			Module_Id := Module_ID + 1;
@@ -235,6 +236,7 @@ package body KOW_View.Pages.Services is
 					Request		=> Request,
 					Context		=> Page,
 					Module_ID	=> Module_ID,
+					Request_mode	=> Custom_Request,
 					Module		=> Complete.Module
 				);
 			Module_Id := Module_ID + 1;

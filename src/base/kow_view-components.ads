@@ -202,6 +202,7 @@ package KOW_View.Components is
 				Request		: in     AWS.Status.Data;
 				Context		: in     String;
 				Module_Id	: in     Positive;
+				Request_Mode	: in     Request_Mode_Type;
 				Module		:    out Module_Ptr
 			) is abstract;
 	-- create a module, setting it's ID if necessary

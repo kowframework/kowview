@@ -99,6 +99,7 @@ pragma Elaborate_Body( KOW_View.Modules.Stateful_Module_Factories );
 				Request		: in     AWS.Status.Data;
 				Context		: in     String;
 				Module_Id	: in     Positive;
+				Request_Mode	: in     Request_Mode_Type;
 				Module		:    out Module_Ptr
 			);
 	-- create a module, setting it's ID if necessary
