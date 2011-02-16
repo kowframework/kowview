@@ -39,6 +39,7 @@ with KOW_Lib.UString_Vectors;
 with KOW_View.Components;
 with KOW_View.Components.Registry;
 with KOW_View.Components.Util;
+with KOW_View.Pages.Components;
 
 package body KOW_View.Pages.Services.Util is
 
@@ -125,7 +126,9 @@ package body KOW_View.Pages.Services.Util is
 												Configuration_Name	=> "page" / Page
 											);
 				begin
-					Config_File_Maps.Include( Cache, UPage, My_Config );
+					if KOW_View.Pages.Components.Component.Enable_Cache then
+						Config_File_Maps.Include( Cache, UPage, My_Config );
+					end if;
 					Config := My_Config;
 				end;
 		end Get_Config_File;

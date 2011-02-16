@@ -83,7 +83,6 @@ package body KOW_View.Pages.Services is
 	-- The Page Service --
 	----------------------
 
-
 	overriding
 	procedure Process_Json_Request(
 			Service	: in out Page_Service;

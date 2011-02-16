@@ -63,7 +63,6 @@ package KOW_View.Pages.Services.Util is
 			) return Index_Array;
 
 private
-	Enable_Cache : Boolean := True;
 
 
 	package Config_File_Maps is new Ada.Containers.Ordered_Maps(

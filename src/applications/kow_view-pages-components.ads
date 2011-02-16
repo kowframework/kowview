@@ -38,13 +38,17 @@ with KOW_View.Components;
 
 package KOW_View.Pages.Components is
 
-	type Pages_Component is new KOW_View.Components.Component_Type with null record;
+	type Pages_Component is new KOW_View.Components.Component_Type with record
+		Enable_Cache : Boolean;
+	end record;
 
 	overriding
 	procedure Setup(
 			Component	: in out Pages_Component;
 			Config		: in out KOW_Config.Config_File
-		) is null;
+		);
+	-- setup if the page has cache
+	-- default == false
 
 
 	Component : aliased Pages_Component;
