@@ -121,11 +121,19 @@ package body KOW_View.Pages.Services.Util is
 		exception
 			when CONSTRAINT_ERROR =>
 				declare
-					My_Config : constant KOW_Config.Config_File := KOW_View.Components.Util.Load_Configuration(
+					My_Config : KOW_Config.Config_File := KOW_View.Components.Util.Load_Configuration(
 												Component_Name		=> KOW_View.Components.Get_Name( KOW_View.Pages.Components.Component ),
 												Configuration_Name	=> "page" / Page
 											);
 				begin
+					if KOW_Config.Has_Element( My_Config, "extends" ) then
+						declare
+							Parent : KOW_Config.Config_File;
+						begin
+							Get_Config_File( Parent, KOW_Config.Element( My_Config, "extends" ) );
+							My_Config := KOW_Config.Merge_Configs( Parent => Parent, Child => My_Config );
+						end;
+					end if;
 					if KOW_View.Pages.Components.Component.Enable_Cache then
 						Config_File_Maps.Include( Cache, UPage, My_Config );
 					end if;

@@ -55,7 +55,8 @@ package KOW_View.Services is
 	--------------
 
 
-	type Service_Type is abstract new Ada.Finalization.Controlled with record
+	--type Service_Type is abstract new Ada.Finalization.Controlled with record
+	type Service_Type is abstract tagged record
 		-- this is the unit that process user requests
 		-- even the page processing is implemented as a service
 		--
