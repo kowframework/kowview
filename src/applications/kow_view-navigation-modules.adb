@@ -137,8 +137,7 @@ package body KOW_View.Navigation.Modules is
 										L_Code		=> Module.Locale.Code,
 										Dump_On_Error	=> True
 									);
-						Menu_Item.Href  := To_Unbounded_String( "/pages/page/" );
-						Append( Menu_Item.Href, To_Page_URI( Href ) );
+						Menu_Item.Href  := To_Unbounded_String( To_Page_URI( Href ) );
 
 						Menu_Item_Vectors.Append( Module.Items, Menu_Item );
 					else
