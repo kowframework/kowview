@@ -70,15 +70,6 @@ package body KOW_View.Navigation.Modules is
 
 		Current_Locale : KOW_Lib.Locales.Locale := KOW_View.Locales.Get_Locale( Request );
 
-		function Get_Page return String is
-		begin
-			return KOW_View.Pages.Services.Get_Page(
-							Service	=> KOW_View.Pages.Services.Page_Service_Cycles.Service_Instance,
-							Request	=> Request
-						);
-		end Get_Page;
-
-
 	begin
 		if Module.Is_Initialized and then Module.Locale = Current_Locale then
 			return;
@@ -90,7 +81,7 @@ package body KOW_View.Navigation.Modules is
 		
 		declare
 			Items		: KOW_Config.Config_File_Array := KOW_Config.Elements_Array( Config, "item" );
-			Current_Page	: constant String := Get_Page;
+			Current_Page	: constant String := To_String( Module.Context );
 
 			function Has_Access( Str : in String ) return Boolean is
 				

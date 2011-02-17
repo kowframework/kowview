@@ -46,7 +46,7 @@ package body KOW_View.URI_Util is
 			raise CONSTRAINT_ERROR with "can't get page name from URN " & URN;
 		end if;
 
-		return URN( URN'First + Page_URN_Identifier'Length .. URN'Last );
+		return '/' & URN( URN'First + Page_URN_Identifier'Length .. URN'Last );
 	end Get_Page_Name;
 
 

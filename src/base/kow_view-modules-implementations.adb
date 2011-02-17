@@ -64,7 +64,6 @@ package body KOW_View.Modules.Implementations is
 				Response:    out Unbounded_String
 			) is
 		-- return the content specified by the configuration
-		Buffer : Unbounded_String;
 
 		Resource_URI	: constant String := To_String( Module.Resource );
 		Locale		: constant KOW_Lib.Locales.Locale := KOW_View.Locales.Get_Locale( Request );
@@ -100,7 +99,6 @@ package body KOW_View.Modules.Implementations is
 	exception
 		when Ada.Text_IO.End_Error =>
 			Ada.Text_IO.Close( File );
-			Response := Buffer;
 
 	end Process_Body;
 end KOW_View.Modules.Implementations;
