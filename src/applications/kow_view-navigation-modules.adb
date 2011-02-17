@@ -47,6 +47,7 @@ with KOW_View.Locales;
 with KOW_View.Modules;
 with KOW_View.Modules.Stateful_Module_Factories;
 with KOW_View.Pages.Services;
+with KOW_View.Services.Util;
 with KOW_View.URI_Util;
 
 ---------
@@ -68,6 +69,16 @@ package body KOW_View.Navigation.Modules is
 		use KOW_Lib.Locales;
 
 		Current_Locale : KOW_Lib.Locales.Locale := KOW_View.Locales.Get_Locale( Request );
+
+		function Get_Page return String is
+		begin
+			return KOW_View.Pages.Services.Get_Page(
+							Service	=> KOW_View.Pages.Services.Page_Service_Cycles.Service_Instance,
+							Request	=> Request
+						);
+		end Get_Page;
+
+
 	begin
 		if Module.Is_Initialized and then Module.Locale = Current_Locale then
 			return;
@@ -78,7 +89,8 @@ package body KOW_View.Navigation.Modules is
 		Module.Locale := Current_Locale;
 		
 		declare
-			Items	: KOW_Config.Config_File_Array := KOW_Config.Elements_Array( Config, "item" );
+			Items		: KOW_Config.Config_File_Array := KOW_Config.Elements_Array( Config, "item" );
+			Current_Page	: constant String := Get_Page;
 
 			function Has_Access( Str : in String ) return Boolean is
 				
@@ -90,12 +102,18 @@ package body KOW_View.Navigation.Modules is
 				-- why? for several reasons...
 				-- 	1. the new process_request declared in kow_view.pages don't do anything but initializing
 				-- 	2. we are not actually processing the page.. we just want the access rules checked...
-				Dumb_Request  : AWS.Status.Data;
 				Dumb_Response : AWS.Response.Data;
+
 			begin
+				if Page = Current_Page then
+					-- it's fine to assume this module is going to be initialized
+					-- only after the page security has been aproved
+					return true;
+				end if;
+
 				Process_Custom_Request(
 						Service		=> Service,
-						Request		=> Dumb_Request,
+						Request		=> Request,
 						Response	=> Dumb_Response,
 						Page		=> Page,
 						Initialize_Only	=> True

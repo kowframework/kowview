@@ -48,7 +48,6 @@ with KOW_View.Pages.Components;
 with KOW_View.Services;
 with KOW_View.Services.Implementations;
 with KOW_View.Services.Singleton_Service_Cycles;
-with KOW_View.Services.Stateless_Service_Cycles;
 with KOW_View.Themes;
 
 
@@ -132,7 +131,7 @@ package KOW_View.Pages.Services is
 			);
 
 
-	package Page_Service_Cycles is new KOW_View.Services.Stateless_Service_Cycles(
+	package Page_Service_Cycles is new KOW_View.Services.Singleton_Service_Cycles(
 						Service_Type	=> Page_Service,
 						Component	=> KOW_View.Pages.Components.Component'Access
 					);
@@ -179,7 +178,7 @@ package KOW_View.Pages.Services is
 	----------------
 
 	type JS_Service is new Component_Resource_Service_Type with null record;
-	package JS_Service_Cycles is new KOW_View.Services.Stateless_Service_Cycles(
+	package JS_Service_Cycles is new KOW_View.Services.Singleton_Service_Cycles(
 						Service_Type	=> JS_Service,
 						Component	=> KOW_View.Pages.Components.Component'Access
 					);
