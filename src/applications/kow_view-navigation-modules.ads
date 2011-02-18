@@ -66,6 +66,10 @@ package KOW_View.Navigation.Modules is
 
 	type Menu_Module is new KOW_View.Modules.Module_Type with record
 		Items		: Menu_Item_Vectors.Vector;
+		Items_For	: KOW_Sec.User_Identity_Type := ( others => ' ' );
+		-- used to update the items list whenever we have other user in the current session
+		-- 	1. it could be thanks to a login procedure
+		-- 	2. it could be thanks to a switch user procedure...
 
 		Locale		: KOW_Lib.Locales.Locale;
 		-- used by initialize request everytime it's called so

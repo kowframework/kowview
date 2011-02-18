@@ -48,6 +48,7 @@ with KOW_View.Locales;
 with KOW_View.Modules;
 with KOW_View.Modules.Stateful_Module_Factories;
 with KOW_View.Pages.Services;
+with KOW_View.Security;
 with KOW_View.Services.Util;
 with KOW_View.URI_Util;
 
@@ -116,7 +117,16 @@ package body KOW_View.Navigation.Modules is
 
 	begin
 		if Module.Is_Initialized and then Module.Locale = Current_Locale then
-			return;
+			declare
+				use KOW_Sec;
+				User : KOW_Sec.User_Type := KOW_View.Security.Get_User( Request );
+			begin
+				if Module.Items_For = User.Data.Identity then
+					return;
+				else
+					Module.Items_For := User.Data.Identity;
+				end if;
+			end;
 		end if;
 
 		Menu_Item_Vectors.Clear( Module.Items );
