@@ -54,6 +54,16 @@ package body KOW_View.Security is
 	end Get_User;
 
 
+	procedure Reload_User_Data( Request : in AWS.Status.Data ) is
+		-- reload the logged user data into memory...
+		-- usefull when updating user settings and such
+		User : KOW_Sec.User_Type := Get_user( Request );
+	begin
+		User.Data := KOW_Sec.Get_User( User.Data.Identity );
+		User_Data.Set( AWS.Status.Session( Request ), User_Key, User );
+	end Reload_User_Data;
+
+
 	procedure Insert(
 				Params	: in out Templates_Parser.Translate_Set;
 				User	: in     KOW_Sec.User_Type

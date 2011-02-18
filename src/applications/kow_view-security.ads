@@ -76,6 +76,10 @@ package KOW_View.Security is
 
 
 
+	procedure Reload_User_Data( Request : in AWS.Status.Data );
+	-- reload the logged user data into memory...
+	-- usefull when updating user settings and such
+
 
 	procedure Insert(
 				Params	: in out Templates_Parser.Translate_Set;
