@@ -156,7 +156,7 @@ package body KOW_View.Navigation.Modules is
 					);
 				return true;
 			exception
-				when KOW_Sec.Access_Denied => 
+				when KOW_Sec.Access_Denied | KOW_Sec.Login_Required => 
 					return false;
 			end Has_Access;
 		begin
