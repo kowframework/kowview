@@ -28,8 +28,6 @@ pragma License( GPL );
 -- Modules for navigation component                                         --
 ------------------------------------------------------------------------------
 
-with ada.text_io;
-
 --------------
 -- Ada 2005 --
 --------------
@@ -150,7 +148,6 @@ package body KOW_View.Navigation.Modules is
 				Dumb_Response : AWS.Response.Data;
 
 			begin
-				ada.text_io.put_line( page & " vs " & current_page );
 				if Page = Current_Page then
 					-- it's fine to assume this module is going to be initialized
 					-- only after the page security has been aproved
