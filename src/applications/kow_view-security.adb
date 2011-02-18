@@ -93,6 +93,7 @@ package body KOW_View.Security is
 		Set( "account_status_message",	User.Account_Status_Message );
 		Set( "first_name",		User.First_Name );
 		Set( "last_name",		User.Last_Name );
+		Set( "gender",			KOW_Sec.Gender_Type'Image( User.Gender ) );
 		Set( "nickname",		User.Nickname );
 		Set( "primary_email",		User.Primary_Email );
 	end Insert;
