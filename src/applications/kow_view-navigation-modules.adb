@@ -166,16 +166,18 @@ package body KOW_View.Navigation.Modules is
 					Href	: constant String := KOW_Config.Element( Items( i ), "href" );
 					Menu_Item : Menu_Item_Type;
 				begin
-					if Is_Page_URN( Href ) and then Has_Access( Href ) then
-						Menu_Item.Label := KOW_Config.Element(
-										F		=> Items( i ),
-										Key		=> To_Unbounded_String( "label" ),
-										L_Code		=> Module.Locale.Code,
-										Dump_On_Error	=> True
-									);
-						Menu_Item.Href  := To_Unbounded_String( To_Page_URI( Href ) );
-
-						Menu_Item_Vectors.Append( Module.Items, Menu_Item );
+					if Is_Page_URN( Href ) then
+						if Has_Access( Href ) then
+							Menu_Item.Label := KOW_Config.Element(
+											F		=> Items( i ),
+											Key		=> To_Unbounded_String( "label" ),
+											L_Code		=> Module.Locale.Code,
+											Dump_On_Error	=> True
+										);
+							Menu_Item.Href  := To_Unbounded_String( To_Page_URI( Href ) );
+	
+							Menu_Item_Vectors.Append( Module.Items, Menu_Item );
+						end if;
 					else
 						Menu_Item.Label := KOW_Config.Element(
 										F		=> Items( i ),
