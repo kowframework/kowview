@@ -72,6 +72,11 @@ package KOW_View.Navigation.Modules is
 		-- we will check if there is a need to update the item
 
 		Is_Initialized	: Boolean := False;
+
+
+		Config		: KOW_Config.Config_File;
+		-- store the page config internally
+		-- this is to avoid infinite looping
 	end record;
 
 	overriding
@@ -80,8 +85,6 @@ package KOW_View.Navigation.Modules is
 				Request		: in     AWS.Status.Data;
 				Config		: in out KOW_Config.Config_File
 			);
-	-- build up the menu item vector for the selected locale
-	-- when the locale changes, update the list
 	
 	overriding
 	procedure Process_Body(
@@ -91,6 +94,15 @@ package KOW_View.Navigation.Modules is
 			);
 	-- return a html list (ul) with the given menu
 	
+
+	procedure Initialize_Menu_Items(
+				Module		: in out Menu_Module;
+				Request		: in     AWS.Status.Data
+			);
+	-- initialize all the menu items.
+	-- this can be overriden by your own implementation
+	--
+	-- is called during the Proces_Body request to avoid infite looping
 
 	package Menu_Factories is new KOW_View.Modules.Stateful_Module_Factories(
 					Module_Type	=> Menu_Module,

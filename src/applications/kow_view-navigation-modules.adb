@@ -28,6 +28,7 @@ pragma License( GPL );
 -- Modules for navigation component                                         --
 ------------------------------------------------------------------------------
 
+with ada.text_io;
 
 --------------
 -- Ada 2005 --
@@ -64,8 +65,51 @@ package body KOW_View.Navigation.Modules is
 				Request		: in     AWS.Status.Data;
 				Config		: in out KOW_Config.Config_File
 			) is
-		-- build up the menu item vector for the selected locale
-		-- when the locale changes, update the list
+	begin
+		Module.Config := Config;
+	end Initialize_Request;
+
+
+
+	overriding
+	procedure Process_Body(
+				Module		: in out Menu_Module;
+				Request		: in     AWS.Status.Data;
+				Response	:    out Unbounded_String
+			) is
+		-- return a html list (ul) with the given menu
+		Buffer : Unbounded_String := To_Unbounded_String( "<ul class=""menu"">" );
+	
+
+		procedure Iterator( C : in Menu_Item_Vectors.Cursor ) is
+			Menu_Item : Menu_Item_Type := Menu_Item_Vectors.Element( C );
+		begin
+			Append( Buffer, "<li class=""menu"">" );
+			Append( Buffer, "<a href=""" );
+				Append( Buffer, KOW_Lib.String_Util.Scriptify( To_String( Menu_Item.Href ) ) );
+			Append( Buffer, """>" );
+			Append( Buffer, Menu_Item.Label );
+			Append( Buffer, "</a></li>" );
+		end Iterator;
+	begin
+		
+		Initialize_Menu_Items( Module, Request );
+
+		Menu_Item_Vectors.Iterate( Module.Items, Iterator'Access );
+		Append( Buffer, "</ul>" );
+		Response := Buffer;
+	end Process_Body;
+
+
+
+	procedure Initialize_Menu_Items(
+				Module		: in out Menu_Module;
+				Request		: in     AWS.Status.Data
+			) is
+		-- initialize all the menu items.
+		-- this can be overriden by your own implementation
+		--
+		-- is called during the Proces_Body request to avoid infite looping
 		use KOW_Lib.Locales;
 
 		Current_Locale : KOW_Lib.Locales.Locale := KOW_View.Locales.Get_Locale( Request );
@@ -80,7 +124,7 @@ package body KOW_View.Navigation.Modules is
 		Module.Locale := Current_Locale;
 		
 		declare
-			Items		: KOW_Config.Config_File_Array := KOW_Config.Elements_Array( Config, "item" );
+			Items		: KOW_Config.Config_File_Array := KOW_Config.Elements_Array( Module.Config, "item" );
 			Current_Page	: constant String := To_String( Module.Context );
 
 			function Has_Access( Str : in String ) return Boolean is
@@ -96,6 +140,7 @@ package body KOW_View.Navigation.Modules is
 				Dumb_Response : AWS.Response.Data;
 
 			begin
+				ada.text_io.put_line( page & " vs " & current_page );
 				if Page = Current_Page then
 					-- it's fine to assume this module is going to be initialized
 					-- only after the page security has been aproved
@@ -145,34 +190,7 @@ package body KOW_View.Navigation.Modules is
 			end loop;
 		end;
 
-	end Initialize_Request;
 
-
-
-	overriding
-	procedure Process_Body(
-				Module		: in out Menu_Module;
-				Request		: in     AWS.Status.Data;
-				Response	:    out Unbounded_String
-			) is
-		-- return a html list (ul) with the given menu
-		Buffer : Unbounded_String := To_Unbounded_String( "<ul class=""menu"">" );
-	
-
-		procedure Iterator( C : in Menu_Item_Vectors.Cursor ) is
-			Menu_Item : Menu_Item_Type := Menu_Item_Vectors.Element( C );
-		begin
-			Append( Buffer, "<li class=""menu"">" );
-			Append( Buffer, "<a href=""" );
-				Append( Buffer, KOW_Lib.String_Util.Scriptify( To_String( Menu_Item.Href ) ) );
-			Append( Buffer, """>" );
-			Append( Buffer, Menu_Item.Label );
-			Append( Buffer, "</a></li>" );
-		end Iterator;
-	begin
-		Menu_Item_Vectors.Iterate( Module.Items, Iterator'Access );
-		Append( Buffer, "</ul>" );
-		Response := Buffer;
-	end Process_Body;
+	end Initialize_Menu_Items;
 
 end KOW_View.Navigation.Modules;
