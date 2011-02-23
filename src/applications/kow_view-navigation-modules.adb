@@ -32,6 +32,8 @@ pragma License( GPL );
 -- Ada 2005 --
 --------------
 with Ada.Containers.Vectors;
+with Ada.Strings;
+with Ada.Strings.Fixed;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 
 -------------------
@@ -66,6 +68,7 @@ package body KOW_View.Navigation.Modules is
 			) is
 	begin
 		Module.Config := Config;
+		Module.Dijit_Menu_Bar := KOW_Config.Value( Config, "dijit_menu_bar", True );
 	end Initialize_Request;
 
 
@@ -77,26 +80,99 @@ package body KOW_View.Navigation.Modules is
 				Response	:    out Unbounded_String
 			) is
 		-- return a html list (ul) with the given menu
-		Buffer : Unbounded_String := To_Unbounded_String( "<ul class=""menu"">" );
+		Current_Level	: Positive := 1;
 	
+
+
+		procedure Dijit_Iterator( C : in Menu_Item_Vectors.Cursor ) is
+			Menu_Item : Menu_Item_Type := Menu_Item_Vectors.Element( C );
+		begin
+			if Current_Level < Menu_Item.Level then
+				raise CONSTRAINT_ERROR with "Menu structure is all wrong... you should probably fix it";
+			end if;
+			-- we can't find a sub menu before a popupmenubaritem!
+
+			while Current_Level > Menu_Item.Level loop
+				-- close the previous sub menus..
+				Append( Response, "</div></div>" );
+				Current_level := Current_Level - 1;
+			end loop;
+
+			if Menu_Item.Href = "" then
+				if Current_Level = 1 then
+					Append( Response, "<div dojoType=""dijit.PopupMenuBarItem"">" );
+				else
+					Append( Response, "<div dojoType=""dijit.PopupMenuItem"">" );
+				end if;
+				Append( Response, "<span>" );
+				Append( Response, Menu_Item.Label );
+				Append( Response, "</span>" );
+
+				Append( Response, "<div dojoType=""dijit.Menu"">" );
+				Current_Level := Current_Level + 1;
+			else
+				if Current_Level = 1 then
+					Append( Response, "<div dojoType=""dijit.MenuBarItem"" " );
+				else
+					Append( Response, "<div dojoType=""dijit.MenuItem"" " );
+				end if;
+				
+				Append( Response, "onClick=""document.location.href='" );
+				Append( Response, Menu_Item.Href );
+				Append( Response, "'"">" );
+				Append( Response, Menu_Item.Label );
+				Append( Response, "</div>" );
+			end if;
+		end Dijit_Iterator;
+
 
 		procedure Iterator( C : in Menu_Item_Vectors.Cursor ) is
 			Menu_Item : Menu_Item_Type := Menu_Item_Vectors.Element( C );
+
+			function Level return String is
+			begin
+				return Ada.Strings.Fixed.Trim( Positive'Image( Menu_Item.Level ), Ada.Strings.Both );
+			end Level;
 		begin
-			Append( Buffer, "<li class=""menu"">" );
-			Append( Buffer, "<a href=""" );
-				Append( Buffer, KOW_Lib.String_Util.Scriptify( To_String( Menu_Item.Href ) ) );
-			Append( Buffer, """>" );
-			Append( Buffer, Menu_Item.Label );
-			Append( Buffer, "</a></li>" );
+			Append( Response, "<li class=""menu_" & Level & """>" );
+			Append( Response, "<a href=""" );
+				Append( Response, KOW_Lib.String_Util.Scriptify( To_String( Menu_Item.Href ) ) );
+			Append( Response, """>" );
+			Append( Response, Menu_Item.Label );
+			Append( Response, "</a></li>" );
 		end Iterator;
+
+
 	begin
-		
 		Initialize_Menu_Items( Module, Request );
 
-		Menu_Item_Vectors.Iterate( Module.Items, Iterator'Access );
-		Append( Buffer, "</ul>" );
-		Response := Buffer;
+
+		if Module.Dijit_Menu_Bar then
+			Include_Dojo_Package( Module, "dijit.Menu" );
+			Include_Dojo_Package( Module, "dijit.MenuBar" );
+    			Include_Dojo_Package( Module, "dijit.MenuBarItem");
+			Include_Dojo_Package( Module, "dijit.MenuItem" );
+			Include_Dojo_Package( Module, "dijit.PopupMenuBarItem" );
+			Include_Dojo_Package( Module, "dijit.PopupMenuItem" );
+
+
+
+		
+			Append( Response, "<div dojoType=""dijit.MenuBar"">" );
+			Menu_Item_Vectors.Iterate( Module.Items, Dijit_Iterator'Access );
+				while Current_Level > 1 loop
+					-- close the ramining sub menus
+					Append( Response, "</div></div>" );
+					Current_level := Current_Level - 1;
+				end loop;
+
+			Append( Response, "</div>" );
+
+		else
+			Append( Response, "<ul class=""menu"">" );
+			Menu_Item_Vectors.Iterate( Module.Items, Iterator'Access );
+			Append( Response, "</ul>" );
+		end if;
 	end Process_Body;
 
 
@@ -170,7 +246,7 @@ package body KOW_View.Navigation.Modules is
 			for i in Items'Range loop
 				declare
 					use KOW_View.URI_Util;
-					Href	: constant String := KOW_Config.Element( Items( i ), "href" );
+					Href	: constant String := KOW_Config.Value( Items( i ), "href", "" );
 					Menu_Item : Menu_Item_Type;
 				begin
 					if Is_Page_URN( Href ) then
@@ -181,6 +257,7 @@ package body KOW_View.Navigation.Modules is
 											L_Code		=> Module.Locale.Code,
 											Dump_On_Error	=> True
 										);
+							Menu_Item.Level := KOW_Config.Value( Items( i ), "level", 1 );
 							Menu_Item.Href  := To_Unbounded_String( To_Page_URI( Href ) );
 	
 							Menu_Item_Vectors.Append( Module.Items, Menu_Item );
@@ -192,6 +269,7 @@ package body KOW_View.Navigation.Modules is
 										L_Code		=> Module.Locale.Code,
 										Dump_On_Error	=> True
 									);
+						Menu_Item.Level := KOW_Config.Value( Items( i ), "level", 1 );
 						Menu_Item.Href := To_Unbounded_String( Href );
 						Menu_Item_Vectors.Append( Module.Items, Menu_Item );
 					end if;

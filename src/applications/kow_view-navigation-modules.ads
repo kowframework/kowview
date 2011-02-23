@@ -56,6 +56,7 @@ package KOW_View.Navigation.Modules is
 
 	type Menu_Item_Type is record
 		Label	: Unbounded_String;
+		Level	: Positive := 1;
 		Href	: Unbounded_String;
 	end record;
 
@@ -81,6 +82,9 @@ package KOW_View.Navigation.Modules is
 		Config		: KOW_Config.Config_File;
 		-- store the page config internally
 		-- this is to avoid infinite looping
+
+		Dijit_Menu_Bar	: Boolean := True;
+
 	end record;
 
 	overriding
@@ -113,4 +117,5 @@ package KOW_View.Navigation.Modules is
 					Component	=> KOW_View.Navigation.Components.Component'Access
 				);
 
+	
 end KOW_View.Navigation.Modules;
