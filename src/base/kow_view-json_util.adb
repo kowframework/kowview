@@ -91,7 +91,8 @@ package body KOW_View.json_util is
 				Value	=> Object 
 			);
 		return AWS.Response.Build(
-					Content_Type	=> "application/json", 
+					--Content_Type	=> "application/json", 
+					Content_Type	=> "text/javascript", 
 					Message_Body	=> To_Json( Response ),
 					Status_Code	=> Status_Code,
 					Cache_Control	=> Cache_Control
