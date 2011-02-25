@@ -118,6 +118,20 @@ package body KOW_View.Services is
 	end Parse_Template;
 
 
+	function Local_URI(
+				Service	: in Service_Type;
+				URI	: in String;
+				No_Slash: in Boolean := False
+			) return String is
+	begin
+		return Util.Local_URI(
+					Service	=> Service_Type'Class( Service ),
+					URI	=> URI,
+					No_Slash=> No_Slash
+				);
+	end Local_URI;
+
+
 	function Get_Name( Service : in Service_Type'Class ) return String is
 	begin
 		return KOW_View.Services.Util.Get_Name( Service'Tag );
