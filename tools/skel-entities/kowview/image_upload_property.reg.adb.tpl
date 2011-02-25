@@ -17,6 +17,10 @@
 							@@IF@@ @_thumbnail_@ /=""
 								,Thumbnail	=> "@_thumbnail_@"
 							@@END_IF@@
+							@@IF@@ @_big_@ /=""
+								,Big		=> "@_big_@"
+							@@END_IF@@
+
 							@@IF@@ @_convert_@ /= ""
 								,Convert	=> "@_convert_@"
 							@@END_IF@@
