@@ -99,26 +99,30 @@ package body KOW_View is
 
 					Wrap_Data : constant Boolean := AWS.Parameters.Get( AWS.Status.Parameters( Request ), "iframe" ) = "true";
 				begin
-					Process_JSon_Request(
-							Component	=> Component.all,
-							Request		=> Request,
-							Response	=> Object 
-						);
-
-					Response := KOW_View.Json_Util.Build_Success_Response( Object => Object, Wrap_Data => Wrap_Data );
-					KOW_Sec.Accounting.Set_Exit_Status(
-							My_Action,
-							KOW_Sec.Accounting.Exit_Success,
-							"finished json request"
-						);
+					begin
+						Process_JSon_Request(
+								Component	=> Component.all,
+								Request		=> Request,
+								Response	=> Object 
+							);
+		
+						Response := KOW_View.Json_Util.Build_Success_Response( Object => Object, Wrap_Data => Wrap_Data );
+						KOW_Sec.Accounting.Set_Exit_Status(
+								My_Action,
+								KOW_Sec.Accounting.Exit_Success,
+								"finished json request"
+							);
+					exception
+						when REDIRECT_TO_HOME =>
+							raise REDIRECT with To_String( Home );
+						when KOW_Sec.LOGIN_REQUIRED =>
+							raise REDIRECT with To_String( Login_Page );
+					end;
 	
 
 				exception
 					when e : REDIRECT =>
 						Response := KOW_View.Json_Util.Build_Redirect_Response( URI => Ada.Exceptions.Exception_Message( e ), Wrap_Data => Wrap_Data );
-					--when e : REDIRECT_TO_HOME | KOW_Sec.LOGIN_REQUIRED =>
-					-- NOTICE:: json responses should be treated as .. well... JSON!
-					-- so we don't reraise any occurence here.. simply return it to JS to handle
 					when e : others =>
 						Response := KOW_View.Json_Util.Build_Error_Response( E => E, Wrap_Data => Wrap_Data );
 						KOW_Sec.Accounting.Set_Exit_Status(
