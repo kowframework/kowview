@@ -45,10 +45,29 @@ with AWS.Messages;
 with AWS.Response;
 
 package KOW_View.json_util is
+
+
+	-- Notice about Wrap_Data (common in every build functions).
+	--
+	-- The method dojo.io.iframe.send() is the only way to send multipart/form-data to the server.
+	-- This method expects the response to be inside an html document such as:
+	-- <html>
+	--   <body>
+	--       <textarea>
+	--             payload
+	--       </textarea>
+	--   </body>
+	-- </html>
+	--
+	-- where payload the is the actual response.
+	-- 
+	-- Wrap_Data set to true does exactly this.
+
 	function Build_Error_Response(
 			E		: Ada.Exceptions.Exception_Occurrence;
 			Status_Code	: AWS.Messages.Status_Code := AWS.Messages.S505;
-			Cache_Control	: AWS.Messages.Cache_Option := AWS.Messages.No_Cache
+			Cache_Control	: AWS.Messages.Cache_Option := AWS.Messages.No_Cache;
+			Wrap_Data	: Boolean := False
 		) return AWS.Response.Data;
 	-- return a json encoded object with:
 	-- 	'status' : 'error'
@@ -59,7 +78,8 @@ package KOW_View.json_util is
 	function Build_Success_Response(
 			Object		: KOW_Lib.Json.Object_Type;
 			Status_Code	: AWS.Messages.Status_Code := AWS.Messages.S200;
-			Cache_Control	: AWS.Messages.Cache_Option := AWS.Messages.No_Cache
+			Cache_Control	: AWS.Messages.Cache_Option := AWS.Messages.No_Cache;
+			Wrap_Data	: Boolean := False
 		) return AWS.Response.Data;
 	-- return a json encoded object with
 	-- 	'status'  : 'success'
@@ -69,7 +89,8 @@ package KOW_View.json_util is
 	function Build_Redirect_Response(
 			URI		: String;
 			Status_Code	: AWS.Messages.Status_Code := AWS.Messages.S200;
-			Cache_Control	: AWS.Messages.Cache_Option := AWS.Messages.No_Cache
+			Cache_Control	: AWS.Messages.Cache_Option := AWS.Messages.No_Cache;
+			Wrap_Data	: Boolean := False
 		) return AWS.Response.Data;
 	-- return a json encoded object with
 	-- 	'status'  : 'redirect'
@@ -78,4 +99,16 @@ package KOW_View.json_util is
 	-- 	page:some/page
 	--
 	-- or anything else, in wich case isn't touched at all
+
+
+
+private
+	function Build(
+			Message_Body	: in String;
+			Status_Code	: in AWS.Messages.Status_Code;
+			Cache_Control	: in AWS.Messages.Cache_Option;
+			Wrap_Data	: in Boolean
+		) return AWS.Response.Data;
+	-- do the final building process (where wrap_data is actually used)
+
 end KOW_View.json_util;

@@ -49,7 +49,8 @@ package body KOW_View.json_util is
 	function Build_Error_Response(
 			E		: Ada.Exceptions.Exception_Occurrence;
 			Status_Code	: AWS.Messages.Status_Code := AWS.Messages.S505;
-			Cache_Control	: AWS.Messages.Cache_Option := AWS.Messages.No_Cache
+			Cache_Control	: AWS.Messages.Cache_Option := AWS.Messages.No_Cache;
+			Wrap_Data	: Boolean := False
 		) return AWS.Response.Data is
 		
 		use Ada.Exceptions;
@@ -61,11 +62,13 @@ package body KOW_View.json_util is
 		Set( Object, "status", "error" );
 		Set( Object, "error", Exception_Name( e ) );
 		Set( Object, "message", Exception_Message( e ) );
-		return AWS.Response.Build(
-					Content_Type	=> "application/json", 
-					Message_Body	=> To_Json( Object ),
-					Status_Code	=> Status_Code,
-					Cache_Control	=> Cache_Control
+
+
+		return Build(
+				Message_Body	=> To_Json( Object ),
+				Status_Code	=> Status_Code,
+				Cache_Control	=> Cache_Control,
+				Wrap_Data	=> Wrap_Data
 			);
 	end Build_Error_Response;
 
@@ -74,7 +77,8 @@ package body KOW_View.json_util is
 	function Build_Success_Response(
 			Object		: KOW_Lib.Json.Object_Type;
 			Status_Code	: AWS.Messages.Status_Code := AWS.Messages.S200;
-			Cache_Control	: AWS.Messages.Cache_Option := AWS.Messages.No_Cache
+			Cache_Control	: AWS.Messages.Cache_Option := AWS.Messages.No_Cache;
+			Wrap_Data	: Boolean := False
 		) return AWS.Response.Data is
 
 		Response : Object_Type;
@@ -90,12 +94,11 @@ package body KOW_View.json_util is
 				Key	=> "response",
 				Value	=> Object 
 			);
-		return AWS.Response.Build(
-					Content_Type	=> "application/json", 
-					--Content_Type	=> "text/javascript", 
-					Message_Body	=> To_Json( Response ),
-					Status_Code	=> Status_Code,
-					Cache_Control	=> Cache_Control
+		return Build(
+				Message_Body	=> To_Json( Response ),
+				Status_Code	=> Status_Code,
+				Cache_Control	=> Cache_Control,
+				Wrap_Data	=> Wrap_Data
 			);
 	end Build_Success_Response;
 
@@ -103,7 +106,8 @@ package body KOW_View.json_util is
 	function Build_Redirect_Response(
 			URI		: String;
 			Status_Code	: AWS.Messages.Status_Code := AWS.Messages.S200;
-			Cache_Control	: AWS.Messages.Cache_Option := AWS.Messages.No_Cache
+			Cache_Control	: AWS.Messages.Cache_Option := AWS.Messages.No_Cache;
+			Wrap_Data	: Boolean := False
 		) return AWS.Response.Data is
 		use KOW_View.URI_Util;
 		Response : Object_Type;
@@ -128,13 +132,40 @@ package body KOW_View.json_util is
 				);
 		end if;
 
-		return AWS.Response.Build(
-					Content_Type	=> "application/json",
-					Message_Body	=> To_Json( Response ),
-					Status_Code	=> Status_Code,
-					Cache_Control	=> Cache_Control
+		return Build(
+				Message_Body	=> To_Json( Response ),
+				Status_Code	=> Status_Code,
+				Cache_Control	=> Cache_Control,
+				Wrap_Data	=> Wrap_Data
 				);
 	end Build_Redirect_Response;
+
+
+
+	function Build(
+			Message_Body	: in String;
+			Status_Code	: in AWS.Messages.Status_Code;
+			Cache_Control	: in AWS.Messages.Cache_Option;
+			Wrap_Data	: in Boolean
+		) return AWS.Response.Data is
+		-- do the final building process (where wrap_data is actually used)
+	begin
+		if Wrap_Data then
+			return AWS.Response.Build(
+						Content_Type	=> "text/html",
+						Message_Body	=> "<html><body><textarea>" & Message_Body & "</textarea></body></html>",
+						Status_Code	=> Status_Code,
+						Cache_Control	=> Cache_Control
+					);
+		else
+			return AWS.Response.Build(
+						COntent_Type	=> "application/json",
+						Message_Body	=> Message_Body,
+						Status_Code	=> Status_Code,
+						Cache_Control	=> Cache_Control
+					);
+		end if;
+	end Build;
 
 
 end KOW_View.json_util;
