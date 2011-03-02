@@ -48,6 +48,7 @@ with KOW_View.Security.REST;
 ---------
 -- AWS --
 ---------
+with AWS.Messages;
 with AWS.Parameters;
 with AWS.Response;
 with AWS.Response.Set;
@@ -94,14 +95,15 @@ package body KOW_View.Security.Services is
 		if Username = "" and then Password = "" then
 			KOW_View.Security.REST.Insert_REST_Providers( Params );
 			Response := AWS.Response.Build(
-						"text/html",
-						Parse_Template(
-								Service			=> Service,
-								Template_Resource	=> Login_Page,
-								Template_Extension	=> HTML,
-								Parameters		=> Params,
-								Locale			=> KOW_View.Locales.Get_Locale( Request )
-							)
+						Content_Type	=> "text/html",
+						Message_Body	=> Parse_Template(
+										Service			=> Service,
+										Template_Resource	=> Login_Page,
+										Template_Extension	=> HTML,
+										Parameters		=> Params,
+										Locale			=> KOW_View.Locales.Get_Locale( Request )
+									),
+						Encoding	=> AWS.Messages.Deflate
 					);
 		else
 

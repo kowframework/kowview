@@ -42,6 +42,7 @@ with KOW_View.Services.Util;
 ---------
 -- AWS --
 ---------
+with AWS.Messages;
 with AWS.MIME;
 with AWS.Status;
 with AWS.Response;
@@ -78,7 +79,8 @@ package body KOW_View.Services.Implementations is
 	begin
 		Response := AWS.Response.File(
 				Content_Type    => AWS.MIME.Content_Type( Resource_Path ),
-				Filename        => Resource_Path
+				Filename        => Resource_Path,
+				Encoding	=> AWS.Messages.Deflate
 			);
 	end Process_Custom_Request;
 

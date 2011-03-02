@@ -45,6 +45,7 @@ with KOW_View.Themes.Components;
 ---------
 -- AWS --
 ---------
+with AWS.Messages;
 with AWS.Status;
 with Templates_Parser;			use Templates_Parser;
 
@@ -337,7 +338,11 @@ package body KOW_View.Themes.Template_Processors is
 		declare
 			contents : constant String := Templates_Parser.Parse( Template_File, Parameters );
 		begin
-			Output := AWS.Response.Build( "text/html", contents );
+			Output := AWS.Response.Build( 
+						Content_Type	=> "text/html", 
+						Message_Body	=> Contents,
+						Encoding	=> AWS.Messages.Deflate
+					);
 		end;
 	end Process;
 

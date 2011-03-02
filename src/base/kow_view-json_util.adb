@@ -162,7 +162,8 @@ package body KOW_View.json_util is
 						COntent_Type	=> "application/json",
 						Message_Body	=> Message_Body,
 						Status_Code	=> Status_Code,
-						Cache_Control	=> Cache_Control
+						Cache_Control	=> Cache_Control,
+						Encoding	=> AWS.Messages.Deflate
 					);
 		end if;
 	end Build;
