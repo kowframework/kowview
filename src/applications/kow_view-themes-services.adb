@@ -22,6 +22,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 pragma License( GPL );
+with ada.text_io;
 
 --------------
 -- Ada 2005 --
@@ -43,8 +44,8 @@ with KOW_View.Services.Util;
 ---------
 -- AWS --
 ---------
-with AWS.MIME;
 with AWS.Messages;
+with AWS.MIME;
 with AWS.Session;
 with AWS.Status;
 with AWS.Response;
@@ -84,11 +85,12 @@ package body KOW_View.Themes.Services is
 		if Extension = To_String( Service.Template_Extension ) then
 			raise CONSTRAINT_ERROR with "I can't show you my template sources! Sorry!";
 		end if;
+
 		-- if it got here, everything went well
 		Response := AWS.Response.File(
 				Content_Type	=> AWS.MIME.Content_Type( Complete_Path ),
 				Filename	=> Complete_Path,
-				Encoding	=> AWS.Messages.Gzip
+				encoding	=> AWS.Messages.deflate
 			);
 	end Process_Custom_Request;
 
