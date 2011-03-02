@@ -44,6 +44,7 @@ with KOW_View.Services.Util;
 -- AWS --
 ---------
 with AWS.MIME;
+with AWS.Messages;
 with AWS.Session;
 with AWS.Status;
 with AWS.Response;
@@ -86,7 +87,8 @@ package body KOW_View.Themes.Services is
 		-- if it got here, everything went well
 		Response := AWS.Response.File(
 				Content_Type	=> AWS.MIME.Content_Type( Complete_Path ),
-				Filename	=> Complete_Path
+				Filename	=> Complete_Path,
+				Encoding	=> AWS.Messages.Gzip
 			);
 	end Process_Custom_Request;
 
