@@ -77,24 +77,15 @@ package body KOW_View.Services.Implementations is
 								Locale		=> Locale
 							);
 	begin
-
-		if Extension = "js" then
-			-- we DO NOT encode JavaScript resources thanks to dojo.js
-			-- the thing is, dojo files can't be encoded for some weird reason... as I have no time for
-			-- this right now I'll leave this research for later on....
-			--
-			-- TODO :: see why dojo.js doesn't like gzip neither deflate
-			Response := AWS.Response.File(
-					Content_Type    => AWS.MIME.Content_Type( Resource_Path ),
-					Filename        => Resource_Path
-				);
-		else
-			Response := AWS.Response.File(
-					Content_Type    => AWS.MIME.Content_Type( Resource_Path ),
-					Filename        => Resource_Path,
-					Encoding	=> AWS.Messages.Deflate
-				);
-		end if;
+		-- we DO NOT encode JavaScript and CSS and anything else because... well... its not working at all
+		-- the thing is, dojo files can't be encoded for some weird reason... as I have no time for
+		-- this right now I'll leave this research for later on....
+		--
+		-- TODO :: see why dojo.js doesn't like gzip neither deflate
+		Response := AWS.Response.File(
+				Content_Type    => AWS.MIME.Content_Type( Resource_Path ),
+				Filename        => Resource_Path
+			);
 	end Process_Custom_Request;
 
 
