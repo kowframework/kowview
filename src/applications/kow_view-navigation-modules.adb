@@ -83,6 +83,16 @@ package body KOW_View.Navigation.Modules is
 		Current_Level	: Positive := 1;
 		URI		: constant String := AWS.Status.URI( Request );
 
+
+		procedure Append_Disabled( Menu_Item : in Menu_ITem_Type ) is
+		begin
+			if Menu_Item.Disable_When_Active then
+				if Menu_Item.Href = URI or else Menu_Item.Href = URI & "/main" then
+					Append( Response, " disabled" );
+				end if;
+			end if;
+		end Append_Disabled;
+
 		procedure Dijit_Iterator( C : in Menu_Item_Vectors.Cursor ) is
 			Menu_Item : Menu_Item_Type := Menu_Item_Vectors.Element( C );
 		begin
@@ -120,11 +130,8 @@ package body KOW_View.Navigation.Modules is
 				Append( Response, Menu_Item.Href );
 				Append( Response, "'""" );
 
-				if Menu_Item.Disable_When_Active then
-					if Menu_Item.Href = URI or else Menu_Item.Href = URI & "/main" then
-						Append( Response, " disabled" );
-					end if;
-				end if;
+				Append_Disabled( Menu_Item );
+
 				Append( Response, ">" );
 				Append( Response, Menu_Item.Label );
 				Append( Response, "</div>" );
@@ -143,7 +150,9 @@ package body KOW_View.Navigation.Modules is
 			Append( Response, "<li class=""menu_" & Level & """>" );
 			Append( Response, "<a href=""" );
 				Append( Response, KOW_Lib.String_Util.Scriptify( To_String( Menu_Item.Href ) ) );
-			Append( Response, """>" );
+			Append( Response, """" );
+			Append_Disabled( Menu_Item );
+			Append( Response, ">" );
 			Append( Response, Menu_Item.Label );
 			Append( Response, "</a></li>" );
 		end Iterator;
