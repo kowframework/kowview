@@ -29,7 +29,7 @@
 package body KOW_View.URI_Util is
 
 	Page_URN_Identifier	: constant String := "page:";
-	Page_Service_URI	: constant String := "/pages/page/";
+	Page_Service_URI	: constant String := "/pages/page";
 
 
 	function Is_Page_URN( URN : in String ) return Boolean is

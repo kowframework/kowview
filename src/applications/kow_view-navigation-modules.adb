@@ -81,8 +81,7 @@ package body KOW_View.Navigation.Modules is
 			) is
 		-- return a html list (ul) with the given menu
 		Current_Level	: Positive := 1;
-	
-
+		URI		: constant String := AWS.Status.URI( Request );
 
 		procedure Dijit_Iterator( C : in Menu_Item_Vectors.Cursor ) is
 			Menu_Item : Menu_Item_Type := Menu_Item_Vectors.Element( C );
@@ -119,7 +118,14 @@ package body KOW_View.Navigation.Modules is
 				
 				Append( Response, "onClick=""document.location.href='" );
 				Append( Response, Menu_Item.Href );
-				Append( Response, "'"">" );
+				Append( Response, "'""" );
+
+				if Menu_Item.Disable_When_Active then
+					if Menu_Item.Href = URI or else Menu_Item.Href = URI & "/main" then
+						Append( Response, " disabled" );
+					end if;
+				end if;
+				Append( Response, ">" );
 				Append( Response, Menu_Item.Label );
 				Append( Response, "</div>" );
 			end if;
@@ -249,6 +255,9 @@ package body KOW_View.Navigation.Modules is
 					Href	: constant String := KOW_Config.Value( Items( i ), "href", "" );
 					Menu_Item : Menu_Item_Type;
 				begin
+			
+					Menu_Item.Disable_When_Active := KOW_Config.Value( Items( i ), "disable_when_active", True );
+
 					if Is_Page_URN( Href ) then
 						if Has_Access( Href ) then
 							Menu_Item.Label := KOW_Config.Element(

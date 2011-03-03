@@ -55,9 +55,10 @@ package KOW_View.Navigation.Modules is
 
 
 	type Menu_Item_Type is record
-		Label	: Unbounded_String;
-		Level	: Positive := 1;
-		Href	: Unbounded_String;
+		Label			: Unbounded_String;
+		Level			: Positive := 1;
+		Href			: Unbounded_String;
+		Disable_When_Active	: Boolean := True;
 	end record;
 
 	package Menu_Item_Vectors is new Ada.Containers.Vectors(
