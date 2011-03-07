@@ -102,8 +102,8 @@ package body KOW_View.Security.Services is
 										Template_Extension	=> HTML,
 										Parameters		=> Params,
 										Locale			=> KOW_View.Locales.Get_Locale( Request )
-									),
-						Encoding	=> AWS.Messages.Deflate
+									)
+--						Encoding	=> AWS.Messages.Deflate
 					);
 		else
 

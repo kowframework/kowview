@@ -340,8 +340,8 @@ package body KOW_View.Themes.Template_Processors is
 		begin
 			Output := AWS.Response.Build( 
 						Content_Type	=> "text/html", 
-						Message_Body	=> Contents,
-						Encoding	=> AWS.Messages.Deflate
+						Message_Body	=> Contents
+--						Encoding	=> AWS.Messages.Deflate
 					);
 		end;
 	end Process;
