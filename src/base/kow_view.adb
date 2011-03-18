@@ -34,6 +34,8 @@
 with Ada.Characters.Handling;
 with Ada.Directories;
 with Ada.Exceptions;
+with Ada.Strings;
+with Ada.Strings.Fixed;
 with Ada.Tags;
 with Ada.Text_IO;
 
@@ -254,7 +256,7 @@ package body KOW_View is
 							Server		=> Server,
 							From		=> AWS.SMTP.E_Mail( T( E_Mail_From_Name ), T( E_Mail_From_Address ) ),
 							To		=> AWS.SMTP.E_Mail( T( E_Mail_To_Name ), T( E_Mail_To_Address ) ),
-							Subject		=> T( E_Mail_Subject ) & Exception_Name( E ),
+							Subject		=> T( Error_E_Mail_Subject ) & Exception_Name( E ),
 							Message		=> Exception_Information( E ), -- TODO :: maybe there is a better exception message I can send
 							Attachments	=> Attachments,
 							Status		=> Status
@@ -283,5 +285,78 @@ package body KOW_View is
 					);
 		end if;
 	end Handle_Exception;
+
+
+	------------------------------
+	-- Email Sending Procedures --
+	------------------------------
+
+
+
+
+	procedure Send_Email(
+			To_Name		: in String;
+			To_Address	: in String;
+			Subject		: in String;
+			Message		: in String 
+		) is
+
+		function T( U : in Unbounded_String ) return String renames To_String;
+		My_Action : KOW_Sec.Accounting.Base_Action_Type'Class := KOW_Sec.Accounting.New_Action(
+								Name		=> "email",
+								Root_Accountant	=> Accountant'Access
+							);
+
+		Server		: AWS.SMTP.Receiver := AWS.SMTP.Initialize( T( E_Mail_SMTP_Server ) );
+		Attachments	: AWS.SMTP.Client.Attachment_Set( 2 .. 1 );
+		Status		: AWS.SMTP.Status;
+	begin
+		AWS.SMTP.Client.Send(
+				Server		=> Server,
+				From		=> AWS.SMTP.E_Mail( T( E_Mail_From_Name ), T( E_Mail_From_Address ) ),
+				To		=> AWS.SMTP.E_Mail( To_Name, To_Address ),
+				Subject		=> Subject,
+				Message		=> Message,
+				Attachments	=> Attachments,
+				Status		=> Status
+			);
+		if AWS.SMTP.Is_OK( Status ) then
+			KOW_Sec.Accounting.Set_Exit_Status(
+					My_Action,
+					KOW_Sec.Accounting.Exit_Success,
+					"e-mail sent"
+				);
+		else
+			KOW_Sec.Accounting.Set_Exit_Status(
+					My_Action,
+					KOW_Sec.Accounting.Exit_Error,
+					"e-mail not sent"
+				);
+		end if;
+	end;
+
+
+
+
+
+	procedure Send_Email(
+			To	: in KOW_Sec.User_Data_Type;
+			Subject	: in String;
+			Message	: in String
+		) is
+		-- send plain text email messages
+		function T( Str : in String ) return String is
+		begin
+			return Ada.Strings.Fixed.Trim( Str, Ada.Strings.Both );
+		end T;
+
+	begin
+		Send_Email(
+				To_Name		=> T( To.Nickname ),
+				To_Address	=> T( To.Primary_Email ),
+				Subject		=> Subject,
+				Message		=> Message
+			);
+	end Send_Email;
 
 end KOW_View;

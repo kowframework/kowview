@@ -107,13 +107,37 @@ package KOW_View is
 	-- send email with information about excetpions that aren't expected
 	-- disabled by default on development environments
 
-	E_Mail_From_Name	: Unbounded_String := To_Unbounded_String( "Marcelo" );
-	E_Mail_From_Address	: Unbounded_String := To_Unbounded_String( "marcelo@kow.com.br" );
+	E_Mail_From_Name	: Unbounded_String := To_Unbounded_String( "Teca" );
+	E_Mail_From_Address	: Unbounded_String := To_Unbounded_String( "teca@teca.etc.br" );
 
 	E_Mail_To_Name		: Unbounded_String := To_Unbounded_String( "Marcelo" );
 	E_Mail_To_Address	: Unbounded_String := To_Unbounded_String( "marcelo@kow.com.br" );
 
-	E_Mail_Subject		: Unbounded_String := To_Unbounded_String( "[Unhandled Exception] " );
+	Error_E_Mail_Subject	: Unbounded_String := To_Unbounded_String( "[Unhandled Exception] " );
+
 	E_Mail_SMTP_Server	: Unbounded_String := To_Unbounded_String( "localhost" );
+
+
+
+
+	------------------------------
+	-- Email Sending Procedures --
+	------------------------------
+
+	procedure Send_Email(
+			To_Name		: in String;
+			To_Address	: in String;
+			Subject		: in String;
+			Message		: in String
+		);
+
+
+
+	procedure Send_Email(
+			To	: in KOW_Sec.User_Data_Type;
+			Subject	: in String;
+			Message	: in String
+		);
+	-- send plain text email messages
 
 end KOW_View;
