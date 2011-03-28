@@ -72,7 +72,7 @@ package body KOW_View.Security.Modules is
 				Request	=> Request
 			);
 
-		KOW_Sec.Authorization_Criterias.Require( Criteria, KOW_View.Security.Get_User( Request ) );
+		KOW_Sec.Accounting.Require( Criteria, KOW_View.Security.Get_User( Request ), Accountant'Access );
 	end Initialize_Request;
 
 
@@ -107,7 +107,7 @@ package body KOW_View.Security.Modules is
 				Request	=> Request
 			);
 
-		KOW_Sec.Authorization_Criterias.Require( Criteria, KOW_View.Security.Get_User( Request ) );
+		KOW_Sec.Accounting.Require( Criteria, KOW_View.Security.Get_User( Request ), Accountant'Access );
 	end Process_Head;
 
 
