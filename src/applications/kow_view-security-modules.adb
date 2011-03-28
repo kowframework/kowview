@@ -75,6 +75,42 @@ package body KOW_View.Security.Modules is
 		KOW_Sec.Authorization_Criterias.Require( Criteria, KOW_View.Security.Get_User( Request ) );
 	end Initialize_Request;
 
+
+	--------------------------
+	-- Head Criteria Module --
+	--------------------------
+
+	overriding
+	procedure Initialize_Request(
+				Module	: in out Head_Criteria_Module;
+				Request	: in     AWS.Status.Data;
+				Config	: in out KOW_Config.Config_File
+			) is
+	begin
+		Module.Descriptor := KOW_Config.Element( Config, "descriptor" );
+	end Initialize_Request;
+
+	
+	overriding
+	procedure Process_Head(
+				Module	: in out Head_Criteria_Module;
+				Request	: in     AWS.Status.Data;
+				Output	:    out Unbounded_String
+			) is
+		Criteria : KOW_Sec.Authorization_Criterias.Expression_Criteria_Type;
+	begin
+		Criteria.Descriptor := Module.Descriptor;
+
+		Add_Contexts(
+				Module	=> Head_Criteria_Module'Class( Module ), 
+				Criteria=> Criteria,
+				Request	=> Request
+			);
+
+		KOW_Sec.Authorization_Criterias.Require( Criteria, KOW_View.Security.Get_User( Request ) );
+	end Process_Head;
+
+
 	-----------------------------
 	-- Login Controller Module --
 	-----------------------------

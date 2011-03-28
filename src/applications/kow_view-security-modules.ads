@@ -88,6 +88,42 @@ package KOW_View.Security.Modules is
 						Component	=> KOW_View.Security.Components.Component'Access
 					);
 
+
+	--------------------------
+	-- Head Criteria Module --
+	--------------------------
+
+	type Head_Criteria_Module is new KOW_View.Modules.Module_Type with record
+		-- same as criteria module, but check the criteria while processing the head
+		-- usefull for criterias that depend on a given context (such as a given entity)
+		Descriptor : Unbounded_String;
+	end record;
+
+	overriding
+	procedure Initialize_Request(
+				Module	: in out Head_Criteria_Module;
+				Request	: in     AWS.Status.Data;
+				Config	: in out KOW_Config.Config_File
+			);
+	
+	overriding
+	procedure Process_Head(
+				Module	: in out Head_Criteria_Module;
+				Request	: in     AWS.Status.Data;
+				Output	:    out Unbounded_String
+			);
+	
+	procedure Add_Contexts(
+				Module	: in out Head_Criteria_Module;
+				Criteria: in out KOW_Sec.Authorization_Criterias.Expression_Criteria_Type'Class;
+				Request	: in     AWS.Status.Data
+			) is null;
+	
+	package Head_Criteria_Module_Factories is new KOW_View.Modules.Stateless_Module_Factories(
+						Module_Type	=> Head_Criteria_Module,
+						Component	=> KOW_View.Security.Components.Component'Access
+					);
+
 	-----------------------------
 	-- Login Controller Module --
 	-----------------------------
