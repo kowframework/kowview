@@ -59,10 +59,23 @@ with AWS.Status;
 with Templates_Parser;
 
 package KOW_View.Security is
+
+	----------------
+	-- Accounting --
+	----------------
 	Accountant      : aliased KOW_Sec.Accounting.Accountant_Type := KOW_Sec.Accounting.New_Accountant( "security", KOW_View.Accountant'Access );
 
 
 
+	-----------
+	-- Roles --
+	-----------
+	Switch_User : constant KOW_Sec.Role_Type := KOW_Sec.New_Role( "security", "switch_user" );
+
+
+	-------------------
+	-- User Handling --
+	-------------------
 
 	User_Key	: constant String;
 	package User_Data is new AWS.Session.Generic_Data(

@@ -48,5 +48,5 @@ begin
 			True
 		);
 	
-	KOW_Sec.Roles_Registry.Register( "security", "switch_user" );
+	KOW_Sec.Roles_Registry.Register( KOW_View.Security.Switch_User );
 end KOW_View.Security.Load;
