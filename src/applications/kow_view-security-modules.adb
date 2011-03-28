@@ -51,6 +51,34 @@ package body KOW_View.Security.Modules is
 
 
 
+	---------------------
+	-- Criteria Module --
+	---------------------
+
+	overriding
+	procedure Initialize_Request(
+				Module	: in out Criteria_Module;
+				Request	: in     AWS.Status.Data;
+				Config	: in out KOW_Config.Config_File
+			) is
+		-- where the magic happens
+		Criteria : KOW_Sec.Authorization_Criterias.Expression_Criteria_Type;
+	begin
+		Criteria.Descriptor := KOW_Config.Element( Config, "descriptor" );
+
+		Add_Contexts(
+				Module	=> Criteria_Module'Class( Module ), 
+				Criteria=> Criteria,
+				Request	=> Request
+			);
+
+		KOW_Sec.Authorization_Criterias.Require( Criteria, KOW_View.Security.Get_User( Request ) );
+	end Initialize_Request;
+
+	-----------------------------
+	-- Login Controller Module --
+	-----------------------------
+
 	HTML : constant String := "html";
 
 	overriding
@@ -115,5 +143,23 @@ package body KOW_View.Security.Modules is
 		end if;
 	end Process_Body;
 
+
+	---------------------------
+	-- Login Required Module --
+	---------------------------
+
+
+	overriding
+	procedure Initialize_Request(
+				Module	: in out Login_Required_Module;
+				Request	: in     AWS.Status.Data;
+				Config	: in out KOW_Config.Config_File
+			) is
+	begin
+		if KOW_Sec.Is_Anonymous( KOW_View.Security.Get_user( Request ) ) then
+			raise KOW_Sec.Login_Required;
+		end if;
+	end Initialize_Request;
+	
 
 end KOW_View.Security.Modules;
