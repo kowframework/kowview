@@ -88,9 +88,12 @@ package body KOW_View is
 										Name		=> "request:" & AWS.Status.URI( Request ),
 										Root_Accountant	=> Accountant'Access
 									);
+		URI : constant String := AWS.Status.URI( Request );
 	begin
-		if AWS.Status.URI( Request ) = "/favicon.ico" then
+		if URI = "/favicon.ico" then
 			raise REDIRECT with "/themes/theme/favicon.ico";
+		elsif URI = "/robots.txt" then
+			raise REDIRECT with "/pages/static/robots.txt";
 		end if;
 
 		Component := Component_Ptr( Registry.Get_Component( Request ) );
