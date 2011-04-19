@@ -155,6 +155,7 @@ package body KOW_View.Security.Modules is
 	begin
 		if KOW_Sec.Is_Anonymous( User ) then
 			Include_Dojo_Package( Module, "dijit.form.Button" );
+			Include_Dojo_Package( Module, "dijit.form.Form" );
 			Include_Dojo_Package( Module, "dijit.form.ValidationTextBox" );
 			Include_Component_Script( Module, "login.js" );
 			KOW_View.Security.REST.Insert_REST_Providers( Params );
