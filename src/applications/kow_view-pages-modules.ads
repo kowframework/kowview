@@ -28,7 +28,10 @@ pragma License( GPL );
 -- Main package for the Pages application                                   --
 ------------------------------------------------------------------------------
 
-
+--------------
+-- Ada 2005 --
+--------------
+with Ada.Strings.Unbounded;
 
 -------------------
 -- KOW Framework --
@@ -46,6 +49,32 @@ with AWS.Status;
 
 package KOW_View.Pages.Modules is
 
+
+	---------------------------
+	-- Exception Test Module --
+	---------------------------
+
+	AN_EXCEPTION : Exception;
+
+	type Exception_Test_Module is new KOW_View.Modules.Module_Type with null record;
+	
+	overriding
+	procedure Process_Body(
+			Module	: in out Exception_Test_Module;
+			Request	: in     AWS.Status.Data;
+			Response:    out Ada.Strings.Unbounded.Unbounded_String
+		);
+
+	package Exception_Test_Module_Factories is new KOW_View.Modules.Stateless_Module_Factories(
+					Module_Type	=> Exception_Test_Module,
+					Component	=> KOW_View.Pages.Components.Component'Access
+				);
+
+
+	-------------------
+	-- Static Module --
+	-------------------
+
 	type Static_Module is new KOW_View.Modules.Implementations.Resource_Module with null record;
 	-- serve static content...
 
@@ -54,6 +83,9 @@ package KOW_View.Pages.Modules is
 					Component	=> KOW_View.Pages.Components.Component'Access
 				);
 	
+	-----------------
+	-- Void Module --
+	-----------------
 
 	type Void_Module is new KOW_View.Modules.Module_type with null record;
 
