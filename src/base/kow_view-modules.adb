@@ -80,6 +80,15 @@ package body KOW_View.Modules is
 	end Get_Dojo_Packages;
 
 	overriding
+	function Get_Dojo_CSS(
+			Module		: in Module_Type
+		) return KOW_Lib.UString_Vectors.Vector is
+	begin
+		return Module.Dojo_CSS;
+	end Get_Dojo_CSS;
+
+
+	overriding
 	function Get_CSS_Includes(
 			Module		: in     Module_Type
 		) return KOW_Lib.UString_Vectors.Vector is
@@ -121,6 +130,16 @@ package body KOW_View.Modules is
 	begin
 		KOW_Lib.UString_Vectors.Append( Module.Dojo_Packages, To_Unbounded_String( Dojo_Package ) );
 	end Include_Dojo_Package;
+
+
+	procedure Include_Dojo_CSS(
+			Module		: in out Module_Type;
+			Dojo_CSS	: in     String
+		) is
+	begin
+		KOW_Lib.UString_Vectors.Append( Module.Dojo_CSS, To_Unbounded_String( Dojo_CSS ) );
+	end Include_Dojo_CSS;
+
 
 	procedure Include_Component_CSS(
 			Module		: in out Module_Type;

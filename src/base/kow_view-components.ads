@@ -137,6 +137,10 @@ package KOW_View.Components is
 	function Get_Dojo_Packages(
 			Module		: in     Module_Interface
 		) return KOW_Lib.UString_Vectors.Vector is abstract;
+	
+	function Get_Dojo_CSS(
+			Module		: in     Module_Interface
+		) return KOW_Lib.UString_Vectors.Vector is abstract;
 
 	function Get_CSS_Includes(
 			Module		: in     Module_Interface

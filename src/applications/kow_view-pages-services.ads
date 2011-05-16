@@ -210,5 +210,5 @@ private
 	-- initialized by the body elaboration, includes all the script includes required by the
 	-- page service except for dojo main package (as it requires configuration in HTML part)
 	Page_Dojo_Packages	: KOW_Lib.UString_Vectors.Vector;
-	-- sabe as Page_Script_Includes but for dojo packages
+	-- same as Page_Script_Includes but for dojo packages
 end KOW_View.Pages.Services;

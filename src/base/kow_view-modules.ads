@@ -86,6 +86,7 @@ package KOW_View.Modules is
 
 		Script_Includes	: KOW_Lib.UString_Vectors.Vector;
 		Dojo_Packages	: KOW_Lib.UString_Vectors.Vector;
+		Dojo_CSS	: KOW_Lib.UString_Vectors.Vector;
 		CSS_Includes	: KOW_Lib.UString_Vectors.Vector;
 	end record;
 
@@ -102,6 +103,11 @@ package KOW_View.Modules is
 	overriding
 	function Get_Dojo_Packages(
 			Module		: in     Module_Type
+		) return KOW_Lib.UString_Vectors.Vector;
+	
+	overriding
+	function Get_Dojo_CSS(
+			Module		: in Module_Type
 		) return KOW_Lib.UString_Vectors.Vector;
 
 	overriding
@@ -125,6 +131,11 @@ package KOW_View.Modules is
 	procedure Include_Dojo_Package(
 			Module		: in out Module_Type;
 			Dojo_Package	: in     String
+		);
+	
+	procedure Include_Dojo_CSS(
+			Module		: in out Module_Type;
+			Dojo_CSS	: in     String
 		);
 
 	procedure Include_Component_CSS(

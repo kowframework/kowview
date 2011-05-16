@@ -165,6 +165,7 @@ package body KOW_View.Themes.Template_Processors is
 	begin
 		Insert_All( "script_includes", Include_Buffers.Script_Includes );
 		Insert_All( "dojo_packages", Include_Buffers.Dojo_Packages );
+		Insert_All( "dojo_css", Include_Buffers.Dojo_CSS );
 		Insert_All( "css_includes", Include_Buffers.CSS_Includes );
 	end Insert;
 
@@ -238,6 +239,18 @@ package body KOW_View.Themes.Template_Processors is
 				To	=> Processor.Include_Buffers.Dojo_Packages
 			);
 	end Append_Dojo_Packages;
+
+	procedure Append_Dojo_CSS(
+				Processor	: in out Template_Processor_Type;
+				Dojo_CSS	: in     KOW_Lib.Ustring_Vectors.Vector
+			) is
+	begin
+		Append_Unique(
+				From	=> Dojo_CSS,
+				To	=> Processor.Include_Buffers.Dojo_CSS
+			);
+	end Append_Dojo_CSS;
+
 
 
 	procedure Append_CSS_Includes(
