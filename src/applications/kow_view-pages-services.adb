@@ -317,6 +317,15 @@ package body KOW_View.Pages.Services is
 				);
 		end Process_Dojo_Packages;
 
+
+		procedure Process_Dojo_CSS( Complete : in out Complete_Module_Type ) is
+		begin
+			Append_Dojo_CSS(
+					Processor	=> Processor,
+					Dojo_CSS	=> Get_Dojo_CSS( Complete.Module.all )
+				);
+		end Process_Dojo_CSS;
+
 		procedure Process_CSS_Includes( Complete : in out Complete_Module_Type ) is
 		begin
 			Append_CSS_Includes(
@@ -416,6 +425,7 @@ package body KOW_View.Pages.Services is
 
 			Iterate( Modules => Modules, Iterator => Process_Script_Includes'Access );
 			Iterate( Modules => Modules, Iterator => Process_Dojo_Packages'Access );
+			Iterate( Modules => Modules, Iterator => Process_Dojo_CSS'Access );
 			Iterate( Modules => Modules, Iterator => Process_CSS_Includes'Access );
 		end if;
 		Iterate( Modules => Modules, Iterator => Finalize'Access );
