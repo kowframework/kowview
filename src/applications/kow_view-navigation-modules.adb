@@ -86,10 +86,8 @@ package body KOW_View.Navigation.Modules is
 
 		procedure Append_Disabled( Menu_Item : in Menu_ITem_Type ) is
 		begin
-			if Menu_Item.Disable_When_Active then
-				if Menu_Item.Href = URI or else Menu_Item.Href = URI & "/main" then
-					Append( Response, " disabled" );
-				end if;
+			if Menu_Item.Disable_When_Active and then Is_Active( Menu_Module'Class( Module ), Request, Menu_Item ) then
+				Append( Response, " disabled" );
 			end if;
 		end Append_Disabled;
 
@@ -159,7 +157,7 @@ package body KOW_View.Navigation.Modules is
 
 
 	begin
-		Initialize_Menu_Items( Module, Request );
+		Initialize_Menu_Items( Menu_Module'Class( Module ), Request );
 
 
 		if Module.Dijit_Menu_Bar then
@@ -224,78 +222,202 @@ package body KOW_View.Navigation.Modules is
 		
 		declare
 			Items		: KOW_Config.Config_File_Array := KOW_Config.Elements_Array( Module.Config, "item" );
-			Current_Page	: constant String := To_String( Module.Context );
-
-			function Has_Access( Str : in String ) return Boolean is
-				
-				Page : constant String := KOW_View.URI_Util.Get_Page_Name( Str );
-				
-				use KOW_View.Pages.Services;
-				Service : Page_Service;
-				-- luckly I don't need to call the page service from a instance created by any of the elements in here..
-				-- why? for several reasons...
-				-- 	1. the new process_request declared in kow_view.pages don't do anything but initializing
-				-- 	2. we are not actually processing the page.. we just want the access rules checked...
-				Dumb_Response : AWS.Response.Data;
-
-			begin
-				if Page = Current_Page then
-					-- it's fine to assume this module is going to be initialized
-					-- only after the page security has been aproved
-					return true;
-				end if;
-
-				Process_Custom_Request(
-						Service		=> Service,
-						Request		=> Request,
-						Response	=> Dumb_Response,
-						Page		=> Page,
-						Initialize_Only	=> True
-					);
-				return true;
-			exception
-				when KOW_Sec.Access_Denied | KOW_Sec.Login_Required => 
-					return false;
-			end Has_Access;
 		begin
 			for i in Items'Range loop
 				declare
-					use KOW_View.URI_Util;
-					Href	: constant String := KOW_Config.Value( Items( i ), "href", "" );
-					Menu_Item : Menu_Item_Type;
-				begin
-			
-					Menu_Item.Disable_When_Active := KOW_Config.Value( Items( i ), "disable_when_active", True );
-
-					if Is_Page_URN( Href ) then
-						if Has_Access( Href ) then
-							Menu_Item.Label := KOW_Config.Element(
-											F		=> Items( i ),
-											Key		=> To_Unbounded_String( "label" ),
-											L_Code		=> Module.Locale.Code,
-											Dump_On_Error	=> True
-										);
-							Menu_Item.Level := KOW_Config.Value( Items( i ), "level", 1 );
-							Menu_Item.Href  := To_Unbounded_String( To_Page_URI( Href ) );
-	
-							Menu_Item_Vectors.Append( Module.Items, Menu_Item );
-						end if;
-					else
-						Menu_Item.Label := KOW_Config.Element(
-										F		=> Items( i ),
-										Key		=> To_Unbounded_String( "label" ),
-										L_Code		=> Module.Locale.Code,
-										Dump_On_Error	=> True
+					Menu_Item : Menu_Item_Type := New_Menu_Item(
+										Module		=> Menu_Module'Class( Module ),
+										Request		=> Request,
+										Item_ID		=> i,
+										Menu_Config	=> Items( i )
 									);
-						Menu_Item.Level := KOW_Config.Value( Items( i ), "level", 1 );
-						Menu_Item.Href := To_Unbounded_String( Href );
+				begin
+					if Menu_Item.Has_Access then
 						Menu_Item_Vectors.Append( Module.Items, Menu_Item );
 					end if;
 				end;
 			end loop;
 		end;
-
-
 	end Initialize_Menu_Items;
+
+	function New_Menu_Item(
+				Module		: in     Menu_Module;
+				Request		: in     AWS.Status.Data;
+				Item_ID		: in     Positive;
+				Menu_Config	: in     KOW_Config.Config_File
+			) return Menu_Item_Type is
+		use KOW_View.URI_Util;
+
+		Current_Page	: constant String := To_String( Module.Context );
+		Href		: constant String := KOW_Config.Value( Menu_Config, "href", "" );
+		Menu_Item	: Menu_Item_Type;
+
+		function Has_Access( Str : in String ) return Boolean is
+			
+			Page : constant String := KOW_View.URI_Util.Get_Page_Name( Str );
+			
+			use KOW_View.Pages.Services;
+			Service : Page_Service;
+			-- luckly I don't need to call the page service from a instance created by any of the elements in here..
+			-- why? for several reasons...
+			-- 	1. the new process_request declared in kow_view.pages don't do anything but initializing
+			-- 	2. we are not actually processing the page.. we just want the access rules checked...
+			Dumb_Response : AWS.Response.Data;
+
+		begin
+			if Page = Current_Page then
+				-- it's fine to assume this module is going to be initialized
+				-- only after the page security has been aproved
+				return true;
+			end if;
+
+			Process_Custom_Request(
+					Service		=> Service,
+					Request		=> Request,
+					Response	=> Dumb_Response,
+					Page		=> Page,
+					Initialize_Only	=> True
+				);
+			return true;
+		exception
+			when KOW_Sec.Access_Denied | KOW_Sec.Login_Required => 
+				return false;
+		end Has_Access;
+	begin
+		Menu_Item.ID := Item_ID;
+		Menu_Item.Disable_When_Active := KOW_Config.Value( Menu_Config, "disable_when_active", True );
+		Menu_Item.Label := KOW_Config.Element(
+						F		=> Menu_Config,
+						Key		=> To_Unbounded_String( "label" ),
+						L_Code		=> Module.Locale.Code,
+						Dump_On_Error	=> True
+					);
+		Menu_Item.Level := KOW_Config.Value( Menu_Config, "level", 1 );
+
+		if Is_Page_URN( Href ) then
+			Menu_Item.Has_Access := Has_Access( Href );
+			Menu_Item.Href  := To_Unbounded_String( To_Page_URI( Href ) );
+		else
+			Menu_Item.Has_Access := True;
+			Menu_Item.Href := To_Unbounded_String( Href );
+		end if;
+
+		return Menu_Item;
+	end New_Menu_Item;
+
+
+
+	function Is_Active(
+				Module		: in     Menu_Module;
+				Request		: in     AWS.Status.Data;
+				Menu_Item	: in     Menu_Item_Type
+			) return Boolean is
+		-- used only when disable_when_active is set in the item
+		URI		: constant String := AWS.Status.URI( Request );
+	begin
+		return  Menu_Item.Href = URI or else Menu_Item.Href = URI & "/main";
+	end Is_Active;
+
+
+	--------------------------
+	-- Module Switcher Menu --
+	--------------------------
+	
+	overriding
+	procedure Initialize_Request(
+				Module		: in out Module_Switcher_Menu_Module;
+				Request		: in     AWS.Status.Data;
+				Config		: in out KOW_Config.Config_File
+			) is
+	begin
+		Module.Preserve_Variables := KOW_Lib.String_Util.Explode( ',', KOW_Config.Value( Config, "preserve_variables", Null_Unbounded_String ) );
+
+
+		Module.Default_Item	:= Positive'Value( KOW_Config.Value( Config, "default_item", "1" ) );
+		-- the default item to be accepted as selected
+
+		Module.Selector_Variable:= KOW_Config.Value( Config, "selector_variable", To_Unbounded_String( "selected_module_id" ) );
+		-- the variable where should be stored the current selected module 
+
+
+		Initialize_Request(
+				Module	=> Menu_Module( Module ),
+				Request	=> Request,
+				Config	=> Config
+			);
+	end Initialize_Request;
+
+
+	overriding
+	function New_Menu_Item(
+				Module		: in     Module_Switcher_Menu_Module;
+				Request		: in     AWS.Status.Data;
+				Item_ID		: in     Positive;
+				Menu_Config	: in     KOW_Config.Config_File
+			) return Menu_Item_Type is
+		-- initialize each menu item...
+		Menu_Item	: Menu_Item_Type;
+
+		P		: AWS.Parameters.List := AWS.Status.Parameters( Request );
+
+		procedure Append_Preserved_Variables( C : in KOW_Lib.UString_Vectors.Cursor ) is
+			K : constant String := To_String( KOW_Lib.UString_Vectors.Element( C ) );
+			V : constant String := AWS.Parameters.Get( P, K );
+		begin
+			Append( Menu_Item.Href, '&' & K & '=' & V );
+		end Append_Preserved_Variables;
+	begin
+		Menu_item.ID := Item_ID;
+
+		Menu_Item.Disable_When_Active := KOW_Config.Value( Menu_Config, "disable_when_active", True );
+		Menu_Item.Label := KOW_Config.Element(
+						F		=> Menu_Config,
+						Key		=> To_Unbounded_String( "label" ),
+						L_Code		=> Module.Locale.Code,
+						Dump_On_Error	=> True
+					);
+		Menu_Item.Level := KOW_Config.Value( Menu_Config, "level", 1 );
+		Menu_Item.Has_Access := True;
+
+
+		Append( Menu_Item.Href, "?" );
+		Append( Menu_Item.Href, Module.Selector_Variable );
+		Append( Menu_item.Href, "=" & Ada.Strings.Fixed.Trim( Positive'Image( Menu_Item.ID ), Ada.Strings.Both ) );
+
+		KOW_Lib.UString_Vectors.Iterate( Module.Preserve_Variables, Append_Preserved_Variables'Access );
+
+		return Menu_Item;
+	end New_Menu_Item;
+
+	
+	overriding
+	function Is_Active(
+				Module		: in     Module_Switcher_Menu_Module;
+				Request		: in     AWS.Status.Data;
+				Menu_Item	: in     Menu_Item_Type
+			) return Boolean is
+	begin
+		return Selected_Module( Module, AWS.Status.Parameters( Request ) ) = Menu_Item.ID;
+	end Is_Active;
+
+
+	function Selected_Module(
+				Module		: in     Module_Switcher_Menu_Module;
+				Parameters	: in     AWS.Parameters.List
+			) return Positive is
+		Parm : constant String := AWS.Parameters.Get( Parameters, To_String( Module.Selector_Variable ) );
+	begin
+		if Parm = "" then
+			return Module.Default_Item;
+		else
+			return Positive'Value( Parm );
+		end if;
+	exception
+		when CONSTRAINT_ERROR =>
+			return Module.Default_Item;
+	end Selected_Module;
+
+
+
 
 end KOW_View.Navigation.Modules;

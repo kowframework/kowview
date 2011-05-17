@@ -40,6 +40,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -------------------
 with KOW_Config;
 with KOW_Lib.Locales;
+with KOW_Lib.UString_Vectors;
 with KOW_View.Components;
 with KOW_View.Modules;
 with KOW_View.Modules.Stateful_Module_Factories;
@@ -48,6 +49,7 @@ with KOW_View.Navigation.Components;
 ---------
 -- AWS --
 ---------
+with AWS.Parameters;
 with AWS.Status;
 
 package KOW_View.Navigation.Modules is
@@ -55,16 +57,22 @@ package KOW_View.Navigation.Modules is
 
 
 	type Menu_Item_Type is record
+		ID			: Positive;
 		Label			: Unbounded_String;
 		Level			: Positive := 1;
 		Href			: Unbounded_String;
 		Disable_When_Active	: Boolean := True;
+		Has_Access		: Boolean := False;
 	end record;
 
 	package Menu_Item_Vectors is new Ada.Containers.Vectors(
 					Index_Type	=> Positive,
 					Element_Type	=> Menu_item_Type
 				);
+	
+	-----------------
+	-- Menu Module --
+	-----------------
 
 	type Menu_Module is new KOW_View.Modules.Module_Type with record
 		Items		: Menu_Item_Vectors.Vector;
@@ -113,10 +121,87 @@ package KOW_View.Navigation.Modules is
 	--
 	-- is called during the Proces_Body request to avoid infite looping
 
+
+	function New_Menu_Item(
+				Module		: in     Menu_Module;
+				Request		: in     AWS.Status.Data;
+				Item_ID		: in     Positive;
+				Menu_Config	: in     KOW_Config.Config_File
+			) return Menu_Item_Type;
+	-- initialize a given menu item
+
+	function Is_Active(
+				Module		: in     Menu_Module;
+				Request		: in     AWS.Status.Data;
+				Menu_Item	: in     Menu_Item_Type
+			) return Boolean;
+	-- used only when disable_when_active is set in the item
+
 	package Menu_Factories is new KOW_View.Modules.Stateful_Module_Factories(
 					Module_Type	=> Menu_Module,
 					Component	=> KOW_View.Navigation.Components.Component'Access
 				);
 
+
+	--------------------------
+	-- Module Switcher Menu --
+	--------------------------
 	
+	type Module_Switcher_Menu_Module is new Menu_Module with record
+		-- renders the menu for a module switcher container module
+
+		Preserve_Variables	: KOW_Lib.UString_Vectors.Vector;
+		-- which variable should be passed allong with the item links
+
+		Default_Item		: Positive;
+		-- the default item to be accepted as selected
+
+		Selector_Variable	: Unbounded_String;
+		-- the variable where should be stored the current selected module 
+	end record;
+
+
+	overriding
+	procedure Initialize_Request(
+				Module		: in out Module_Switcher_Menu_Module;
+				Request		: in     AWS.Status.Data;
+				Config		: in out KOW_Config.Config_File
+			);
+	
+	overriding
+	function New_Menu_Item(
+				Module		: in     Module_Switcher_Menu_Module;
+				Request		: in     AWS.Status.Data;
+				Item_ID		: in     Positive;
+				Menu_Config	: in     KOW_Config.Config_File
+			) return Menu_Item_Type;
+	-- initialize each menu item...
+	
+	
+	overriding
+	function Is_Active(
+				Module		: in     Module_Switcher_Menu_Module;
+				Request		: in     AWS.Status.Data;
+				Menu_Item	: in     Menu_Item_Type
+			) return Boolean;
+	-- determine if the current section is the one being viewed
+	
+
+	function Selected_Module(
+				Module		: in     Module_Switcher_Menu_Module;
+				Parameters	: in     AWS.Parameters.List
+			) return Positive;
+	
+
+
+	package Module_Switcher_Menu_Factories is new KOW_View.Modules.Stateful_Module_Factories(
+					Module_Type	=> Module_Switcher_Menu_Module,
+					Component	=> KOW_View.Navigation.Components.Component'Access
+				);
+				
+	
+	-------------------------------
+	-- Module Switcher Container --
+	-------------------------------
+
 end KOW_View.Navigation.Modules;
