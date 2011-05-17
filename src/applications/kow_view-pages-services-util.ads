@@ -57,6 +57,8 @@ package KOW_View.Pages.Services.Util is
 	-- in the order they are declared inside the configuration file.
 
 
+	function Get_Module( Module_Config : in KOW_Config.Config_File ) return Complete_Module_Type;
+
 	function Get_Module_IDs(
 				Config	: in KOW_Config.Config_File;
 				Region	: in KOW_View.Themes.Region_Type

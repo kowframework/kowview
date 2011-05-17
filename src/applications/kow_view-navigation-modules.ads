@@ -39,6 +39,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -- KOW Framework --
 -------------------
 with KOW_Config;
+with KOW_Lib.Json;
 with KOW_Lib.Locales;
 with KOW_Lib.UString_Vectors;
 with KOW_View.Components;
@@ -46,6 +47,7 @@ with KOW_View.Modules;
 with KOW_View.Modules.Stateful_Module_Factories;
 with KOW_View.Modules.Stateless_Module_Factories;
 with KOW_View.Navigation.Components;
+with KOW_View.Pages.Services;
 
 ---------
 -- AWS --
@@ -205,5 +207,107 @@ package KOW_View.Navigation.Modules is
 	-------------------------------
 	-- Module Switcher Container --
 	-------------------------------
+
+	type Module_Switcher_Container_Module is new KOW_View.Modules.Module_Type with record
+		-- this module acts as a proxy for the actual module being called.
+		--
+		-- it uses the very same procedures and functions the page service uses for allocating and deallocating the child module
+		--
+		-- it's a new instance of module_type instead of module_interface so we can use the generic factory packages
+		-- these packages initialize for us:
+		-- 	. well, the module :)
+		--	. ID
+		--	. context
+	
+		Default_Item		: Positive;
+		Selector_Variable	: Unbounded_String;
+		Current			: KOW_View.Pages.Services.Complete_Module_Type;
+	end record;
+
+
+	overriding
+	procedure Initialize_Request(
+			Module		: in out Module_Switcher_Container_Module;
+			Request		: in     AWS.Status.Data;
+			Config		: in out KOW_Config.Config_File
+		);
+	-- Initialize the processing of a request
+	-- also loads the current module and such
+
+	overriding
+	function Get_Script_Includes(
+			Module		: in     Module_Switcher_Container_Module
+		) return KOW_Lib.UString_Vectors.Vector;
+
+	overriding
+	function Get_Dojo_Packages(
+			Module		: in     Module_Switcher_Container_Module
+		) return KOW_Lib.UString_Vectors.Vector;
+	
+	overriding
+	function Get_Dojo_CSS(
+			Module		: in     Module_Switcher_Container_Module
+		) return KOW_Lib.UString_Vectors.Vector;
+
+	overriding
+	function Get_CSS_Includes(
+			Module		: in     Module_Switcher_Container_Module
+		) return KOW_Lib.UString_Vectors.Vector;
+
+
+	overriding
+	procedure Process_Head(
+			Module		: in out Module_Switcher_Container_Module;
+			Request		: in     AWS.Status.Data;
+			Response	:    out Unbounded_String
+		);
+	-- process header of the response.
+	-- it's assumed that 
+
+	overriding
+	procedure Process_Body(
+			Module		: in out Module_Switcher_Container_Module;
+			Request		: in     AWS.Status.Data;
+			Response	:    out Unbounded_String
+		);
+	-- process the request for a module.
+	-- sometimes is useful for a module only to be created and released - such as in a page counter module
+
+	overriding
+	procedure Process_Foot(
+			Module		: in out Module_Switcher_Container_Module;
+			Request		: in     AWS.Status.Data;
+			Response	:    out Unbounded_String
+		);
+	-- process some footer of the module
+	-- useful when creating benchmar modules
+
+
+	overriding
+	procedure Process_Json_Request(
+			Module		: in out Module_Switcher_Container_Module;
+			Request		: in     AWS.Status.Data;
+			Response	: out    KOW_Lib.Json.Object_Type
+		);
+
+	overriding
+	procedure Finalize_Request(
+			Module		: in out Module_Switcher_Container_Module;
+			Request		: in     AWS.Status.Data
+		);
+	-- Finalize processing the request.
+	-- Called when the process has been finalized
+
+
+	function Selected_Module(
+				Module		: in     Module_Switcher_Container_Module;
+				Parameters	: in     AWS.Parameters.List
+			) return Positive;
+	
+	package Module_Switcher_Container_Factories is new KOW_View.Modules.Stateless_Module_Factories(
+								Module_Type	=> Module_Switcher_Container_Module,
+								Component	=> KOW_View.Navigation.Components.Component'Access
+							);
+
 
 end KOW_View.Navigation.Modules;

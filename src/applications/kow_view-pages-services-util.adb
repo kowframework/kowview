@@ -68,19 +68,29 @@ package body KOW_View.Pages.Services.Util is
 		use KOW_View.Components;
 		Elements	: Config_File_Array := Elements_Array( Config, "modules" );
 		Modules		: Complete_Module_Array( Elements'Range );
-		Component_Name	: Unbounded_String;
 	begin
 
 		for i in Elements'Range loop
-			Component_Name := Element( Elements( i ), "component" );
-			Modules( i ).Config := Elements( i );
-			Modules( i ).Factory := Module_Factory_Ptr( Get_Module_Factory(
-								Component	=> Registry.Get_Component( Component_Name ).all,
-								Name		=> Element( Elements( i ), "module" )
-							) );
+			Modules( i ) := Get_Module( Elements( i ) );
 		end loop;
+
 		return Modules;
 	end Get_Modules;
+
+	function Get_Module( Module_Config : in KOW_Config.Config_File ) return Complete_Module_Type is
+		use KOW_Config;
+		use KOW_View.Components;
+		Component_Name	: Unbounded_String;
+		Module		: Complete_Module_Type;
+	begin
+		Component_Name := Element( Module_Config, "component" );
+		Module.Config	:= Module_Config;
+		Module.Factory := Module_Factory_Ptr( Get_Module_Factory(
+							Component	=> Registry.Get_Component( Component_Name ).all,
+							Name		=> Element( Module_Config, "module" )
+						) );
+		return Module;
+	end Get_Module;
 
 
 	function Get_Module_IDs(

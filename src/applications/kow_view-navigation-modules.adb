@@ -40,6 +40,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -- KOW Framework --
 -------------------
 with KOW_Config;
+with KOW_Lib.Json;
 with KOW_Lib.Locales;
 with KOW_Lib.String_Util;
 with KOW_Sec;
@@ -48,6 +49,7 @@ with KOW_View.Locales;
 with KOW_View.Modules;
 with KOW_View.Modules.Stateful_Module_Factories;
 with KOW_View.Pages.Services;
+with KOW_View.Pages.Services.Util;
 with KOW_View.Security;
 with KOW_View.Services.Util;
 with KOW_View.URI_Util;
@@ -417,6 +419,189 @@ package body KOW_View.Navigation.Modules is
 			return Module.Default_Item;
 	end Selected_Module;
 
+
+
+
+
+
+
+
+
+	-------------------------------
+	-- Module Switcher Container --
+	-------------------------------
+
+
+	overriding
+	procedure Initialize_Request(
+			Module		: in out Module_Switcher_Container_Module;
+			Request		: in     AWS.Status.Data;
+			Config		: in out KOW_Config.Config_File
+		) is
+		-- Initialize the processing of a request
+		-- also loads the current module and such
+		Current_Config : KOW_Config.Config_File;
+	begin
+		Module.Default_Item	:= Positive'Value( KOW_Config.Value( Config, "default_item", "1" ) );
+		Module.Selector_Variable:= KOW_Config.Value( Config, "selector_variable", To_Unbounded_String( "selected_module_id" ) );
+
+
+		Current_Config		:= KOW_Config.Elements_Array( Config, "item" )( Selected_Module( Module, AWS.Status.Parameters( Request ) ) );
+		Module.Current		:= KOW_View.Pages.Services.Util.Get_Module( Current_Config );
+
+
+		KOW_View.Components.Create(
+				Factory		=> Module.Current.Factory.all,
+				Request		=> Request,
+				Context		=> To_String( Module.Context ),
+				Module_ID	=> Get_ID( Module ), -- same ID as the proxy :)
+				Request_mode	=> Custom_Request,
+				Module		=> Module.Current.Module
+			);
+
+		KOW_View.Components.Initialize_Request(
+				Module	=> Module.Current.Module.all,
+				Request	=> Request,
+				Config	=> Current_Config
+			);
+	end Initialize_Request;
+
+
+	overriding
+	function Get_Script_Includes(
+			Module		: in     Module_Switcher_Container_Module
+		) return KOW_Lib.UString_Vectors.Vector is
+	begin
+		return KOW_View.Components.Get_Script_Includes( Module.Current.Module.all );
+	end Get_Script_Includes;
+
+
+	overriding
+	function Get_Dojo_Packages(
+			Module		: in     Module_Switcher_Container_Module
+		) return KOW_Lib.UString_Vectors.Vector is
+	begin
+		return KOW_View.Components.Get_Dojo_Packages( Module.Current.Module.all );
+	end Get_Dojo_Packages;
+	
+	overriding
+	function Get_Dojo_CSS(
+			Module		: in     Module_Switcher_Container_Module
+		) return KOW_Lib.UString_Vectors.Vector is
+	begin
+		return KOW_View.Components.Get_Dojo_CSS( Module.Current.Module.all );
+	end Get_Dojo_CSS;
+
+	overriding
+	function Get_CSS_Includes(
+			Module		: in     Module_Switcher_Container_Module
+		) return KOW_Lib.UString_Vectors.Vector is
+	begin
+		return KOW_View.Components.Get_CSS_Includes( Module.Current.Module.all );
+	end Get_CSS_Includes;
+
+
+	overriding
+	procedure Process_Head(
+			Module		: in out Module_Switcher_Container_Module;
+			Request		: in     AWS.Status.Data;
+			Response	:    out Unbounded_String
+		) is
+		-- process header of the response.
+		-- it's assumed that 
+	begin
+		KOW_View.Components.Process_Head(
+						Module	=> Module.Current.Module.all,
+						Request	=> Request,
+						Response=> Response
+					);
+	end Process_Head;
+
+
+	overriding
+	procedure Process_Body(
+			Module		: in out Module_Switcher_Container_Module;
+			Request		: in     AWS.Status.Data;
+			Response	:    out Unbounded_String
+		) is
+		-- process the request for a module.
+		-- sometimes is useful for a module only to be created and released - such as in a page counter module
+	begin
+		KOW_View.Components.Process_Body(
+						Module	=> Module.Current.Module.all,
+						Request	=> Request,
+						Response=> Response
+					);
+	end Process_Body;
+
+
+	overriding
+	procedure Process_Foot(
+			Module		: in out Module_Switcher_Container_Module;
+			Request		: in     AWS.Status.Data;
+			Response	:    out Unbounded_String
+		) is
+		-- process some footer of the module
+		-- useful when creating benchmar modules
+	begin
+		KOW_View.Components.Process_Foot(
+						Module	=> Module.Current.Module.all,
+						Request	=> Request,
+						Response=> Response
+					);
+	end Process_Foot;
+
+
+	overriding
+	procedure Process_Json_Request(
+			Module		: in out Module_Switcher_Container_Module;
+			Request		: in     AWS.Status.Data;
+			Response	: out    KOW_Lib.Json.Object_Type
+		) is
+	begin
+		KOW_View.Components.Process_Json_Request(
+						Module	=> Module.Current.Module.all,
+						Request	=> Request,
+						Response=> Response
+					);
+	end Process_Json_Request;
+
+
+	overriding
+	procedure Finalize_Request(
+			Module		: in out Module_Switcher_Container_Module;
+			Request		: in     AWS.Status.Data
+		) is
+		-- Finalize processing the request.
+		-- Called when the process has been finalized
+	begin
+		KOW_View.Components.Finalize_Request(
+						Module	=> Module.Current.Module.all,
+						Request	=> Request
+					);
+		KOW_View.Components.Destroy(
+				Factory		=> Module.Current.Factory.all,
+				Request		=> Request,
+				Module		=> Module.Current.Module
+			);
+	end Finalize_Request;
+
+
+	function Selected_Module(
+				Module		: in     Module_Switcher_Container_Module;
+				Parameters	: in     AWS.Parameters.List
+			) return Positive is
+		Parm : constant String := AWS.Parameters.Get( Parameters, To_String( Module.Selector_Variable ) );
+	begin
+		if Parm = "" then
+			return Module.Default_Item;
+		else
+			return Positive'Value( Parm );
+		end if;
+	exception
+		when CONSTRAINT_ERROR =>
+			return Module.Default_Item;
+	end Selected_Module;
 
 
 
