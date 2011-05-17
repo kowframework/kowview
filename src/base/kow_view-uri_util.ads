@@ -35,6 +35,12 @@ pragma License( GPL );
 -- 	URI		: /pages/page/some_page/at_some_place	(used by your browser)
 --	URN		: page:some_page/at_some_place		(used by developers)
 
+
+---------
+-- AWS --
+---------
+with AWS.Status;
+
 package KOW_View.URI_Util is
 
 	function Is_Page_URN( URN : in String ) return Boolean;
@@ -47,5 +53,19 @@ package KOW_View.URI_Util is
 	function To_Page_URI( URN : in String ) return String;
 	-- convert the given page: URN into an URI that can be used to access a page
 
+
+	function Build_URL(
+			Request		: in AWS.Status.Data;
+			Key1,Value1	: in String;
+			Key2,Value2	: in String := "";
+			Key3,Value3	: in String := "";
+			Key4,Value4	: in String := "";
+			Key5,Value5	: in String := "";
+			Include_URI	: in Boolean := False
+		) return String;
+	-- build a URL for the current page replacing the HTTP parameters listed in key/value pairs
+	-- maintain all other urls
+	--
+	-- acts like AWS.Parameters.URI_Format BUT replace the existing values by the new given ones
 
 end KOW_View.URI_Util;
