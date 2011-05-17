@@ -44,6 +44,7 @@ with KOW_Lib.UString_Vectors;
 with KOW_View.Components;
 with KOW_View.Modules;
 with KOW_View.Modules.Stateful_Module_Factories;
+with KOW_View.Modules.Stateless_Module_Factories;
 with KOW_View.Navigation.Components;
 
 ---------
@@ -194,10 +195,11 @@ package KOW_View.Navigation.Modules is
 	
 
 
-	package Module_Switcher_Menu_Factories is new KOW_View.Modules.Stateful_Module_Factories(
+	package Module_Switcher_Menu_Factories is new KOW_View.Modules.Stateless_Module_Factories(
 					Module_Type	=> Module_Switcher_Menu_Module,
 					Component	=> KOW_View.Navigation.Components.Component'Access
 				);
+	-- this one has got to be stateless because of the possibility of some variables changing in the page
 				
 	
 	-------------------------------

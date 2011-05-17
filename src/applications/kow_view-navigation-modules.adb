@@ -147,7 +147,7 @@ package body KOW_View.Navigation.Modules is
 		begin
 			Append( Response, "<li class=""menu_" & Level & """>" );
 			Append( Response, "<a href=""" );
-				Append( Response, KOW_Lib.String_Util.Scriptify( To_String( Menu_Item.Href ) ) );
+				Append( Response, KOW_Lib.String_Util.JSon_Scriptify( To_String( Menu_Item.Href ) ) );
 			Append( Response, """" );
 			Append_Disabled( Menu_Item );
 			Append( Response, ">" );
@@ -377,7 +377,7 @@ package body KOW_View.Navigation.Modules is
 						Dump_On_Error	=> True
 					);
 		Menu_Item.Level := KOW_Config.Value( Menu_Config, "level", 1 );
-		Menu_Item.Has_Access := True;
+		Menu_Item.Has_Access := True;	-- TODO :: check if the user can access the module in the future
 
 
 		Append( Menu_Item.Href, "?" );
