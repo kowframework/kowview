@@ -1,0 +1,23 @@
+<html>
+<head>
+	<title>Login Error</title>
+</head>
+
+<body>
+
+
+
+<h1>
+Error while performing login:
+</h1>
+
+
+
+@@IF@@ @_exception_name_@ = KOW_SEC.ACCOUNT_DISABLED_ERROR
+	Your account is not currently enabled. If you think this is a mistake ask the system administrator.
+@@ELSE@@
+	<pre>@_exception_information_@</pre>
+@@END_IF@@
+
+</body>
+</html>

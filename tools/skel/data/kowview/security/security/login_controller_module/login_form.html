@@ -1,0 +1,38 @@
+<h1>Bem vindo ao teca!</h1>
+
+<p>
+	O Teca é uma plataforma para criação de livros de forma colaborativa fortemente baseada em redes sociais.
+</p>
+
+<p>
+	Para continuar, você precisa estar logado:
+</p>
+
+<form id="login_form_@_module_id_@" action="#" class="login_form" onSubmit="submit_login_form(@_module_id_@);return false" dojoType="dijit.form.Form" method="post">
+	<table>
+		<tr>
+			<th >Usuário</th><td ><input type="text" dojoType="dijit.form.ValidationTextBox" required invalidMessage="You need to inform your username" name="username"/></td>
+		</tr><tr>
+			<th>Senha</th><td height="40px"><input type="password" dojoType="dijit.form.ValidationTextBox" required invalidMessage="You need to inform your password" name="password"/></td>
+		</tr><tr>
+			<th height="40px" colspan="2" class="buttons">
+				<button dojoType="dijit.form.Button" type="submit">Login</button>
+				<button dojoType="dijit.form.Button" onClick="document.location.href='/pages/page/register'">Registre-se</button>
+			</th>
+		</tr>
+	</table>
+</form>
+
+
+
+@@TABLE@@
+	<a href="@_REST_links_@" label="@_REST_labels_@"><img src="@_REST_icons_@"/></a>
+@@END_TABLE@@
+
+
+
+<script type="text/javascript">
+dojo.addOnLoad( function() {
+	dojo.byId("login_form_@_module_id_@").username.focus();
+});
+</script>

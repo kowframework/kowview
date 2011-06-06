@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="pt" lang="pt">
+	<head>
+		<title>@_title_@</title>
+		<meta http-equiv="Content-type" content="text/html;charset=UTF-8" /> 
+		<link rel="stylesheet" type="text/css" href="/themes/theme/style.css" />
+
+		<style type="text/css">
+			@import "http://ajax.googleapis.com/ajax/libs/dojo/1.6/dojo/resources/dojo.css";
+			@import "http://ajax.googleapis.com/ajax/libs/dojo/1.6/dijit/themes/tundra/tundra.css";
+			@import "http://ajax.googleapis.com/ajax/libs/dojo/1.6/dojox/grid/resources/Grid.css";
+			@import "http://ajax.googleapis.com/ajax/libs/dojo/1.6/dojox/grid/resources/tundraGrid.css";
+
+			@@TABLE@@
+				@import "http://ajax.googleapis.com/ajax/libs/dojo/1.6/@_dojo_css_@";
+			@@END_TABLE@@
+
+
+			@@TABLE@@
+				@import "@_css_includes_@";
+			@@END_TABLE@@
+		</style>
+
+		<script type="text/javascript" 
+				src="http://ajax.googleapis.com/ajax/libs/dojo/1.6/dojo/dojo.xd.js"
+				djConfig="parseOnLoad:true, isDebug:false, dojoBlankHtmlUrl:'/pages/js/dojo/dojo/resources/blank.html',modulePaths:{ 'kowview.entities': '/pages/js/component:entities/dojo'}"></script>
+
+
+		<script type="text/javascript">
+			@@TABLE@@
+				dojo.require( "@_dojo_packages_@" );
+			@@END_TABLE@@
+		</script>
+
+		@@TABLE@@
+			<script type="text/javascript" src="@_script_includes_@"></script>
+		@@END_TABLE@@
+
+		@_header_@
+
+	@@TABLE@@
+		@_menu_heads_@
+	@@END_TABLE@@
+	@@TABLE@@
+		@_user_info_heads_@
+	@@END_TABLE@@
+	@@TABLE@@
+		@_main_heads_@
+	@@END_TABLE@@
+	@@TABLE@@
+		@_user_list_heads_@
+	@@END_TABLE@@
+
+	</head>
+<body class="tundra">
+
+<div id="body">
+	<div id="banner">
+		<a id="logo" href="/"><img src="/themes/theme/images/logo_small.png" alt="Teca"/></a>
+
+		<div id="menu">
+			@@TABLE@@
+				<span id="@_menu_body_ids_@">@_menu_bodies_@</span>
+			@@END_TABLE@@
+		</div>
+
+		<div id="user_info">
+			@@TABLE@@
+				<span id="@_user_info_body_ids_@">
+					@_user_info_bodies_@
+				</span>
+			@@END_TABLE@@
+		</div>
+
+	</div>
+
+
+	<table class="main">
+		<tr>
+			<td class="main">
+				<div id="main" class="tundra">
+					@@TABLE@@
+						<div class="moduleContainer" id="@_main_body_ids_@">
+							@_main_bodies_@
+						</div>
+					@@END_TABLE@@
+
+
+				</div>
+			</td>
+			<td class="user_list">
+				<div id="user_list">
+					@@TABLE@@
+						<div id="@_user_list_ids_@">
+							@_user_list_bodies_@
+						</div>
+					@@END_TABLE@@
+				</div>
+			</td>
+		</tr>
+	</table>
+
+
+	<div id="foot">
+		@@TABLE@@
+			<div id="@_menu_foot_ids_@">@_menu_feet_@</div>
+		@@END_TABLE@@
+		@@TABLE@@
+			<div id="@_user_info_foot_ids_@">@_user_info_feet_@</div>
+		@@END_TABLE@@
+		@@TABLE@@
+			<div id="@_main_foot_ids_@">@_main_feet_@</div>
+		@@END_TABLE@@
+		@@TABLE@@
+			<div id="@_main_foot_ids_@">@_user_list_feet_@</div>
+		@@END_TABLE@@
+		<div id="foot_info">
+
+
+			Teca é desenvolvida usando o <a href="http://framework.kow.com.br">KOW Framework</a> 
+			<br/>
+			<small>
+				Trazida a você por <a href="http://www.hedra.com.br/">Editora Hedra</a> &amp; <a href="http://www.kow.com.br/">KOW Software Livre</a>
+			</small>
+
+		</div>
+
+	</div>
+
+
+</div> <!-- id="body" -->
+
+
+<div dojoType="dijit.Dialog" jsId="loading_dialog" style="width:400px;text-align:center;" title="Loading..." closable="false">
+	Aguarde um instante por favor...
+	<br/>
+	<div dojoType="dijit.ProgressBar" style="width:100%" id="downloadProgress" maximum="10" indeterminate="true"></div>
+</div>
+
+
+<div dojoType="dijit.Dialog" jsId="errorDialog" style="width:400px;text-align:center" id="errorDialog" closable="true">
+	<div id="errorDialogMessage"></div>
+</div>
+
+
+<div dojoType="dijit.Dialog" jsId="messageDialog" style="width:400px;text-align:center" id="messageDialog" closable="true">
+	<div id="messageDialogMessage"></div>
+	<button dojoType="dijit.form.Button" onClick="messageDialog.hide()">OK</button>
+</div>
+
+
+</body>
+
+</html>
+

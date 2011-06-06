@@ -1,0 +1,185 @@
+/**
+ * Estrutura da Página
+ **/
+
+
+
+
+
+body{
+	background-color: #f9f9ff;
+	color		: black;
+
+	font-family	: georgia,garamond,serif;
+	/*font-size	: 13px;*/
+	font-size	: 10pt;
+}
+
+
+img{
+	border : none;
+}
+
+
+table{
+	border		: thin dashed #E1E1E1;
+}
+
+
+.align_right{
+	position	: relative;
+	margin-left	: auto;
+	text-align	: left;
+	width		: 312px; /* 167 + 58 + 57  + (padding = 5 * 2 * 3 == 30) == 312*/
+}
+
+
+form{
+	display		: block;
+}
+
+
+/***********/
+/* Banner */
+/*********/
+
+
+#body{
+	width		: 960px;
+	margin-left	: auto;
+	margin-right	: auto;
+}
+
+#banner{
+	display		: block;
+	height		: 50px;
+}
+
+	/*********/
+	/* Logo */
+	/*******/
+
+	#logo{
+		display		: block;
+		width		: 162px;
+		height		: 36px;
+		float		: left;
+		margin-top	: 7px;
+		margin-bottom	: 7px;
+	}
+
+	/*********/
+	/* Menu */
+	/*******/
+	#menu{
+		position	: relative;
+		display		: block;
+		overflow	: hidden;
+		float		: left;
+		margin-left	: 100px;
+		height		: 50px;
+	}
+
+	#menu ul{
+		display		: inline;
+		list-style	: none;
+	}
+
+	#menu ul li{
+		display		: inline;
+		padding		: 2px 2px 2px 2px;
+		margin		: 2px 2px 2px 2px;
+		border		: thin solid black;
+	}
+
+	/**************/
+	/* User Info */
+	/************/
+
+	#user_info{
+		position	: relative;
+		display		: block;
+		height		: 50px;
+		float		: right;
+		white-space:nowrap;
+	}
+
+/*********/
+/* Main */
+/*******/
+
+#main{
+	display		: block;
+	float		: left;
+	width		: 100%;
+}
+
+#main h1{
+	display			: block;
+	border-bottom		: thin solid black;
+	margin-top		: 0px;
+	margin-bottom		: 10px;
+}
+#main h1 img {
+	vertical-align		: middle;
+}
+
+#main div.moduleContainer{
+	margin-top		: 15px;
+}
+
+
+
+
+table.main{
+	margin-top	: 20px;
+	border		: none;
+}
+
+
+table.main td{
+	vertical-align: top;
+}
+
+table.main td.main{
+	width	:  890px;
+}
+
+table.main td.user_list{
+	min-width: 62px;
+}
+
+
+/*********/
+/* Foot */
+/*******/
+#foot{
+	position	: relative;
+	bottom		: -50px;
+}
+#foot_info{
+	text-align	: center;
+	font-size	: 8pt;
+}
+
+
+
+a{
+	color	: gray;
+}
+a:hover{
+	color	: black;
+}
+/*a:before
+{
+	content	: url(http://localhost:8083/themes/logo.jpg);
+}*/
+
+
+/*****************/
+/* Error Dialog */
+/***************/
+
+#errorDialog_underlay{
+	background-color	: #ff3300;
+}
