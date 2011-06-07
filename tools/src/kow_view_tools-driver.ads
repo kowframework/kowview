@@ -7,6 +7,7 @@ with KOW_View_Tools.Commands;
 with KOW_View_Tools.Help;
 with KOW_View_Tools.Info;
 with KOW_View_Tools.Init;
+with KOW_View_Tools.Install_Tool;
 with KOW_View_Tools.NewApp;
 with KOW_View_Tools.Setup;
 with KOW_View_Tools.Version;
@@ -20,6 +21,7 @@ package KOW_View_Tools.Driver is
 			help,
 			info,
 			init,
+			install_tool,
 			newapp,
 			setup,
 			version
@@ -36,12 +38,13 @@ private
 
 	
 	Command_Constructors : constant Available_Commands_Array := (
-						Help	=> KOW_View_Tools.Help.New_Command'Access,
-						Info	=> KOW_View_Tools.Info.New_Command'Access,
-						Init	=> KOW_View_Tools.Init.New_Command'Access,
-						newapp	=> KOW_View_Tools.NewApp.New_Command'Access,
-						Setup	=> KOW_View_Tools.Setup.New_Command'Access,
-						Version	=> KOW_View_Tools.Version.New_Command'Access
+						Help		=> KOW_View_Tools.Help.New_Command'Access,
+						Info		=> KOW_View_Tools.Info.New_Command'Access,
+						Init		=> KOW_View_Tools.Init.New_Command'Access,
+						Install_Tool	=> KOW_View_Tools.Install_Tool.New_Command'Access,
+						newapp		=> KOW_View_Tools.NewApp.New_Command'Access,
+						Setup		=> KOW_View_Tools.Setup.New_Command'Access,
+						Version		=> KOW_View_Tools.Version.New_Command'Access
 					);
 
 
