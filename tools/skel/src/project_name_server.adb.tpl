@@ -13,6 +13,7 @@
 -- Ada 2005 --
 --------------
 with Ada.Exceptions;
+with Ada.Strings.Unbounded;	use Ada.Strings.Unbounded;
 with Ada.Text_IO;		use Ada.Text_IO;
 
 
@@ -45,6 +46,25 @@ begin
 	@_project_name_@_Setup( true );
 	-- the setup process is where the entire KOW Framework is initialized. :)
 	
+
+	-----------------------------
+	-- Setup the Email Sending --
+	-----------------------------
+
+	KOW_View.E_Mail_On_Exceptions	:= False;
+	-- send email with information about excetpions that aren't expected
+	-- disabled by default on development environments
+
+	KOW_View.E_Mail_From_Name	:= To_Unbounded_String( "KOW Framework Application" );
+	KOW_View.E_Mail_From_Address	:= To_Unbounded_String( "app@yourwebsite" );
+
+	KOW_View.E_Mail_To_Name		:= To_Unbounded_String( "Admin" );
+	KOW_View.E_Mail_To_Address	:= To_Unbounded_String( "admin@yourwebsite" );
+	
+	KOW_View.Error_E_Mail_Subject	:= To_Unbounded_String( "[KOW_View Unhandled Exception] " );
+
+	KOW_View.E_Mail_SMTP_Server	:= To_Unbounded_String( "localhost" );
+
 
 
 	----------------------------
