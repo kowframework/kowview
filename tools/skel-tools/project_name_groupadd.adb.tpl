@@ -40,12 +40,12 @@ begin
 
 	declare
 		use KOW_Sec;
-		function Context return String is
+		function Context return Context_Type is
 		begin
 			if Argument_Count /= 3 then
-				return "";
+				return To_Context( "" );
 			else
-				return Argument( 3 );
+				return To_Context( Argument( 3 ) );
 			end if;
 		end Context;
 		The_Group : constant Group_Type := To_Group( Argument( 2 ), Context );
