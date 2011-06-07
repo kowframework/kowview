@@ -21,6 +21,7 @@ with KOW_Lib.String_Util;
 with KOW_Lib.UString_Vectors;
 with KOW_View_Tools.Commands;
 with KOW_View_Tools.Driver;
+with KOW_View_Tools.Install_Tool;
 with KOW_View_Tools.Setup;
 
 
@@ -174,6 +175,16 @@ package body KOW_View_Tools.Init is
 		Templates_Parser.Insert( Tpl_Parameters, Templates_Parser.Assoc( "upper_project_name", Ada.Characters.Handling.To_Upper( Project_Name ) ) );
 		Iterate( TPL_Files, TPL_Files_Iterator'Access );
 
+		-- we install some tools also
+		declare
+			use KOW_View_Tools.Install_Tool;
+		begin
+			Install( "create_tables" );
+			Install( "dump_create_tables" );
+			Install( "groupadd" );
+			Install( "useradd" );
+			Install( "userstatus" );
+		end;
 
 		-- NOW we run the setup.. --
 		declare

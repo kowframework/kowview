@@ -11,6 +11,19 @@ with KOW_View_Tools.Commands;
 package KOW_View_Tools.Install_Tool is
 
 
+	-----------------------------------------------------------------
+	-- Main Procedure so it can be also called by other procedures --
+	-----------------------------------------------------------------
+
+	
+	procedure Install( Tool : in String );
+	-- install the given tool
+
+	------------------
+	-- Command Type --
+	------------------
+
+
 	type Command_Type is new KOW_View_Tools.Commands.Command_Type with null record;
 
 

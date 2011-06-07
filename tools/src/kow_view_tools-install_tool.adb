@@ -23,42 +23,37 @@ with Templates_Parser;
 package body KOW_View_Tools.Install_Tool is
 
 
-	function New_Command return KOW_View_Tools.Commands.Command_Type'Class is
-		-- constructor for our command
-		Command : Command_Type;
-	begin
-		return Command;
-	end New_Command;
+	-----------------------------------------------------------------
+	-- Main Procedure so it can be also called by other procedures --
+	-----------------------------------------------------------------
 
-	overriding
-	procedure Run( Command : in out Command_Type ) is
-		-- when no parameter is given, display the Install_Tool message
+	
+	procedure Install( Tool : in String ) is
+		-- install the given tool
 		Tpl_Parameters	: Templates_Parser.Translate_Set;
 
+
+		PN	: constant String := Project_Name;
+		LPN	: constant String := Ada.Characters.Handling.To_Lower( PN );
+		UPN	: constant String := Ada.Characters.Handling.To_Upper( PN );
 	begin
-
-		if Argument_Count /= 2 then
-			raise KOW_View_Tools.Commands.Usage_ERROR with "You need to specify a tool to install";
-		end if;
-
-
 		if Project_name = "" then
 			raise KOW_View_Tools.Commands.Usage_ERROR with "you need to run this within an existing project directory";
 		end if;
 
-		Templates_Parser.Insert( Tpl_Parameters, Templates_Parser.Assoc( "project_name", Project_Name ) );
-		Templates_Parser.Insert( Tpl_Parameters, Templates_Parser.Assoc( "lower_project_name", Ada.Characters.Handling.To_Lower( Project_Name ) ) );
-		Templates_Parser.Insert( Tpl_Parameters, Templates_Parser.Assoc( "upper_project_name", Ada.Characters.Handling.To_Upper( Project_Name ) ) );
+		Templates_Parser.Insert( Tpl_Parameters, Templates_Parser.Assoc( "project_name", PN ) );
+		Templates_Parser.Insert( Tpl_Parameters, Templates_Parser.Assoc( "lower_project_name", LPN ) );
+		Templates_Parser.Insert( Tpl_Parameters, Templates_Parser.Assoc( "upper_project_name", UPN ) );
 
 	
 		declare
-			Name		: String := Tools_Skel_Path & '/' & Argument( 2 ) & ".adb.tpl";
-			Destination_Path: String := "./tools-src/" & Argument( 2 ) & ".adb";
+			Name		: String := Tools_Skel_Path & "/project_name_" & Tool & ".adb.tpl";
+			Destination_Path: String := "./tools-src/" & LPN & '_' & Tool & ".adb";
 
 			Destination	: File_Type;
 		begin
 			if not Ada.Directories.Exists( Name ) then
-				raise KOW_View_Tools.Commands.Usage_ERROR with "There is no such tool: " & Argument( 2 );
+				raise KOW_View_Tools.Commands.Usage_ERROR with "There is no such tool: " & Tool;
 			end if;
 
 			if Ada.Directories.Exists( Destination_Path ) then
@@ -69,6 +64,32 @@ package body KOW_View_Tools.Install_Tool is
 			Put( Destination, Templates_Parser.Parse( Name, Tpl_Parameters ) );
 			Close( Destination );
 		end;
+
+	end Install;
+
+
+	------------------
+	-- Command Type --
+	------------------
+
+
+	function New_Command return KOW_View_Tools.Commands.Command_Type'Class is
+		-- constructor for our command
+		Command : Command_Type;
+	begin
+		return Command;
+	end New_Command;
+
+	overriding
+	procedure Run( Command : in out Command_Type ) is
+		-- when no parameter is given, display the Install_Tool message
+	begin
+
+		if Argument_Count /= 2 then
+			raise KOW_View_Tools.Commands.Usage_ERROR with "You need to specify a tool to install";
+		end if;
+
+		Install( Argument( 2 ) );
 	end Run;
 
 
@@ -85,7 +106,7 @@ package body KOW_View_Tools.Install_Tool is
 	procedure Describe( Command : in out Command_Type ) is
 		-- show a short description about this command;
 	begin
-		Put( "Install a command-line tool into tools-src overwriting any existing file. You still need to add this tool to your gpr file" );
+		Put( "Install a command-line tool into tools-src overwriting any existing file" );
 	end Describe;
 
 	
