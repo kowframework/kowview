@@ -106,7 +106,7 @@ package body KOW_View_Tools.Install_Tool is
 	procedure Describe( Command : in out Command_Type ) is
 		-- show a short description about this command;
 	begin
-		Put( "Install a command-line tool into tools-src overwriting any existing file" );
+		Put( "Install a command-line tool into tools-src overwriting any existing file - you still need to add to your gpr.in file" );
 	end Describe;
 
 	
