@@ -553,6 +553,7 @@ begin
 
 
 	include_dojo( "dijit.Dialog" );
+	include_dojo( "dijit.form.Button" );
 	include_dojo( "dijit.ProgressBar" );
 	include_dojo( "dojo.io.iframe" ); -- used by the kowview-entities :)
 end KOW_View.Pages.Services;
