@@ -22,6 +22,9 @@ kowview.modules = {
 			},
 	getJson		: function ( module_id, parameters ) {
 				kowview.getJson( parameters, kowview.modules.jsonURL( module_id ) );
+			},
+	iframeSend	: function ( module_id, parameters ) {
+				kowview.iframeSend( parameters, kowview.modules.jsonURL( module_id ) );
 			}
 
 }

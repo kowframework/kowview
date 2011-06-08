@@ -10,11 +10,11 @@ function submit_login_form( module_id ) {
 						form		: theForm,
 						load		: function( responseObject ) {
 									console.dir( responseObject )
-									document.location.reload();
+									document.location.href="/";
 								},
 						error		: function( data ) {
 									console.dir( data );
-									kowview.errorMessage( "Login Form", data.message );
+									kowview.showErrorMessage( "Login Error", data.message );
 								}
 					}
 			);

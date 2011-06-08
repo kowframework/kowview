@@ -1,15 +1,9 @@
+Redirecionando...
+<script type="text/javascript">
 
-
-
-
-<form id="login_form_@_module_id_@">
-	Username	<input type="text" dojoType="dijit.form.ValidationTextBox" required invalidMessage="You need to inform your username" name="username"/>
-	<br/>
-	Password	<input type="password" dojoType="dijit.form.ValidationTextBox" required invalidMessage="You need to inform your password" name="password"/>
-
-	<button dojoType="dijit.form.Button" onClick="submit_login_form(@_module_id_@)">Login</button>
-</form>
-
-@@TABLE@@
-	<a href="@_REST_links_@" label="@_REST_labels_@"><img src="@_REST_icons_@"/></a>
-@@END_TABLE@@
+dojo.addOnLoad(
+function(){
+	document.location.href="/pages/page/login";
+}
+)
+</script>
