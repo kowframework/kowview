@@ -173,7 +173,7 @@ package body KOW_View.Navigation.Modules is
 
 
 		
-			Append( Response, "<div dojoType=""dijit.MenuBar"">" );
+			Append( Response, "<div dojoType=""dijit.MenuBar"" class=""dijitMenu"">" );
 			Menu_Item_Vectors.Iterate( Module.Items, Dijit_Iterator'Access );
 				while Current_Level > 1 loop
 					-- close the ramining sub menus
