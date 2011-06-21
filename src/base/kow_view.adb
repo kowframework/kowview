@@ -281,13 +281,14 @@ package body KOW_View is
 					Insert( P, Assoc( "exception_message", Exception_Message( E ) ) );
 					Insert( P, Assoc( "exception_information", Exception_Information( E ) ) );
 					Insert( P, Assoc( "uri", AWS.Status.URI( Error.Request ) ) );
+					Insert( P, Assoc( "host", AWS.Status.Host( Error.Request ) ) );
 					
 
 					AWS.SMTP.Client.Send(
 							Server		=> Server,
 							From		=> AWS.SMTP.E_Mail( T( E_Mail_From_Name ), T( E_Mail_From_Address ) ),
 							To		=> AWS.SMTP.E_Mail( T( E_Mail_To_Name ), T( E_Mail_To_Address ) ),
-							Subject		=> T( Error_E_Mail_Subject ) & Exception_Name( E ),
+							Subject		=> T( Error_E_Mail_Subject ) & Exception_Name( E ) & "@" & AWS.Status.Host( Error.Request ),
 							Message		=> Message,
 							Attachments	=> Attachments,
 							Status		=> Status
