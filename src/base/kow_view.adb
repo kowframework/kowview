@@ -50,6 +50,7 @@ with KOW_Sec.Accounting;
 with KOW_View.Components;		use KOW_View.Components;
 with KOW_View.Components.Registry;
 with KOW_View.Json_Util;
+with KOW_View.Security;
 
 
 ---------
@@ -201,7 +202,7 @@ package body KOW_View is
 	Exception_Template_Root_Path : constant String := "data" / "exceptions";
 
 	procedure Handle_Exception(
-				E	: in Ada.Exceptions.Exception_Occurrence;
+				E	: in     Ada.Exceptions.Exception_Occurrence;
 				Log	: in out AWS.Log.Object;
 				Error	: in     AWS.Exceptions.Data;
 				Answer	: in out AWS.Response.Data
@@ -244,6 +245,8 @@ package body KOW_View is
 					);
 			if E_Mail_On_Exceptions then
 				declare
+					use Templates_Parser;
+
 					function T( U : in Unbounded_String ) return String renames To_String;
 					My_Action : KOW_Sec.Accounting.Base_Action_Type'Class := KOW_Sec.Accounting.New_Action(
 											Name		=> "exception email",
@@ -254,13 +257,38 @@ package body KOW_View is
 					Server		: AWS.SMTP.Receiver := AWS.SMTP.Initialize( T( E_Mail_SMTP_Server ) );
 					Attachments	: AWS.SMTP.Client.Attachment_Set( 2 .. 1 );
 					Status		: AWS.SMTP.Status;
+
+
+
+					P		: Translate_Set;
+					User		: KOW_Sec.User_Type := KOW_View.Security.Get_User( Error.Request );
+
+
+
+					function Message return String is
+						Template_Path : constant String := "./data/exceptions/email.txt";
+					begin
+						if Ada.Directories.Exists( Template_Path ) then
+							return Parse( Template_Path, P );
+						else
+							return Exception_Information( E );
+						end if;
+					end Message;
 				begin
+
+					KOW_View.Security.Insert( P, User );
+					Insert( P, Assoc( "exception_name", Exception_Name( E ) ) );
+					Insert( P, Assoc( "exception_message", Exception_Message( E ) ) );
+					Insert( P, Assoc( "exception_information", Exception_Information( E ) ) );
+					Insert( P, Assoc( "uri", AWS.Status.URI( Error.Request ) ) );
+					
+
 					AWS.SMTP.Client.Send(
 							Server		=> Server,
 							From		=> AWS.SMTP.E_Mail( T( E_Mail_From_Name ), T( E_Mail_From_Address ) ),
 							To		=> AWS.SMTP.E_Mail( T( E_Mail_To_Name ), T( E_Mail_To_Address ) ),
 							Subject		=> T( Error_E_Mail_Subject ) & Exception_Name( E ),
-							Message		=> Exception_Information( E ), -- TODO :: maybe there is a better exception message I can send
+							Message		=> Message,
 							Attachments	=> Attachments,
 							Status		=> Status
 						);

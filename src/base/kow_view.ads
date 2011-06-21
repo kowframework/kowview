@@ -72,7 +72,7 @@ package KOW_View is
 
 
 	procedure Handle_Exception(
-				E	: in Ada.Exceptions.Exception_Occurrence;
+				E	: in     Ada.Exceptions.Exception_Occurrence;
 				Log	: in out AWS.Log.Object;
 				Error	: in     AWS.Exceptions.Data;
 				Answer	: in out AWS.Response.Data
