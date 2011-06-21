@@ -282,6 +282,10 @@ package body KOW_View is
 					Insert( P, Assoc( "exception_information", Exception_Information( E ) ) );
 					Insert( P, Assoc( "uri", AWS.Status.URI( Error.Request ) ) );
 					Insert( P, Assoc( "host", AWS.Status.Host( Error.Request ) ) );
+					Insert( P, Assoc( "user_agent", AWS.Status.User_Agent( Error.Request ) ) );
+					Insert( P, Assoc( "referer", AWS.Status.Referer( Error.Request ) ) );
+					Insert( P, Assoc( "peername", AWS.Status.Peername( Error.Request ) ) );
+
 
 
 					Insert( P, Assoc( "parameters", AWS.Parameters.URI_Format( AWS.Status.Parameters( Error.Request ) ) ) );

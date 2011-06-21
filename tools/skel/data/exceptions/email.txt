@@ -18,6 +18,13 @@ URI: @_uri_@
 Parameters: @_parameters_@
 
 
+
+User Agent : @_user_agent_@
+Referer: @_referer_@
+Peername: @_peername_@
+
+
+
 =====================
 = User Information: =
 =====================
