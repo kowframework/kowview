@@ -282,6 +282,9 @@ package body KOW_View is
 					Insert( P, Assoc( "exception_information", Exception_Information( E ) ) );
 					Insert( P, Assoc( "uri", AWS.Status.URI( Error.Request ) ) );
 					Insert( P, Assoc( "host", AWS.Status.Host( Error.Request ) ) );
+
+
+					Insert( P, Assoc( "parameters", AWS.Parameters.URI_Format( AWS.Status.Parameters( Error.Request ) ) ) );
 					
 
 					AWS.SMTP.Client.Send(
