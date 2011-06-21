@@ -245,8 +245,6 @@ package body KOW_View is
 					);
 			if E_Mail_On_Exceptions then
 				declare
-					use Templates_Parser;
-
 					function T( U : in Unbounded_String ) return String renames To_String;
 					My_Action : KOW_Sec.Accounting.Base_Action_Type'Class := KOW_Sec.Accounting.New_Action(
 											Name		=> "exception email",
@@ -260,37 +258,35 @@ package body KOW_View is
 
 
 
-					P		: Translate_Set;
-					User		: KOW_Sec.User_Type := KOW_View.Security.Get_User( Error.Request );
-
-
 
 					function Message return String is
-						Template_Path : constant String := "./data/exceptions/email.txt";
+						use Templates_Parser;
+
+						Template_Path	: constant String := "./data/exceptions/email.txt";
+						User		: KOW_Sec.User_Type;
+						P		: Translate_Set;
 					begin
 						if Ada.Directories.Exists( Template_Path ) then
+							User := KOW_View.Security.Get_User( Error.Request );
+
+							KOW_View.Security.Insert( P, User );
+							Insert( P, Assoc( "exception_name", Exception_Name( E ) ) );
+							Insert( P, Assoc( "exception_message", Exception_Message( E ) ) );
+							Insert( P, Assoc( "exception_information", Exception_Information( E ) ) );
+							Insert( P, Assoc( "uri", AWS.Status.URI( Error.Request ) ) );
+							Insert( P, Assoc( "host", AWS.Status.Host( Error.Request ) ) );
+							Insert( P, Assoc( "user_agent", AWS.Status.User_Agent( Error.Request ) ) );
+							Insert( P, Assoc( "referer", AWS.Status.Referer( Error.Request ) ) );
+							Insert( P, Assoc( "peername", AWS.Status.Peername( Error.Request ) ) );
+
+							Insert( P, Assoc( "parameters", AWS.Parameters.URI_Format( AWS.Status.Parameters( Error.Request ) ) ) );
+
 							return Parse( Template_Path, P );
 						else
 							return Exception_Information( E );
 						end if;
 					end Message;
 				begin
-
-					KOW_View.Security.Insert( P, User );
-					Insert( P, Assoc( "exception_name", Exception_Name( E ) ) );
-					Insert( P, Assoc( "exception_message", Exception_Message( E ) ) );
-					Insert( P, Assoc( "exception_information", Exception_Information( E ) ) );
-					Insert( P, Assoc( "uri", AWS.Status.URI( Error.Request ) ) );
-					Insert( P, Assoc( "host", AWS.Status.Host( Error.Request ) ) );
-					Insert( P, Assoc( "user_agent", AWS.Status.User_Agent( Error.Request ) ) );
-					Insert( P, Assoc( "referer", AWS.Status.Referer( Error.Request ) ) );
-					Insert( P, Assoc( "peername", AWS.Status.Peername( Error.Request ) ) );
-
-
-
-					Insert( P, Assoc( "parameters", AWS.Parameters.URI_Format( AWS.Status.Parameters( Error.Request ) ) ) );
-					
-
 					AWS.SMTP.Client.Send(
 							Server		=> Server,
 							From		=> AWS.SMTP.E_Mail( T( E_Mail_From_Name ), T( E_Mail_From_Address ) ),
