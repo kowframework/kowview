@@ -30,14 +30,14 @@ Peername: @_peername_@
 =====================
 
 
-Identity: @_user_identity_@
+Identity: @_identity_@
 
-Status: @_user_account_status_@
-Status Message: @_user_account_status_message_@
+Status: @_account_status_@
+Status Message: @_account_status_message_@
 
-First Name: @_user_first_name_@
-Last Name:  @_user_last_name_@
-Gender: @_user_gender_@
-Nickname: @_user_nickname_@
+First Name: @_first_name_@
+Last Name:  @_last_name_@
+Gender: @_gender_@
+Nickname: @_nickname_@
 
-Primary Email @_user_primary_email_@
+Primary Email @_primary_email_@
