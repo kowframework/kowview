@@ -94,7 +94,7 @@ package body KOW_View is
 
 		htdocs_path : constant String := "htdocs" & URI;
 	begin
-		if Ada.Directories.Exists( htdocs_path ) then
+		if Ada.Directories.Exists( htdocs_path ) and then Ada.Directories."="( Ada.Directories.Ordinary_File, Ada.Directories.Kind( htdocs_path) ) then
 			return AWS.Response.File(
 							Content_Type    => AWS.MIME.Content_Type( htdocs_path ),
 							Filename        => htdocs_path
