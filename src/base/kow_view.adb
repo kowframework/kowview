@@ -56,6 +56,7 @@ with KOW_View.Security;
 ---------
 -- AWS --
 ---------
+with AWS.MIME;
 with AWS.Parameters;
 with AWS.Response;
 with AWS.SMTP;
@@ -90,8 +91,15 @@ package body KOW_View is
 										Root_Accountant	=> Accountant'Access
 									);
 		URI : constant String := AWS.Status.URI( Request );
+
+		htdocs_path : constant String := "htdocs" & URI;
 	begin
-		if URI = "/favicon.ico" then
+		if Ada.Directories.Exists( htdocs_path ) then
+			return AWS.Response.File(
+							Content_Type    => AWS.MIME.Content_Type( htdocs_path ),
+							Filename        => htdocs_path
+						);
+		elsif URI = "/favicon.ico" then
 			raise REDIRECT with "/themes/theme/favicon.ico";
 		elsif URI = "/robots.txt" then
 			raise REDIRECT with "/pages/static/robots.txt";
