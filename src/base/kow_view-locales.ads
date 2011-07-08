@@ -76,5 +76,10 @@ package KOW_View.Locales is
 			);
 	-- set the session's locale
 
+	function Get_Dojo_Locale( Request : in AWS.Status.Data ) return String;
+	-- return the locale in the Dojo formatting standard;
+	-- ie (ISO => Dojo):
+	-- 	pt_BR => pt-br
+	-- 	en_US => en-us
 
 end KOW_View.Locales;

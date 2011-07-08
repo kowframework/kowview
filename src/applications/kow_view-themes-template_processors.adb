@@ -39,6 +39,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -- KOW Framework --
 -------------------
 with KOW_Lib.UString_Vectors;
+with KOW_View.Locales;
 with KOW_View.Themes.Components;
 
 
@@ -343,6 +344,7 @@ package body KOW_View.Themes.Template_Processors is
 	begin
 		Insert( Parameters, Assoc( "title", Processor.Title ) );
 		Insert( Parameters, Assoc( "author", Processor.Author ) );
+		Insert( Parameters, Assoc( "dojo_locale", KOW_View.Locales.Get_Dojo_Locale( Request ) ) );
 		Insert( Parameters, Processor.Include_Buffers );
 
 		Region_Index_Maps.Iterate( Processor.Index_Map, Insert_Regions_Iterator'Access );

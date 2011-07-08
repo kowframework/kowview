@@ -31,10 +31,17 @@ pragma License (GPL);
 
 
 
+--------------
+-- Ada 2005 --
+--------------
+with Ada.Characters.Handling;
+with Ada.Strings.Unbounded;
+
 -------------------
 -- KOW Framework --
 -------------------
 with KOW_Lib.Locales;
+with KOW_Lib.String_Util;
 
 
 ---------
@@ -62,4 +69,16 @@ package body KOW_View.Locales is
 		Locale_Data.Set( Session_ID, Session_Key, Locale );
 	end Set_Locale;
 
+	function Get_Dojo_Locale( Request : in AWS.Status.Data ) return String is
+		-- return the locale in the Dojo formatting standard;
+		-- ie (ISO => Dojo):
+		-- 	pt_BR => pt-br
+		-- 	en_US => en-us
+	begin
+		return KOW_Lib.String_Util.Str_Replace(
+						From	=> '_',
+						To	=> '-', 
+						Str	=> Ada.Characters.Handling.To_Lower( Ada.Strings.Unbounded.To_String( Get_Locale( Request ).Code ) )
+					);
+	end Get_Dojo_Locale;
 end KOW_View.Locales;
