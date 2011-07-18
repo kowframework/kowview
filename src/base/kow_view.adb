@@ -94,7 +94,9 @@ package body KOW_View is
 
 		htdocs_path : constant String := "htdocs" & URI;
 	begin
-		if Ada.Directories.Exists( htdocs_path ) and then Ada.Directories."="( Ada.Directories.Ordinary_File, Ada.Directories.Kind( htdocs_path) ) then
+		if URI = "/" and then Welcome_Function /= null then
+			return Welcome_Function.all( Request );
+		elsif Ada.Directories.Exists( htdocs_path ) and then Ada.Directories."="( Ada.Directories.Ordinary_File, Ada.Directories.Kind( htdocs_path) ) then
 			return AWS.Response.File(
 							Content_Type    => AWS.MIME.Content_Type( htdocs_path ),
 							Filename        => htdocs_path
@@ -329,6 +331,11 @@ package body KOW_View is
 		end if;
 	end Handle_Exception;
 
+
+	function Default_Welcome_Function( Request : in AWS.Status.Data ) return AWS.Response.Data is
+	begin
+		return AWS.Response.URL( To_String( Home ) );
+	end Default_Welcome_Function;
 
 	------------------------------
 	-- Email Sending Procedures --

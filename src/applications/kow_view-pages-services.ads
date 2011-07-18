@@ -204,6 +204,33 @@ package KOW_View.Pages.Services is
 					);
 
 
+	-----------------
+	-- Dir Service --
+	-----------------
+
+	type Dir_Service is new KOW_View.Services.Service_Type with null record;
+	-- list all the available modules and services for every component registered
+
+
+	overriding
+	procedure Process_Json_Request(
+			Service	: in out Dir_Service;
+			Request	: in     AWS.Status.Data;
+			Response:    out KOW_Lib.Json.Object_Type
+		);
+
+	overriding
+	procedure Process_Custom_Request(
+			Service		: in out Dir_Service;
+			Request		: in     AWS.Status.Data;
+			Response	:    out AWS.Response.Data
+		);
+
+	package Dir_Service_Cycles is new KOW_View.Services.Singleton_Service_Cycles(
+						Service_Type	=> Dir_Service,
+						Component	=> KOW_View.Pages.Components.Component'Access
+					);
+
 private
 
 	Page_Script_Includes	: KOW_Lib.UString_Vectors.Vector;

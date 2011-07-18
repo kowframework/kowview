@@ -85,13 +85,19 @@ package KOW_View.Components.Registry is
 	function Get_Component( Request : in AWS.Status.Data ) return KOW_View.Components.Component_Access;
 	-- get the component for the given request.
 
-private
-
 
 	package Component_Maps is new Ada.Containers.Ordered_Maps(
 					Key_Type	=> Unbounded_String,
 					Element_Type	=> Component_Ptr
 				);
+
+
+	function Get_Components return Component_Maps.Map;
+	-- return all the components available;
+
+private
+
+
 
 	The_Registry: Component_Maps.Map;
 

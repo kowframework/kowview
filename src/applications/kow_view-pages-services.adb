@@ -33,6 +33,7 @@ pragma License( GPL );
 --------------
 with Ada.Containers.Vectors;
 with Ada.Strings.Fixed;
+with Ada.Strings.Unbounded;
 
 -------------------
 -- KOW Framework --
@@ -532,6 +533,146 @@ package body KOW_View.Pages.Services is
 					);
 		end if;
 	end Locate_Resource;
+
+
+
+
+
+
+
+
+
+
+	-----------------
+	-- Dir Service --
+	-----------------
+
+
+
+	overriding
+	procedure Process_Json_Request(
+			Service	: in out Dir_Service;
+			Request	: in     AWS.Status.Data;
+			Response:    out KOW_Lib.Json.Object_Type
+		) is
+		use KOW_Lib.Json;
+		use KOW_View.Components;
+		use KOW_View.Components.Registry;
+
+
+		Components : Array_Type;
+
+		procedure Component_Iterator( C : in Component_Maps.Cursor ) is
+			Component_Name	: Unbounded_String := Component_Maps.Key( C );
+			Component	: Component_Ptr := Component_Maps.Element( C );
+
+			Component_object: Object_Type;
+			Services	: Array_Type;
+			Modules		: Array_Type;
+
+
+			procedure Service_Iterator( S_C : in Service_Delegator_Maps.Cursor ) is
+			begin
+				Append( Services, Service_Delegator_Maps.Key( S_C ) );
+			end Service_Iterator;
+
+			procedure Module_Iterator( M_C : in Module_Factory_Maps.Cursor ) is
+			begin
+				Append( Modules, Module_Factory_Maps.Key( M_C ) );
+			end Module_Iterator;
+		begin
+
+			Service_Delegator_Maps.Iterate( Component.Service_Delegators, Service_Iterator'Access );
+			Module_Factory_Maps.Iterate( Component.Module_Factories, Module_Iterator'Access );
+
+			
+			Set( Component_Object, "name", component_name );
+			Set( Component_Object, "services", Services );
+			Set( Component_Object, "modules", Modules );
+
+			Append( Components, Component_Object );
+
+		end Component_Iterator;
+	begin
+		Component_Maps.Iterate( Get_Components, Component_Iterator'Access );
+
+
+		declare
+			Obj : Object_Type;
+		begin
+			Set( Obj, "components", Components );
+			Response := Obj;
+		end;
+		
+	end Process_Json_Request;
+
+
+
+	overriding
+	procedure Process_Custom_Request(
+			Service		: in out Dir_Service;
+			Request		: in     AWS.Status.Data;
+			Response	:    out AWS.Response.Data
+		) is
+		use Ada.Strings.Unbounded;
+		use KOW_View.Components;
+		use KOW_View.Components.Registry;
+
+
+		Buffer : Unbounded_String;
+
+		procedure Component_Iterator( C : in Component_Maps.Cursor ) is
+			Component_Name	: Unbounded_String := Component_Maps.Key( C );
+			Component	: Component_Ptr := Component_Maps.Element( C );
+
+			procedure Service_Iterator( S_C : in Service_Delegator_Maps.Cursor ) is
+			begin
+				Append( Buffer, "<li>" );
+				Append( Buffer, Service_Delegator_Maps.Key( S_C ) );
+				Append( Buffer, "</li>" );
+			end Service_Iterator;
+
+			procedure Module_Iterator( M_C : in Module_Factory_Maps.Cursor ) is
+			begin
+				Append( Buffer, "<li>" );
+				Append( Buffer, Module_Factory_Maps.Key( M_C ) );
+				Append( Buffer, "</li>" );
+			end Module_Iterator;
+		begin
+
+			Append( Buffer, "<h2>" );
+			Append( Buffer, Component_Name );
+			Append( Buffer, "</h2>" );
+
+			Append( Buffer, "<h3>Services:</h3>" );
+			Append( Buffer, "<ul>" );
+				Service_Delegator_Maps.Iterate( Component.Service_Delegators, Service_Iterator'Access );
+			Append( Buffer, "</ul>" );
+
+			Append( Buffer, "<h3>Modules:</h3>" );
+			Append( Buffer, "<ul>" );
+				Module_Factory_Maps.Iterate( Component.Module_Factories, Module_Iterator'Access );
+			Append( Buffer, "</ul>" );
+		end Component_Iterator;
+
+
+	begin
+		Append( Buffer, "<html><head><title>Available Components</title></head><body><h1>Available Components</h1>" );
+		Append( Buffer, "This is an automatically generated page with all available components and it's services and modules." );
+		Component_Maps.Iterate( Get_Components, Component_Iterator'Access );
+		Append( Buffer, "</body></html>" );
+		Response := AWS.Response.Build(
+					Content_Type	=> "text/html",
+					Message_Body	=> To_String( Buffer )
+				);
+
+	end Process_Custom_Request;
+
+
+
+
+
+
 
 
 

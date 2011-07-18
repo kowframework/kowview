@@ -86,6 +86,9 @@ package KOW_View is
 	--
 
 	
+	type Welcome_Function_Type is access function( Request : in AWS.Status.Data ) return AWS.Response.Data;
+	function Default_Welcome_Function( Request : in AWS.Status.Data ) return AWS.Response.Data;
+	-- redirects to home
 
 	REDIRECT : Exception;
 	-- whenever you need you can raise this exception to get your application redirected somewhere
@@ -117,6 +120,10 @@ package KOW_View is
 
 	E_Mail_SMTP_Server	: Unbounded_String := To_Unbounded_String( "localhost" );
 
+
+	Welcome_Function	: Welcome_Function_Type := Default_Welcome_Function'Access;
+	-- the processor for when the URI is /
+	-- the default behaviour (if it's null) / is to redirect to home.
 
 
 

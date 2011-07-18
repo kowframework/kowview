@@ -109,6 +109,10 @@ package body KOW_View.Components.Registry is
 	end Get_Component;
 
 
-
+	function Get_Components return Component_Maps.Map is
+		-- return all the components available;
+	begin
+		return The_Registry;
+	end Get_Components;
 
 end KOW_View.Components.Registry;
