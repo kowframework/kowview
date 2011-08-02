@@ -140,16 +140,21 @@ package body KOW_View.Components is
 
 
 		function Delegator( Name : Unbounded_String ) return Service_Delegator_Access is
+			Deleg : Service_Delegator_Ptr;
 		begin
-			return Service_Delegator_Access(
-				Service_Delegator_Maps.Element(
-							Component.Service_Delegators,
-							Name
-						)
-					);
-		exception
-			when CONSTRAINT_ERROR =>
-				raise SERVICE_ERROR with "unknown service: " & To_String( Name );
+			if Service_Delegator_Maps.Contains( Component.Service_Delegators, Name ) then
+				Deleg := Service_Delegator_Maps.Element(
+								Component.Service_Delegators,
+								Name
+							);
+				if Deleg = null then
+					raise SERVICE_ERROR with "unknown service (null): " & To_String( Name );
+				else
+					return Service_Delegator_Access( Deleg );
+				end if;
+			else
+				raise SERVICE_ERROR with "unknown service (not registered): " & To_String( Name );
+			end if;
 		end Delegator;
 	begin
 
