@@ -27,11 +27,13 @@
 --------------
 -- Ada 2005 --
 --------------
+with Ada.Strings.Unbounded;
 with Ada.Tags;
 
 -------------------
 -- KOW Framework --
 -------------------
+with KOW_Lib.String_Util;
 with KOW_View.Components;
 with KOW_View.Util;
 
@@ -53,7 +55,8 @@ package body KOW_View.Services.Util is
 		use KOW_View.Components;
 		Mapping : constant String := '/' & Get_Name( Service.Component.all ) & '/' & Get_Name( Service'Tag );
 
-		First : integer := Mapping'Length + URI'First;
+		First : Integer := Mapping'Length + URI'First;
+		Last  : Integer := URI'Last;
 	begin
 		pragma Assert( Mapping'Length <= URI'Length, "this is not a valid URI for this service.. expect something inside " & Mapping );
 
@@ -61,7 +64,17 @@ package body KOW_View.Services.Util is
 			First := First + 1;
 		end if;
 
-		return URI( First .. URI'Last );
+		while Last >= First and then URI( Last ) = '/' loop
+			Last := Last - 1;
+		end loop;
+
+		if First > Last then
+			return "";
+		else
+			-- NOTE :: this is slow because relies on unbounded_string AND the implementation of str_replace isn't the smartest either.
+			-- TODO :: optimize this code
+			return URI( First .. Last );
+		end if;
 	end Local_URI;
 
 end KOW_View.Services.Util;

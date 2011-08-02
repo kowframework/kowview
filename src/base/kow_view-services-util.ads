@@ -47,5 +47,7 @@ package KOW_View.Services.Util is
 			) return String;
 	-- get the URI stripping the service mapping
 	-- if no_slash then tries to strip the forward slash in the begining
+	--
+	-- and removes all the end forward slashes
 
 end KOW_View.Services.Util;
