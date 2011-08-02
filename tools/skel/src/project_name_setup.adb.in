@@ -103,9 +103,9 @@ begin
 	begin
 		Log_Config := New_Config_File( "kow_lib-log" );
 
---		KOW_Lib.Log.Default_Level := KOW_Lib.Log.Log_Level'Value(
---					"level_" & Value( Log_Config, "log_level", "warning" )
---				);
+		KOW_Lib.Log.Default_Level := KOW_Lib.Log.Log_Level'Value(
+					"level_" & Value( Log_Config, "log_level", "warning" )
+				);
 
 		Set_File_Output(
 				KOW_Lib.Log.Error_Output,
