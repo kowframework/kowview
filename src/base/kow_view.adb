@@ -44,6 +44,7 @@ with Ada.Text_IO;
 -------------------
 with KOW_Lib.File_System;		use KOW_Lib.File_System;
 with KOW_Lib.Json;
+with KOW_Lib.Log;
 with KOW_Lib.String_Util;
 with KOW_Sec;
 with KOW_Sec.Accounting;
@@ -66,6 +67,8 @@ with Templates_Parser;
 
 
 package body KOW_View is
+
+	Big_Error_Logger : KOW_Lib.Log.Logger_Type := KOW_Lib.Log.Get_Logger( "KOW_View HUGE Exceptions" );
 
 
 
@@ -329,6 +332,19 @@ package body KOW_View is
 						Message_Body	=> "<html><head><title>Oops...</title><body>the server isn't exactly well configured...</body></html>"
 					);
 		end if;
+	exception
+		when others => 
+			KOW_Lib.Log.Log(
+					Logger	=> BIG_Error_Logger,
+					Level	=> KOW_Lib.Log.Level_Error,
+					Message	=> "I AM UNABLE TO HANDLE EXCEPTIONS.... SHAME ON ME"
+				);
+
+			-- couldn't handle the exception? well, then we stop trying and give up
+			Answer := AWS.Response.Build(
+						Content_Type	=> "text/html",
+						Message_Body	=> "<html><head><title>I give up...</title></head><body>So many erros in my soul... I give up.</body></html>"
+					);
 	end Handle_Exception;
 
 
