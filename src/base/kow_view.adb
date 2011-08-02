@@ -333,12 +333,24 @@ package body KOW_View is
 					);
 		end if;
 	exception
-		when others => 
+		when e : others => 
 			KOW_Lib.Log.Log(
 					Logger	=> BIG_Error_Logger,
 					Level	=> KOW_Lib.Log.Level_Error,
 					Message	=> "I AM UNABLE TO HANDLE EXCEPTIONS.... SHAME ON ME"
 				);
+			KOW_Lib.Log.Log(
+					Logger	=> BIG_Error_Logger,
+					Level	=> KOW_Lib.Log.Level_Error,
+					Message	=> "Name : " & Ada.Exceptions.Exception_Name( E )
+				);
+			KOW_Lib.Log.Log(
+					Logger	=> BIG_Error_Logger,
+					Level	=> KOW_Lib.Log.Level_Error,
+					Message	=> "Message : " & Ada.Exceptions.Exception_Message( E )
+				);
+
+
 
 			-- couldn't handle the exception? well, then we stop trying and give up
 			Answer := AWS.Response.Build(
