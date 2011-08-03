@@ -65,7 +65,7 @@ package KOW_View.json_util is
 
 	function Build_Error_Response(
 			E		: Ada.Exceptions.Exception_Occurrence;
-			Status_Code	: AWS.Messages.Status_Code := AWS.Messages.S505;
+			Status_Code	: AWS.Messages.Status_Code := AWS.Messages.S500;
 			Cache_Control	: AWS.Messages.Cache_Option := AWS.Messages.No_Cache;
 			Wrap_Data	: Boolean := False
 		) return AWS.Response.Data;
