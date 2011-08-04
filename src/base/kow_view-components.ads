@@ -302,6 +302,8 @@ package KOW_View.Components is
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
 			Locale		: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
 		) return String;
+	-- locate a resource file using KOW_View.Components.Util.Locate_Resource
+
 
 	procedure Register_Service_Delegator(
 			Component	: in out Component_Type;

@@ -66,6 +66,19 @@ package KOW_View.Components.Util is
 	-- 	or
 	-- 	[WORKING_DIR]/applications/component_name/data/resource.extension
 	-- returning it's name if nothing has been found raise Ada.Directories.Name_Error if not found
+	--
+	-- Also, when Locale_Code is provided look for the resources in a localized way.
+	-- 
+	-- For instance, when looking for component's foo the bar.ext resource in pt_BR locale it'd look for:
+	--
+	-- 1. [WORKING_DIR]/data/kowview/foo/bar_pt_BR.ext
+	-- 2. [WORKING_DIR]/data/kowview/foo/bar_pt.ext
+	-- 3. [WORKING_DIR]/data/kowview/foo/bar.ext
+	-- 4. [WORKING_DIR]/applications/data/foo/bar_pt_BR.ext
+	-- 5. [WORKING_DIR]/applications/data/foo/bar_pt.ext
+	-- 6. [WORKING_DIR]/applications/data/foo/bar.ext
+	--
+	-- Returning the first file relative path found
 
 	function Load_Main_Configuration(
 			Component_Name	: in String
