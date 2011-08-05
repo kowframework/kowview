@@ -12,7 +12,6 @@ with "kowlib.gpr";
 with "kowsec.gpr";
 with "kowsec-entities.gpr";
 with "kowview.gpr";
-with "kowview-entities.gpr";
 
 with "aws";
 
