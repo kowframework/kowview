@@ -24,7 +24,6 @@
 pragma License( GPL );
 
 
-with Ada.Text_IO;
 
 --------------
 -- Ada 2005 --

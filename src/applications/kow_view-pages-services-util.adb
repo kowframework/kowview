@@ -22,7 +22,6 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 pragma License( GPL );
-with ada.text_io;
 
 
 --------------
@@ -72,7 +71,6 @@ package body KOW_View.Pages.Services.Util is
 	begin
 
 		for i in Elements'Range loop
-			ada.text_io.put_line( integer'image(i));
 			Modules( i ) := Get_Module( Elements( i ) );
 		end loop;
 
@@ -87,7 +85,6 @@ package body KOW_View.Pages.Services.Util is
 	begin
 		Component_Name := Element( Module_Config, "component" );
 
-		Ada.text_io.put_line( "allocating module for component " & to_string(component_name));
 		Module.Config	:= Module_Config;
 		Module.Factory := Module_Factory_Ptr( Get_Module_Factory(
 							Component	=> Registry.Get_Component( Component_Name ).all,

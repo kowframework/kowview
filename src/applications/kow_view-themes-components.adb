@@ -30,7 +30,6 @@ with Ada.Calendar;
 with Ada.Strings;
 with Ada.Strings.Fixed;
 with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
-with ada.text_io;			use ada.text_io;
 
 -------------------
 -- KOW Framework --
