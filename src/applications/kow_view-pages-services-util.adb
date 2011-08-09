@@ -22,6 +22,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 pragma License( GPL );
+with ada.text_io;
 
 
 --------------
@@ -71,6 +72,7 @@ package body KOW_View.Pages.Services.Util is
 	begin
 
 		for i in Elements'Range loop
+			ada.text_io.put_line( integer'image(i));
 			Modules( i ) := Get_Module( Elements( i ) );
 		end loop;
 
@@ -84,6 +86,8 @@ package body KOW_View.Pages.Services.Util is
 		Module		: Complete_Module_Type;
 	begin
 		Component_Name := Element( Module_Config, "component" );
+
+		Ada.text_io.put_line( "allocating module for component " & to_string(component_name));
 		Module.Config	:= Module_Config;
 		Module.Factory := Module_Factory_Ptr( Get_Module_Factory(
 							Component	=> Registry.Get_Component( Component_Name ).all,
@@ -126,29 +130,40 @@ package body KOW_View.Pages.Services.Util is
 			use KOW_Lib.File_System;
 			
 			UPage : constant Unbounded_String := To_Unbounded_String( Page );
+
+			My_Config : KOW_Config.Config_File;
+
+			procedure Load is
+				-- load configuration from file in disk
+			begin
+				My_Config := KOW_View.Components.Util.Load_Configuration(
+											Component_Name		=> KOW_View.Components.Get_Name( KOW_View.Pages.Components.Component ),
+											Configuration_Name	=> "page" / Page
+										);
+				
+				if KOW_Config.Has_Element( My_Config, "extends" ) then
+					declare
+						Parent : KOW_Config.Config_File;
+					begin
+						Get_Config_File( Parent, KOW_Config.Element( My_Config, "extends" ) );
+						My_Config := KOW_Config.Merge_Configs( Parent => Parent, Child => My_Config );
+					end;
+				end if;
+			end Load;
+
 		begin
-			Config := Config_File_Maps.Element( Cache, UPage );
-		exception
-			when CONSTRAINT_ERROR =>
-				declare
-					My_Config : KOW_Config.Config_File := KOW_View.Components.Util.Load_Configuration(
-												Component_Name		=> KOW_View.Components.Get_Name( KOW_View.Pages.Components.Component ),
-												Configuration_Name	=> "page" / Page
-											);
-				begin
-					if KOW_Config.Has_Element( My_Config, "extends" ) then
-						declare
-							Parent : KOW_Config.Config_File;
-						begin
-							Get_Config_File( Parent, KOW_Config.Element( My_Config, "extends" ) );
-							My_Config := KOW_Config.Merge_Configs( Parent => Parent, Child => My_Config );
-						end;
-					end if;
-					if KOW_View.Pages.Components.Component.Enable_Cache then
-						Config_File_Maps.Include( Cache, UPage, My_Config );
-					end if;
+			if KOW_View.Pages.Components.Component.Enable_Cache then
+				if Config_File_Maps.Contains( Cache, UPage ) then
+					Config := Config_File_Maps.Element( Cache, UPage );
+				else
+					Load;
 					Config := My_Config;
-				end;
+					Config_File_Maps.Include( Cache, UPage, My_Config );
+				end if;
+			else
+				Load;
+				Config := My_Config;
+			end if;
 		end Get_Config_File;
 	end Page_Config_Cache;
 

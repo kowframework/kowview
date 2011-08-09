@@ -22,6 +22,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 pragma License( GPL );
+with ada.text_io;
 
 
 
@@ -136,6 +137,7 @@ package body KOW_View.Security.Modules is
 			) is
 		-- get the JavaScript functions for submiting login/logout information
 	begin
+		ada.text_io.put_line("my body");
 		Response := Null_Unbounded_String;
 	end Process_Head;
 
