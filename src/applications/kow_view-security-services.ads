@@ -171,12 +171,11 @@ package KOW_View.Security.Services is
 	-------------------------
 
 
-	Switch_User_Role : constant KOW_Sec.Role_Type := KOW_Sec.New_Role( "security", "switch_user" );
 
 	type Switch_User_Service is new KOW_View.Services.Service_Type with null record;
 	-- just like "su" for root users :)
 	--
-	-- the active user can't be anonymous and must have the switch_user role
+	-- the active user can't be anonymous and must have the kow_view.security.switch_user role
 
 
 	overriding

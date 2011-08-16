@@ -292,15 +292,32 @@ package body KOW_View.Security.Services is
 	-- Switch User Service --
 	-------------------------
 
-	procedure Do_Switch( Request : in AWS.Status.Data ) is
-		User	: KOW_Sec.User_Type := Get_User( Request );
-		Criteria: KOW_Sec.Authorization_Criterias.Role_Criteria_Type;
+	procedure Do_Switch(
+				Service	: Switch_User_Service;
+				Request	: in AWS.Status.Data
+			) is
+		Criteria	: KOW_Sec.Authorization_Criterias.Role_Criteria_Type;
+		Session_ID	: constant AWS.Session.ID      := AWS.Status.Session( Request );
+
+
+		function Identity return KOW_Sec.User_Identity_Type is
+			URI : constant String := AWS.Status.URI( Request );
+		begin
+			return KOW_Sec.To_Identity( Local_URI( Service, URI, True ) );-- TODO :: get the identity from the url
+		end Identity;
 	begin
-		Criteria.Descriptor := Ada.Strings.Unbounded.To_Unbounded_String( String( KOW_Sec.Identity( Switch_User_Role ) ) );
+		Criteria.Descriptor := Ada.Strings.Unbounded.To_Unbounded_String( String( KOW_Sec.Identity( Switch_User ) ) );
 		KOW_Sec.Accounting.Require( Criteria, KOW_View.Security.Get_User( Request ), Accountant'Access );
 
 
-		-- TODO :: do the switch
+		KOW_View.Security.User_Data.Set(
+					Session_Id,
+					User_Key,
+					(
+							Data		=> KOW_Sec.Get_User( Identity ),
+							Current_Manager => null
+						)
+				);
 
 		raise KOW_View.Redirect_To_Home;
 	end Do_Switch;
@@ -313,7 +330,7 @@ package body KOW_View.Security.Services is
 				Response	:    out AWS.Response.Data
 			) is
 	begin
-		Do_Switch( Request );
+		Do_Switch( Service, Request );
 	end Process_Custom_Request;
 	
 	overriding
@@ -323,7 +340,7 @@ package body KOW_View.Security.Services is
 				Response	:    out KOW_Lib.Json.Object_Type
 			) is
 	begin
-		Do_Switch( Request );
+		Do_Switch( Service, Request );
 	end Process_Json_Request;
 
 
