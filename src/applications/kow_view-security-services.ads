@@ -164,4 +164,38 @@ package KOW_View.Security.Services is
 					Service_Type	=> User_Info_Service,
 					Component	=> KOW_View.Security.Components.Component'Access
 			);
+
+	
+	-------------------------
+	-- Switch User Service --
+	-------------------------
+
+
+	Switch_User_Role : constant KOW_Sec.Role_Type := KOW_Sec.New_Role( "security", "switch_user" );
+
+	type Switch_User_Service is new KOW_View.Services.Service_Type with null record;
+	-- just like "su" for root users :)
+	--
+	-- the active user can't be anonymous and must have the switch_user role
+
+
+	overriding
+	procedure Process_Custom_Request(
+				Service		: in out Switch_User_Service;
+				Request		: in     AWS.Status.Data;
+				Response	:    out AWS.Response.Data
+			);
+	
+	overriding
+	procedure Process_Json_Request(
+				Service		: in out Switch_User_Service;
+				Request		: in     AWS.Status.Data;
+				Response	:    out KOW_Lib.Json.Object_Type
+			);
+	
+	package Switch_User_Cycles is new KOW_View.Services.Singleton_Service_Cycles(
+					Service_Type	=> Switch_User_Service,
+					Component	=> KOW_View.Security.Components.Component'Access
+				);
+
 end KOW_View.Security.Services;

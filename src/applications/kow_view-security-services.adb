@@ -34,12 +34,14 @@ pragma License( GPL );
 --------------
 with Ada.Strings;
 with Ada.Strings.Fixed;
+with Ada.Strings.Unbounded;
 
 -------------------
 -- KOW Framework --
 -------------------
 with KOW_Lib.Json;
 with KOW_Sec;
+with KOW_Sec.Authorization_Criterias;
 with KOW_View.Components;
 with KOW_View.Locales;
 with KOW_View.Security.Components;
@@ -284,4 +286,45 @@ package body KOW_View.Security.Services is
 		KOW_Lib.Json.Set( Object, "user", KOW_Sec.To_Json( KOW_View.Security.Get_user( Request ).Data ) );
 		Response := Object;
 	end Process_Json_Request;
+
+
+	-------------------------
+	-- Switch User Service --
+	-------------------------
+
+	procedure Do_Switch( Request : in AWS.Status.Data ) is
+		User	: KOW_Sec.User_Type := Get_User( Request );
+		Criteria: KOW_Sec.Authorization_Criterias.Role_Criteria_Type;
+	begin
+		Criteria.Descriptor := Ada.Strings.Unbounded.To_Unbounded_String( String( KOW_Sec.Identity( Switch_User_Role ) ) );
+		KOW_Sec.Accounting.Require( Criteria, KOW_View.Security.Get_User( Request ), Accountant'Access );
+
+
+		-- TODO :: do the switch
+
+		raise KOW_View.Redirect_To_Home;
+	end Do_Switch;
+
+
+	overriding
+	procedure Process_Custom_Request(
+				Service		: in out Switch_User_Service;
+				Request		: in     AWS.Status.Data;
+				Response	:    out AWS.Response.Data
+			) is
+	begin
+		Do_Switch( Request );
+	end Process_Custom_Request;
+	
+	overriding
+	procedure Process_Json_Request(
+				Service		: in out Switch_User_Service;
+				Request		: in     AWS.Status.Data;
+				Response	:    out KOW_Lib.Json.Object_Type
+			) is
+	begin
+		Do_Switch( Request );
+	end Process_Json_Request;
+
+
 end KOW_View.Security.Services;
