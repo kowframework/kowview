@@ -37,7 +37,7 @@ begin
 	The_User	:= KOW_Sec.Get_User( Argument( 1 ) );
 	
 	declare
-		The_Role : constant Role_Type := To_Role( Argument( 2 ) );
+		The_Role : constant KOW_Sec.Role_Type := KOW_Sec.To_Role( KOW_Sec.to_Identity( Argument( 2 ) ) );
 	begin
 		KOW_Sec.Add_Global_Role( The_User, The_Role );
 	end;
