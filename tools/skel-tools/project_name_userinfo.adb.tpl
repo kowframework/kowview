@@ -20,7 +20,7 @@ with @_project_name_@_setup;
 procedure @_project_name_@_Userinfo is
 
 
-	Data : User_Data_Type;
+	User : User_Data_Type;
 
 	Indent_Level : Positive := 2;
 
@@ -52,22 +52,29 @@ begin
 			raise CONSTRAINT_ERROR with "-u option requires the username after";
 		end if;
 		@_project_name_@_Setup( False );
-		Data := Get_User( KOW_Sec.Entities.Get_User_Entity( Username => Argument( 2 ) ).User_Identity );
+		User := Get_User( KOW_Sec.Entities.Get_User_Entity( Username => Argument( 2 ) ).User_Identity );
 	else
-		Data := Get_user( Argument( 1 ) );
+		User := Get_user( Argument( 1 ) );
 	end if;
 
 	Put_Line( "Current info is " );
 
-	Put_Line( "TODO:: IMPLEMENT THE CORE USER INFO FEATURE" );
+	Put_Line( "identity : " 		& String( User.Identity ) );
+	Put_Line( "account_status : " 		& KOW_Sec.Account_Status_type'Image( User.Account_Status ) );
+	Put_Line( "account_status_message" 	& User.Account_Status_Message );
+	Put_Line( "first_name"			& User.First_Name );
+	Put_Line( "last_name"			& User.Last_Name );
+	Put_Line( "nickname"			& User.Nickname );
+	Put_Line( "primary_email"		& User.Primary_Email );
+
 
 
 	Put_Line( "Roles:" );
-	Role_Vectors.Iterate( Get_Roles( Data, False ), Roles_Iterator'Access );
+	Role_Vectors.Iterate( Get_Roles( User, False ), Roles_Iterator'Access );
 
 	Indent_Level := 4;
 	Put_line( "Groups:" );
-	Group_Vectors.Iterate( Get_All_Groups( Data ), Groups_iterator'Access );
+	Group_Vectors.Iterate( Get_All_Groups( User ), Groups_iterator'Access );
 
 
 end @_project_name_@_Userinfo;
