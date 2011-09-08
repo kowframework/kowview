@@ -147,4 +147,9 @@ package KOW_View is
 		);
 	-- send plain text email messages
 
+
+	
+	Enable_Virtual_Host	: Boolean := False;
+	-- enable name virtual hosts
+
 end KOW_View;

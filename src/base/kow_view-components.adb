@@ -88,6 +88,7 @@ package body KOW_View.Components is
 					Component_Name	=> Get_Name( Component ),
 					Resource	=> Resource,
 					Extension	=> Extension,
+					Virtual_Host	=> "",	-- TODO :: change this to enable virtual_host
 					Kind		=> Kind,
 					Locale_Code	=> Locale.Code
 				);

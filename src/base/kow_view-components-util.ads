@@ -57,6 +57,7 @@ package KOW_View.Components.Util is
 			Component_Name	: in String;
 			Resource	: in String;
 			Extension	: in String;
+			Virtual_Host	: in String;
 			Kind		: in Ada.Directories.File_Kind;
 			Locale_Code	: in KOW_Lib.Locales.Locale_Code := Ada.Strings.Unbounded.Null_Unbounded_String
 		) return String;

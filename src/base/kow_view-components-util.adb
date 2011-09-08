@@ -86,6 +86,7 @@ package body KOW_View.Components.Util is
 			Component_Name	: in String;
 			Resource	: in String;
 			Extension	: in String;
+			Virtual_Host	: in String;
 			Kind		: in Ada.Directories.File_Kind;
 			Locale_Code	: in KOW_Lib.Locales.Locale_Code := Ada.Strings.Unbounded.Null_Unbounded_String
 		) return String is
@@ -106,28 +107,25 @@ package body KOW_View.Components.Util is
 		Name		: String		:= "data" / "kowview" / MComponent_Name / Resource; --& "." & Extension;
 		Default_Name	: String		:= "applications" / MComponent_Name / "data" / Resource;-- & "." & Extension;
 
-
-
-
-
-		procedure check( FName : in String ) is
-			Real_Kind : File_Kind;
+		function Virtual_Host_Name return String is
 		begin
-			Real_Kind := Ada.Directories.Kind( FName );
+			return "data"/"kowview"/"vhost"/Virtual_Host/MComponent_Name/Resource;
+		end Virtual_Host_Name;
 
-			if Real_Kind /= Kind then
-				raise Ada.Directories.Name_Error with
-						"Resource """ & Resource &
-						""" of component """ & Component_Name &
-						""" is of type """ & File_Kind'Image( Real_Kind ) &
-						""" ( expected """ & File_Kind'Image( Kind ) & """)";
+
+
+
+
+		function check( FName : in String ) return Boolean is
+		begin
+			
+			if not Ada.Directories.Exists( FName ) then
+				return false;
+			elsif Ada.Directories.Kind( FName ) /= Kind then
+				return false;
+			else
+				return True;
 			end if;
-		exception
-			when Ada.IO_Exceptions.Name_Error =>
-				raise Ada.Directories.Name_Error with
-					"Resource """ & Resource &
-					""" of component """ & Component_Name &
-					""" ( aka """ & FName & """ ) not found";
 		end Check;
 
 
@@ -186,26 +184,34 @@ package body KOW_View.Components.Util is
 
 					N : constant String := FName & Suffix;
 				begin
-					Check( N );
-					return N;
-				exception
-					when e : others =>
-						if i = Parts'Last then -- no localized file...
-							Ada.Exceptions.Reraise_Occurrence( E );
-						end if;
+					if Check( N ) then
+						return N;
+					end if;
 				end;
 			end loop;
-
-			raise PROGRAM_ERROR with "seems like you found a bug in the resource localization code! Congratulations! :)";
 			return "";
 		end Check_Localized;
 	
 
+
+		function "+"( L, R : in String ) return String is
+			Computed : String renames L;
+			The_name : String renames R;
+		begin
+			if Computed = "" then
+				return Check_Localized( The_Name );
+			else
+				return Computed;
+			end if;
+		end "+";
+
 	begin
-		return Check_Localized( Name );
-	exception
-		when others =>
-			return Check_Localized( Default_Name );
+
+		if KOW_View.Enable_Virtual_Host then
+			return "" + Virtual_Host_Name + Name + Default_Name;
+		else
+			return "" + Name + Default_Name;
+		end if;
 
 	end Locate_Resource;
 
