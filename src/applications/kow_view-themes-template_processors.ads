@@ -144,8 +144,11 @@ package KOW_View.Themes.Template_Processors is
 		Template	: KOW_View.Themes.Template_Type;
 
 
-		Title	: Unbounded_String;
+		Title		: Unbounded_String;
 		Author		: Unbounded_String;
+
+
+		Virtual_Host	: KOW_View.Virtual_Host_Name_Type;
 	end record;
 
 

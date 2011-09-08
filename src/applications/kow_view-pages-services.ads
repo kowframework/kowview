@@ -161,6 +161,7 @@ package KOW_View.Pages.Services is
 			Service		: in Component_Resource_Service_Type;
 			Resource	: in String;
 			Extension	: in String := "";
+			Virtual_Host	: in String;
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
 			Locale		: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
 		) return String;

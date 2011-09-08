@@ -182,6 +182,7 @@ package body KOW_View.Modules is
 					Component	=> Module.Component.all,
 					Resource	=> Prefix / Resource,
 					Extension	=> Extension,
+					Virtual_Host	=> Module.Virtual_Host,
 					Kind		=> Kind,
 					Locale		=> Locale
 				);

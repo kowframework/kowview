@@ -102,6 +102,7 @@ package body KOW_View.Security.Services is
 										Service			=> Service,
 										Template_Resource	=> Login_Page,
 										Template_Extension	=> HTML,
+										Virtual_Host		=> KOW_View.Virtual_Host( Request ),
 										Parameters		=> Params,
 										Locale			=> KOW_View.Locales.Get_Locale( Request )
 									)
@@ -145,6 +146,7 @@ package body KOW_View.Security.Services is
 									Service			=> Service,
 									Template_Resource	=> Login_Error_Page,
 									Template_Extension	=> HTML,
+									Virtual_Host		=> KOW_View.Virtual_Host( Request ),
 									Parameters		=> Params,
 									Locale			=> KOW_View.Locales.Get_Locale( Request )
 								)
@@ -266,6 +268,7 @@ package body KOW_View.Security.Services is
 							Service			=> Service,
 							Template_Resource	=> User_Info_Page,
 							Template_Extension	=> HTML,
+							Virtual_Host		=> KOW_View.Virtual_Host( Request ),
 							Parameters		=> Params,
 							Locale			=> KOW_View.Locales.Get_Locale( Request )
 						)

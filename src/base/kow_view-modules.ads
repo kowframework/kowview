@@ -88,6 +88,10 @@ package KOW_View.Modules is
 		Dojo_Packages	: KOW_Lib.UString_Vectors.Vector;
 		Dojo_CSS	: KOW_Lib.UString_Vectors.Vector;
 		CSS_Includes	: KOW_Lib.UString_Vectors.Vector;
+
+
+		Virtual_Host	: KOW_View.Virtual_Host_Name_Type := ( others => ' ' );
+		-- a cache for virtual host name in the module
 	end record;
 
 

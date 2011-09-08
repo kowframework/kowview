@@ -334,7 +334,7 @@ package body KOW_View.Themes.Template_Processors is
 			) is
 		use Templates_Parser;
 		Parameters	: Templates_Parser.Translate_Set;
-		Template_File	: constant String := Get_File_Name( Processor.Template, Request );
+		Template_File	: constant String := Get_File_Name( Processor.Template, Processor.Virtual_Host, Request );
 
 		procedure Insert_Regions_Iterator( C : Region_Index_Maps.Cursor ) is
 		begin

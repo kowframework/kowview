@@ -46,6 +46,7 @@ package body KOW_View.Themes is
 			Theme_Name	: in String;
 			Resource	: in String;
 			Extension	: in String;
+			Virtual_Host	: in String;
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
 			Locale		: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
 		) return String is
@@ -54,6 +55,7 @@ package body KOW_View.Themes is
 				Component	=> KOW_View.Themes.Components.Component,
 				Resource	=> Theme_Name & Separator & Resource,
 				Extension	=> Extension,
+				Virtual_Host	=> Virtual_Host,
 				Kind		=> Kind,
 				Locale		=> Locale
 			);
@@ -97,6 +99,7 @@ package body KOW_View.Themes is
 
 	function Get_File_Name(
 				Template	: in Template_Type;
+				Virtual_Host	: in String;
 				Request		: in AWS.Status.Data
 			) return String is
 
@@ -106,6 +109,7 @@ package body KOW_View.Themes is
 				Theme_Name	=> Get_Theme_Name( Request ),
 				Resource	=> File_Name,
 				Extension	=> Extension,
+				Virtual_Host	=> Virtual_Host,
 				Kind		=> Ada.Directories.Ordinary_File,
 				Locale		=> KOW_View.Locales.Get_Locale( Request )
 			);

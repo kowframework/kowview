@@ -148,8 +148,14 @@ package KOW_View is
 	-- send plain text email messages
 
 
+	subtype Virtual_Host_Name_Type is String( 1 .. 100 );
 	
 	Enable_Virtual_Host	: Boolean := False;
 	-- enable name virtual hosts
+
+	function Virtual_Host(
+			Request	: in AWS.Status.Data
+		) return Virtual_Host_Name_Type;
+	-- compute the current virtual host
 
 end KOW_View;

@@ -59,6 +59,7 @@ package body KOW_View.Services is
 			Service		: in Service_Type;
 			Resource	: in String;
 			Extension	: in String := "";
+			Virtual_Host	: in String;
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
 			Locale		: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
 		) return String is
@@ -68,6 +69,7 @@ package body KOW_View.Services is
 					Component	=> Service.Component.all,
 					Resource	=> Prefix / Resource,
 					Extension	=> Extension,
+					Virtual_Host	=> Virtual_host,
 					Kind		=> Kind,
 					Locale		=> Locale
 				);
@@ -100,6 +102,7 @@ package body KOW_View.Services is
 			Service			: in Service_Type;
 			Template_Resource	: in String;
 			Template_Extension	: in String := "";
+			Virtual_Host		: in String;
 			Parameters		: in Templates_Parser.Translate_Set;
 			Locale			: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
 		) return String is
@@ -110,6 +113,7 @@ package body KOW_View.Services is
 						Service		=> Service_Type'Class( Service ),
 						Resource	=> Template_Resource,
 						Extension	=> Template_Extension,
+						Virtual_Host	=> Virtual_Host,
 						Kind		=> Ada.Directories.Ordinary_File,
 						Locale		=> Locale
 					);

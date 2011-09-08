@@ -61,6 +61,7 @@ package KOW_View.Themes is
 			Theme_Name	: in String;
 			Resource	: in String;
 			Extension	: in String;
+			Virtual_Host	: in String;
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
 			Locale		: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
 		) return String;
@@ -117,6 +118,7 @@ package KOW_View.Themes is
 
 	function Get_File_Name(
 				Template	: in Template_Type;
+				Virtual_Host	: in String;
 				Request		: in AWS.Status.Data
 			) return String;
 	-- locate the filename for the current template in current theme

@@ -76,6 +76,7 @@ package body KOW_View.Themes.Services is
 				Theme_Name	=> Theme_Name,
 				Resource	=> File_Name,
 				Extension	=> Extension,
+				Virtual_Host	=> KOW_View.Virtual_Host( Request ),
 				Kind		=> Ada.Directories.Ordinary_File
 			);
 	begin

@@ -437,4 +437,14 @@ package body KOW_View is
 			);
 	end Send_Email;
 
+
+
+	function Virtual_Host(
+			Request	: in AWS.Status.Data
+		) return Virtual_Host_Name_Type is
+		-- TODO :: implement-me
+		-- compute the current virtual host
+	begin
+		return Virtual_Host_Name_Type'( others => ' ' );
+	end Virtual_Host;
 end KOW_View;

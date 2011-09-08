@@ -74,6 +74,7 @@ package body KOW_View.Services.Implementations is
 								Service		=> Resource_Service'Class( Service ),
 								Resource	=> Resource,
 								Extension	=> Extension,
+								Virtual_Host	=> KOW_View.Virtual_Host( Request ),
 								Locale		=> Locale
 							);
 	begin
