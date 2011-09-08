@@ -205,12 +205,22 @@ package body KOW_View.Components.Util is
 			end if;
 		end "+";
 
+		function LMC( Str : in String ) return String is
+			-- it's a last minute check; raise exception if the resource is not found
+		begin
+			if Str /= "" then
+				return Str;
+			end if;
+
+			raise Ada.Directories.Name_Error with "Resource "+Resource+ "." + Extension + " of component " + Component_name + " not found!";
+		end LMC;
+
 	begin
 
 		if KOW_View.Enable_Virtual_Host then
-			return "" + Virtual_Host_Name + Name + Default_Name;
+			return LMC( "" + Virtual_Host_Name + Name + Default_Name );
 		else
-			return "" + Name + Default_Name;
+			return LMC( "" + Name + Default_Name );
 		end if;
 
 	end Locate_Resource;
