@@ -118,6 +118,7 @@ package body KOW_View.Pages.Services is
 					Context		=> Page,
 					Module_ID	=> Module_ID,
 					Request_Mode	=> Json_Request,
+					Virtual_Host	=> KOW_View.Virtual_Host( Request ),
 					Module		=> Complete.Module
 				);
 			Module_Id := Module_ID + 1;
@@ -229,6 +230,7 @@ package body KOW_View.Pages.Services is
 		Module_Id	: Positive := 1;
 
 
+		Virtual_Host	: constant KOW_View.Virtual_Host_Name_Type := KOW_View.Virtual_Host( Request );
 		procedure Create( Complete : in out Complete_Module_Type ) is
 		begin
 			Create(
@@ -237,6 +239,7 @@ package body KOW_View.Pages.Services is
 					Context		=> Page,
 					Module_ID	=> Module_ID,
 					Request_mode	=> Custom_Request,
+					Virtual_Host	=> Virtual_Host,
 					Module		=> Complete.Module
 				);
 			Module_Id := Module_ID + 1;

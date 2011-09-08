@@ -70,6 +70,7 @@ pragma Elaborate_Body( KOW_View.Modules.Stateless_Module_Factories );
 				Context		: in     String;
 				Module_Id	: in     Positive;
 				Request_Mode	: in     Request_Mode_Type;
+				Virtual_Host	: in     KOW_View.Virtual_Host_Name_Type;
 				Module		:    out Module_Ptr
 			);
 	-- create a module, setting it's ID if necessary

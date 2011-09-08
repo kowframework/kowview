@@ -53,32 +53,38 @@ package body KOW_View.Modules.Stateful_Module_Factories is
 
 	function Get_Key(
 				Context		: in String;
+				Virtual_Host	: in KOW_View.Virtual_Host_Name_Type;
 				Module_Id	: in Positive
 			) return String is
 		ID_Str : constant String := Ada.Strings.Fixed.Trim( Positive'Image( Module_Id ), Ada.Strings.Both );
 	begin
-		return Module_Container_Key_Prefix & Context & "::" & ID_Str;
+		if KOW_View.Enable_Virtual_Host then
+			return Module_Container_Key_Prefix & Context & "::" & Virtual_Host & "::" & ID_Str;
+		else
+			return Module_Container_Key_Prefix & Context & "::" & ID_Str;
+		end if;
 	end Get_Key;
 
 	function Get(
 			Request		: in AWS.Status.Data;
 			Context		: in String;
+			Virtual_Host	: in KOW_View.Virtual_Host_Name_Type;
 			Module_Id	: in Positive
 		) return Module_Type is
 		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
 	begin
-		return Module_Data.Get( Session_ID, Get_Key( Context, Module_ID ) );
+		return Module_Data.Get( Session_ID, Get_Key( Context, Virtual_Host, Module_ID ) );
 	end Get;
 	
 	procedure Set(
-			Request	: in AWS.Status.Data;
-			Module	: in Module_Type
+			Request		: in AWS.Status.Data;
+			Module		: in Module_Type
 		) is
 		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
 	begin
 		Module_Data.Set(
 					SID	=> Session_Id,
-					Key	=> Get_Key( To_String( Module.Context ), Module.Id ),
+					Key	=> Get_Key( To_String( Module.Context ), Module.Virtual_Host, Module.Id ),
 					Value	=> Module
 				);
 	end Set;
@@ -96,17 +102,19 @@ package body KOW_View.Modules.Stateful_Module_Factories is
 				Context		: in     String;
 				Module_Id	: in     Positive;
 				Request_Mode	: in     Request_Mode_Type;
+				Virtual_Host	: in     KOW_View.Virtual_Host_Name_Type;
 				Module		:    out Module_Ptr
 			) is
 		-- create a module, setting it's ID if necessary
 		
-		The_Module : Module_Type_Access := new Module_Type'( Get( Request, Context, Module_ID ) );
+		The_Module : Module_Type_Access := new Module_Type'( Get( Request, Context, Virtual_Host, Module_ID ) );
 	begin
 		The_Module.Context := Ada.Strings.Unbounded.To_Unbounded_String( Context );
 		The_Module.ID := Module_id;
 		The_Module.ID_Count := 0;
 		The_Module.Component := Component_Ptr( Component );
 		The_Module.Request_Mode := Request_Mode;
+		The_Module.Virtual_Host := Virtual_Host;
 
 		Module := Module_Ptr( The_Module );
 	end Create;

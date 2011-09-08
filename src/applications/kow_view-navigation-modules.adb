@@ -456,6 +456,7 @@ package body KOW_View.Navigation.Modules is
 				Context		=> To_String( Module.Context ),
 				Module_ID	=> Get_ID( Module ), -- same ID as the proxy :)
 				Request_mode	=> Custom_Request,
+				Virtual_Host	=> Module.Virtual_Host,
 				Module		=> Module.Current.Module
 			);
 

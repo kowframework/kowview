@@ -57,6 +57,7 @@ package body KOW_View.Modules.Stateless_Module_Factories is
 				Context		: in     String;
 				Module_Id	: in     Positive;
 				Request_Mode	: in     Request_Mode_Type;
+				Virtual_Host	: in     KOW_View.Virtual_Host_Name_Type;
 				Module		:    out Module_Ptr
 			) is
 		-- create a module, setting it's ID if necessary
@@ -68,6 +69,7 @@ package body KOW_View.Modules.Stateless_Module_Factories is
 		The_Module.ID_Count := 0;
 		The_Module.Component := Component_Ptr( Component );
 		The_Module.Request_Mode := Request_mode;
+		The_Module.Virtual_Host := Virtual_Host;
 
 		Module := Module_Ptr( The_Module );
 	end Create;
