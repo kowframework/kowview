@@ -8,8 +8,10 @@
 -- $Author$
 
 
+with "aws";
 with "kowlib";
 with "kowconfig";
+with "kowsec";
 
 project KOWView is
 
