@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# 
+# Local configuration file for KOW Lib
+
+
+
+project="kowview"
+include_files=src/*/*
+
+
+set_configuration KOWVIEW_EXTERNALLY_BUILT "false"
