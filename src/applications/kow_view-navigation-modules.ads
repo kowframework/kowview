@@ -84,14 +84,14 @@ package KOW_View.Navigation.Modules is
 		-- 	1. it could be thanks to a login procedure
 		-- 	2. it could be thanks to a switch user procedure...
 
-		Locale		: KOW_Lib.Locales.Locale;
+		Locale		: KOW_Lib.Locales.Locale_Type;
 		-- used by initialize request everytime it's called so
 		-- we will check if there is a need to update the item
 
 		Is_Initialized	: Boolean := False;
 
 
-		Config		: KOW_Config.Config_File;
+		Config		: KOW_Config.Config_File_Type;
 		-- store the page config internally
 		-- this is to avoid infinite looping
 
@@ -103,7 +103,7 @@ package KOW_View.Navigation.Modules is
 	procedure Initialize_Request(
 				Module		: in out Menu_Module;
 				Request		: in     AWS.Status.Data;
-				Config		: in out KOW_Config.Config_File
+				Config		: in out KOW_Config.Config_File_Type
 			);
 	
 	overriding
@@ -129,7 +129,7 @@ package KOW_View.Navigation.Modules is
 				Module		: in     Menu_Module;
 				Request		: in     AWS.Status.Data;
 				Item_ID		: in     Positive;
-				Menu_Config	: in     KOW_Config.Config_File
+				Menu_Config	: in     KOW_Config.Config_File_Type
 			) return Menu_Item_Type;
 	-- initialize a given menu item
 
@@ -168,7 +168,7 @@ package KOW_View.Navigation.Modules is
 	procedure Initialize_Request(
 				Module		: in out Module_Switcher_Menu_Module;
 				Request		: in     AWS.Status.Data;
-				Config		: in out KOW_Config.Config_File
+				Config		: in out KOW_Config.Config_File_Type
 			);
 	
 	overriding
@@ -176,7 +176,7 @@ package KOW_View.Navigation.Modules is
 				Module		: in     Module_Switcher_Menu_Module;
 				Request		: in     AWS.Status.Data;
 				Item_ID		: in     Positive;
-				Menu_Config	: in     KOW_Config.Config_File
+				Menu_Config	: in     KOW_Config.Config_File_Type
 			) return Menu_Item_Type;
 	-- initialize each menu item...
 	
@@ -229,7 +229,7 @@ package KOW_View.Navigation.Modules is
 	procedure Initialize_Request(
 			Module		: in out Module_Switcher_Container_Module;
 			Request		: in     AWS.Status.Data;
-			Config		: in out KOW_Config.Config_File
+			Config		: in out KOW_Config.Config_File_Type
 		);
 	-- Initialize the processing of a request
 	-- also loads the current module and such

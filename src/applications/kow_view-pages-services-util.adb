@@ -47,26 +47,26 @@ package body KOW_View.Pages.Services.Util is
 
 
 
-	function Get_Config_File( Page : in String ) return KOW_Config.Config_File is
+	function Get_Config_File( Page : in String ) return KOW_Config.Config_File_Type is
 		-- get the config file for the given page..
-		Config : KOW_Config.Config_File;
+		Config : KOW_Config.Config_File_Type;
 	begin
 		Page_Config_Cache.Get_Config_File( Config, Page );
 		return Config;
 	end Get_Config_File;
 
 
-	function Get_Template( Config : in KOW_Config.Config_File ) return KOW_View.Themes.Template_Type is
+	function Get_Template( Config : in KOW_Config.Config_File_Type ) return KOW_View.Themes.Template_Type is
 		-- get the template for the given configuration file
-		Tpl : Unbounded_String := KOW_Config.Element( Config, "template" );
+		Tpl : constant String := KOW_Config.Default_Value( Config, "template" );
 	begin
 		return KOW_View.Themes.Templates_Registry.Registry.Get( Tpl );
 	end Get_Template;
 
-	function Get_Modules( Config : in KOW_Config.Config_File ) return Complete_Module_Array is
+	function Get_Modules( Config : in KOW_Config.Config_File_Type ) return Complete_Module_Array is
 		use KOW_Config;
 		use KOW_View.Components;
-		Elements	: Config_File_Array := Elements_Array( Config, "modules" );
+		Elements	: Config_File_Array := Extract_Array( Config, "modules" );
 		Modules		: Complete_Module_Array( Elements'Range );
 	begin
 
@@ -77,29 +77,28 @@ package body KOW_View.Pages.Services.Util is
 		return Modules;
 	end Get_Modules;
 
-	function Get_Module( Module_Config : in KOW_Config.Config_File ) return Complete_Module_Type is
+	function Get_Module( Module_Config : in KOW_Config.Config_File_Type ) return Complete_Module_Type is
 		use KOW_Config;
 		use KOW_View.Components;
-		Component_Name	: Unbounded_String;
+		Component_Name	: constant String := Default_Value( Module_Config, "component" );
 		Module		: Complete_Module_Type;
 	begin
-		Component_Name := Element( Module_Config, "component" );
 
 		Module.Config	:= Module_Config;
 		Module.Factory := Module_Factory_Ptr( Get_Module_Factory(
 							Component	=> Registry.Get_Component( Component_Name ).all,
-							Name		=> Element( Module_Config, "module" )
+							Name		=> To_Unbounded_String( Default_Value( Module_Config, "module" ) )
 						) );
 		return Module;
 	end Get_Module;
 
 
 	function Get_Module_IDs(
-				Config	: in KOW_Config.Config_File;
+				Config	: in KOW_Config.Config_File_Type;
 				Region	: in KOW_View.Themes.Region_Type
 			) return Index_Array is
 		use KOW_Lib.UString_Vectors;
-		IDs_Str		: constant Unbounded_String := KOW_Config.Element( Config, Unbounded_String( Region ) );
+		IDs_Str		: constant String := KOW_Config.Default_Value( Config, To_String( Unbounded_String( Region ) ) );
 		IDs_Vector	: constant Vector := KOW_Lib.String_Util.Explode( ',', IDs_Str );
 		
 		Results		: Index_Array( 1 .. Natural( Length( IDs_Vector ) ) );
@@ -121,14 +120,14 @@ package body KOW_View.Pages.Services.Util is
 
 
 	protected body Page_Config_Cache is
-		procedure Get_Config_File( Config : out KOW_Config.Config_File; Page : in String ) is
+		procedure Get_Config_File( Config : out KOW_Config.Config_File_Type; Page : in String ) is
 		-- check if the config file is in the map... if not, read it into the map
 		-- return the config file if available
 			use KOW_Lib.File_System;
 			
 			UPage : constant Unbounded_String := To_Unbounded_String( Page );
 
-			My_Config : KOW_Config.Config_File;
+			My_Config : KOW_Config.Config_File_Type;
 
 			procedure Load is
 				-- load configuration from file in disk
@@ -137,15 +136,6 @@ package body KOW_View.Pages.Services.Util is
 											Component_Name		=> KOW_View.Components.Get_Name( KOW_View.Pages.Components.Component ),
 											Configuration_Name	=> "page" / Page
 										);
-				
-				if KOW_Config.Has_Element( My_Config, "extends" ) then
-					declare
-						Parent : KOW_Config.Config_File;
-					begin
-						Get_Config_File( Parent, KOW_Config.Element( My_Config, "extends" ) );
-						My_Config := KOW_Config.Merge_Configs( Parent => Parent, Child => My_Config );
-					end;
-				end if;
 			end Load;
 
 		begin

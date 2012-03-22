@@ -59,7 +59,7 @@ package KOW_View.Components.Util is
 			Extension	: in String;
 			Virtual_Host	: in String;
 			Kind		: in Ada.Directories.File_Kind;
-			Locale_Code	: in KOW_Lib.Locales.Locale_Code := Ada.Strings.Unbounded.Null_Unbounded_String
+			Locale_Code	: in KOW_Lib.Locales.Locale_Code_Type := KOW_Lib.Locales.Get_Default_Locale_Code
 		) return String;
 	-- locate a resource file for this component
 	-- this file should be placed at
@@ -83,13 +83,13 @@ package KOW_View.Components.Util is
 
 	function Load_Main_Configuration(
 			Component_Name	: in String
-		) return KOW_Config.Config_File;
+		) return KOW_Config.Config_File_Type;
 	-- load the main configuration for this component
 	
 	function Load_Configuration(
 			Component_Name		: in String;
 			Configuration_Name	: in String
-		) return KOW_Config.Config_File;
+		) return KOW_Config.Config_File_Type;
 	-- load a configuration file from this component's relative path
 
 end KOW_View.Components.Util;

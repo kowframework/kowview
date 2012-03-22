@@ -71,7 +71,7 @@ package KOW_View.Themes.Components is
 	overriding
 	procedure Setup(
 			Component	: in out Themes_Component;
-			Config		: in out KOW_Config.Config_File
+			Config		: in out KOW_Config.Config_File_Type
 		);
 	-- setup the theme variables
 

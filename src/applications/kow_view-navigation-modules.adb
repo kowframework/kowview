@@ -40,6 +40,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -- KOW Framework --
 -------------------
 with KOW_Config;
+with KOW_Config.Util;
 with KOW_Lib.Json;
 with KOW_Lib.Locales;
 with KOW_Lib.String_Util;
@@ -66,11 +67,11 @@ package body KOW_View.Navigation.Modules is
 	procedure Initialize_Request(
 				Module		: in out Menu_Module;
 				Request		: in     AWS.Status.Data;
-				Config		: in out KOW_Config.Config_File
+				Config		: in out KOW_Config.Config_File_Type
 			) is
 	begin
 		Module.Config := Config;
-		Module.Dijit_Menu_Bar := KOW_Config.Value( Config, "dijit_menu_bar", True );
+		Module.Dijit_Menu_Bar := KOW_Config.Util.Booleans.Default_Value( Config, "dijit_menu_bar", True );
 	end Initialize_Request;
 
 
@@ -202,7 +203,7 @@ package body KOW_View.Navigation.Modules is
 		-- is called during the Proces_Body request to avoid infite looping
 		use KOW_Lib.Locales;
 
-		Current_Locale : KOW_Lib.Locales.Locale := KOW_View.Locales.Get_Locale( Request );
+		Current_Locale : KOW_Lib.Locales.Locale_Type := KOW_View.Locales.Get_Locale( Request );
 
 	begin
 		if Module.Is_Initialized and then Module.Locale = Current_Locale then
@@ -223,7 +224,7 @@ package body KOW_View.Navigation.Modules is
 		Module.Locale := Current_Locale;
 		
 		declare
-			Items		: KOW_Config.Config_File_Array := KOW_Config.Elements_Array( Module.Config, "item" );
+			Items		: KOW_Config.Config_File_Array := KOW_Config.Extract_Array( Module.Config, "item" );
 		begin
 			for i in Items'Range loop
 				declare
@@ -246,12 +247,12 @@ package body KOW_View.Navigation.Modules is
 				Module		: in     Menu_Module;
 				Request		: in     AWS.Status.Data;
 				Item_ID		: in     Positive;
-				Menu_Config	: in     KOW_Config.Config_File
+				Menu_Config	: in     KOW_Config.Config_File_Type
 			) return Menu_Item_Type is
 		use KOW_View.URI_Util;
 
 		Current_Page	: constant String := To_String( Module.Context );
-		Href		: constant String := KOW_Config.Value( Menu_Config, "href", "" );
+		Href		: constant String := KOW_Config.Default_Value( Menu_Config, "href", "" );
 		Menu_Item	: Menu_Item_Type;
 
 		function Has_Access( Str : in String ) return Boolean is
@@ -287,14 +288,13 @@ package body KOW_View.Navigation.Modules is
 		end Has_Access;
 	begin
 		Menu_Item.ID := Item_ID;
-		Menu_Item.Disable_When_Active := KOW_Config.Value( Menu_Config, "disable_when_active", True );
-		Menu_Item.Label := KOW_Config.Element(
-						F		=> Menu_Config,
-						Key		=> To_Unbounded_String( "label" ),
-						L_Code		=> Module.Locale.Code,
-						Dump_On_Error	=> True
+		Menu_Item.Disable_When_Active := KOW_Config.Util.Booleans.Default_Value( Menu_Config, "disable_when_active", True );
+		Menu_Item.Label := KOW_Config.Util.Unbounded_Strings.Value(
+						Config		=> Menu_Config,
+						Key		=> "label",
+						Locale_Code	=> Module.Locale.Code
 					);
-		Menu_Item.Level := KOW_Config.Value( Menu_Config, "level", 1 );
+		Menu_Item.Level := KOW_Config.Util.Integers.Default_Value( Menu_Config, "level", 1 );
 
 		if Is_Page_URN( Href ) then
 			Menu_Item.Has_Access := Has_Access( Href );
@@ -329,16 +329,16 @@ package body KOW_View.Navigation.Modules is
 	procedure Initialize_Request(
 				Module		: in out Module_Switcher_Menu_Module;
 				Request		: in     AWS.Status.Data;
-				Config		: in out KOW_Config.Config_File
+				Config		: in out KOW_Config.Config_File_Type
 			) is
 	begin
-		Module.Preserve_Variables := KOW_Lib.String_Util.Explode( ',', KOW_Config.Value( Config, "preserve_variables", Null_Unbounded_String ) );
+		Module.Preserve_Variables := KOW_Lib.String_Util.Explode( ',', KOW_Config.Default_Value( Config, "preserve_variables", "") );
 
 
-		Module.Default_Item	:= Positive'Value( KOW_Config.Value( Config, "default_item", "1" ) );
+		Module.Default_Item	:= KOW_Config.Util.Integers.Default_Value( Config, "default_item", 1 );
 		-- the default item to be accepted as selected
 
-		Module.Selector_Variable:= KOW_Config.Value( Config, "selector_variable", To_Unbounded_String( "selected_module_id" ) );
+		Module.Selector_Variable:= KOW_Config.Util.Unbounded_Strings.Default_Value( Config, "selector_variable", To_Unbounded_String( "selected_module_id" ) );
 		-- the variable where should be stored the current selected module 
 
 
@@ -355,7 +355,7 @@ package body KOW_View.Navigation.Modules is
 				Module		: in     Module_Switcher_Menu_Module;
 				Request		: in     AWS.Status.Data;
 				Item_ID		: in     Positive;
-				Menu_Config	: in     KOW_Config.Config_File
+				Menu_Config	: in     KOW_Config.Config_File_Type
 			) return Menu_Item_Type is
 		-- initialize each menu item...
 		Menu_Item	: Menu_Item_Type;
@@ -371,14 +371,13 @@ package body KOW_View.Navigation.Modules is
 	begin
 		Menu_item.ID := Item_ID;
 
-		Menu_Item.Disable_When_Active := KOW_Config.Value( Menu_Config, "disable_when_active", True );
-		Menu_Item.Label := KOW_Config.Element(
-						F		=> Menu_Config,
-						Key		=> To_Unbounded_String( "label" ),
-						L_Code		=> Module.Locale.Code,
-						Dump_On_Error	=> True
-					);
-		Menu_Item.Level := KOW_Config.Value( Menu_Config, "level", 1 );
+		Menu_Item.Disable_When_Active := KOW_Config.Util.Booleans.Default_Value( Menu_Config, "disable_when_active", True );
+		Menu_Item.Label := KOW_Config.Util.Unbounded_Strings.Value(
+							Config		=> Menu_Config,
+							Key		=> "label",
+							Locale_Code	=> Module.Locale.Code
+						);
+		Menu_Item.Level := KOW_Config.Util.Integers.Default_Value( Menu_Config, "level", 1 );
 		Menu_Item.Has_Access := True;	-- TODO :: check if the user can access the module in the future
 
 
@@ -436,17 +435,17 @@ package body KOW_View.Navigation.Modules is
 	procedure Initialize_Request(
 			Module		: in out Module_Switcher_Container_Module;
 			Request		: in     AWS.Status.Data;
-			Config		: in out KOW_Config.Config_File
+			Config		: in out KOW_Config.Config_File_Type
 		) is
 		-- Initialize the processing of a request
 		-- also loads the current module and such
-		Current_Config : KOW_Config.Config_File;
+		Current_Config : KOW_Config.Config_File_Type;
 	begin
-		Module.Default_Item	:= Positive'Value( KOW_Config.Value( Config, "default_item", "1" ) );
-		Module.Selector_Variable:= KOW_Config.Value( Config, "selector_variable", To_Unbounded_String( "selected_module_id" ) );
+		Module.Default_Item	:= KOW_Config.Util.Integers.Default_Value( Config, "default_item", 1 );
+		Module.Selector_Variable:= KOW_Config.Util.Unbounded_Strings.Default_Value( Config, "selector_variable", To_Unbounded_String( "selected_module_id" ) );
 
 
-		Current_Config		:= KOW_Config.Elements_Array( Config, "item" )( Selected_Module( Module, AWS.Status.Parameters( Request ) ) );
+		Current_Config		:= KOW_Config.Extract_Array( Config, "item" )( Selected_Module( Module, AWS.Status.Parameters( Request ) ) );
 		Module.Current		:= KOW_View.Pages.Services.Util.Get_Module( Current_Config );
 
 

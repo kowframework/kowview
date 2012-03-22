@@ -35,6 +35,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -- KOW Framework --
 -------------------
 with KOW_Config;
+with KOW_Config.Util;
 with KOW_Lib.File_System;		use KOW_Lib.File_System;
 with KOW_Lib.String_Util;
 with KOW_Lib.UString_Vectors;
@@ -64,15 +65,15 @@ package body KOW_View.Themes.Components is
 	overriding
 	procedure Setup(
 			Component	: in out Themes_Component;
-			Config		: in out KOW_Config.Config_File
+			Config		: in out KOW_Config.Config_File_Type
 		) is
 	-- setup the theme variables
 
 
 		use KOW_Config;
 	begin
-		Component.Default_Theme_Name	:= Value( Config, "default_theme", "default" );
-		Component.Template_Extension	:= Value( Config, "template_extension", "tpl" );
+		Component.Default_Theme_Name	:= Util.Unbounded_Strings.Default_Value( Config, "default_theme", To_Unbounded_String( "default" ) );
+		Component.Template_Extension	:= Util.Unbounded_Strings.Default_Value( Config, "template_extension", To_Unbounded_String( "tpl" ) );
 	end Setup;
 
 	function Get_Theme_Name(

@@ -45,7 +45,7 @@ package body KOW_View.Security.Components is
 	overriding
 	procedure Setup(
 			Component	: in out Security_Component;
-			Config		: in out KOW_Config.Config_File
+			Config		: in out KOW_Config.Config_File_Type
 		) is
 		use KOW_Config;
 
@@ -54,7 +54,7 @@ package body KOW_View.Security.Components is
 										Root_Accountant	=> Accountant'Access
 									);
 
-		Default_Redirect		: constant String := Value( Config, "default_redirect", "" );
+		Default_Redirect		: constant String := Default_Value( Config, "default_redirect", "" );
 
 
 		function URI( N : in String ) return Unbounded_String is

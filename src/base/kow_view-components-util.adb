@@ -88,7 +88,7 @@ package body KOW_View.Components.Util is
 			Extension	: in String;
 			Virtual_Host	: in String;
 			Kind		: in Ada.Directories.File_Kind;
-			Locale_Code	: in KOW_Lib.Locales.Locale_Code := Ada.Strings.Unbounded.Null_Unbounded_String
+			Locale_Code	: in KOW_Lib.Locales.Locale_Code_Type := KOW_Lib.Locales.Get_Default_Locale_Code
 		) return String is
 		-- locate a resource file for this component
 		-- this file should be placed at
@@ -128,68 +128,29 @@ package body KOW_View.Components.Util is
 			end if;
 		end Check;
 
-
-
-		function Compute_Locale_Parts return Natural is
-			use Ada.Strings.Unbounded;
-			PL : Natural := Count( Locale_Code, "_" );
-		begin
-			if Locale_Code = "" then
-				return 0;
-			else
-				return PL + 1;
-			end if;
-		end Compute_Locale_Parts;
-
-
-		Locale_Parts : constant Natural := Compute_Locale_Parts;
-
 		function Check_Localized( FName : in String ) return String is
 			use Ada.Strings;
 			use Ada.Strings.Unbounded;
-			use KOW_Lib;
+			use KOW_Lib.Locales;
 
 
-			type Locale_Parts_Array is array( 0 .. Locale_Parts ) of Locales.Locale_Code;
-
-			Parts		: Locale_Parts_Array;
-			High_Index	: Integer := Length( Locale_Code ) + 1;
-		begin
-			for i in 0 .. Parts'Last - 1 loop -- at Parts'Last we leave empty representing no locale
-				Parts( i ) := Head( Locale_Code, High_Index - 1 );
-				High_Index := Index(
-							Source	=> Locale_Code,
-							Pattern	=> "_",
-							From	=> High_Index - 1,
-							Going	=> Backward
-						);
-				if High_Index = -1 then
-					pragma Assert( i = Parts'Last - 1, "Not found when needed the ""_"" character... bug here!" );
-					High_Index := Length( Locale_Code ) + 1;
+			function inner_check( LC : in Locale_Code_Type ) return String is
+				N : constant String := FName & '_' & To_String( LC ) & '.' & Extension;
+			begin
+				if Check( N ) then
+					return N;
+				else
+					return "";
 				end if;
+			end inner_check;
 
-			end loop;
-
-			for i in Parts'Range loop
-				declare
-					function Suffix return String is
-						S : constant String := Ada.Characters.Handling.To_Lower( To_String( Parts( i ) ) );
-					begin
-						if S = "" then
-							return "." & Extension;
-						else
-							return "_" & S & "." & Extension;
-						end if;
-					end Suffix;
-
-					N : constant String := FName & Suffix;
-				begin
-					if Check( N ) then
-						return N;
-					end if;
-				end;
-			end loop;
-			return "";
+			The_Name : constant String := Inner_Check( Locale_Code );
+		begin
+			if The_Name /= "" then
+				return The_Name;
+			else
+				return Inner_Check( ( Language => Locale_Code.Language, Country => No_Country ) );
+			end if;
 		end Check_Localized;
 	
 
@@ -229,7 +190,7 @@ package body KOW_View.Components.Util is
 
 	function Load_Main_Configuration(
 			Component_Name	: in String
-		) return KOW_Config.Config_File is
+		) return KOW_Config.Config_File_Type is
 		-- load the main configuration for this component
 		use KOW_Lib.File_System;
 	begin
@@ -243,7 +204,7 @@ package body KOW_View.Components.Util is
 	function Load_Configuration(
 			Component_Name		: in String;
 			Configuration_Name	: in String
-		) return KOW_Config.Config_File is
+		) return KOW_Config.Config_File_Type is
 		-- load a configuration file from this component's relative path
 		use KOW_Lib.File_System;
 	begin

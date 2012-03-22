@@ -71,7 +71,7 @@ package KOW_View.Services is
 
 	procedure Setup_Service(
 			Service		: in out Service_Type;
-			Config		: in     KOW_Config.Config_File
+			Config		: in     KOW_Config.Config_File_Type
 		) is null;
 	-- for those services that can be configured, this is where you implement the configuration calling
 	-- this is usefull if you have two diferent instances of the same service, each one with
@@ -103,7 +103,7 @@ package KOW_View.Services is
 			Extension	: in String := "";
 			Virtual_Host	: in String;
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
-			Locale		: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
+			Locale		: in KOW_Lib.Locales.Locale_Type := KOW_Lib.Locales.Get_Default_Locale
 		) return String;
 
 	procedure Setup_Service(
@@ -119,7 +119,7 @@ package KOW_View.Services is
 			Template_Extension	: in String := "";
 			Virtual_Host		: in String;
 			Parameters		: in Templates_Parser.Translate_Set;
-			Locale			: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
+			Locale			: in KOW_Lib.Locales.Locale_Type := KOW_Lib.Locales.Get_Default_Locale
 		) return String;
 	-- helper method for calling templates parser's parse method and locate_resource
 

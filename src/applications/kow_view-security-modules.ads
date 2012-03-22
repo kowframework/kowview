@@ -69,7 +69,7 @@ package KOW_View.Security.Modules is
 	procedure Initialize_Request(
 				Module	: in out Criteria_Module;
 				Request	: in     AWS.Status.Data;
-				Config	: in out KOW_Config.Config_File
+				Config	: in out KOW_Config.Config_File_Type
 			);
 	-- where the magic happens
 
@@ -103,7 +103,7 @@ package KOW_View.Security.Modules is
 	procedure Initialize_Request(
 				Module	: in out Head_Criteria_Module;
 				Request	: in     AWS.Status.Data;
-				Config	: in out KOW_Config.Config_File
+				Config	: in out KOW_Config.Config_File_Type
 			);
 	
 	overriding
@@ -143,7 +143,7 @@ package KOW_View.Security.Modules is
 	procedure Initialize_Request(
 				Module	: in out Login_Controller_Module;
 				Request	: in     AWS.Status.Data;
-				Config	: in out KOW_Config.Config_File
+				Config	: in out KOW_Config.Config_File_Type
 			);
 	
 	overriding
@@ -180,7 +180,7 @@ package KOW_View.Security.Modules is
 	procedure Initialize_Request(
 				Module	: in out Login_Required_Module;
 				Request	: in     AWS.Status.Data;
-				Config	: in out KOW_Config.Config_File
+				Config	: in out KOW_Config.Config_File_Type
 			);
 	
 

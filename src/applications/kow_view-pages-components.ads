@@ -45,7 +45,7 @@ package KOW_View.Pages.Components is
 	overriding
 	procedure Setup(
 			Component	: in out Pages_Component;
-			Config		: in out KOW_Config.Config_File
+			Config		: in out KOW_Config.Config_File_Type
 		);
 	-- setup if the page has cache
 	-- default == false

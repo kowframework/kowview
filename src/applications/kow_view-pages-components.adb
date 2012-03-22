@@ -29,6 +29,7 @@ pragma License( GPL );
 -- KOW Framework --
 -------------------
 with KOW_Config;
+with KOW_Config.Util;
 with KOW_View.Components;
 
 package body KOW_View.Pages.Components is
@@ -36,12 +37,12 @@ package body KOW_View.Pages.Components is
 	overriding
 	procedure Setup(
 			Component	: in out Pages_Component;
-			Config		: in out KOW_Config.Config_File
+			Config		: in out KOW_Config.Config_File_Type
 		) is
 		-- setup if the page has cache
 		-- default == false
 	begin
-		Component.Enable_Cache := KOW_Config.Value( Config, "enable_cache", false );
+		Component.Enable_Cache := KOW_Config.Util.Booleans.Default_Value( Config, "enable_cache", false );
 	end Setup;
 
 end KOW_View.Pages.Components;

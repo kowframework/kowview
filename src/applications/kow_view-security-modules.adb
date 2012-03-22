@@ -35,6 +35,7 @@ with Ada.Strings.Unbounded;			use Ada.Strings.Unbounded;
 -- KOW Framework --
 -------------------
 with KOW_Config;
+with KOW_Config.Util;
 with KOW_Lib.Json;
 with KOW_Sec.Accounting;
 with KOW_View.Locales;
@@ -59,12 +60,12 @@ package body KOW_View.Security.Modules is
 	procedure Initialize_Request(
 				Module	: in out Criteria_Module;
 				Request	: in     AWS.Status.Data;
-				Config	: in out KOW_Config.Config_File
+				Config	: in out KOW_Config.Config_File_Type
 			) is
 		-- where the magic happens
 		Criteria : KOW_Sec.Authorization_Criterias.Expression_Criteria_Type;
 	begin
-		Criteria.Descriptor := KOW_Config.Element( Config, "descriptor" );
+		Criteria.Descriptor := KOW_Config.Util.Unbounded_Strings.Default_Value( Config, "descriptor" );
 
 		Add_Contexts(
 				Module	=> Criteria_Module'Class( Module ), 
@@ -84,10 +85,10 @@ package body KOW_View.Security.Modules is
 	procedure Initialize_Request(
 				Module	: in out Head_Criteria_Module;
 				Request	: in     AWS.Status.Data;
-				Config	: in out KOW_Config.Config_File
+				Config	: in out KOW_Config.Config_File_Type
 			) is
 	begin
-		Module.Descriptor := KOW_Config.Element( Config, "descriptor" );
+		Module.Descriptor := KOW_Config.Util.Unbounded_Strings.Default_Value( Config, "descriptor" );
 	end Initialize_Request;
 
 	
@@ -121,11 +122,11 @@ package body KOW_View.Security.Modules is
 	procedure Initialize_Request(
 				Module	: in out Login_Controller_Module;
 				Request	: in     AWS.Status.Data;
-				Config	: in out KOW_Config.Config_File
+				Config	: in out KOW_Config.Config_File_Type
 			) is
 	begin
-		Module.Login_Template := KOW_Config.Value( Config, "login_template", Default_Login_Template );
-		Module.Logout_Template:= KOW_Config.Value( Config, "logout_template", Default_Logout_Template );
+		Module.Login_Template := KOW_Config.Util.Unbounded_Strings.Default_Value( Config, "login_template", Default_Login_Template );
+		Module.Logout_Template:= KOW_Config.Util.Unbounded_Strings.Default_Value( Config, "logout_template", Default_Logout_Template );
 	end Initialize_Request;
 	
 	overriding
@@ -190,7 +191,7 @@ package body KOW_View.Security.Modules is
 	procedure Initialize_Request(
 				Module	: in out Login_Required_Module;
 				Request	: in     AWS.Status.Data;
-				Config	: in out KOW_Config.Config_File
+				Config	: in out KOW_Config.Config_File_Type
 			) is
 	begin
 		if KOW_Sec.Is_Anonymous( KOW_View.Security.Get_user( Request ) ) then

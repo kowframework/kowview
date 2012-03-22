@@ -124,7 +124,7 @@ package KOW_View.Components is
 	procedure Initialize_Request(
 			Module		: in out Module_Interface;
 			Request		: in     AWS.Status.Data;
-			Config		: in out KOW_Config.Config_File
+			Config		: in out KOW_Config.Config_File_Type
 		) is null;
 	-- Initialize the processing of a request
 	-- Called before anything has been build.
@@ -272,7 +272,7 @@ package KOW_View.Components is
 
 	procedure Setup(
 			Component	: in out Component_Type;
-			Config		: in out KOW_Config.Config_File
+			Config		: in out KOW_Config.Config_File_Type
 		) is null;
 	-- setup the component while starting up the server
 	-- Config is an already initialized configuration file located at:
@@ -302,7 +302,7 @@ package KOW_View.Components is
 			Extension	: in String := "";
 			Virtual_Host	: in String;
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
-			Locale		: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
+			Locale		: in KOW_Lib.Locales.Locale_Type := KOW_Lib.Locales.Get_Default_Locale
 		) return String;
 	-- locate a resource file using KOW_View.Components.Util.Locate_Resource
 

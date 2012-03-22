@@ -100,7 +100,7 @@ package body KOW_View.Pages.Services is
 
 		Page		: constant String := Get_Page( Service, Request );
 		Json_Module_Str	: constant String := AWS.Parameters.Get( Params, "module_id" );
-		Config		: KOW_Config.Config_File := Util.Get_Config_File( Page );
+		Config		: KOW_Config.Config_File_Type := Util.Get_Config_File( Page );
 		Template	: KOW_View.Themes.Template_Type := Util.Get_Template( Config );
 
 		Modules		: Complete_Module_Array := Util.Get_Modules( Config );
@@ -213,7 +213,7 @@ package body KOW_View.Pages.Services is
 
 		use KOW_View.Themes.Template_Processors;
 
-		Config		: KOW_Config.Config_File := Util.Get_Config_File( Page );
+		Config		: KOW_Config.Config_File_Type := Util.Get_Config_File( Page );
 		Template	: KOW_View.Themes.Template_Type := Util.Get_Template( Config );
 
 		Modules		: Complete_Module_Array := Util.Get_Modules( Config );
@@ -473,11 +473,11 @@ package body KOW_View.Pages.Services is
 
 	procedure Setup(
 				Service	: in out Page_Service;
-				Config	: in out KOW_Config.Config_File
+				Config	: in out KOW_Config.Config_File_Type
 			) is
 	begin
-		Service.Title	:= KOW_Config.Element( Config, "title" );
-		Service.Author	:= KOW_Config.Element( Config, "author" );
+		Service.Title	:= To_Unbounded_String( KOW_Config.Default_Value( Config, "title" ) );
+		Service.Author	:= To_Unbounded_String( KOW_Config.Default_Value( Config, "author" ) );
 	end Setup;
 
 	--------------------------------------
@@ -492,7 +492,7 @@ package body KOW_View.Pages.Services is
 			Extension	: in String := "";
 			Virtual_Host	: in String;
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
-			Locale		: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
+			Locale		: in KOW_Lib.Locales.Locale_Type := KOW_Lib.Locales.Get_Default_Locale
 		) return String is
 		-- locate resource given:
 		-- 	when resource is a URN using:

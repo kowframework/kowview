@@ -53,7 +53,7 @@ with AWS.Status;
 
 package body KOW_View.Locales is
 
-	function Get_Locale( Request : in AWS.Status.Data ) return KOW_Lib.Locales.Locale is
+	function Get_Locale( Request : in AWS.Status.Data ) return KOW_Lib.Locales.Locale_Type is
 		-- get the session's locale
 		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
 	begin
@@ -62,7 +62,7 @@ package body KOW_View.Locales is
 
 	procedure Set_Locale(
 				Request	: in AWS.Status.Data;
-				Locale	: in KOW_Lib.Locales.Locale
+				Locale	: in KOW_Lib.Locales.Locale_Type
 			) is
 		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
 	begin
@@ -78,7 +78,7 @@ package body KOW_View.Locales is
 		return KOW_Lib.String_Util.Str_Replace(
 						From	=> '_',
 						To	=> '-', 
-						Str	=> Ada.Characters.Handling.To_Lower( Ada.Strings.Unbounded.To_String( Get_Locale( Request ).Code ) )
+						Str	=> Ada.Characters.Handling.To_Lower( KOW_Lib.Locales.To_String( Get_Locale( Request ).Code ) )
 					);
 	end Get_Dojo_Locale;
 end KOW_View.Locales;

@@ -61,7 +61,7 @@ package KOW_View.Security.Components is
 	overriding
 	procedure Setup(
 			Component	: in out Security_Component;
-			Config		: in out KOW_Config.Config_File
+			Config		: in out KOW_Config.Config_File_Type
 		);
 	-- the setup expects for the values of:
 	-- 	default_redirect	=> where to redirect when the login call doesn't specify (empty causes to redirect to home)

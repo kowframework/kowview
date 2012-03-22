@@ -58,7 +58,7 @@ package KOW_View.Locales is
 	-- Session Data --
 	------------------
 	package Locale_Data is new AWS.Session.Generic_Data(
-					Data		=> KOW_Lib.Locales.Locale,
+					Data		=> KOW_Lib.Locales.Locale_Type,
 					Null_Data	=> KOW_Lib.Locales.Get_Default_Locale
 				);
 	
@@ -67,12 +67,12 @@ package KOW_View.Locales is
 	-- Methods --
 	-------------
 
-	function Get_Locale( Request : in AWS.Status.Data ) return KOW_Lib.Locales.Locale;
+	function Get_Locale( Request : in AWS.Status.Data ) return KOW_Lib.Locales.Locale_Type;
 	-- get the session's locale
 
 	procedure Set_Locale(
 				Request	: in AWS.Status.Data;
-				Locale	: in KOW_Lib.Locales.Locale
+				Locale	: in KOW_Lib.Locales.Locale_Type
 			);
 	-- set the session's locale
 

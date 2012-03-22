@@ -50,10 +50,10 @@ package body KOW_View.Modules.Implementations is
 	procedure Initialize_Request(
 			Module		: in out Resource_Module;
 			Request		: in     AWS.Status.Data;
-			Config		: in out KOW_Config.Config_File
+			Config		: in out KOW_Config.Config_File_Type
 		) is
 	begin
-		Module.Resource := KOW_Config.Element( Config, "resource" );
+		Module.Resource := To_Unbounded_String( KOW_Config.Default_Value( Config, "resource" ) );
 	end Initialize_Request;
 
 
@@ -66,7 +66,7 @@ package body KOW_View.Modules.Implementations is
 		-- return the content specified by the configuration
 
 		Resource_URI	: constant String := To_String( Module.Resource );
-		Locale		: constant KOW_Lib.Locales.Locale := KOW_View.Locales.Get_Locale( Request );
+		Locale		: constant KOW_Lib.Locales.Locale_Type := KOW_View.Locales.Get_Locale( Request );
 
 		Extension	: constant String := Ada.Directories.Extension( Resource_URI );
 

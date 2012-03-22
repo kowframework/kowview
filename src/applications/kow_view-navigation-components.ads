@@ -44,7 +44,7 @@ package KOW_View.Navigation.Components is
 	overriding
 	procedure Setup(
 			Component	: in out Navigation_Component;
-			Config		: in out KOW_Config.Config_File
+			Config		: in out KOW_Config.Config_File_Type
 		) is null;
 
 

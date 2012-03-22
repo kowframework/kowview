@@ -42,14 +42,14 @@ with KOW_Config;
 with KOW_View.Themes;
 
 package KOW_View.Pages.Services.Util is
-	function Get_Config_File( Page : in String ) return KOW_Config.Config_File;
+	function Get_Config_File( Page : in String ) return KOW_Config.Config_File_Type;
 	-- get the config file for the given page..
 
-	function Get_Template( Config : in KOW_Config.Config_File ) return KOW_View.Themes.Template_Type;
+	function Get_Template( Config : in KOW_Config.Config_File_Type ) return KOW_View.Themes.Template_Type;
 	-- get the template for the given configuration file
 
 
-	function Get_Modules( Config : in KOW_Config.Config_File ) return Complete_Module_Array;
+	function Get_Modules( Config : in KOW_Config.Config_File_Type ) return Complete_Module_Array;
 	-- get all the complete_module_type types initializing the properties:
 	-- 	factory
 	-- 	region
@@ -57,10 +57,10 @@ package KOW_View.Pages.Services.Util is
 	-- in the order they are declared inside the configuration file.
 
 
-	function Get_Module( Module_Config : in KOW_Config.Config_File ) return Complete_Module_Type;
+	function Get_Module( Module_Config : in KOW_Config.Config_File_Type ) return Complete_Module_Type;
 
 	function Get_Module_IDs(
-				Config	: in KOW_Config.Config_File;
+				Config	: in KOW_Config.Config_File_Type;
 				Region	: in KOW_View.Themes.Region_Type
 			) return Index_Array;
 
@@ -69,12 +69,12 @@ private
 
 	package Config_File_Maps is new Ada.Containers.Ordered_Maps(
 				Key_Type	=> Unbounded_String,
-				Element_Type	=> KOW_Config.Config_File,
+				Element_Type	=> KOW_Config.Config_File_Type,
 				"="		=> KOW_Config."="
 			);
 
 	protected Page_Config_Cache is
-		procedure Get_Config_File( Config : out KOW_Config.Config_File; Page : in String );
+		procedure Get_Config_File( Config : out KOW_Config.Config_File_Type; Page : in String );
 		-- check if the config file is in the map... if not, read it into the map
 		-- return the config file if available
 	private

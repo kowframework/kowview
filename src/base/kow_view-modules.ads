@@ -159,7 +159,7 @@ package KOW_View.Modules is
 			Resource	: in String;
 			Extension	: in String := "";
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
-			Locale		: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
+			Locale		: in KOW_Lib.Locales.Locale_Type := KOW_Lib.Locales.Get_Default_Locale
 		) return String;
 
 
@@ -176,7 +176,7 @@ package KOW_View.Modules is
 			Template_Resource	: in String;
 			Template_Extension	: in String := "";
 			Parameters		: in Templates_Parser.Translate_Set;
-			Locale			: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
+			Locale			: in KOW_Lib.Locales.Locale_Type := KOW_Lib.Locales.Get_Default_Locale
 		) return String;
 	-- helper method for calling templates parser's parse method and locate_resource
 
@@ -186,7 +186,7 @@ package KOW_View.Modules is
 			Template_Resource	: in String;
 			Template_Extension	: in String := "";
 			Parameters		: in Templates_Parser.Translate_Set;
-			Locale			: in KOW_Lib.Locales.Locale := KOW_Lib.Locales.Get_Default_Locale
+			Locale			: in KOW_Lib.Locales.Locale_Type := KOW_Lib.Locales.Get_Default_Locale
 		) return Unbounded_String;
 	-- helper method for calling templates parser's parse method and locate_resource
 

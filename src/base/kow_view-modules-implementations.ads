@@ -62,7 +62,7 @@ package KOW_View.Modules.Implementations is
 	procedure Initialize_Request(
 			Module		: in out Resource_Module;
 			Request		: in     AWS.Status.Data;
-			Config		: in out KOW_Config.Config_File
+			Config		: in out KOW_Config.Config_File_Type
 		);
 
 	overriding
