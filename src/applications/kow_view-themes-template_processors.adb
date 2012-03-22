@@ -60,26 +60,15 @@ package body KOW_View.Themes.Template_Processors is
 
 	function ID(
 			Region_Buffer	: in Region_Buffer_Type;
-			Block		: in Block_Type;
 			Module_ID	: in Positive
 		) return String is
 
 		The_ID_Str : constant String := Ada.Strings.Fixed.Trim( Positive'Image( Module_ID ), Ada.Strings.Both );
 	begin
-		return Block_Type'Image( Block ) & '_' & To_String( Region_Buffer.Region ) & "_module_" & The_ID_Str ;
+		return To_String( Region_Buffer.Region ) & "_module_" & The_ID_Str ;
 	end ID;
 
 
-	procedure Append_Head(
-				Region_Buffer	: in out Region_Buffer_Type;
-				Module_ID	: in     Positive;
-				Head_Buffer	: in     Unbounded_String
-			) is
-	begin
-		Region_Buffer.Head_IDs		:= Region_Buffer.Head_IDs & ID( Region_Buffer, Head_Block, Module_ID );
-		Region_Buffer.Head_Buffer	:= Region_Buffer.Head_Buffer & Head_Buffer;
-	end Append_Head;
-		
 	
 	procedure Append_Body(
 				Region_Buffer	: in out Region_Buffer_Type;
@@ -87,21 +76,10 @@ package body KOW_View.Themes.Template_Processors is
 				Body_Buffer	: in     Unbounded_String
 			) is
 	begin
-		Region_Buffer.Body_IDs		:= Region_Buffer.Body_IDs & ID( Region_Buffer, Body_Block, Module_ID );
+		Region_Buffer.Body_IDs		:= Region_Buffer.Body_IDs & ID( Region_Buffer, Module_ID );
 		Region_Buffer.Body_Buffer	:= Region_Buffer.Body_Buffer & Body_Buffer;
 	end Append_Body;
 	
-
-	procedure Append_Foot(
-				Region_Buffer	: in out Region_Buffer_Type;
-				Module_ID	: in     Positive;
-				Foot_Buffer	: in     Unbounded_String
-			) is
-	begin
-		Region_Buffer.Foot_IDs		:= Region_Buffer.Foot_IDs & Id( Region_Buffer, Foot_Block, Module_ID );
-		Region_Buffer.Foot_Buffer	:= Region_Buffer.Foot_Buffer & Foot_Buffer;
-	end Append_Foot;
-
 
 	procedure Insert(
 				Parameters	: in out Templates_Parser.Translate_Set;
@@ -118,14 +96,8 @@ package body KOW_View.Themes.Template_Processors is
 		end I;
 
 	begin
-		I( "head_ids",	Region_Buffer.Head_IDs );
-		I( "heads",	Region_Buffer.Head_Buffer );
-
 		I( "body_ids",	Region_Buffer.Body_IDs );
 		I( "bodies",	Region_Buffer.Body_Buffer );
-
-		I( "foot_ids",	Region_Buffer.Foot_IDs );
-		I( "feet",	Region_Buffer.Foot_Buffer );
 	end Insert;
 		
 
@@ -281,20 +253,6 @@ package body KOW_View.Themes.Template_Processors is
 	end Region_ID;
 
 
-	procedure Append_Head(
-				Processor	: in out Template_Processor_Type;
-				Region		: in     Region_Type;
-				Module_ID	: in     Positive;
-				Head_Buffer	: in     Unbounded_String
-			) is
-	begin
-		Append_Head(
-				Region_Buffer	=> Processor.Buffers( Region_ID( Processor, Region ) ),
-				Module_ID	=> Module_ID,
-				Head_Buffer	=> Head_Buffer
-			);
-	end Append_Head;
-
 	procedure Append_Body(
 				Processor	: in out Template_Processor_Type;
 				Region		: in     Region_Type;
@@ -309,21 +267,6 @@ package body KOW_View.Themes.Template_Processors is
 			);
 	end Append_Body;
 
-
-
-	procedure Append_Foot(
-				Processor	: in out Template_Processor_Type;
-				Region		: in     Region_Type;
-				Module_ID	: in     Positive;
-				Foot_Buffer	: in     Unbounded_String
-			) is
-	begin
-		Append_Foot(
-				Region_Buffer	=> Processor.Buffers( Region_ID( Processor, Region ) ),
-				Module_ID	=> Module_ID,
-				Foot_Buffer	=> Foot_Buffer
-			);
-	end Append_Foot;
 
 	
 

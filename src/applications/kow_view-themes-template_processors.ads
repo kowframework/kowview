@@ -53,11 +53,6 @@ with Templates_Parser;			use Templates_Parser;
 package KOW_View.Themes.Template_Processors is
 
 
-	-----------------------------------------------------------
-	-- The blocks inside the template :: head, body and foot --
-	-----------------------------------------------------------
-	type Block_Type is ( HEAD_BLOCK, BODY_BLOCK, FOOT_BLOCK );
-
 	-----------------------
 	-- The Region Buffer --
 	-----------------------
@@ -65,33 +60,16 @@ package KOW_View.Themes.Template_Processors is
 	type Region_Buffer_Type is record
 		Region		: Region_Type;
 		
-		Head_IDs	: Templates_Parser.Tag;
-		Head_Buffer	: Templates_Parser.Tag;
-
 		Body_Ids	: Templates_Parser.Tag;
 		Body_Buffer	: Templates_Parser.Tag;
-
-		Foot_Ids	: Templates_Parser.Tag;
-		Foot_Buffer	: Templates_Parser.Tag;
 	end record;
 
-	procedure Append_Head(
-				Region_Buffer	: in out Region_Buffer_Type;
-				Module_Id	: in     Positive;
-				Head_Buffer	: in     Unbounded_String
-			);
-	
 	procedure Append_Body(
 				Region_Buffer	: in out Region_Buffer_Type;
 				Module_Id	: in     Positive;
 				Body_Buffer	: in     Unbounded_String
 			);
 	
-	procedure Append_Foot(
-				Region_Buffer	: in out Region_Buffer_Type;
-				Module_Id	: in     Positive;
-				Foot_Buffer	: in     Unbounded_String
-			);
 	
 	procedure Insert(
 				Parameters	: in out Templates_Parser.Translate_Set;
@@ -179,13 +157,6 @@ package KOW_View.Themes.Template_Processors is
 
 
 
-	procedure Append_Head(
-				Processor	: in out Template_Processor_Type;
-				Region		: in     Region_Type;
-				Module_Id	: in     Positive;
-				Head_Buffer	: in     Unbounded_String
-			);
-
 	procedure Append_Body(
 				Processor	: in out Template_Processor_Type;
 				Region		: in     Region_Type;
@@ -194,14 +165,6 @@ package KOW_View.Themes.Template_Processors is
 			);
 
 
-
-	procedure Append_Foot(
-				Processor	: in out Template_Processor_Type;
-				Region		: in     Region_Type;
-				Module_Id	: in     Positive;
-				Foot_Buffer	: in     Unbounded_String
-			);
-	
 
 	procedure Process(
 				Processor	: in out Template_Processor_Type;

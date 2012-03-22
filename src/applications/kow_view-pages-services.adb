@@ -218,9 +218,7 @@ package body KOW_View.Pages.Services is
 
 		Modules		: Complete_Module_Array := Util.Get_Modules( Config );
 		type Buffer_Array is Array( 1 .. Modules'Length ) of Unbounded_String;
-		Head_Buffers	: Buffer_Array;
 		Body_Buffers	: Buffer_Array;
-		Foot_Buffers	: Buffer_Array;
 
 		type Process_Module_Array is array( Buffer_Array'Range ) of Boolean;
 		Process_Module	: Process_Module_Array := ( others => false );
@@ -268,19 +266,6 @@ package body KOW_View.Pages.Services is
 
 
 
-
-		procedure Process_Head( Complete : in out Complete_Module_Type ) is
-			Id : constant Natural := Get_ID( Complete.Module.all );
-		begin
-			if Process_Module( id ) then
-				Process_Head(
-						Module		=> Complete.Module.all,
-						Request		=> Request,
-						Response	=> Head_Buffers( Id )
-					);
-			end if;
-		end Process_Head;
-
 		procedure Process_Body( Complete : in out Complete_Module_Type ) is
 			Id : constant Natural := Get_ID( Complete.Module.all );
 		begin
@@ -293,17 +278,6 @@ package body KOW_View.Pages.Services is
 			end if;
 		end Process_Body;
 
-		procedure Process_Foot( Complete : in out Complete_Module_Type ) is
-			Id : constant Natural := Get_ID( Complete.Module.all );
-		begin
-			if Process_Module( id ) then
-				Process_Foot(
-						Module		=> Complete.Module.all,
-						Request		=> Request,
-						Response	=> Foot_Buffers( Id )
-					);
-			end if;
-		end Process_Foot;
 
 		procedure Process_Script_Includes( Complete : in out Complete_Module_Type ) is
 		begin
@@ -369,23 +343,11 @@ package body KOW_View.Pages.Services is
 		begin
 			for i in Module_IDs'Range loop
 				Module_ID := Module_IDs( i );
-				Append_Head(
-						Processor	=> Processor,
-						Region		=> Region,
-						Module_Id	=> Module_ID,
-						Head_Buffer	=> Head_Buffers( Module_ID )
-					);
 				Append_Body(
 						Processor	=> Processor,
 						Region		=> Region,
 						Module_ID	=> Module_ID,
 						Body_Buffer	=> Body_Buffers( Module_ID )
-					);
-				Append_Foot(
-						Processor	=> Processor,
-						Region		=> Region,
-						Module_ID	=> Module_ID,
-						Foot_Buffer	=> Foot_Buffers( Module_ID )
 					);
 			end loop;
 		end Append_Region;
@@ -419,13 +381,11 @@ package body KOW_View.Pages.Services is
 		KOW_Config.Set_Section( Config, "positions" );
 		KOW_Lib.UString_Vectors.Iterate( Template.Regions, Initialize_Process_Module'Access );
 		-- this will initialize the Process_Module array which will tell
-		-- what modules should have head, body and foot processed
+		-- what modules should have body
 
 		if not Initialize_Only then
 	
-			Iterate( Modules => Modules, Iterator => Process_Head'Access );
 			Iterate( Modules => Modules, Iterator => Process_Body'Access );
-			Iterate( Modules => Modules, Iterator => Process_Foot'Access );
 
 			Iterate( Modules => Modules, Iterator => Process_Script_Includes'Access );
 			Iterate( Modules => Modules, Iterator => Process_Dojo_Packages'Access );
