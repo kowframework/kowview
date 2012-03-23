@@ -46,6 +46,9 @@ with KOW_Lib.Json;
 -- XML/Ada --
 -------------
 with DOM.Core;
+with DOM.Core.Documents;
+with DOM.Core.Elements;
+with DOM.Core.Nodes;
 with Input_Sources.File;
 with SAX.Readers;
 with DOM.Readers;
@@ -99,7 +102,7 @@ package body KOW_View.KTML is
 
 		Process_Node( doc, root, state );
 
-		DOM.Core.Node.Write(
+		DOM.Core.Nodes.Write(
 					Stream		=> Output'Access,
 					N		=> doc,
 					With_URI	=> False,
@@ -133,20 +136,22 @@ package body KOW_View.KTML is
 	procedure Process_Child_Nodes(
 				Doc	: in     DOM.Core.Document;
 				N	: in out DOM.Core.Node;
-				State	: in out KOW_Lib.Json_Object_Type
+				State	: in out KOW_Lib.Json.Object_Type
 			) is
 		-- call process node for each one of the children of the given node
 
 		use DOM.Core;
 
 		List : Node_List;
+		Child : Node;
 	begin
 		if Nodes.Has_Child_Nodes( N ) then
 			List := Nodes.Child_Nodes( N );
 			for i in 0 .. Nodes.Length( List ) loop
+				Child := Nodes.Item( List, i );
 				Process_Node(
 						doc	=> doc,
-						N	=> Nodes.Item( List, i ),
+						N	=> Child,
 						State	=> State
 					);
 			end loop;
@@ -169,23 +174,23 @@ package body KOW_View.KTML is
 		if Processor_Maps.Contains( My_Processors, UTag ) then
 			return Processor_Maps.Element( My_processors, UTag );
 		else
-			return Proces_Child_Nodes'Access;
+			return Process_Child_Nodes'Access;
 		end if;
 	end Get_Processor;
 
 	procedure Set_Processor(
 		Tag		: in String;
 		Processor	: not null access procedure(
-						Doc	: in     DOM.Document;
+						Doc	: in     DOM.Core.Document;
 						N	: in out DOM.Core.Node;
 						State	: in out KOW_Lib.Json.Object_Type
 					)
 			) is
 	begin
-		Processor_Maps.Incude(
+		Processor_Maps.Include(
 					My_Processors,
 					Ada.Strings.Unbounded.To_Unbounded_String( Tag ),
-					Node_Processor_Access( Processor )
+					null -- TODO :: Node_Processor_Access( Processor )
 				);
 	end Set_Processor;
 

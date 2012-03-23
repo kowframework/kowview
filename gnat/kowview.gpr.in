@@ -12,6 +12,7 @@ with "aws";
 with "kowlib";
 with "kowconfig";
 with "kowsec";
+with "xmlada";
 
 project KOWView is
 

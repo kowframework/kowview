@@ -113,10 +113,11 @@ package KOW_View.KTML is
 
 private
 
-	package Processor_Maps is new Ada.Container.Hashed_Maps(
+	package Processor_Maps is new Ada.Containers.Hashed_Maps(
 							Key_Type	=> Unbounded_String,
 							Element_Type	=> Node_Processor_Access,
-							Hash		=> Ada.Strings.Unbounded.Hash
+							Hash		=> Ada.Strings.Unbounded.Hash,
+							Equivalent_Keys	=> Ada.Strings.Unbounded."="
 						);
 
 
