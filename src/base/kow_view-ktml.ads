@@ -28,14 +28,6 @@ pragma License (GPL);
 ------------------------------------------------------------------------------
 
 
---------------
--- Ada 2005 --
---------------
-with Ada.Containers.Hashed_Maps;
-with Ada.Strings.Unbounded;
-with Ada.Strings.Unbounded.Hash;
-
-
 -------------------
 -- KOW Framework --
 -------------------
@@ -52,6 +44,9 @@ with DOM.Core;
 -- smart way to deal with XML files.
 
 package KOW_View.KTML is
+
+
+	
 
 
 
@@ -92,35 +87,119 @@ package KOW_View.KTML is
 					);
 
 
-	---------------------------
-	-- Processors Collection --
-	---------------------------
-
-	function Get_Processor( Tag : in String ) return Node_Processor_Access;
-	-- return a processor for the given tag
-	-- reutrn process_child_nodes by default
+	----------------
+	-- Processors --
+	----------------
 
 
-	procedure Set_Processor(
-				Tag		: in String;
-				Processor	: not null access procedure(
-										Doc	: in     DOM.Core.Document;
-										N	: in out DOM.Core.Node;
-										State	: in out KOW_Lib.Json.Object_Type
-									)
-						);
+
+	package Processors is
+		-- this nested package is the heart of the KTML implementation.
+		--
+		-- A processor implements the Processor_Interface, which only changes the
+		-- contents of a given node.
+
+		-----------------------------
+		-- The Processor Interface --
+		-----------------------------
+
+		type Processor_Interface is interface;
+		
+		procedure Process_Node(
+					Processor	: in out Processor_Interface;
+					Doc		: in     DOM.Core.Document;
+					N		: in out DOM.Core.Node;
+					State		: in out KOW_Lib.Json.Object_Type
+				) is abstract;
 
 
-private
 
-	package Processor_Maps is new Ada.Containers.Hashed_Maps(
-							Key_Type	=> Unbounded_String,
-							Element_Type	=> Node_Processor_Access,
-							Hash		=> Ada.Strings.Unbounded.Hash,
-							Equivalent_Keys	=> Ada.Strings.Unbounded."="
-						);
+		---------------------------
+		-- The Processor Factory --
+		---------------------------
 
 
-	My_Processors : Processor_Maps.Map;
+		type Processor_Factory_Interface is interface;
+		-- singleton object responsible for allocating processor_interfaces.
+
+
+		type Processor_Factory_Ptr is access all Processor_Factory_Interface'Class;
+
+		function New_Processor(
+					Factory : in Processor_Factory_Interface
+				) return Processor_Interface'Class is abstract;
+
+
+		----------------------------
+		-- The Processor Registry --
+		----------------------------
+
+		function Get( Tag : in String ) return Processor_Interface'Class;
+		-- return a processor for the given tag
+		-- reutrn process_child_nodes by default
+
+
+		procedure Set_Factory(
+					Tag	: in String;
+					Factory	: in Processor_Factory_Ptr
+				);
+
+
+
+		package Defaults is
+			type Processor_Type is new Processor_Interface with null record;
+			-- call KOW_View.KTML.Process_Node for each one of the child elements
+
+			overriding
+			procedure Process_Node(
+						Processor	: in out Processor_Type;
+						Doc		: in     DOM.Core.Document;
+						N		: in out DOM.Core.Node;
+						State		: in out KOW_Lib.Json.Object_Type
+					);
+			-- call process_child_nodes
+
+
+			procedure Process_Child_Nodes(
+						Processor	: in out Processor_Type;
+						Doc		: in     DOM.Core.Document;
+						N		: in out DOM.Core.Node;
+						State		: in out KOW_Lib.Json.Object_Type
+					);
+			
+
+			-----------------
+			-- the factory --
+			-----------------
+
+			type Factory_Type is new Processor_Factory_Type with null record;
+
+			overriding
+			function New_Processor(
+						Factory	: in Factory_Type
+					) return Processor_Interface'Class;
+
+			Factory : constant Factory_Type;
+		end Defaults;
+
+
+		generic
+			type Processor_Type is new Processor_Interface with private;
+			Tag : constant String;
+
+		package Generic_Factories is
+			type Factory_Type is new Processor_Factory_Interface with null record;
+
+			overriding
+			function New_Processor(
+					Factory	: in Factory_Type
+				) return Processor_Interface'Class;
+			-- allocate a uninitialized processor_Type, returning it
+
+			Factory : constant aliased Factory_Type;
+			-- the singleton instance
+		end Generic_Factories;
+	end Processors;
+
 end KOW_View.KTML;
 

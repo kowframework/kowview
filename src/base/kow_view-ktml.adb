@@ -121,10 +121,13 @@ package body KOW_View.KTML is
 		-- query the processor the given tag and process the node
 		use DOM.Core;
 	begin
-		if doc.Node_Type = Element_Node then
-			Get_Processor(
-					Elements.Get_Tag_Name( N )
-				).all( Doc, N, State );
+		if Doc.Node_Type = Element_Node then
+			Processors.Process(
+						Processor	=> Processors.Get( Elements.Get_Tag_Name( N ) ),
+					       	Doc		=> Doc,
+						N		=> N,
+    						State		=> State 
+					);
 		else
 			-- TODO :: replace the ${} to what we really want
 			null;
@@ -133,66 +136,123 @@ package body KOW_View.KTML is
 
 
 
-	procedure Process_Child_Nodes(
-				Doc	: in     DOM.Core.Document;
-				N	: in out DOM.Core.Node;
-				State	: in out KOW_Lib.Json.Object_Type
-			) is
-		-- call process node for each one of the children of the given node
+	----------------
+	-- Processors --
+	----------------
 
-		use DOM.Core;
-
-		List : Node_List;
-		Child : Node;
-	begin
-		if Nodes.Has_Child_Nodes( N ) then
-			List := Nodes.Child_Nodes( N );
-			for i in 0 .. Nodes.Length( List ) loop
-				Child := Nodes.Item( List, i );
-				Process_Node(
-						doc	=> doc,
-						N	=> Child,
-						State	=> State
-					);
-			end loop;
-		end if;
-	end Process_Child_Nodes;
+	package body Processors is
 
 
+		package Factory_Maps is new Ada.Containers.Hashed_Maps(
+								Key_Type	=> Unbounded_String,
+								Element_Type	=> Processors.Processor_Factory_Ptr,
+								Hash		=> Ada.Strings.Unbounded.Hash,
+								Equivalent_Keys	=> Ada.Strings.Unbounded."="
+							);
 
-	--------------------------
-	-- Processor Collection --
-	--------------------------
+
+		My_Factories : Factory_Maps.Map;
+
+		----------------------------
+		-- The Processor Registry --
+		----------------------------
+
+		function Get( Tag : in String ) return Processor_Interface'Class is
+			-- return a processor for the given tag
+			-- reutrn process_child_nodes by default
+
+			use Ada.Strings.Unbounded;
+			UTag : constant Unbounded_String := To_Unbounded_String( Tag );
+		begin
+			if Factory_Maps.Contains( My_Factories, UTag ) then
+				return New_Processor( Factory_Maps.Element( My_Factories, UTag ).all );
+			else
+				return New_Processor( Defaults.Factory );
+			end if;
+		end Get;
 
 
-	function Get_Processor( Tag : in String ) return Node_Processor_Access is
-		-- return a processor for the given tag
-		-- the default processor only iterates in the childs
-		use Ada.Strings.Unbounded;
-		UTag : constant Unbounded_String := To_Unbounded_String( Tag );
-	begin
-		if Processor_Maps.Contains( My_Processors, UTag ) then
-			return Processor_Maps.Element( My_processors, UTag );
-		else
-			return Process_Child_Nodes'Access;
-		end if;
-	end Get_Processor;
+		procedure Set_Factory(
+					Tag	: in String;
+					Factory	: in Processor_Factory_Ptr
+				) is
+			use Ada.Strings.Unbounded;
+			UTag : constant Unbounded_String := To_Unbounded_String( Tag );
+		begin
+			Factory_Maps.Include( My_Factories, UTag, Factory );
+		end Set_Factory;
 
-	procedure Set_Processor(
-		Tag		: in String;
-		Processor	: not null access procedure(
-						Doc	: in     DOM.Core.Document;
-						N	: in out DOM.Core.Node;
-						State	: in out KOW_Lib.Json.Object_Type
-					)
-			) is
-	begin
-		Processor_Maps.Include(
-					My_Processors,
-					Ada.Strings.Unbounded.To_Unbounded_String( Tag ),
-					null -- TODO :: Node_Processor_Access( Processor )
-				);
-	end Set_Processor;
+
+
+		package body Defaults is
+			overriding
+			procedure Process_Node(
+						Processor	: in out Processor_Type;
+						Doc		: in     DOM.Core.Document;
+						N		: in out DOM.Core.Node;
+						State		: in out KOW_Lib.Json.Object_Type
+					) is
+				-- call process_child_nodes
+			begin
+				Process_Child_Nodes( Processor, Doc, N, State );
+			end Process_Node;
+
+			procedure Process_Child_Nodes(
+						Processor	: in out Processor_Type;
+						Doc		: in     DOM.Core.Document;
+						N		: in out DOM.Core.Node;
+						State		: in out KOW_Lib.Json.Object_Type
+					) is
+			
+				use DOM.Core;
+
+				List : Node_List;
+				Child : Node;
+			begin
+				if Nodes.Has_Child_Nodes( N ) then
+					List := Nodes.Child_Nodes( N );
+					for i in 0 .. Nodes.Length( List ) loop
+						Child := Nodes.Item( List, i );
+						Process_Node(
+								doc	=> doc,
+								N	=> Child,
+								State	=> State
+							);
+					end loop;
+				end if;
+			end Process_Child_Nodes;
+
+			-----------------
+			-- the factory --
+			-----------------
+
+			overriding
+			function New_Processor(
+						Factory	: in Factory_Type
+					) return Processor_Interface'Class is
+			begin
+				return Processor_Type'( null );
+			end New_Processor;
+		end Defaults;
+
+		package Generic_Factories is
+			type Factory_Type is new Processor_Factory_Interface with null record;
+
+			overriding
+			function New_Processor(
+					Factory	: in Factory_Type
+				) return Processor_Interface'Class is
+				-- allocate a uninitialized processor_Type, returning it
+			begin
+				return Factory_Type'( null );
+			end New_Processor;
+		begin
+			Set( Tag, Factory'Access );
+		end Generic_Factories;
+	end Processors;
+
+
+
 
 end KOW_View.KTML;
 
