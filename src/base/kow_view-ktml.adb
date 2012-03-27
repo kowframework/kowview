@@ -32,6 +32,8 @@ pragma License (GPL);
 -- Ada 2005 --
 --------------
 with Ada.Containers.Hashed_Maps;
+with Ada.Strings;
+with Ada.Strings.Fixed;
 with Ada.Strings.Unbounded;
 with Ada.Strings.Unbounded.Hash;
 
@@ -40,6 +42,7 @@ with Ada.Strings.Unbounded.Hash;
 -- KOW Framework --
 -------------------
 with KOW_Lib.Json;
+with KOW_Lib.String_Util;
 
 
 -------------
@@ -121,6 +124,7 @@ package body KOW_View.KTML is
 		-- query the processor the given tag and process the node
 		use DOM.Core;
 		Processor : Processors.Processor_Interface'Class := Processors.Get( Elements.Get_Tag_Name( N ) );
+
 	begin
 		if Doc.Node_Type = Element_Node then
 			Processors.Process_Node(
@@ -129,12 +133,66 @@ package body KOW_View.KTML is
 						N		=> N,
     						State		=> State 
 					);
+		elsif Doc.Node_Type = Text_Node then
+			-- TODO :: expand to the attributes (and maybe even tag names)
+			Nodes.Set_Node_Value( N, Expand( Nodes.Node_Value( N ), State ) );
 		else
-			-- TODO :: replace the ${} to what we really want
 			null;
 		end if;
 	end Process_Node;
 
+	--------------------
+	-- Helper Methods --
+	--------------------
+
+	function Value_Of(
+				Object	: in KOW_Lib.Json.Object_Type;
+				Key	: in String
+			) return String is
+		-- return the value for the key in the object in string type
+		use Ada.Strings;
+		use KOW_Lib.Json;
+		
+		First_Dot : Integer;
+	begin
+		if Contains( Object, Key ) then
+			return Get( Object, Key );
+		end if;
+
+		First_Dot := Fixed.Index( Key, ".", Forward );
+
+		if First_Dot in Key'Range then
+			declare
+				Obj_Key : constant String := Key( Key'First .. First_Dot - 1 );
+				New_Key : constant String := Key( First_Dot + 1 .. Key'Last );
+			begin
+				if Get_Type( Object, Obj_Key ) /= Json_Object then
+					raise CONSTRAINT_ERROR with "Can't get key from a non object json data at " & key;
+				end if;
+
+				return Value_of( Get( Object, Obj_key ), New_key );
+			end;
+		else
+			raise CONSTRAINT_ERROR with "unknown key: " & key;
+		end if;
+	end Value_Of;
+
+
+
+	function Expand(
+				Str	: in String;
+				Object	: in KOW_Lib.Json.Object_Type
+			) return String is
+		-- expand the values ${..} in the string using the state
+		function Value_of( Key : in String ) return String is
+		begin
+			return Value_Of( Object, Str );
+		end Value_Of;
+
+		function My_Expand is new KOW_Lib.String_Util.Expand( Value_of );
+	begin
+		return My_Expand( Str );
+	end Expand;
 
 
 	----------------

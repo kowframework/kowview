@@ -77,6 +77,22 @@ package KOW_View.KTML is
 						State		: in out KOW_Lib.Json.Object_Type
 					);
 
+	--------------------
+	-- Helper Methods --
+	--------------------
+
+
+	function Value_Of(
+				Object	: in KOW_Lib.Json.Object_Type;
+				Key	: in String
+			) return String;
+	-- return the value for the key in the object in string type
+
+	function Expand(
+				Str	: in String;
+				Object	: in KOW_Lib.Json.Object_Type
+			) return String;
+	-- expand the values ${..} in the string using the state
 
 	----------------
 	-- Processors --
