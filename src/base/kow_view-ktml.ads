@@ -71,15 +71,6 @@ package KOW_View.KTML is
 
 
 
-	procedure Process_Child_Nodes(
-				Doc	: in     DOM.Core.Document;
-				N	: in out DOM.Core.Node;
-				State	: in out KOW_Lib.Json.Object_Type
-			);
-	-- call process node for every child of the given node
-
-
-
 	type Node_Processor_Access is access procedure(
 						Doc		: in     DOM.Core.Document;
 						N		: in out DOM.Core.Node;
@@ -172,21 +163,20 @@ package KOW_View.KTML is
 			-- the factory --
 			-----------------
 
-			type Factory_Type is new Processor_Factory_Type with null record;
+			type Factory_Type is new Processor_Factory_Interface with null record;
 
 			overriding
 			function New_Processor(
 						Factory	: in Factory_Type
 					) return Processor_Interface'Class;
 
-			Factory : constant Factory_Type;
+			Factory : Factory_Type;
 		end Defaults;
 
 
 		generic
 			type Processor_Type is new Processor_Interface with private;
-			Tag : constant String;
-
+			Tag : String;
 		package Generic_Factories is
 			type Factory_Type is new Processor_Factory_Interface with null record;
 
@@ -196,7 +186,7 @@ package KOW_View.KTML is
 				) return Processor_Interface'Class;
 			-- allocate a uninitialized processor_Type, returning it
 
-			Factory : constant aliased Factory_Type;
+			Factory : aliased Factory_Type;
 			-- the singleton instance
 		end Generic_Factories;
 	end Processors;

@@ -120,10 +120,11 @@ package body KOW_View.KTML is
 		) is
 		-- query the processor the given tag and process the node
 		use DOM.Core;
+		Processor : Processors.Processor_Interface'Class := Processors.Get( Elements.Get_Tag_Name( N ) );
 	begin
 		if Doc.Node_Type = Element_Node then
-			Processors.Process(
-						Processor	=> Processors.Get( Elements.Get_Tag_Name( N ) ),
+			Processors.Process_Node(
+						Processor	=> Processor,
 					       	Doc		=> Doc,
 						N		=> N,
     						State		=> State 
@@ -167,7 +168,7 @@ package body KOW_View.KTML is
 			if Factory_Maps.Contains( My_Factories, UTag ) then
 				return New_Processor( Factory_Maps.Element( My_Factories, UTag ).all );
 			else
-				return New_Processor( Defaults.Factory );
+				return Defaults.New_Processor( Defaults.Factory );
 			end if;
 		end Get;
 
@@ -231,23 +232,23 @@ package body KOW_View.KTML is
 						Factory	: in Factory_Type
 					) return Processor_Interface'Class is
 			begin
-				return Processor_Type'( null );
+				return Processor_Type'( others => <> );
 			end New_Processor;
 		end Defaults;
 
-		package Generic_Factories is
-			type Factory_Type is new Processor_Factory_Interface with null record;
+		package body Generic_Factories is
 
 			overriding
 			function New_Processor(
 					Factory	: in Factory_Type
 				) return Processor_Interface'Class is
 				-- allocate a uninitialized processor_Type, returning it
+				Processor : Processor_Type;
 			begin
-				return Factory_Type'( null );
+				return Processor;
 			end New_Processor;
 		begin
-			Set( Tag, Factory'Access );
+			KOW_View.KTML.Processors.Set_Factory( Tag, Factory'Access );
 		end Generic_Factories;
 	end Processors;
 
