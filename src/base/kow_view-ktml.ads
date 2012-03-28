@@ -220,8 +220,19 @@ package KOW_View.KTML is
 
 		package Implementations is
 			type Each_Processor_Type is new Defaults.Processor_Type with null record;
+			-- <kv:each source="key_for_an_array_or_object" key="name_for_the_key" target="name_for_the_value" tag="span">
+
+
+			overriding
+			procedure Process_Node(
+						Processor	: in out Each_Processor_Type;
+						Doc		: in     DOM.Core.Document;
+						N		: in out DOM.Core.Node;
+						State		: in out KOW_Lib.Json.Object_Type
+					);
 
 			type For_Processor_Type is new Defaults.Processor_Type with null record;
+			-- <kv:for range="1..10" target="" tag="span">
 		end Implementations;
 	end Processors;
 
