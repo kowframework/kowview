@@ -328,10 +328,66 @@ package body KOW_View.KTML is
 		begin
 			KOW_View.KTML.Processors.Set_Factory( Tag, Factory'Access );
 		end Generic_Factories;
+
+		package Implementations is
+			package Each_Factories is new Generic_Factories( Each_Processor_Type, "kv:each" );
+			-- <kv:each source="key_for_an_array_or_object" key="name_for_the_key" target="name_for_the_value" tag="span">
+
+
+			overriding
+			procedure Process_Node(
+						Processor	: in out Each_Processor_Type;
+						Doc		: in     DOM.Core.Document;
+						N		: in out DOM.Core.Node;
+						State		: in out KOW_Lib.Json.Object_Type
+					) is
+				use DOM.Core;
+				use KOW_Lib.Json;
+				Local_State	: Json_Object_Type := State;
+				Collection	: Json_Data_Type := Get( State, Elements.Get_Attribute( N, "source" ) );
+
+				Key_Att		: constant String := Elements.Get_Attribute( N, "key" );
+				Target_Att	: constant String := Elements.Get_Attribute( N, "target" );
+
+				Template	: Node;
+
+				procedure Append_Node is
+					-- process the child nodes for the cloned child nodes; and append it to N.
+					New_Child : Node := Nodes.Clone_Node( Template, True );
+				begin
+					New_Child := Nodes.Append_Child( N => N, New_Child => New_Child );
+					Process_Child_Nodes(
+								Processor	=> Each_Processor_Type'Class( Processor ),
+								Doc		=> Doc,
+								N		=> New_Child,
+								State		=> Local_State
+							);
+				end Append_Node;
+
+				procedure Object_Iterator( Key : in String; Value : in Json_Data_type ) is
+				begin
+					Set( Local_State, Key_Att, Key );
+					Set( Local_State, Value_Att, Value );
+					Append_Node;
+				end Object_Iterator;
+			begin
+				-- Prepare the template and the container
+
+				----------------------------
+				-- iterate the collection --
+				----------------------------
+				case Type_Of( Collection ) is
+					when Json_Object =>
+						Iterate( Object => From_Data( Collection ), Iterator => Object_Iterator'Access );
+					when Json_Array =>
+						Iterate( A => From_Data( Collection ), iterator => Array_Iterator'Access );
+					when others =>
+						raise CONSTRAINT_ERROR with "Source for looping not array nor object";
+				end case;
+			end Process_Node;
+
+
 	end Processors;
-
-
-
 
 end KOW_View.KTML;
 
