@@ -49,6 +49,7 @@ with KOW_Lib.String_Util;
 -- XML/Ada --
 -------------
 with DOM.Core;
+with DOM.Core.Attrs;
 with DOM.Core.Documents;
 with DOM.Core.Elements;
 with DOM.Core.Nodes;
@@ -254,6 +255,7 @@ package body KOW_View.KTML is
 				-- call process_child_nodes
 			begin
 				Process_Child_Nodes( Processor, Doc, N, State );
+				Process_Node_Attributes( Processor, Doc, N, State );
 			end Process_Node;
 
 			procedure Process_Child_Nodes(
@@ -270,7 +272,7 @@ package body KOW_View.KTML is
 			begin
 				if Nodes.Has_Child_Nodes( N ) then
 					List := Nodes.Child_Nodes( N );
-					for i in 0 .. Nodes.Length( List ) loop
+					for i in 0 .. Nodes.Length( List ) - 1 loop
 						Child := Nodes.Item( List, i );
 						Process_Node(
 								doc	=> doc,
@@ -280,6 +282,24 @@ package body KOW_View.KTML is
 					end loop;
 				end if;
 			end Process_Child_Nodes;
+
+
+			procedure Process_Node_Attributes(
+						Processor	: in out Processor_Type;
+						Doc		: in     DOM.Core.Document;
+						N		: in out DOM.Core.Node;
+						State		: in out KOW_Lib.Json.Object_Type
+					) is
+				-- process the node attributes, replacing the ${...} declarations
+				use DOM.Core;
+				Atts : Named_Node_Map := Nodes.Attributes( N );
+				Att  : Node;
+			begin
+				for i in 0 .. Nodes.Length( Atts ) - 1 loop
+					Att := Nodes.Item( Atts, i );
+					Attrs.Set_Value( Att, Attrs.Value( Att ) );
+				end loop;
+			end Process_Node_Attributes;
 
 			-----------------
 			-- the factory --

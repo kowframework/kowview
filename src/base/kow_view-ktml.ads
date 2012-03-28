@@ -173,6 +173,15 @@ package KOW_View.KTML is
 						N		: in out DOM.Core.Node;
 						State		: in out KOW_Lib.Json.Object_Type
 					);
+
+
+			procedure Process_Node_Attributes(
+						Processor	: in out Processor_Type;
+						Doc		: in     DOM.Core.Document;
+						N		: in out DOM.Core.Node;
+						State		: in out KOW_Lib.Json.Object_Type
+					);
+			-- process the node attributes, replacing the ${...} declarations
 			
 
 			-----------------
@@ -205,6 +214,15 @@ package KOW_View.KTML is
 			Factory : aliased Factory_Type;
 			-- the singleton instance
 		end Generic_Factories;
+
+
+
+
+		package Implementations is
+			type Each_Processor_Type is new Defaults.Processor_Type with null record;
+
+			type For_Processor_Type is new Defaults.Processor_Type with null record;
+		end Implementations;
 	end Processors;
 
 end KOW_View.KTML;
