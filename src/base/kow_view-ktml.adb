@@ -329,9 +329,9 @@ package body KOW_View.KTML is
 			KOW_View.KTML.Processors.Set_Factory( Tag, Factory'Access );
 		end Generic_Factories;
 
-		package Implementations is
+		package body Implementations is
 			package Each_Factories is new Generic_Factories( Each_Processor_Type, "kv:each" );
-			-- <kv:each source="key_for_an_array_or_object" key="name_for_the_key" target="name_for_the_value" tag="span">
+			-- <kv:each source="key_for_an_array_or_object" key="name_for_the_key" target="name_for_the_value" tag="span" item_tag="span">
 
 
 			overriding
@@ -343,19 +343,37 @@ package body KOW_View.KTML is
 					) is
 				use DOM.Core;
 				use KOW_Lib.Json;
-				Local_State	: Json_Object_Type := State;
+
+
+
+				function Node_Attribute( Key : in String; Default : in String ) return String is
+					Value : constant String := Elements.Get_Attribute( N, Key );
+				begin
+					if Value = "" then
+						return Default;
+					else
+						return Value;
+					end if;
+				end Node_Attribute;
+
+
+				Local_State	: Object_Type := State;
 				Collection	: Json_Data_Type := Get( State, Elements.Get_Attribute( N, "source" ) );
 
-				Key_Att		: constant String := Elements.Get_Attribute( N, "key" );
-				Target_Att	: constant String := Elements.Get_Attribute( N, "target" );
+				Key_Att		: constant String := Node_Attribute( "key", "key" );
+				Target_Att	: constant String := Node_Attribute( "target", "item" );
+				Tag		: constant String := Node_Attribute( "tag", "span" );
+				Item_Tag	: constant String := Node_Attribute( "item_tag", "span" );
 
 				Template	: Node;
+				Child		: Node_List := Nodes.Child_Nodes( N );
+				New_N		: Node;
 
 				procedure Append_Node is
 					-- process the child nodes for the cloned child nodes; and append it to N.
 					New_Child : Node := Nodes.Clone_Node( Template, True );
 				begin
-					New_Child := Nodes.Append_Child( N => N, New_Child => New_Child );
+					New_Child := Nodes.Append_Child( N => New_N, New_Child => New_Child );
 					Process_Child_Nodes(
 								Processor	=> Each_Processor_Type'Class( Processor ),
 								Doc		=> Doc,
@@ -370,13 +388,26 @@ package body KOW_View.KTML is
 					Set( Local_State, Value_Att, Value );
 					Append_Node;
 				end Object_Iterator;
+
+
 			begin
 				-- Prepare the template and the container
+
+				New_N    := Document.Create_Element( Doc, Tag );
+				Template := Document.Create_Element( Doc, Item_Tag );
+
+				for i in 0 .. Nodes.Length( Child ) - 1 loop
+					Nodes.Append_Child(
+								N		=> Template,
+								New_Child	=> Nodes.Clone_Node( Nodes.Item( Child, i ), True )
+							);
+				end loop;
+
 
 				----------------------------
 				-- iterate the collection --
 				----------------------------
-				case Type_Of( Collection ) is
+				case Collection.Node_Type is
 					when Json_Object =>
 						Iterate( Object => From_Data( Collection ), Iterator => Object_Iterator'Access );
 					when Json_Array =>
@@ -384,7 +415,16 @@ package body KOW_View.KTML is
 					when others =>
 						raise CONSTRAINT_ERROR with "Source for looping not array nor object";
 				end case;
+
+
+				N := Nodes.Replace_Child(
+							N		=> Nodes.Parent( N ),
+							New_Child	=> New_N,
+							Old_Child	=> N
+						);
+				Nodes.Free( N, True );
 			end Process_Node;
+		end Implementations;
 
 
 	end Processors;
