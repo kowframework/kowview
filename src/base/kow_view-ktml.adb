@@ -368,6 +368,7 @@ package body KOW_View.KTML is
 				Template	: Node;
 				Child		: Node_List := Nodes.Child_Nodes( N );
 				New_N		: Node;
+				Child_N		: Node;
 
 				procedure Append_Node is
 					-- process the child nodes for the cloned child nodes; and append it to N.
@@ -385,19 +386,27 @@ package body KOW_View.KTML is
 				procedure Object_Iterator( Key : in String; Value : in Json_Data_type ) is
 				begin
 					Set( Local_State, Key_Att, Key );
-					Set( Local_State, Value_Att, Value );
+					Set( Local_State, Target_Att, Value );
 					Append_Node;
 				end Object_Iterator;
+
+
+				procedure Array_Iterator( Index : in Natural; Value : in Json_Data_Type ) is
+				begin
+					Set( Local_State, Key_Att, Index );
+					Set( Local_State, Target_Att, Value );
+					Append_Node;
+				end Array_Iterator;
 
 
 			begin
 				-- Prepare the template and the container
 
-				New_N    := Document.Create_Element( Doc, Tag );
-				Template := Document.Create_Element( Doc, Item_Tag );
+				New_N    := Documents.Create_Element( Doc, Tag );
+				Template := Documents.Create_Element( Doc, Item_Tag );
 
 				for i in 0 .. Nodes.Length( Child ) - 1 loop
-					Nodes.Append_Child(
+					Child_N := Nodes.Append_Child(
 								N		=> Template,
 								New_Child	=> Nodes.Clone_Node( Nodes.Item( Child, i ), True )
 							);
@@ -407,7 +416,7 @@ package body KOW_View.KTML is
 				----------------------------
 				-- iterate the collection --
 				----------------------------
-				case Collection.Node_Type is
+				case Get_Type( Collection ) is
 					when Json_Object =>
 						Iterate( Object => From_Data( Collection ), Iterator => Object_Iterator'Access );
 					when Json_Array =>
@@ -418,7 +427,7 @@ package body KOW_View.KTML is
 
 
 				N := Nodes.Replace_Child(
-							N		=> Nodes.Parent( N ),
+							N		=> Nodes.Parent_Node( N ),
 							New_Child	=> New_N,
 							Old_Child	=> N
 						);
