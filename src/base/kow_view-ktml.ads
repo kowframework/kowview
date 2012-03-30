@@ -265,7 +265,7 @@ package KOW_View.KTML is
 			-------------------------
 
 			type Each_Processor_Type is new Iterable_Processor_Type with null record;
-			-- <kv:each source="key_for_an_array_or_object" key="key" target="item" tag="ul">
+			-- <kv:each source="key_for_an_array_or_object" key="key" target="item" tag="ul" reverse="false">
 			-- 	<kv:item tag="li">${name_for_the_value} is named ${key}</kv:item>
 			-- 	<kv:empty>There is no item in here brutha!</kv:empty>
 			-- </kv:each>

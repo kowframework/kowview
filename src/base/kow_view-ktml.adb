@@ -477,12 +477,23 @@ package body KOW_View.KTML is
 
 				-- parameters:
 				Collection	: Json_Data_Type := Get( State, Elements.Get_Attribute( N, "source" ) );
-				Key_Att		: constant String := DOM_Util.Node_Attribute( N, "key", "key" );
-				Target_Att	: constant String := DOM_Util.Node_Attribute( N, "target", "item" );
+				Key_Str		: constant String := DOM_Util.Node_Attribute( N, "key", "key" );
+				Target_Str	: constant String := DOM_Util.Node_Attribute( N, "target", "item" );
+				Reverse_Str	: constant String := DOM_Util.Node_Attribute( N, "reverse", "false" );
 
 				-- work variables:
 				New_N		: Node := DOM_Util.Create_From_Template( Doc, N, "ul", False );
 				Local_State	: Object_Type := State;
+
+
+				function Reversed return Boolean is
+				begin
+					return Boolean'Value( Reverse_Str );
+				exception
+					when others =>
+						raise CONSTRAINT_ERROR with "'" & Reverse_Str & "' is not a valid boolean value in reverse attribute";
+				end Reversed;
+
 
 				procedure Append_Node is
 				begin
@@ -497,16 +508,16 @@ package body KOW_View.KTML is
 
 				procedure Object_Iterator( Key : in String; Value : in Json_Data_type ) is
 				begin
-					Set( Local_State, Key_Att, Key );
-					Set( Local_State, Target_Att, Value );
+					Set( Local_State, Key_Str, Key );
+					Set( Local_State, Target_Str, Value );
 					Append_Node;
 				end Object_Iterator;
 
 
 				procedure Array_Iterator( Index : in Natural; Value : in Json_Data_Type ) is
 				begin
-					Set( Local_State, Key_Att, Index );
-					Set( Local_State, Target_Att, Value );
+					Set( Local_State, Key_Str, Index );
+					Set( Local_State, Target_Str, Value );
 					Append_Node;
 				end Array_Iterator;
 
@@ -529,9 +540,17 @@ package body KOW_View.KTML is
 				-- iterate the collection
 				case Get_Type( Collection ) is
 					when Json_Object =>
-						Iterate( Object => From_Data( Collection ), Iterator => Object_Iterator'Access );
+						if Reversed then
+							Reverse_Iterate( Object => From_Data( Collection ), Iterator => Object_Iterator'Access );
+						else
+							Iterate( Object => From_Data( Collection ), Iterator => Object_Iterator'Access );
+						end if;
 					when Json_Array =>
-						Iterate( A => From_Data( Collection ), iterator => Array_Iterator'Access );
+						if Reversed then
+							Reverse_Iterate( A => From_Data( Collection ), iterator => Array_Iterator'Access );
+						else
+							Iterate( A => From_Data( Collection ), iterator => Array_Iterator'Access );
+						end if;
 					when others =>
 						raise CONSTRAINT_ERROR with "Source for looping not array nor object";
 				end case;
@@ -593,11 +612,7 @@ package body KOW_View.KTML is
 
 				function Reversed return Boolean is
 				begin
-					if Reverse_Str = "" then
-						return false;
-					else
-						return Boolean'Value( Reverse_Str );
-					end if;
+					return Boolean'Value( Reverse_Str );
 				exception
 					when others =>
 						raise CONSTRAINT_ERROR with "'" & Reverse_Str & "' is not a valid boolean value in reverse attribute";
