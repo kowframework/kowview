@@ -232,9 +232,11 @@ package KOW_View.KTML is
 			type Iterable_Processor_Type is abstract new Defaults.Processor_Type with record
 				Item_Templates		: DOM.Core.Node_List;
 				Next_Item		: Natural := 0;
+				Empty_Template		: DOM.Core.Node;
+				Is_Empty		: Boolean := True;
 			end record;
 
-			procedure Initialize_Item_Templates(
+			procedure Initialize_Templates(
 						Processor	: in out Iterable_Processor_Type;
 						Doc		: in     DOM.Core.Document;
 						N		: in     DOM.Core.Node
@@ -246,15 +248,27 @@ package KOW_View.KTML is
 						N		: in out DOM.Core.Node;
 						State		: in out KOW_Lib.Json.Object_Type
 					);
-			-- create a new item using one of the item_templates
+			-- create a new item using one of the Item Templates
 
+
+			procedure Create_Empty_If_Needed(
+						Processor	: in out Iterable_Processor_Type;
+						Doc		: in     DOM.Core.Document;
+						N		: in out DOM.Core.Node;
+						State		: in out KOW_Lib.Json.Object_Type
+					);
+			-- create the item representing empty iterators if needed (ie, no call to create_item has been made and
+			-- there is the <kv:empty> child element in this iterator parent node
 
 			-------------------------
 			-- Each Processor Type --
 			-------------------------
 
 			type Each_Processor_Type is new Iterable_Processor_Type with null record;
-			-- <kv:each source="key_for_an_array_or_object" key="name_for_the_key" target="name_for_the_value" tag="span">
+			-- <kv:each source="key_for_an_array_or_object" key="key" target="item" tag="ul">
+			-- 	<kv:item tag="li">${name_for_the_value} is named ${key}</kv:item>
+			-- 	<kv:empty>There is no item in here brutha!</kv:empty>
+			-- </kv:each>
 
 
 			overriding
@@ -265,8 +279,21 @@ package KOW_View.KTML is
 						State		: in out KOW_Lib.Json.Object_Type
 					);
 
-			type For_Processor_Type is new Defaults.Processor_Type with null record;
-			-- <kv:for range="1..10" target="" tag="span">
+
+			------------------------
+			-- For Processor Type --
+			------------------------
+
+			type For_Processor_Type is new Iterable_Processor_Type with null record;
+			-- <kv:for from="1" to="10" target="item" tag="ol" reverse="false">
+
+			overriding
+			procedure Process_Node(
+						Processor	: in out For_Processor_Type;
+						Doc		: in     DOM.Core.Document;
+						N		: in out DOM.Core.Node;
+						State		: in out KOW_Lib.Json.Object_Type
+					);
 		end Implementations;
 	end Processors;
 
