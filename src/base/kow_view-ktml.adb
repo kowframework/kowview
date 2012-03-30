@@ -43,6 +43,7 @@ with Ada.Strings.Unbounded.Hash;
 -------------------
 with KOW_Lib.Json;
 with KOW_Lib.String_Util;
+with KOW_View.DOM_Util;
 
 
 -------------
@@ -330,6 +331,76 @@ package body KOW_View.KTML is
 		end Generic_Factories;
 
 		package body Implementations is
+
+
+
+			-----------------------------
+			-- Iterable Processor Type --
+			-----------------------------
+
+			procedure Initialize_Item_Templates(
+						Processor	: in out Iterable_Processor_Type;
+						Doc		: in     DOC.Core.Document;
+						N		: in     DOM.Core.Node
+					) is
+
+
+				procedure New_Template( Item_Node : Node ) is
+					New_Item : Node :=
+			begin
+
+			end Initialize_Item_Templates;
+
+
+
+			procedure Get_Item_Template(
+						Processor	: in out Iterable_Processor_Type;
+						New_Node	:    out DOM.Core.Node
+					) is
+			begin
+				New_Node := DOM.Core.Clone( DOM.Core.Item( Processor.Item_Templates, Processor.Next_Item ) );
+				Processor.Next_Item := Processor.Next_Item + 1;
+
+				if Processor.Next_Item >= DOM.Core.Length( Processor.Item_Templates ) then
+					Processor.Next_Item := 0;
+				end if;
+			end Get_Item_Template;
+
+			procedure Create_Item(
+						Processor	: in out Iterable_Processor_Type;
+						Doc		: in     DOM.Core.Document;
+						N		: in out DOM.Core.Node;
+						State		: in out KOW_Lib.Json.Object_Type
+					) is
+				-- create a new item using one of the item_templates
+				
+
+				New_Child : Node;
+			begin
+				Get_Item_Template( Processor, New_Child );
+				New_Child := Nodes.Append_Child_Node( N => N, New_Node => New_Child );
+				Process_Child_Nodes(
+								Processor	=> Each_Processor_Type'Class( Processor ),
+								Doc		=> Doc,
+								N		=> New_Child,
+								State		=> Local_State
+							);
+			end Create_Item;
+
+
+			procedure Finalize_Item_Templates(
+						Processor	: in out Iterable_Processor_Type
+					) is
+				-- will dealloc the item_templates list
+			begin
+				DOM.Core.Free( Processor.Item_Templates );
+			end Finalize_Item_Templates;
+
+			-------------------------
+			-- Each Processor Type --
+			-------------------------
+
+
 			package Each_Factories is new Generic_Factories( Each_Processor_Type, "kv:each" );
 			-- <kv:each source="key_for_an_array_or_object" key="name_for_the_key" target="name_for_the_value" tag="span" item_tag="span">
 
@@ -346,16 +417,6 @@ package body KOW_View.KTML is
 
 
 
-				function Node_Attribute( Key : in String; Default : in String ) return String is
-					Value : constant String := Elements.Get_Attribute( N, Key );
-				begin
-					if Value = "" then
-						return Default;
-					else
-						return Value;
-					end if;
-				end Node_Attribute;
-
 
 				Local_State	: Object_Type := State;
 				Collection	: Json_Data_Type := Get( State, Elements.Get_Attribute( N, "source" ) );
@@ -371,17 +432,16 @@ package body KOW_View.KTML is
 				Child_N		: Node;
 
 				procedure Append_Node is
-					-- process the child nodes for the cloned child nodes; and append it to N.
-					New_Child : Node := Nodes.Clone_Node( Template, True );
 				begin
-					New_Child := Nodes.Append_Child( N => New_N, New_Child => New_Child );
-					Process_Child_Nodes(
-								Processor	=> Each_Processor_Type'Class( Processor ),
-								Doc		=> Doc,
-								N		=> New_Child,
-								State		=> Local_State
-							);
+
+					Create_Item(
+							Processor	=> Processor,
+							Doc		=> Doc,
+							N		=> New_N
+							State		=> Local_State
+						);
 				end Append_Node;
+
 
 				procedure Object_Iterator( Key : in String; Value : in Json_Data_type ) is
 				begin
@@ -402,16 +462,29 @@ package body KOW_View.KTML is
 			begin
 				-- Prepare the template and the container
 
-				New_N    := Documents.Create_Element( Doc, Tag );
-				Template := Documents.Create_Element( Doc, Item_Tag );
 
-				for i in 0 .. Nodes.Length( Child ) - 1 loop
-					Child_N := Nodes.Append_Child(
-								N		=> Template,
-								New_Child	=> Nodes.Clone_Node( Nodes.Item( Child, i ), True )
+				Initialize_Item_Templates(
+						Processor	=> Each_Processor_Type,
+						Doc		=> Doc,
+						N		=> N
+					);
+
+				-- Setup the template
+
+				New_N := Documents.Create_Element( Doc, Tag );
+				KOW_View.DOM_Util.Clone_Attributes(
+								Old_Node	=> N,
+								New_Node	=> New_N
 							);
-				end loop;
+				Elements.Remove_Attribute( New_N, "source" );
+				Elements.Remove_Attribute( New_N, "key" );
+				Elements.Remove_Attribute( New_N, "target" );
+				Elements.Remove_Attribute( New_N, "tag" );
 
+				KOW_View.DOM_Util.Clone_Child_Nodes(
+								Old_Node	=> N,
+								New_Node	=> New_N
+							);
 
 				----------------------------
 				-- iterate the collection --
