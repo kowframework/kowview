@@ -32,7 +32,10 @@ pragma License (GPL);
 -------------
 -- XML/Ada --
 -------------
-with DOM.Core;
+with DOM.Core;			use DOM.Core;
+with DOM.Core.Documents;
+with DOM.Core.Elements;
+with DOM.Core.Nodes;
 
 
 -- The KTML is a superset of the XHTML language. Actually, it's just a
@@ -48,9 +51,10 @@ package body KOW_View.DOM_Util is
 		-- clone all the child nodes from old_parent to new_parent;
 
 		Children : Node_List := Nodes.Child_Nodes( Old_Parent );
+		Child    : Node;
 	begin
-		for i in 0 .. Length( Children ) - 1 loop
-			Nodes.Append_Child( New_Parent, Nodes.Clone( Item( Children, i ) ) );
+		for i in 0 .. Nodes.Length( Children ) - 1 loop
+			Child := Nodes.Append_Child( New_Parent, Nodes.Clone_Node( Nodes.Item( Children, i ), True ) );
 		end loop;
 	end Clone_Child_Nodes;
 
@@ -65,8 +69,8 @@ package body KOW_View.DOM_Util is
 		Old_Attributes	: Named_Node_Map := Nodes.Attributes( Old_Parent );
 		Attribute	: Node;
 	begin
-		for i in 0 .. Length( Old_Attributes ) - 1 loop
-			Attribute := Item( Old_Attributes, i );
+		for i in 0 .. Nodes.Length( Old_Attributes ) - 1 loop
+			Attribute := Nodes.Item( Old_Attributes, i );
 			Set_Attribute( New_Parent, Nodes.Node_Name( Attribute ), Nodes.Node_Value( Attribute ) );
 		end loop;
 	end Clone_Attributes;
@@ -86,5 +90,30 @@ package body KOW_View.DOM_Util is
 			return Value;
 		end if;
 	end Node_Attribute;
+
+
+
+	function Create_From_Template(
+				Doc		: in Document;
+				Template_Node	: in Node;
+				Default_Tag	: in String;
+				Deep		: in Boolean
+			) return Node is
+		-- creates a new element node from the template_node
+		-- the new node will be of the tag attribute of the given node or default_Tag
+		-- if deep, clone child node as well
+
+		Tag_Att : constant String := "tag";
+		N       : Node := Documents.Create_Element( Doc, Node_Attribute( Template_node, Tag_Att, Default_Tag ) );
+	begin
+		Clone_Attributes( Old_Parent => Template_Node, New_Parent => N );
+		Elements.Remove_Attribute( N, "tag" );
+
+		if Deep then
+			Clone_Child_Nodes( Old_Parent => Template_Node, New_Parent => N );
+		end if;
+
+		return N;
+	end Create_From_Template;
 
 end KOW_View.DOM_Util;

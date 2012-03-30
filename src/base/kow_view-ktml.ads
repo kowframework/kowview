@@ -217,6 +217,10 @@ package KOW_View.KTML is
 
 
 
+		---------------------
+		-- Implementations --
+		---------------------
+
 
 		package Implementations is
 
@@ -225,14 +229,14 @@ package KOW_View.KTML is
 			-- Iterable Processor Type --
 			-----------------------------
 
-			type Iterable_Procesor_Type is abstract new Defaults.Processor_Type with record
-				Item_Templates	: DOM.Core.Node_List;
-				Next_Item	: Natural := 0;
+			type Iterable_Processor_Type is abstract new Defaults.Processor_Type with record
+				Item_Templates		: DOM.Core.Node_List;
+				Next_Item		: Natural := 0;
 			end record;
 
 			procedure Initialize_Item_Templates(
 						Processor	: in out Iterable_Processor_Type;
-						Doc		: in     DOC.Core.Document;
+						Doc		: in     DOM.Core.Document;
 						N		: in     DOM.Core.Node
 					);
 
@@ -245,16 +249,11 @@ package KOW_View.KTML is
 			-- create a new item using one of the item_templates
 
 
-			procedure Finalize_Item_Templates(
-						Processor	: in out Iterable_Processor_Type
-					);
-			-- will dealloc the item_templates list
-
 			-------------------------
 			-- Each Processor Type --
 			-------------------------
 
-			type Each_Processor_Type is new Defaults.Processor_Type with null record;
+			type Each_Processor_Type is new Iterable_Processor_Type with null record;
 			-- <kv:each source="key_for_an_array_or_object" key="name_for_the_key" target="name_for_the_value" tag="span">
 
 

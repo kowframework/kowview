@@ -32,7 +32,7 @@ pragma License (GPL);
 -------------
 -- XML/Ada --
 -------------
-with DOM.Core;
+with DOM.Core;		use DOM.Core;
 
 
 -- The KTML is a superset of the XHTML language. Actually, it's just a
@@ -63,4 +63,14 @@ package KOW_View.DOM_Util is
 			) return String;
 	-- get the node attribute if existing; if not, return the default value;
 
+	
+	function Create_From_Template(
+				Doc		: in Document;
+				Template_Node	: in Node;
+				Default_Tag	: in String;
+				Deep		: in Boolean
+			) return Node;
+	-- creates a new element node from the template_node
+	-- the new node will be of the tag attribute of the given node or default_Tag
+	-- if deep, clone child node as well
 end KOW_View.DOM_Util;
