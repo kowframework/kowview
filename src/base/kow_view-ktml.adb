@@ -310,7 +310,8 @@ package body KOW_View.KTML is
 			begin
 				for i in 0 .. Nodes.Length( Atts ) - 1 loop
 					Att := Nodes.Item( Atts, i );
-					Attrs.Set_Value( Att, Attrs.Value( Att ) );
+					Elements.Set_Attribute( N, Attrs.Name( Att), Expand( Attrs.Value( Att ), State ) );
+					-- it's safe because only for element nodes the atts map has values
 				end loop;
 			end Process_Node_Attributes;
 
@@ -411,9 +412,12 @@ package body KOW_View.KTML is
 						New_Node	:    out DOM.Core.Node
 					) is
 			begin
-				New_Node := DOM.Core.Nodes.Clone_Node( DOM.Core.Nodes.Item( Processor.Item_Templates, Processor.Next_Item ), Deep => True );
-				Processor.Next_Item := Processor.Next_Item + 1;
+				New_Node := DOM.Core.Nodes.Clone_Node(
+									N	=> DOM.Core.Nodes.Item( Processor.Item_Templates, Processor.Next_Item ),
+									Deep	=> True
+								);
 
+				Processor.Next_Item := Processor.Next_Item + 1;
 				if Processor.Next_Item >= DOM.Core.Nodes.Length( Processor.Item_Templates ) then
 					Processor.Next_Item := 0;
 				end if;
@@ -548,6 +552,14 @@ package body KOW_View.KTML is
 				Elements.Remove_Attribute( New_N, "key" );
 				Elements.Remove_Attribute( New_N, "target" );
 
+				Process_Node_Attributes(
+								Processor	=> processor,
+								Doc		=> Doc,
+								N		=> New_N,
+								State		=> Local_State
+							);
+
+
 				-- iterate the collection
 				case Get_Type( Collection ) is
 					when Json_Object =>
@@ -656,6 +668,13 @@ package body KOW_View.KTML is
 				Elements.Remove_Attribute( New_N, "target" );
 				Elements.Remove_Attribute( New_N, "reverse" );
 
+				Process_Node_Attributes(
+								Processor	=> processor,
+								Doc		=> Doc,
+								N		=> New_N,
+								State		=> Local_State
+							);
+
 				if Reversed then
 					for i in reverse From .. To loop
 						Append_Node( i );
@@ -680,7 +699,7 @@ package body KOW_View.KTML is
 							New_Child	=> New_N
 						);
 
-				Nodes.Free( N, True );
+				--Nodes.Free( N, True );
 
 				N := New_N;
 			end Process_Node;
