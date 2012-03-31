@@ -37,7 +37,6 @@
 
 
 		<kv:set key="lol" value="omg!"></kv:set>
-
 		${lol}
 	</body>
 </html>
