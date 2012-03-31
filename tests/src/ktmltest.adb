@@ -20,6 +20,7 @@ with KOW_View.KTML;
 procedure KTMLTest is
 
 	State : Object_Type;
+	Some_Obj : Object_Type;
 
 
 	procedure Add_Users is
@@ -39,6 +40,13 @@ procedure KTMLTest is
 		Set( State, "users", users );
 	end Add_Users;
 begin
+
+	Set( Some_Obj, "omg1", "lalala" );
+	Set( Some_Obj, "omg2", "lalala2" );
+	Set( Some_Obj, "omg3", "lalala3" );
+
+	Set( State, "some_obj", Some_Obj );
+
 	Set( State, "welcome", "Bem vindo!" );
 	Add_Users;
 	KOW_Lib.Log.Default_Level := KOW_Lib.Log.Level_Debug;
