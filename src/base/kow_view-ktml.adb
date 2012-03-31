@@ -698,7 +698,7 @@ package body KOW_View.KTML is
 							New_Child	=> New_N
 						);
 
-				--Nodes.Free( N, True );
+				Nodes.Free( N, True );
 
 				N := New_N;
 			end Process_Node;
