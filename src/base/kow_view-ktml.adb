@@ -402,9 +402,11 @@ package body KOW_View.KTML is
 
 
 				-- the empty template
-				if Nodes.Length( Empties ) > 0 then
-					New_Empty_Template( Nodes.Item( Empties, 0 ) );
-				end if;
+				for i in 0 .. Nodes.Length( Empties ) - 1 loop
+					if Processor.Empty_Template = null and then Nodes.Parent_Node( Nodes.Item( Empties, i ) ) = N then
+						New_Empty_Template( Nodes.Item( Empties, i ) );
+					end if;
+				end loop;
 
 			end Initialize_Templates;
 
@@ -486,123 +488,128 @@ package body KOW_View.KTML is
 						N		: in out DOM.Core.Node;
 						State		: in out KOW_Lib.Json.Object_Type
 					) is
-				use DOM.Core;
-				use KOW_Lib.Json;
+
+				procedure Do_Process_Node is
+					use DOM.Core;
+					use KOW_Lib.Json;
 
 
 
-				function Load_Collection return Json_Data_Type is
-					Source : constant String := Elements.Get_Attribute( N, "source" );
-				begin
-					if Source = "" then
-						raise CONSTRAINT_ERROR with "missing required attribute ""source"" in kv:each tag";
-					end if;
-					return Get( State, Source );
-				end Load_Collection;
+					function Load_Collection return Json_Data_Type is
+						Source : constant String := Elements.Get_Attribute( N, "source" );
+					begin
+						if Source = "" then
+							raise CONSTRAINT_ERROR with "missing required attribute ""source"" in kv:each tag";
+						end if;
+						return Get( State, Source );
+					end Load_Collection;
 
-				-- parameters:
-				Collection	: Json_Data_Type := Load_Collection;
-				Key_Str		: constant String := DOM_Util.Node_Attribute( N, "key", "key" );
-				Target_Str	: constant String := DOM_Util.Node_Attribute( N, "target", "item" );
-				Reverse_Str	: constant String := DOM_Util.Node_Attribute( N, "reverse", "false" );
+					-- parameters:
+					Collection	: Json_Data_Type := Load_Collection;
+					Key_Str		: constant String := DOM_Util.Node_Attribute( N, "key", "key" );
+					Target_Str	: constant String := DOM_Util.Node_Attribute( N, "target", "item" );
+					Reverse_Str	: constant String := DOM_Util.Node_Attribute( N, "reverse", "false" );
 
-				-- work variables:
-				New_N		: Node := DOM_Util.Create_From_Template( Doc, N, "ul", False );
-				Local_State	: Object_Type := State;
-
-
-				function Reversed return Boolean is
-				begin
-					return Boolean'Value( Reverse_Str );
-				exception
-					when others =>
-						raise CONSTRAINT_ERROR with "'" & Reverse_Str & "' is not a valid boolean value in reverse attribute";
-				end Reversed;
+					-- work variables:
+					New_N		: Node := DOM_Util.Create_From_Template( Doc, N, "ul", False );
+					Local_State	: Object_Type := State;
 
 
-				procedure Append_Node is
-				begin
-					Create_Item(
-							Processor	=> Processor,
-							Doc		=> Doc,
-							N		=> New_N,
-							State		=> Local_State
-						);
-				end Append_Node;
+					function Reversed return Boolean is
+					begin
+						return Boolean'Value( Reverse_Str );
+					exception
+						when others =>
+							raise CONSTRAINT_ERROR with "'" & Reverse_Str & "' is not a valid boolean value in reverse attribute";
+					end Reversed;
 
 
-				procedure Object_Iterator( Key : in String; Value : in Json_Data_type ) is
-				begin
-					Set( Local_State, Key_Str, Key );
-					Set( Local_State, Target_Str, Value );
-					Append_Node;
-				end Object_Iterator;
-
-
-				procedure Array_Iterator( Index : in Natural; Value : in Json_Data_Type ) is
-				begin
-					Set( Local_State, Key_Str, Index );
-					Set( Local_State, Target_Str, Value );
-					Append_Node;
-				end Array_Iterator;
-
-
-			begin
-				-- Prepare the template and the container
-
-
-				Initialize_Templates(
-						Processor	=> Processor,
-						Doc		=> Doc,
-						N		=> N
-					);
-
-				-- Setup the template
-				Elements.Remove_Attribute( New_N, "source" );
-				Elements.Remove_Attribute( New_N, "key" );
-				Elements.Remove_Attribute( New_N, "target" );
-
-				Process_Node_Attributes(
-								Processor	=> processor,
+					procedure Append_Node is
+					begin
+						Create_Item(
+								Processor	=> Processor,
 								Doc		=> Doc,
 								N		=> New_N,
 								State		=> Local_State
 							);
+					end Append_Node;
 
 
-				-- iterate the collection
-				case Get_Type( Collection ) is
-					when Json_Object =>
-						if Reversed then
-							Reverse_Iterate( Object => From_Data( Collection ), Iterator => Object_Iterator'Access );
-						else
-							Iterate( Object => From_Data( Collection ), Iterator => Object_Iterator'Access );
-						end if;
-					when Json_Array =>
-						if Reversed then
-							Reverse_Iterate( A => From_Data( Collection ), iterator => Array_Iterator'Access );
-						else
-							Iterate( A => From_Data( Collection ), iterator => Array_Iterator'Access );
-						end if;
-					when others =>
-						raise CONSTRAINT_ERROR with "Source for looping not array nor object";
-				end case;
+					procedure Object_Iterator( Key : in String; Value : in Json_Data_type ) is
+					begin
+						Set( Local_State, Key_Str, Key );
+						Set( Local_State, Target_Str, Value );
+						Append_Node;
+					end Object_Iterator;
 
-				Create_Empty_If_Needed(
+
+					procedure Array_Iterator( Index : in Natural; Value : in Json_Data_Type ) is
+					begin
+						Set( Local_State, Key_Str, Index );
+						Set( Local_State, Target_Str, Value );
+						Append_Node;
+					end Array_Iterator;
+
+
+				begin
+					-- Prepare the template and the container
+
+
+					Initialize_Templates(
 							Processor	=> Processor,
 							Doc		=> Doc,
-							N		=> New_N,
-							State		=> State
-					);
-
-
-				-- replace and free the node
-				N := Nodes.Replace_Child(
-							N		=> Nodes.Parent_Node( N ),
-							New_Child	=> New_N,
-							Old_Child	=> N
+							N		=> N
 						);
-				Nodes.Free( N, True );
+
+					-- Setup the template
+					Elements.Remove_Attribute( New_N, "source" );
+					Elements.Remove_Attribute( New_N, "key" );
+					Elements.Remove_Attribute( New_N, "target" );
+
+
+					-- iterate the collection
+					case Get_Type( Collection ) is
+						when Json_Object =>
+							if Reversed then
+								Reverse_Iterate( Object => From_Data( Collection ), Iterator => Object_Iterator'Access );
+							else
+								Iterate( Object => From_Data( Collection ), Iterator => Object_Iterator'Access );
+							end if;
+						when Json_Array =>
+							if Reversed then
+								Reverse_Iterate( A => From_Data( Collection ), iterator => Array_Iterator'Access );
+							else
+								Iterate( A => From_Data( Collection ), iterator => Array_Iterator'Access );
+							end if;
+						when others =>
+							raise CONSTRAINT_ERROR with "Source for looping not array nor object";
+					end case;
+
+					Create_Empty_If_Needed(
+								Processor	=> Processor,
+								Doc		=> Doc,
+								N		=> New_N,
+								State		=> State
+						);
+
+
+					-- replace and free the node
+					N := Nodes.Replace_Child(
+								N		=> Nodes.Parent_Node( N ),
+								New_Child	=> New_N,
+								Old_Child	=> N
+							);
+					Nodes.Free( N, True );
+				end Do_Process_Node;
+			begin
+				Process_Node_Attributes(
+								Processor	=> processor,
+								Doc		=> Doc,
+								N		=> N,
+								State		=> State
+							);
+				Do_Process_Node;
+
 			end Process_Node;
 
 
@@ -619,99 +626,104 @@ package body KOW_View.KTML is
 						N		: in out DOM.Core.Node;
 						State		: in out KOW_Lib.Json.Object_Type
 					) is
-				use DOM.Core;
-				From_Str	: constant String := Elements.Get_Attribute( N, "from" );
-				To_Str		: constant String := Elements.Get_Attribute( N, "to" );
-				Target_Str	: constant String := DOM_Util.Node_Attribute( N, "target", "item" );
-				Reverse_Str	: constant String := DOM_Util.Node_Attribute( N, "reverse", "false" );
-				New_N		: Node;
-				Local_State	: KOW_Lib.Json.Object_Type := State;
 
-				function From return Integer is
-				begin
-					return Integer'Value( From_Str );
-				exception
-					when others =>
-						raise CONSTRAINT_ERROR with "'" & From_Str & "' is not a valid integer value in from attribute";
-				end From;
+				procedure Do_Process_Node is
+					use DOM.Core;
+					From_Str	: constant String := Elements.Get_Attribute( N, "from" );
+					To_Str		: constant String := Elements.Get_Attribute( N, "to" );
+					Target_Str	: constant String := DOM_Util.Node_Attribute( N, "target", "item" );
+					Reverse_Str	: constant String := DOM_Util.Node_Attribute( N, "reverse", "false" );
+					New_N		: Node;
+					Local_State	: KOW_Lib.Json.Object_Type := State;
 
-				function To return Integer is
-				begin
-					return Integer'Value( To_Str );
-				exception
-					when others =>
-						raise CONSTRAINT_ERROR with "'" & To_Str & "' is not a valid integer value in to attribute";
-				end To;
+					function From return Integer is
+					begin
+						return Integer'Value( From_Str );
+					exception
+						when others =>
+							raise CONSTRAINT_ERROR with "'" & From_Str & "' is not a valid integer value in from attribute";
+					end From;
 
-				function Reversed return Boolean is
-				begin
-					return Boolean'Value( Reverse_Str );
-				exception
-					when others =>
-						raise CONSTRAINT_ERROR with "'" & Reverse_Str & "' is not a valid boolean value in reverse attribute";
-				end Reversed;
+					function To return Integer is
+					begin
+						return Integer'Value( To_Str );
+					exception
+						when others =>
+							raise CONSTRAINT_ERROR with "'" & To_Str & "' is not a valid integer value in to attribute";
+					end To;
+
+					function Reversed return Boolean is
+					begin
+						return Boolean'Value( Reverse_Str );
+					exception
+						when others =>
+							raise CONSTRAINT_ERROR with "'" & Reverse_Str & "' is not a valid boolean value in reverse attribute";
+					end Reversed;
 
 
 
-				procedure Append_Node( Item : Integer ) is
-				begin
-					KOW_Lib.Json.Set( Local_State, Target_Str, Item );
-					Create_Item(
-							Processor	=> Processor,
-							Doc		=> Doc,
-							N		=> New_N,
-							State		=> Local_State
-						);
-				end Append_Node;
-
-			begin
-				Initialize_Templates(
-							Processor	=> Processor,
-							Doc		=> Doc,
-							N		=> N
-						);
-
-				New_N := DOM_Util.Create_From_Template( Doc, N, "ol", False );
-
-				Elements.Remove_Attribute( New_N, "from" );
-				Elements.Remove_Attribute( New_N, "to" );
-				Elements.Remove_Attribute( New_N, "target" );
-				Elements.Remove_Attribute( New_N, "reverse" );
-
-				Process_Node_Attributes(
-								Processor	=> processor,
+					procedure Append_Node( Item : Integer ) is
+					begin
+						KOW_Lib.Json.Set( Local_State, Target_Str, Item );
+						Create_Item(
+								Processor	=> Processor,
 								Doc		=> Doc,
 								N		=> New_N,
 								State		=> Local_State
 							);
+					end Append_Node;
 
-				if Reversed then
-					for i in reverse From .. To loop
-						Append_Node( i );
-					end loop;
-				else
-					for i in From .. To loop
-						Append_Node( i );
-					end loop;
-				end if;
+				begin
+					Initialize_Templates(
+								Processor	=> Processor,
+								Doc		=> Doc,
+								N		=> N
+							);
+
+					New_N := DOM_Util.Create_From_Template( Doc, N, "ol", False );
+
+					Elements.Remove_Attribute( New_N, "from" );
+					Elements.Remove_Attribute( New_N, "to" );
+					Elements.Remove_Attribute( New_N, "target" );
+					Elements.Remove_Attribute( New_N, "reverse" );
 
 
-				Create_Empty_If_Needed(
-							Processor	=> Processor,
-							Doc		=> Doc,
-							N		=> New_N,
-							State		=> State
-						);
+					if Reversed then
+						for i in reverse From .. To loop
+							Append_Node( i );
+						end loop;
+					else
+						for i in From .. To loop
+							Append_Node( i );
+						end loop;
+					end if;
 
-				N := Nodes.Replace_Child(
-							N		=> Nodes.Parent_Node( N ),
-							Old_Child	=> N,
-							New_Child	=> New_N
-						);
 
-				Nodes.Free( N, True );
+					Create_Empty_If_Needed(
+								Processor	=> Processor,
+								Doc		=> Doc,
+								N		=> New_N,
+								State		=> State
+							);
 
-				N := New_N;
+					N := Nodes.Replace_Child(
+								N		=> Nodes.Parent_Node( N ),
+								Old_Child	=> N,
+								New_Child	=> New_N
+							);
+
+					Nodes.Free( N, True );
+
+					N := New_N;
+				end Do_Process_Node;
+			begin
+				Process_Node_Attributes(
+								Processor	=> processor,
+								Doc		=> Doc,
+								N		=> N,
+								State		=> State
+							);
+				Do_Process_Node;
 			end Process_Node;
 
 			------------------------
