@@ -43,6 +43,15 @@ with DOM.Core;
 -- The KTML is a superset of the XHTML language. Actually, it's just a
 -- smart way to deal with XML files.
 
+
+-- TODO: kv:set
+-- TODO: kv:if
+-- TODO: kv:case
+-- TODO: kv:if_set
+-- TODO: kv:region (this one will require some sort of
+--
+-- TODO: kv:extends/kv:extension_point => maybe it's not really needed
+
 package KOW_View.KTML is
 
 
