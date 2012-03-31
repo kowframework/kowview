@@ -747,6 +747,7 @@ package body KOW_View.KTML is
 					end if;
 				end Set_State;
 
+				use DOM.Core.Nodes;
 			begin
 				if Key_Str = "" then
 					raise CONSTRAINT_ERROR with "you need to specify a key for your value";
@@ -754,6 +755,10 @@ package body KOW_View.KTML is
 
 
 				Set_State( State, Key_Str );
+
+
+				N := Remove_Child( Parent_Node( N ), N );
+				Free( N );
 			end Process_Node;
 
 
