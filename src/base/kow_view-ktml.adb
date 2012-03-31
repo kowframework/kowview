@@ -197,7 +197,7 @@ package body KOW_View.KTML is
 		-- expand the values ${..} in the string using the state
 		function Value_of( Key : in String ) return String is
 		begin
-			return Value_Of( Object, Str );
+			return Value_Of( Object, Key );
 		end Value_Of;
 
 		function My_Expand is new KOW_Lib.String_Util.Expand( Value_of );

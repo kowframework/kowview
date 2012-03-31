@@ -40,6 +40,7 @@ procedure KTMLTest is
 	end Add_Users;
 begin
 	Set( State, "welcome", "Bem vindo!" );
+	Add_Users;
 	KOW_Lib.Log.Default_Level := KOW_Lib.Log.Level_Debug;
 	Put_Line( KOW_View.KTML.Render( "./data/example.ktml", State ) );
 end KTMLTest;
