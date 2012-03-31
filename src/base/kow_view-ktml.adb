@@ -167,6 +167,7 @@ package body KOW_View.KTML is
 		First_Dot	: Integer;
 		Data		: Json_Data_Type;
 	begin
+		KOW_Lib.Log.Log( Logger, KOW_Lib.Log.Level_Info, "Getting value for key " & key );
 		if Contains( Object, Key ) then
 			Data := Get( Object, Key );
 			return To_String( Data );
@@ -490,9 +491,17 @@ package body KOW_View.KTML is
 
 
 
+				function Load_Collection return Json_Data_Type is
+					Source : constant String := Elements.Get_Attribute( N, "source" );
+				begin
+					if Source = "" then
+						raise CONSTRAINT_ERROR with "missing required attribute ""source"" in kv:each tag";
+					end if;
+					return Get( State, Source );
+				end Load_Collection;
 
 				-- parameters:
-				Collection	: Json_Data_Type := Get( State, Elements.Get_Attribute( N, "source" ) );
+				Collection	: Json_Data_Type := Load_Collection;
 				Key_Str		: constant String := DOM_Util.Node_Attribute( N, "key", "key" );
 				Target_Str	: constant String := DOM_Util.Node_Attribute( N, "target", "item" );
 				Reverse_Str	: constant String := DOM_Util.Node_Attribute( N, "reverse", "false" );

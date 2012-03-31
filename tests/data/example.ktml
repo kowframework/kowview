@@ -7,9 +7,14 @@
 
 	<body>
 		${welcome}
-		<kv:each source="users" target="u">
+		<kv:each source="users" target="item">
 			<kv:item tag="">
-				${u.username} is the loging for ${u.name}
+				${item.username} is the loging for ${item.name}
+
+				<kv:each source="item" target="val" key="k" tag="span">
+					<kv:item tag="span"><b>${k}:</b> ${val}</kv:item>
+				</kv:each>
+
 			</kv:item>
 			<kv:empty>
 				There is no user to list. :)

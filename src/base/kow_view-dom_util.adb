@@ -54,15 +54,10 @@ package body KOW_View.DOM_Util is
 	begin
 		case N.Node_Type is
 			when Element_Node =>
-				New_N := Nodes.Clone_Node( N => N, Deep => False );
-				declare
-					Child : Node_List := Nodes.Child_Nodes( N );
-					Child_N : Node;
-				begin
-					for i in 0 .. Nodes.Length( Child ) - 1 loop
-						Child_N := Nodes.Append_Child( New_N, Deep_Clone( Nodes.Item( Child, i ) ) );
-					end loop;
-				end;
+				New_N := Documents.Create_Element( Nodes.Owner_Document( N ), Elements.Get_Tag_Name( N ) );
+				Clone_Child_Nodes( Old_Parent => N, New_Parent => New_N );
+				Clone_Attributes(  Old_Parent => N, New_Parent => New_N );
+
 			when Text_Node =>
 				declare
 					Str : DOM_String := Nodes.Node_Value( N );
