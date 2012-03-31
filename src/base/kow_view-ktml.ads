@@ -38,6 +38,7 @@ with Ada.Strings.Fixed;
 -- KOW Framework --
 -------------------
 with KOW_Lib.Json;
+with KOW_Lib.Log;
 
 
 -------------
@@ -60,6 +61,7 @@ with DOM.Core;
 package KOW_View.KTML is
 
 
+	Logger : constant KOW_Lib.Log.Logger_Type := KOW_Lib.Log.Get_Logger( "KOW_View.KTML" );
 	
 
 

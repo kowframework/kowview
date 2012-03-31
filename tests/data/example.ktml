@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:kv="http://www.kow.com.br/xsd/kv3">
+
+
+	<!-- HEAD pode ser omitido; nesse caso o framework gera de acordo -->
+
+	<body>
+		${welcome}
+		<kv:each source="users" target="u">
+			<kv:item tag="">
+				${u.name}
+			</kv:item>
+			<kv:empty>
+				There is no user to list. :)
+			</kv:empty>
+		</kv:each>
+
+		<kv:for range="1..10" reverse="true" target="i">
+			<kv:item>${i}</kv:item>
+		</kv:for>
+
+
+		<kv:set key="lol" value="omg!"/>
+
+		${lol}
+	</body>
+</html>

@@ -82,7 +82,10 @@ package body KOW_View_Tests.Modules.Util is
 					Request		=> Dumb_Request,
 					Context		=> "/some/page",
 					Module_Id	=> 1,
-					Module		=> module
+					Request_mode	=> KOW_View.Custom_Request,
+					Virtual_Host	=> ( others => ' ' ),
+					Module		=> Module
+
 			);
 		Ahven.Assert(
 				Condition	=> Module /= null,
@@ -108,6 +111,8 @@ package body KOW_View_Tests.Modules.Util is
 					Request		=> Dumb_Request,
 					Context		=> "/some/page",
 					Module_Id	=> 1,
+					Request_mode	=> KOW_View.Custom_Request,
+					Virtual_Host	=> ( others => ' ' ),
 					Module		=> module
 			);
 		Ahven.Assert(

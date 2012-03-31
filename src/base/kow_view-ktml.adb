@@ -37,6 +37,7 @@ with Ada.Strings;
 with Ada.Strings.Fixed;
 with Ada.Strings.Unbounded;
 with Ada.Strings.Unbounded.Hash;
+with Ada.Tags;
 
 
 -------------------
@@ -93,6 +94,7 @@ package body KOW_View.KTML is
 
 		Output	: aliased AWS.Utils.Streams.Strings;
 	begin
+		KOW_Lib.Log.Log( Logger, KOW_Lib.Log.Level_Info, "About to parse " & File_Path );
 
 		Set_Public_Id( Input, "Template File" );
 		Open( File_Path, Input );
@@ -126,20 +128,26 @@ package body KOW_View.KTML is
 		) is
 		-- query the processor the given tag and process the node
 		use DOM.Core;
-		Processor : Processors.Processor_Interface'Class := Processors.Get( Elements.Get_Tag_Name( N ) );
 
 	begin
-		if Doc.Node_Type = Element_Node then
-			Processors.Process_Node(
-						Processor	=> Processor,
-					       	Doc		=> Doc,
-						N		=> N,
-    						State		=> State 
-					);
-		elsif Doc.Node_Type = Text_Node then
-			-- TODO :: expand to the attributes (and maybe even tag names)
+		if N.Node_Type = Element_Node then
+			declare
+				Tag : constant String := Elements.Get_Tag_Name( N );
+				Processor : Processors.Processor_Interface'Class := Processors.Get( Tag );
+			begin
+				KOW_Lib.Log.Log( Logger, KOW_Lib.Log.Level_Info, "parsing element node of tag " & Tag & " using " & Ada.Tags.Expanded_name( Processor'Tag ) );
+				Processors.Process_Node(
+							Processor	=> Processor,
+						       	Doc		=> Doc,
+							N		=> N,
+    							State		=> State 
+						);
+			end;
+		elsif N.Node_Type = Text_Node then
+			KOW_Lib.Log.Log( Logger, KOW_Lib.Log.Level_Info, "parsing text node" );
 			Nodes.Set_Node_Value( N, Expand( Nodes.Node_Value( N ), State ) );
 		else
+			KOW_Lib.Log.Log( Logger, KOW_Lib.Log.Level_Warning, "skipping node of type "  & Node_Types'Image( N.Node_Type ) );
 			null;
 		end if;
 	end Process_Node;
@@ -176,7 +184,7 @@ package body KOW_View.KTML is
 				return Value_of( Get( Object, Obj_key ), New_key );
 			end;
 		else
-			raise CONSTRAINT_ERROR with "unknown key: " & key;
+			raise CONSTRAINT_ERROR with "unknown key: """ & key & '"';
 		end if;
 	end Value_Of;
 
@@ -241,6 +249,7 @@ package body KOW_View.KTML is
 			use Ada.Strings.Unbounded;
 			UTag : constant Unbounded_String := To_Unbounded_String( Tag );
 		begin
+			KOW_Lib.Log.Log( Logger, KOW_Lib.Log.Level_Info, "registering processor for tag " & Tag );
 			Factory_Maps.Include( My_Factories, UTag, Factory );
 		end Set_Factory;
 
