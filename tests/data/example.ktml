@@ -9,16 +9,17 @@
 		${welcome}
 		<kv:each source="users" target="u">
 			<kv:item tag="">
-				${u.name}
+				${u.username} is the loging for ${u.name}
 			</kv:item>
-			<!--kv:empty>
+			<kv:empty>
 				There is no user to list. :)
-			</kv:empty-->
+			</kv:empty>
 		</kv:each>
 
 		<kv:for from="1" to="10" reverse="false" target="i" welcomeMessage="${welcome}">
 			<kv:item>${i}</kv:item>
 			<kv:item id="item_${i}">${i}</kv:item>
+			<kv:empty>OMG.. empty for loop</kv:empty>
 		</kv:for>
 
 

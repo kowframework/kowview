@@ -379,7 +379,7 @@ package body KOW_View.KTML is
 				procedure New_Empty_Template( Empty_Node : Node ) is
 				begin
 					Processor.Empty_Template := DOM_Util.Create_From_Template( Doc, Empty_Node, "li", True );
-					Processor.Empty_Template := Nodes.Append_Child( N => Container, New_Child => Processor.Empty_Template );
+					Processor.Empty_Template := Nodes.Append_Child( N => EContainer, New_Child => Processor.Empty_Template );
 				end New_Empty_Template;
 			begin
 
@@ -389,7 +389,9 @@ package body KOW_View.KTML is
 
 				-- Item Templates
 				for i in 0 .. Nodes.Length( Items ) - 1 loop
-					New_Item_Template( Nodes.Item( Items, i ) );
+					if Nodes.Parent_Node( Nodes.Item( Items, i ) ) = N then
+						New_Item_Template( Nodes.Item( Items, i ) );
+					end if;
 				end loop;
 
 				if not Nodes.Has_Child_Nodes( Container ) then
