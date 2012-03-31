@@ -41,6 +41,15 @@ with DOM.Core;		use DOM.Core;
 package KOW_View.DOM_Util is
 
 
+
+	function Deep_Clone( N : in Node ) return Node;
+	-- a (working) clone that (really) operates within the child nodes
+	-- The Clone( N => some_node, Deep => True ) function in XML/Ada don't
+	-- actually clone the child nodes but pass references (at least for text nodes).
+	--
+	-- this one is slower, but works as expected;
+
+
 	procedure Clone_Child_Nodes(
 				Old_Parent	: in Node;
 				New_Parent	: in Node

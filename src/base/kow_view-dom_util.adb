@@ -44,6 +44,39 @@ with DOM.Core.Nodes;
 package body KOW_View.DOM_Util is
 
 
+	function Deep_Clone( N : in Node ) return Node is
+		-- a (working) clone that (really) operates within the child nodes
+		-- The Clone( N => some_node, Deep => True ) function in XML/Ada don't
+		-- actually clone the child nodes but pass references (at least for text nodes).
+		--
+		-- this one is slower, but works as expected;
+		New_N : Node;
+	begin
+		case N.Node_Type is
+			when Element_Node =>
+				New_N := Nodes.Clone_Node( N => N, Deep => False );
+				declare
+					Child : Node_List := Nodes.Child_Nodes( N );
+					Child_N : Node;
+				begin
+					for i in 0 .. Nodes.Length( Child ) - 1 loop
+						Child_N := Nodes.Append_Child( New_N, Deep_Clone( Nodes.Item( Child, i ) ) );
+					end loop;
+				end;
+			when Text_Node =>
+				declare
+					Str : DOM_String := Nodes.Node_Value( N );
+				begin
+					New_N := Documents.Create_Text_Node( Nodes.Owner_Document( N ), Str );
+				end;
+			when others =>
+				New_N := Nodes.Clone_Node( N => N, Deep => False );
+		end case;
+
+		return New_N;
+	end Deep_Clone;
+
+
 	procedure Clone_Child_Nodes(
 				Old_Parent	: in Node;
 				New_Parent	: in Node
@@ -54,7 +87,7 @@ package body KOW_View.DOM_Util is
 		Child    : Node;
 	begin
 		for i in 0 .. Nodes.Length( Children ) - 1 loop
-			Child := Nodes.Append_Child( New_Parent, Nodes.Clone_Node( Nodes.Item( Children, i ), True ) );
+			Child := Nodes.Append_Child( New_Parent, Deep_Clone( Nodes.Item( Children, i ) ) );
 		end loop;
 	end Clone_Child_Nodes;
 

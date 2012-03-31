@@ -412,9 +412,8 @@ package body KOW_View.KTML is
 						New_Node	:    out DOM.Core.Node
 					) is
 			begin
-				New_Node := DOM.Core.Nodes.Clone_Node(
-									N	=> DOM.Core.Nodes.Item( Processor.Item_Templates, Processor.Next_Item ),
-									Deep	=> True
+				New_Node := KOW_View.DOM_Util.Deep_Clone(
+									N	=> DOM.Core.Nodes.Item( Processor.Item_Templates, Processor.Next_Item )
 								);
 
 				Processor.Next_Item := Processor.Next_Item + 1;
@@ -459,7 +458,7 @@ package body KOW_View.KTML is
 					return;
 				end if;
 
-				New_Child := Append_Child( N, Nodes.Clone_Node( Processor.Empty_Template, True ) );
+				New_Child := Append_Child( N, KOW_View.DOM_Util.Deep_Clone( Processor.Empty_Template ) );
 				KOW_View.KTML.Process_Node(
 								Doc	=> Doc,
 								N	=> New_Child,
