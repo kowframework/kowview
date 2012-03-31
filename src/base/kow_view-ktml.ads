@@ -28,6 +28,12 @@ pragma License (GPL);
 ------------------------------------------------------------------------------
 
 
+--------------
+-- Ada 2005 --
+--------------
+with Ada.Strings;
+with Ada.Strings.Fixed;
+
 -------------------
 -- KOW Framework --
 -------------------
@@ -44,7 +50,6 @@ with DOM.Core;
 -- smart way to deal with XML files.
 
 
--- TODO: kv:set
 -- TODO: kv:if
 -- TODO: kv:case
 -- TODO: kv:if_set
@@ -79,12 +84,6 @@ package KOW_View.KTML is
 	-- query the processor the given tag and process the node
 
 
-
-	type Node_Processor_Access is access procedure(
-						Doc		: in     DOM.Core.Document;
-						N		: in out DOM.Core.Node;
-						State		: in out KOW_Lib.Json.Object_Type
-					);
 
 	--------------------
 	-- Helper Methods --
@@ -299,6 +298,22 @@ package KOW_View.KTML is
 			overriding
 			procedure Process_Node(
 						Processor	: in out For_Processor_Type;
+						Doc		: in     DOM.Core.Document;
+						N		: in out DOM.Core.Node;
+						State		: in out KOW_Lib.Json.Object_Type
+					);
+
+
+			------------------------
+			-- Set Processor Type --
+			------------------------
+
+			type Set_Processor_Type is new Processor_Interface with null record;
+			-- <kv:set key="theKey" value="theValue"/>
+
+			overriding
+			procedure Process_Node(
+						Processor	: in out Set_Processor_Type;
 						Doc		: in     DOM.Core.Document;
 						N		: in out DOM.Core.Node;
 						State		: in out KOW_Lib.Json.Object_Type

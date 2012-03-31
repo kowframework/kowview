@@ -673,6 +673,60 @@ package body KOW_View.KTML is
 
 				N := New_N;
 			end Process_Node;
+
+			------------------------
+			-- Set Processor Type --
+			------------------------
+
+			package Set_Factories is new Generic_Factories( Set_Processor_Type, "kv:set" );
+			-- <kv:set key="theKey" value="theValue"/>
+
+			overriding
+			procedure Process_Node(
+						Processor	: in out Set_Processor_Type;
+						Doc		: in     DOM.Core.Document;
+						N		: in out DOM.Core.Node;
+						State		: in out KOW_Lib.Json.Object_Type
+					) is
+				Key_Str		: constant String := DOM.Core.Elements.Get_Attribute( N, "key" );
+				Value		: constant String := DOM.Core.Elements.Get_Attribute( N, "value" );
+
+
+				procedure Set_State(
+							Obj	: in out KOW_Lib.Json.Object_Type;
+							Key	: in     String
+						) is
+					use Ada.Strings;
+					use KOW_Lib.Json;
+					Idx	: constant Integer := Fixed.Index( Key, ".", Forward );
+				begin
+					if Idx in Key'Range then
+						declare
+							Child		: Object_Type;
+							Object_key	: constant String := Key( Key'First .. Idx - 1 );
+							Property_Key	: constant String := Key( Idx + 1 .. Key'Last );
+						begin
+							if Contains( Obj, Object_Key ) then
+								Child := Get( Obj, Object_Key );
+							end if;
+							Set_State( Child, Property_Key );
+							Set( Obj, Object_Key, Child );
+						end;
+					else
+						Set( Obj, Key, Value );
+					end if;
+				end Set_State;
+
+			begin
+				if Key_Str = "" then
+					raise CONSTRAINT_ERROR with "you need to specify a key for your value";
+				end if;
+
+
+				Set_State( State, Key_Str );
+			end Process_Node;
+
+
 		end Implementations;
 	end Processors;
 
