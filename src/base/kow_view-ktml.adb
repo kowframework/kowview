@@ -164,10 +164,12 @@ package body KOW_View.KTML is
 		use Ada.Strings;
 		use KOW_Lib.Json;
 		
-		First_Dot : Integer;
+		First_Dot	: Integer;
+		Data		: Json_Data_Type;
 	begin
 		if Contains( Object, Key ) then
-			return Get( Object, Key );
+			Data := Get( Object, Key );
+			return To_String( Data );
 		end if;
 
 		First_Dot := Fixed.Index( Key, ".", Forward );
