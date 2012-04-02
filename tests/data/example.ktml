@@ -29,7 +29,7 @@
 
 		<kv:set key="elements" value="3"/>
 
-		<kv:for from="1" to="3" reverse="false" target="i" welcomeMessage="${welcome}">
+		<kv:for from="1" to="3" reverse="false" target="i" welcomeMessage="${welcome}" keep="false">
 			<kv:item>${i}</kv:item>
 			<kv:item id="item_${i}">${i}</kv:item>
 			<kv:empty>OMG.. empty for loop</kv:empty>

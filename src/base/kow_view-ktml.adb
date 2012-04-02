@@ -511,7 +511,7 @@ package body KOW_View.KTML is
 					Reverse_Str	: constant String := DOM_Util.Node_Attribute( N, "reverse", "false" );
 
 					-- work variables:
-					New_N		: Node := DOM_Util.Create_From_Template( Doc, N, "ul", False );
+					New_N		: Node;
 					Local_State	: Object_Type := State;
 
 
@@ -562,9 +562,10 @@ package body KOW_View.KTML is
 						);
 
 					-- Setup the template
-					Elements.Remove_Attribute( New_N, "source" );
-					Elements.Remove_Attribute( New_N, "key" );
-					Elements.Remove_Attribute( New_N, "target" );
+					Elements.Remove_Attribute( N, "source" );
+					Elements.Remove_Attribute( N, "key" );
+					Elements.Remove_Attribute( N, "target" );
+					New_N := DOM_Util.Create_From_Template( Doc, N, "ul", False );
 
 
 					-- iterate the collection
@@ -680,12 +681,14 @@ package body KOW_View.KTML is
 								N		=> N
 							);
 
+
+					Elements.Remove_Attribute( N, "from" );
+					Elements.Remove_Attribute( N, "to" );
+					Elements.Remove_Attribute( N, "target" );
+					Elements.Remove_Attribute( N, "reverse" );
+
 					New_N := DOM_Util.Create_From_Template( Doc, N, "ol", False );
 
-					Elements.Remove_Attribute( New_N, "from" );
-					Elements.Remove_Attribute( New_N, "to" );
-					Elements.Remove_Attribute( New_N, "target" );
-					Elements.Remove_Attribute( New_N, "reverse" );
 
 
 					if Reversed then

@@ -132,10 +132,21 @@ package body KOW_View.DOM_Util is
 		-- if deep, clone child node as well
 
 		Tag_Att : constant String := "tag";
-		N       : Node := Documents.Create_Element( Doc, Node_Attribute( Template_node, Tag_Att, Default_Tag ) );
+		Keep_Att: constant String := "keep";
+		N       : Node;
+		Keep	: constant Boolean := Boolean'Value( Node_Attribute( Template_Node, Keep_Att, "true" ) );
+
 	begin
-		Clone_Attributes( Old_Parent => Template_Node, New_Parent => N );
-		Elements.Remove_Attribute( N, "tag" );
+
+
+		if Keep then
+			N := Documents.Create_Element( Doc, Node_Attribute( Template_node, Tag_Att, Default_Tag ) );
+			Clone_Attributes( Old_Parent => Template_Node, New_Parent => N );
+			Elements.Remove_Attribute( N, Tag_Att );
+			Elements.Remove_Attribute( N, Keep_Att );
+		else
+			N := Documents.Create_Document_Fragment( Doc );
+		end if;
 
 		if Deep then
 			Clone_Child_Nodes( Old_Parent => Template_Node, New_Parent => N );

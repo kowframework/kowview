@@ -51,6 +51,9 @@ with DOM.Core;
 -- smart way to deal with XML files.
 
 
+-- TODO: filters in string processing:: ie ${key|filter_name}
+-- TODO: useful filters: message (module/request aware), if_set, parameter (module/request aware), user (kowsec for getting user data such as ${first_name|user}
+-- TODO: the template_parser type with important variables such as the dom document and the filter map
 -- TODO: kv:if
 -- TODO: kv:case
 -- TODO: kv:if_set
@@ -275,7 +278,7 @@ package KOW_View.KTML is
 			-------------------------
 
 			type Each_Processor_Type is new Iterable_Processor_Type with null record;
-			-- <kv:each source="key_for_an_array_or_object" key="key" target="item" tag="ul" reverse="false">
+			-- <kv:each source="key_for_an_array_or_object" key="key" target="item" tag="ul" reverse="false" keep="true">
 			-- 	<kv:item tag="li">${name_for_the_value} is named ${key}</kv:item>
 			-- 	<kv:empty>There is no item in here brutha!</kv:empty>
 			-- </kv:each>
@@ -295,7 +298,7 @@ package KOW_View.KTML is
 			------------------------
 
 			type For_Processor_Type is new Iterable_Processor_Type with null record;
-			-- <kv:for from="1" to="10" target="item" tag="ol" reverse="false">
+			-- <kv:for from="1" to="10" target="item" tag="ol" reverse="false" keep="true">
 
 			overriding
 			procedure Process_Node(
