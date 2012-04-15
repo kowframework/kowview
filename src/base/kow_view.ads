@@ -52,12 +52,60 @@ with AWS.Response;
 
 
 package KOW_View is
+
+
+
+	---------
+	-- Log --
+	---------
+
 	Accountant : aliased KOW_Sec.Accounting.Accountant_Type := KOW_Sec.Accounting.New_Accountant( "kow_sec" );
 
+
+
+	----------------
+	-- Core Types --
+	----------------
+
+
+	--
+	-- Request Mode
+	--
 	type Request_Mode_Type is(
 			Json_Request,
 			Custom_Request
 		);
+
+
+	-- 
+	-- Names 
+	--
+	Name_Length : constant Positive := 150;
+	type Component_Name_Type is String( 1 .. Name_Length );
+	type Service_Name_Type   is Stirng( 1 .. Name_Length );
+	type Module_Name_Type    is String( 1 .. Name_Length );
+
+
+	Null_Component_Name : constant Component_Name_Type := ( others => ' ' );
+	Null_Service_Name   : constant Service_Name_Type   := ( others => ' ' );
+	Null_Module_Name    : constant Module_Name_Type    := ( others => ' ' );
+
+
+	-- 
+	-- Request Status
+	--
+	type Request_Status_Type is record
+		Mode			: Request_Mode_Type;
+		Mapped_URI		: Unbounded_String;
+		Mapped_Expression	: Unbounded_String;
+		URI_Parameters		: KOW_Lib.Json.Object_Type;
+		Request			: AWS.Status.Data;
+
+
+		Component		: Component_Name_Type := Null_Component_Name;
+		Service			: Service_Name_Type   := Null_Service_Name;
+		Module			: Module_Name_Type    := Null_Module_Name;
+	end record;
 
 
 
@@ -97,6 +145,9 @@ package KOW_View is
 	REDIRECT_TO_HOME : Exception;
 	-- redirect to the home for this server
 
+	ERROR_404 : Exception;
+	-- the "not found" HTTP error code
+	
 
 	Home		: Unbounded_String := To_Unbounded_String( "/pages/page" );
 	-- a string representing the main service.. :)
