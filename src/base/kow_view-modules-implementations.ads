@@ -45,10 +45,6 @@ with Ada.Strings.Unbounded;			use Ada.Strings.Unbounded;
 with KOW_Config;
 with KOW_View.Modules;
 
----------
--- AWS --
----------
-with AWS.Status;
 
 package KOW_View.Modules.Implementations is
 
@@ -61,14 +57,14 @@ package KOW_View.Modules.Implementations is
 	overriding
 	procedure Initialize_Request(
 			Module		: in out Resource_Module;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Config		: in out KOW_Config.Config_File_Type
 		);
 
 	overriding
 	procedure Process_Body(
 				Module	: in out Resource_Module;
-				Request	: in     AWS.Status.Data;
+				Status	: in     Request_Status_Type;
 				Response:    out Unbounded_String
 			);
 	-- return the content specified by the configuration

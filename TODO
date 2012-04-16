@@ -1,0 +1,9 @@
+
+
+Things that should be done to the 3.0 release:
+
+
+	1. remove all kow_config dependency in modules in favour of a kow_lib.json.object_type
+	2. implement a method for retrieving specific configurations
+
+TODO ::: DEFINE WHAT TO DOOOO

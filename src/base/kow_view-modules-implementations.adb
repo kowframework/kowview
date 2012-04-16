@@ -39,17 +39,13 @@ with KOW_Lib.Locales;
 with KOW_View.Locales;
 with KOW_View.Modules;
 
----------
--- AWS --
----------
-with AWS.Status;
 
 package body KOW_View.Modules.Implementations is
 
 	overriding
 	procedure Initialize_Request(
 			Module		: in out Resource_Module;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Config		: in out KOW_Config.Config_File_Type
 		) is
 	begin
@@ -60,7 +56,7 @@ package body KOW_View.Modules.Implementations is
 	overriding
 	procedure Process_Body(
 				Module	: in out Resource_Module;
-				Request	: in     AWS.Status.Data;
+				Status	: in     Request_Status_Type;
 				Response:    out Unbounded_String
 			) is
 		-- return the content specified by the configuration
