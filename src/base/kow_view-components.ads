@@ -87,13 +87,13 @@ package KOW_View.Components is
 
 	procedure Process_Custom_Request(
 				Delegator	: in out Service_Delegator_Interface;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Response	:    out AWS.Response.Data
 			) is abstract;
 
 	procedure Process_Json_Request(
 				Delegator	: in out Service_Delegator_Interface;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Response	:    out KOW_Lib.Json.Object_Type
 			) is abstract;
 
@@ -134,11 +134,11 @@ package KOW_View.Components is
 			Module		: in     Module_Interface
 		) return KOW_Lib.UString_Vectors.Vector is abstract;
 
-	function Get_Dojo_Packages(
+	function Get_AMDJS_Packages(
 			Module		: in     Module_Interface
 		) return KOW_Lib.UString_Vectors.Vector is abstract;
 	
-	function Get_Dojo_CSS(
+	function Get_AMDJS_CSS(
 			Module		: in     Module_Interface
 		) return KOW_Lib.UString_Vectors.Vector is abstract;
 
@@ -147,40 +147,25 @@ package KOW_View.Components is
 		) return KOW_Lib.UString_Vectors.Vector is abstract;
 
 
-	procedure Process_Head(
-			Module		: in out Module_Interface;
-			Request		: in     AWS.Status.Data;
-			Response	:    out Unbounded_String
-		) is null;
-	-- process header of the response.
-	-- it's assumed that 
 
 	procedure Process_Body(
 			Module		: in out Module_Interface;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out Unbounded_String
 		) is null;
 	-- process the request for a module.
 	-- sometimes is useful for a module only to be created and released - such as in a page counter module
 
-	procedure Process_Foot(
-			Module		: in out Module_Interface;
-			Request		: in     AWS.Status.Data;
-			Response	:    out Unbounded_String
-		) is null;
-	-- process some footer of the module
-	-- useful when creating benchmar modules
-
 
 	procedure Process_Json_Request(
 			Module		: in out Module_Interface;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	: out    KOW_Lib.Json.Object_Type
 		) is null;
 
 	procedure Finalize_Request(
 			Module		: in out Module_Interface;
-			Request		: in     AWS.Status.Data
+			Status		: in     Request_Status_Type
 		) is null;
 	-- Finalize processing the request.
 	-- Called when the process has been finalized
@@ -331,13 +316,13 @@ package KOW_View.Components is
 		
 	procedure Process_Json_Request(
 			Component	: in out Component_Type;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out KOW_Lib.Json.Object_Type
 		);
 
 	procedure Process_Custom_Request(
 			Component	: in out Component_Type;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out AWS.Response.Data
 		);
 	-- this is where the request processing takes place..

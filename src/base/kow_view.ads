@@ -80,10 +80,12 @@ package KOW_View is
 	-- 
 	-- Names 
 	--
-	Name_Length : constant Positive := 150;
-	type Component_Name_Type is String( 1 .. Name_Length );
-	type Service_Name_Type   is Stirng( 1 .. Name_Length );
-	type Module_Name_Type    is String( 1 .. Name_Length );
+
+	type Path_Type is String( 1 .. 150 );
+
+	subtype Component_Name_Type is Path_Type;
+	subtype Service_Name_Type   is Path_Type;
+	subtype Module_Name_Type    is Path_Type;
 
 
 	Null_Component_Name : constant Component_Name_Type := ( others => ' ' );

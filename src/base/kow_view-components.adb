@@ -175,20 +175,20 @@ package body KOW_View.Components is
 
 	procedure Process_Json_Request(
 			Component	: in out Component_Type;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out KOW_Lib.Json.Object_Type
 		) is
 	begin
 		Process_Json_Request(
 				Delegator	=> Get_Service_Delegator( Component, Request ).all,
-				Request		=> Request,
+				Status		=> Status,
 				Response	=> Response
 			);
 	end Process_Json_Request;
 
 	procedure Process_Custom_Request(
 			Component	: in out Component_Type;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out AWS.Response.Data
 		) is
 		-- this is where the request processing takes place..
@@ -196,7 +196,7 @@ package body KOW_View.Components is
 	begin
 		Process_Custom_Request(
 				Delegator	=> Get_Service_Delegator( Component, Request ).all,
-				Request		=> Request,
+				Status		=> Status,
 				Response	=> Response
 			);
 	end Process_Custom_Request;
