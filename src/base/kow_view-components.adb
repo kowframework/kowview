@@ -131,12 +131,12 @@ package body KOW_View.Components is
 
 	function Get_Service_Delegator(
 			Component	: in Component_Type;
-			Data		: in AWS.Status.Data
+			Status		: in Request_Status_Type
 		) return Service_Delegator_Access is
 		-- return the service delegator for this request..
 		-- you should override this method in case you want only one service in your component 
 		
-		URI		: constant String := AWS.Status.URI( Data );
+		URI		: constant String := AWS.Status.URI( Status.Request );
 		Rest_Of_URI	: constant String := URI( Get_Name( Component )'Length + 3 .. URI'Last );
 		Last		: Integer := Ada.Strings.Fixed.Index( Rest_of_Uri, "/" ) - 1;
 

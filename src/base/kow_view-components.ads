@@ -57,7 +57,6 @@ with KOW_Lib.UString_Vectors;
 -- AWS --
 ---------
 with AWS.Response;
-with AWS.Status;
 with Templates_Parser;
 
 
@@ -187,7 +186,7 @@ package KOW_View.Components is
 
 	procedure Create(
 				Factory		: in out Module_Factory_Interface;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Context		: in     String;
 				Module_Id	: in     Positive;
 				Request_Mode	: in     Request_Mode_Type;
@@ -200,7 +199,7 @@ package KOW_View.Components is
 
 	procedure Destroy(
 				Factory		: in out Module_Factory_Interface;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Module		: in out Module_Ptr
 			) is abstract;
 	-- free the module access type
@@ -308,7 +307,7 @@ package KOW_View.Components is
 
 	function Get_Service_Delegator(
 			Component	: in Component_Type;
-			Data		: in AWS.Status.Data
+			Status		: in Request_Status_Type
 		) return Service_Delegator_Access;
 	-- return the service delegator for this request..
 	-- you should override this method in case you want only one service in your component 
