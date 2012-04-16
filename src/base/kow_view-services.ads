@@ -44,7 +44,6 @@ with KOW_View.Components;		use KOW_View.Components;
 ---------
 -- AWS --
 ---------
-with AWS.Status;
 with AWS.Response;
 with Templates_Parser;
 
@@ -82,13 +81,13 @@ package KOW_View.Services is
 
 	procedure Process_Json_Request(
 			Service	: in out Service_Type;
-			Request	: in     AWS.Status.Data;
+			Status	: in     Request_Status_Type;
 			Response:    out KOW_Lib.Json.Object_Type
 		) is abstract;
 
 	procedure Process_Custom_Request(
 			Service		: in out Service_Type;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out AWS.Response.Data
 		) is abstract;
 	-- process a request to a service

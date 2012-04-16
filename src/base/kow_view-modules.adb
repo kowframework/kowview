@@ -44,7 +44,6 @@ with KOW_View.Modules.Util;
 ---------
 -- AWS --
 ---------
-with AWS.Status;
 with Templates_Parser;
 
 

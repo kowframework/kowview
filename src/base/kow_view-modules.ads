@@ -56,7 +56,6 @@ with KOW_View.Components;		use KOW_View.Components;
 ---------
 -- AWS --
 ---------
-with AWS.Status;
 with Templates_Parser;
 
 package KOW_View.Modules is
