@@ -49,6 +49,78 @@ with AWS.Response;
 with Templates_Parser;
 
 package body KOW_View.Services is
+	----------------------------
+	-- Service Delegator Type --
+	----------------------------
+
+	type Service_Dispatcher_Type is new KOW_View.Request_Dispatchers.Implementations.Prefix_Request_Dispatcher_Type with record
+		Component_Name	: Component_Name_Type;
+		Component	: Components.Component_Ptr;
+		Service_Name	: Service_Name_Type;
+	end record;
+
+
+
+	overriding
+	function Dispatch(
+				Dispatcher	: in Service_Dispatcher_Type;
+				Request		: in AWS.Status.Data
+			) return AWS.Response.Data is
+		Status		: Request_Status_Type;
+	begin
+		Setup_Status( Dispatcher, Status );
+		declare
+			use KOW_Config.Components;
+			Delegator	: Service_Delegator_Access := Get_Service_Delegator( Dispatcher.Component.all, Dispatcher.Service_Name );
+		begin
+
+			case Status.Mode is
+				when Custom_Request =>
+					declare
+						Response : AWS.Response.Data;
+					begin
+						Process_Custom_Request(
+									Delegator	=> Delegator.all,
+									Status		=> Status,
+									Response	=> Response
+								);
+						return Response;
+					end;
+				when Json_Request =>
+					declare
+						Response : KOW_Lib.Json.Object_Type;
+					begin
+						Process_Json_Request(
+									Delegator	=> Delegator.all,
+									Status		=> Status,
+									Response	=> Response
+								);
+						return KOW_View.Json_Util.Build_Success_Response( Response );
+					end;
+			end case;
+		end;
+	end Dispatch;
+
+	
+
+
+	overriding
+	procedure Setup_Status(
+				Dispatcher	: in     Base_Dispatcher_Type;
+				Request		: in     AWS.Status.Data;
+				Status		: in out Request_Status_Type
+			) is
+		use KOW_View.Request_Dispatchers.Implementations;
+	begin
+		Setup_Status(
+				Dispatcher	=> Path_Request_Dispatcher_Type( Dispatcher ),
+				Status		=> Status
+			);
+		Status.Component := Dispatcher.Component_Name;
+		Status.Service   := Dispatcher.Service_Name;
+	end Setup_Status;
+
+
 
 	-------------
 	-- Service --
