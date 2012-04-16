@@ -28,7 +28,6 @@
 ---------
 with Ada.IO_Exceptions;
 with Ada.Directories;			use Ada.Directories;
-with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 with Ada.Tags;
 
 -------------------
@@ -38,7 +37,6 @@ with KOW_Config;
 with KOW_Config.Generic_Registry;
 with KOW_Lib.File_System;
 with KOW_Lib.String_Util;
-with KOW_Lib.UString_Vectors;
 with KOW_View.Components;		use KOW_View.Components;
 with KOW_View.Components.Util;
 with KOW_View.Util;
@@ -57,7 +55,7 @@ package body KOW_View.Components.Registry is
 				Require_Configuration	: in Boolean
 			) is
 
-		Component_name	: constant Unbounded_String := KOW_View.Util.Get_Type_name( Component.all'Tag, "_component" );
+		Component_name	: constant Component_Name_Type := KOW_View.Util.Get_Type_name( Component.all'Tag, "_component" );
 
 		use Component_Maps;
 	begin
@@ -77,12 +75,14 @@ package body KOW_View.Components.Registry is
 	function Get_Component( Component_Name: in String ) return KOW_View.Components.Component_Access is
 		-- Loads a component by it's name
 		-- There is only one instance for each component.
+		C_Name : Component_Name_Type;
 	begin
-		return Get_Component( To_Unbounded_String( Component_Name ) );
+		KOW_Lib.String_Util.Copy( From => Component_Name, To => String( C_Name ) );
+		return Get_Component( C_Name );
 	end Get_Component;
 
 
-	function Get_Component( Component_Name: in Unbounded_String ) return KOW_View.Components.Component_Access is
+	function Get_Component( Component_Name: in Component_Name_Type ) return KOW_View.Components.Component_Access is
 	begin
 		declare
 			Component : Component_Access := Component_Access( Component_Maps.Element( The_Registry, Component_Name ) );

@@ -79,7 +79,7 @@ package KOW_View.Components.Registry is
 	-- get a component by it's name
 	-- There is only one instance for each component.
 
-	function Get_Component( Component_Name: in Unbounded_String ) return KOW_View.Components.Component_Access;
+	function Get_Component( Component_Name: in Component_Name_Type ) return KOW_View.Components.Component_Access;
 
 
 	function Get_Component( Request : in AWS.Status.Data ) return KOW_View.Components.Component_Access;
@@ -87,7 +87,7 @@ package KOW_View.Components.Registry is
 
 
 	package Component_Maps is new Ada.Containers.Ordered_Maps(
-					Key_Type	=> Unbounded_String,
+					Key_Type	=> Component_Name_Type,
 					Element_Type	=> Component_Ptr
 				);
 
