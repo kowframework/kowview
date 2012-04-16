@@ -102,10 +102,12 @@ package body KOW_View.Components is
 			Name		: in     String;
 			Delegator	: in     Service_Delegator_Access
 		) is
+		Service_Name : Service_Name_Type;
 	begin
+		KOW_Lib.String_Util.Copy( From => Name, To => Service_Name );
 		Register_Service_Delegator(
 				Component	=> Component,
-				Name		=> To_Unbounded_String( Name ),
+				Name		=> Service_Name,
 				Delegator	=> Delegator
 			);
 	end Register_Service_Delegator;
@@ -113,7 +115,7 @@ package body KOW_View.Components is
 
 	procedure Register_Service_Delegator(
 			Component	: in out Component_Type;
-			Name		: in     Unbounded_String;
+			Name		: in     Service_Name_Type;
 			Delegator	: in     Service_Delegator_Access
 		) is
 		-- register a new service delegator...
@@ -131,45 +133,31 @@ package body KOW_View.Components is
 
 	function Get_Service_Delegator(
 			Component	: in Component_Type;
-			Status		: in Request_Status_Type
+			Service		: in Service_Name_Type
 		) return Service_Delegator_Access is
 		-- return the service delegator for this request..
 		-- you should override this method in case you want only one service in your component 
 		
-		URI		: constant String := AWS.Status.URI( Status.Request );
-		Rest_Of_URI	: constant String := URI( Get_Name( Component )'Length + 3 .. URI'Last );
-		Last		: Integer := Ada.Strings.Fixed.Index( Rest_of_Uri, "/" ) - 1;
+		Deleg		: Service_Delegator_Ptr;
 
 
-		function Delegator( Name : Unbounded_String ) return Service_Delegator_Access is
-			Deleg : Service_Delegator_Ptr;
 		begin
-			if Service_Delegator_Maps.Contains( Component.Service_Delegators, Name ) then
-				Deleg := Service_Delegator_Maps.Element(
-								Component.Service_Delegators,
-								Name
-							);
-				if Deleg = null then
-					raise SERVICE_ERROR with "unknown service (null): " & To_String( Name );
-				else
-					return Service_Delegator_Access( Deleg );
-				end if;
-			else
-				raise SERVICE_ERROR with "unknown service (not registered): " & To_String( Name );
-			end if;
-		end Delegator;
-	begin
-
-		if Rest_of_uri'Length = 0 then
+		if Service = No_Service then
 			pragma Assert( Component.Default_Service /= null, "there is no default service in the component " & Get_Name( Component ) );
 			return Service_Delegator_Access( Component.Default_Service );
+		elsif Service_Delegator_Maps.Contains( Component.Service_Delegators, Service ) then
+			Deleg := Service_Delegator_Maps.Element(
+							Component.Service_Delegators,
+							Name
+						);
+			if Deleg = null then
+				raise SERVICE_ERROR with "unknown service (null): " & Service;
+			else
+				return Service_Delegator_Access( Deleg );
+			end if;
+		else
+			raise SERVICE_ERROR with "unknown service (not registered): " & Service;
 		end if;
-
-		if Last < 0 then
-			Last := Rest_of_Uri'Last;
-		end if;
-
-		return Delegator( To_Unbounded_String( Rest_of_Uri( Rest_of_Uri'First .. Last ) ) );
 	end Get_Service_Delegator;
 
 
@@ -206,7 +194,7 @@ package body KOW_View.Components is
 
 	procedure Register_Module_Factory(
 			Component	: in out Component_Type;
-			Name		: in     Unbounded_String;
+			Name		: in     Module_Name_Type;
 			Factory		: in     Module_Factory_Access
 		) is
 		use Module_Factory_Maps;
@@ -220,7 +208,7 @@ package body KOW_View.Components is
 	
 	function Get_Module_Factory(
 			Component	: in Component_Type;
-			Name		: in Unbounded_String
+			Name		: in Module_Name_Type
 		) return Module_Factory_Access is
 	begin
 		return Module_Factory_Access( Module_Factory_Maps.Element( Component.Module_Factories, Name ) );

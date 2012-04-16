@@ -34,15 +34,20 @@
 with Ada.Characters.Handling;
 with Ada.Strings;
 with Ada.Strings.Fixed;
-with Ada.Strings.Unbounded;
 with Ada.Tags;
+
+
+-------------------
+-- KOW Framework --
+-------------------
+with KOW_Lib.String_Util;
 
 
 
 package body KOW_View.Util is
 
 
-	function Get_Type_Name(
+	function Get_Type_Name_String(
 				Tag	: in Ada.Tags.Tag;
 				Sufix	: in String := "_type"
 			) return String is
@@ -63,15 +68,18 @@ package body KOW_View.Util is
 		end if;
 
 		return Ada.Characters.Handling.To_Lower( T( First .. Last ) );
-	end Get_Type_Name;
+	end Get_Type_Name_String;
 
 
 
 	function Get_Type_Name(
 				Tag	: in Ada.Tags.Tag;
 				Sufix	: in String := "_type"
-			) return Ada.Strings.Unbounded.Unbounded_String is
+			) return Path_Type is
+		P	: Path_Type;
+		Str	: constant String := Get_Type_Name_String( Tag, Sufix );
 	begin
-		return Ada.Strings.Unbounded.To_Unbounded_String( Get_Type_name( Tag, Sufix ) );
+		KOW_Lib.String_Util.Copy( From => Str, To => P );
+		return P;
 	end Get_Type_Name;
 end KOW_View.Util;

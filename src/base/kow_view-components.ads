@@ -98,7 +98,7 @@ package KOW_View.Components is
 
 	
 	package Service_Delegator_Maps is new Ada.Containers.Ordered_Maps(
-				Key_Type	=> Unbounded_String,
+				Key_Type	=> Service_Name_Type,
 				Element_Type	=> Service_Delegator_Ptr
 			);
 
@@ -206,7 +206,7 @@ package KOW_View.Components is
 
 
 	package Module_Factory_Maps is new Ada.Containers.Ordered_Maps(
-				Key_Type	=> Unbounded_String,
+				Key_Type	=> Module_Name_Type,
 				Element_Type	=> Module_Factory_Ptr
 			);
 
@@ -298,7 +298,7 @@ package KOW_View.Components is
 
 	procedure Register_Service_Delegator(
 			Component	: in out Component_Type;
-			Name		: in     Unbounded_String;
+			Name		: in     Service_Name_Type;
 			Delegator	: in     Service_Delegator_Access
 		);
 	-- register a new service delegator...
@@ -307,7 +307,7 @@ package KOW_View.Components is
 
 	function Get_Service_Delegator(
 			Component	: in Component_Type;
-			Status		: in Request_Status_Type
+			Service		: in Service_Name_Type
 		) return Service_Delegator_Access;
 	-- return the service delegator for this request..
 	-- you should override this method in case you want only one service in your component 
@@ -329,13 +329,13 @@ package KOW_View.Components is
 
 	procedure Register_Module_Factory(
 			Component	: in out Component_Type;
-			Name		: in     Unbounded_String;
+			Name		: in     Module_Name_Type;
 			Factory		: in     Module_Factory_Access
 		);
 	
 	function Get_Module_Factory(
 			Component	: in Component_Type;
-			Name		: in Unbounded_String
+			Name		: in Module_Name_Type 
 		) return Module_Factory_Access;
 
 	procedure Register_Initialization_Trigger(

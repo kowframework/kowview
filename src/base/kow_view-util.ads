@@ -32,27 +32,26 @@ pragma License (GPL);
 --------------
 -- Ada 2005 --
 --------------
-with Ada.Strings.Unbounded;
 with Ada.Tags;
 
 
 package KOW_View.Util is
 
 
-	function Get_Type_Name(
+	function Get_Type_Name_String(
 			Tag	: in Ada.Tags.Tag;
 			Sufix	: in String := "_type"
 		) return String;
 	-- ge the naming component of the tag, giving the following naming conventions
 	-- 	Package1.Subpackage1.My_Element_Type
-	-- will return:
-	-- 	my_element (yes, lowercase)
+	-- will return (yes, lowercase):
+	-- 	my_element 
 
 
 
 	function Get_Type_Name(
 			Tag	: in Ada.Tags.Tag;
 			Sufix	: in String := "_type"
-		) return Ada.Strings.Unbounded.Unbounded_String;
+		) return Path_Type;
 
 end KOW_View.Util;
