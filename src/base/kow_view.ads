@@ -83,14 +83,16 @@ package KOW_View is
 
 	type Path_Type is String( 1 .. 150 );
 
+	No_Path : constant Path_Type := ( others => ' ' );
+
 	subtype Component_Name_Type is Path_Type;
 	subtype Service_Name_Type   is Path_Type;
 	subtype Module_Name_Type    is Path_Type;
 
 
-	Null_Component_Name : constant Component_Name_Type := ( others => ' ' );
-	Null_Service_Name   : constant Service_Name_Type   := ( others => ' ' );
-	Null_Module_Name    : constant Module_Name_Type    := ( others => ' ' );
+	No_Component : constant Component_Name_Type := ( others => ' ' );
+	No_Service   : constant Service_Name_Type   := ( others => ' ' );
+	No_Module    : constant Module_Name_Type    := ( others => ' ' );
 
 
 	-- 
@@ -98,15 +100,33 @@ package KOW_View is
 	--
 	type Request_Status_Type is record
 		Mode			: Request_Mode_Type;
-		Mapped_URI		: Unbounded_String;
-		Mapped_Expression	: Unbounded_String;
-		URI_Parameters		: KOW_Lib.Json.Object_Type;
+		-- if it's a json a custom request
+		Mapped_URI		: Path_Type;
+		-- the part of the URI that has been mapped 
+		Mapped_Expression	: Path_Type;
+		-- the expression used to map this URI
+
+		Local_URI		: Path_Type;
+		-- the part of the URI that hasn't been mapped
+
+		Request_Parameters	: KOW_Lib.Json.Object_Type;
+		-- parameters that are built for this request
+		-- the request dispatcher is responsible for initializing this attribute
+		-- it can contain anything (but usually contains parameters extracted from the URI)
+
 		Request			: AWS.Status.Data;
+		-- the AWS.Status.Data value for the given request
 
 
-		Component		: Component_Name_Type := Null_Component_Name;
-		Service			: Service_Name_Type   := Null_Service_Name;
-		Module			: Module_Name_Type    := Null_Module_Name;
+		-- 
+		-- The following attributes correspond to the specific component, service and module that will process
+		-- the current request;
+		--
+		-- Those should also be defined by the request dispatcher
+		--
+		Component		: Component_Name_Type := No_Component;
+		Service			: Service_Name_Type   := No_Service;
+		Module			: Module_Name_Type    := No_Module;
 	end record;
 
 

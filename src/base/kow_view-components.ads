@@ -123,8 +123,7 @@ package KOW_View.Components is
 
 	procedure Initialize_Request(
 			Module		: in out Module_Interface;
-			Request		: in     AWS.Status.Data;
-			Config		: in out KOW_Config.Config_File_Type
+			Status		: in     Request_Status_Type
 		) is null;
 	-- Initialize the processing of a request
 	-- Called before anything has been build.
