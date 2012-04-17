@@ -45,6 +45,7 @@ with KOW_View.Util;
 ---------
 -- AWS --
 ---------
+with AWS.Parameters;
 with AWS.Response;
 with Templates_Parser;
 
@@ -89,13 +90,14 @@ package body KOW_View.Services is
 				when Json_Request =>
 					declare
 						Response : KOW_Lib.Json.Object_Type;
+						Wrap_Data : constant Boolean := AWS.Parameters.Get( AWS.Status.Parameters( Status.Request ), "iframe" ) = "true";
 					begin
 						Process_Json_Request(
 									Delegator	=> Delegator.all,
 									Status		=> Status,
 									Response	=> Response
 								);
-						return KOW_View.Json_Util.Build_Success_Response( Response );
+						return KOW_View.Json_Util.Build_Success_Response( Object => Response, Wrap_Data => Wrap_Data );
 					end;
 			end case;
 		end;
