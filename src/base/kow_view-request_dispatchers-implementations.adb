@@ -122,4 +122,54 @@ package body KOW_Sec.Request_Dispatchers.Implementations is
 	end Set_Prefix;
 
 
+
+	-----------------------
+	-- htdocs Dispatcher --
+	-----------------------
+
+	overriding
+	function Can_Dispatch(
+				Dispatcher	: in Htdocs_Dispatcher_Type;
+				Request		: in AWS.Status.Data
+			) return Boolean is
+		-- check if the given URI exists inside the URI folder
+		htdocs_path : constant String := Compute_Path( Htdocs_Dispatcher_Type'Class( Dispatcher ), Request );
+	begin
+		return Ada.Directories.Exists( htdocs_path ) and then Ada.Directories."="( Ada.Directories.Ordinary_File, Ada.Directories.Kind( htdocs_path) ) then
+	end Can_Dispatch;
+
+
+	overriding
+	function Dispatch(
+				Dispatcher	: in Htdocs_Dispatcher_Type;
+				Request		: in AWS.Status.Data
+			) return AWS.Response.Data is
+		-- serve the file using the standard AWS methods
+		htdocs_path : constant String := Compute_Path( Htdocs_Dispatcher_Type'Class( Dispatcher ), Request );
+	begin
+		return AWS.Response.File(
+					Content_Type    => AWS.MIME.Content_Type( htdocs_path ),
+					Filename        => htdocs_path
+				);
+	end Dispatch;
+
+
+	function Compute_Path(
+				Dispatcher	: in Htdocs_Dispatcher_Type;
+				Request		: in AWS.Status.Data
+			) return String is
+		use KOW_Lib.File_System;
+	begin
+		return To_String( Dispatcher.Document_Root ) / AWS.Status.URI( Request );
+	end Compute_Path;
+
+
+
+
+	Htdocs_Dispatcher : aliased Htdocs_Dispatcher_Type;
+	
+
+begin
+	Append_Dispatcher( Htdocs_Dispatcher'Access );
+
 end KOW_Sec.Request_Dispatchers.Implementations;

@@ -187,15 +187,13 @@ package KOW_View.Components is
 	procedure Create(
 				Factory		: in out Module_Factory_Interface;
 				Status		: in     Request_Status_Type;
-				Context		: in     String;
 				Module_Id	: in     Positive;
 				Request_Mode	: in     Request_Mode_Type;
 				Virtual_Host	: in     KOW_View.Virtual_Host_Name_Type;
 				Module		:    out Module_Ptr
 			) is abstract;
 	-- create a module, setting it's ID if necessary
-	-- Context	=> string representing something like the page where the module will be created
-	-- Module_ID	=> which module in sequence being created in the same context
+	-- Module_ID	=> which module in sequence being created in the same request
 
 	procedure Destroy(
 				Factory		: in out Module_Factory_Interface;

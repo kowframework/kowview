@@ -15,3 +15,11 @@ Things that should be done to the 3.0 release:
 The config (and resource) path should be default to:
 	./
 	./data/
+
+
+
+
+Adding the following comment:
+-- TODO :: command line argument
+
+So we can list every possible command line argument

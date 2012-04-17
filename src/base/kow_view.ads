@@ -155,10 +155,6 @@ package KOW_View is
 	-- 	./data/exceptions/others.html				=> fallback
 	--
 
-	
-	type Welcome_Function_Type is access function( Request : in AWS.Status.Data ) return AWS.Response.Data;
-	function Default_Welcome_Function( Request : in AWS.Status.Data ) return AWS.Response.Data;
-	-- redirects to home
 
 	REDIRECT : Exception;
 	-- whenever you need you can raise this exception to get your application redirected somewhere
@@ -171,9 +167,9 @@ package KOW_View is
 	-- the "not found" HTTP error code
 	
 
-	Home		: Unbounded_String := To_Unbounded_String( "/pages/page" );
-	-- a string representing the main service.. :)
-	-- default is the page component, but can be overriden
+	Home		: Unbounded_String := To_Unbounded_String( "/" );
+	-- a string representing the main page for this server :)
+	-- default is / but can be overriden
 
 	Login_Page		: Unbounded_String := To_Unbounded_String( "/security/login" );
 	-- the URI for the login page
@@ -192,11 +188,6 @@ package KOW_View is
 	Error_E_Mail_Subject	: Unbounded_String := To_Unbounded_String( "[Unhandled Exception] " );
 
 	E_Mail_SMTP_Server	: Unbounded_String := To_Unbounded_String( "localhost" );
-
-
-	Welcome_Function	: Welcome_Function_Type := Default_Welcome_Function'Access;
-	-- the processor for when the URI is /
-	-- the default behaviour (if it's null) / is to redirect to home.
 
 
 

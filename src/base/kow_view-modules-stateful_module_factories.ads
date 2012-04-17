@@ -102,7 +102,6 @@ pragma Elaborate_Body( KOW_View.Modules.Stateful_Module_Factories );
 	procedure Create(
 				Delegator	: in out Module_Factory_Type;
 				Request		: in     AWS.Status.Data;
-				Context		: in     String;
 				Module_Id	: in     Positive;
 				Request_Mode	: in     Request_Mode_Type;
 				Virtual_Host	: in     KOW_View.Virtual_Host_Name_Type;

@@ -48,9 +48,8 @@ with KOW_Lib.Log;
 with KOW_Lib.String_Util;
 with KOW_Sec;
 with KOW_Sec.Accounting;
-with KOW_View.Components;		use KOW_View.Components;
-with KOW_View.Components.Registry;
 with KOW_View.Json_Util;
+with KOW_View.Request_Dispatchers;
 with KOW_View.Security;
 
 
@@ -93,17 +92,18 @@ package body KOW_View is
 										Name		=> "request:" & AWS.Status.URI( Request ),
 										Root_Accountant	=> Accountant'Access
 									);
-		URI : constant String := AWS.Status.URI( Request );
-
 		htdocs_path : constant String := "htdocs" & URI;
+
+		Dispatcher : Request_Dispatchers.Request_Dispatcher_Ptr := Request_Dispatchers.Get_Dispatcher( Request );
 	begin
-		if URI = "/" and then Welcome_Function /= null then
-			return Welcome_Function.all( Request );
-		elsif Ada.Directories.Exists( htdocs_path ) and then Ada.Directories."="( Ada.Directories.Ordinary_File, Ada.Directories.Kind( htdocs_path) ) then
-			return AWS.Response.File(
-							Content_Type    => AWS.MIME.Content_Type( htdocs_path ),
-							Filename        => htdocs_path
-						);
+
+
+		if Dispatcher = null then
+			raise ERROR_404 with AWS.Status.URI( Request );
+		else
+			return Request_Dispatchers.Dispatch( Dispatcher.all, Request );
+		end if;
+
 		elsif URI = "/favicon.ico" then
 			raise REDIRECT with "/themes/theme/favicon.ico";
 		elsif URI = "/robots.txt" then
@@ -113,36 +113,6 @@ package body KOW_View is
 		Component := Component_Ptr( Registry.Get_Component( Request ) );
 		case Request_Mode is
 			when Json_Request =>
-				declare
-					Object : KOW_Lib.Json.Object_Type;
-
-					Wrap_Data : constant Boolean := AWS.Parameters.Get( AWS.Status.Parameters( Request ), "iframe" ) = "true";
-				begin
-					begin
-						Process_JSon_Request(
-								Component	=> Component.all,
-								Request		=> Request,
-								Response	=> Object 
-							);
-		
-						Response := KOW_View.Json_Util.Build_Success_Response( Object => Object, Wrap_Data => Wrap_Data );
-						KOW_Sec.Accounting.Set_Exit_Status(
-								My_Action,
-								KOW_Sec.Accounting.Exit_Success,
-								"finished json request"
-							);
-					exception
-						when REDIRECT_TO_HOME =>
-							raise REDIRECT with To_String( Home );
-						when KOW_Sec.LOGIN_REQUIRED =>
-							raise REDIRECT with To_String( Login_Page );
-					end;
-	
-
-				exception
-					when e : REDIRECT =>
-						Response := KOW_View.Json_Util.Build_Redirect_Response( URI => Ada.Exceptions.Exception_Message( e ), Wrap_Data => Wrap_Data );
-					when e : others =>
 						Response := KOW_View.Json_Util.Build_Error_Response( E => E, Wrap_Data => Wrap_Data );
 						KOW_Sec.Accounting.Set_Exit_Status(
 								My_Action,
@@ -360,10 +330,6 @@ package body KOW_View is
 	end Handle_Exception;
 
 
-	function Default_Welcome_Function( Request : in AWS.Status.Data ) return AWS.Response.Data is
-	begin
-		return AWS.Response.URL( To_String( Home ) );
-	end Default_Welcome_Function;
 
 	------------------------------
 	-- Email Sending Procedures --

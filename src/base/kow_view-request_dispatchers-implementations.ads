@@ -91,6 +91,40 @@ package KOW_Sec.Request_Dispatchers.Implementations is
 			);
 
 
+
+	-----------------------
+	-- htdocs Dispatcher --
+	-----------------------
+
+
+	type Htdocs_Dispatcher_Type is new Request_Dispatcher_Interface with record
+		Document_Path : Unbounded_String := To_Unbounded_String( "./htdocs" );
+		-- TODO :: command line argument
+	end record;
+
+	overriding
+	function Can_Dispatch(
+				Dispatcher	: in Htdocs_Dispatcher_Type;
+				Request		: in AWS.Status.Data
+			) return Boolean;
+	-- check if the given URI exists inside the URI folder
+
+
+	overriding
+	function Dispatch(
+				Dispatcher	: in Htdocs_Dispatcher_Type;
+				Request		: in AWS.Status.Data
+			) return AWS.Response.Data;
+	-- serve the file using the standard AWS methods
+
+	function Compute_Path(
+				Dispatcher	: in Htdocs_Dispatcher_Type;
+				Request		: in AWS.Status.Data
+			) return String;
+
+
+	Htdocs_Dispatcher : aliased Htdocs_Dispatcher_Type;
+	
 private
 
 	type Prefix_Dispatcher_Type is abstract new Request_Dispatcher_Interface with record
