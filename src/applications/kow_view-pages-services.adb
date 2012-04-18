@@ -98,7 +98,7 @@ package body KOW_View.Pages.Services is
 		Params		: AWS.Parameters.List := AWS.Status.Parameters( Status.Request );
 
 
-		Page		: constant String := Get_Page( Service, Status.Request );
+		Page		: constant String := Get_Page( Service, Status );
 		Json_Module_Str	: constant String := AWS.Parameters.Get( Params, "module_id" );
 		Config		: KOW_Config.Config_File_Type := Util.Get_Config_File( Page );
 		Template	: KOW_View.Themes.Template_Type := Util.Get_Template( Config );
@@ -117,7 +117,7 @@ package body KOW_View.Pages.Services is
 					Status		=> Status,
 					Module_ID	=> Module_ID,
 					Request_Mode	=> Json_Request,
-					Virtual_Host	=> KOW_View.Virtual_Host( Request ),
+					Virtual_Host	=> KOW_View.Virtual_Host( Status.Request ),
 					Module		=> Complete.Module
 				);
 			Module_Id := Module_ID + 1;
@@ -313,7 +313,7 @@ package body KOW_View.Pages.Services is
 		begin
 			Finalize_Request(
 					Module	=> Complete.Module.all,
-					Request	=> Status
+					Status	=> Status
 				);
 		end Finalize;
 
@@ -322,7 +322,7 @@ package body KOW_View.Pages.Services is
 			if Complete.Module /= null then
 				Destroy(
 						Factory		=> Complete.Factory.all,
-						Request		=> Request,
+						Status		=> Status,
 						Module		=> Complete.Module
 					);
 			end if;
@@ -525,7 +525,7 @@ package body KOW_View.Pages.Services is
 		Components : Array_Type;
 
 		procedure Component_Iterator( C : in Component_Maps.Cursor ) is
-			Component_Name	: Unbounded_String := Component_Maps.Key( C );
+			Component_Name	: Component_Name_Type := Component_Maps.Key( C );
 			Component	: Component_Ptr := Component_Maps.Element( C );
 
 			Component_object: Object_Type;
@@ -535,12 +535,12 @@ package body KOW_View.Pages.Services is
 
 			procedure Service_Iterator( S_C : in Service_Delegator_Maps.Cursor ) is
 			begin
-				Append( Services, Service_Delegator_Maps.Key( S_C ) );
+				Append( Services, To_String( Service_Delegator_Maps.Key( S_C ) ) );
 			end Service_Iterator;
 
 			procedure Module_Iterator( M_C : in Module_Factory_Maps.Cursor ) is
 			begin
-				Append( Modules, Module_Factory_Maps.Key( M_C ) );
+				Append( Modules, To_String( Module_Factory_Maps.Key( M_C ) ) );
 			end Module_Iterator;
 		begin
 
@@ -548,7 +548,7 @@ package body KOW_View.Pages.Services is
 			Module_Factory_Maps.Iterate( Component.Module_Factories, Module_Iterator'Access );
 
 			
-			Set( Component_Object, "name", component_name );
+			Set( Component_Object, "name", To_String( component_name ) );
 			Set( Component_Object, "services", Services );
 			Set( Component_Object, "modules", Modules );
 
@@ -584,26 +584,26 @@ package body KOW_View.Pages.Services is
 		Buffer : Unbounded_String;
 
 		procedure Component_Iterator( C : in Component_Maps.Cursor ) is
-			Component_Name	: Unbounded_String := Component_Maps.Key( C );
+			Component_Name	: Component_Name_Type := Component_Maps.Key( C );
 			Component	: Component_Ptr := Component_Maps.Element( C );
 
 			procedure Service_Iterator( S_C : in Service_Delegator_Maps.Cursor ) is
 			begin
 				Append( Buffer, "<li>" );
-				Append( Buffer, Service_Delegator_Maps.Key( S_C ) );
+				Append( Buffer, To_String( Service_Delegator_Maps.Key( S_C ) ) );
 				Append( Buffer, "</li>" );
 			end Service_Iterator;
 
 			procedure Module_Iterator( M_C : in Module_Factory_Maps.Cursor ) is
 			begin
 				Append( Buffer, "<li>" );
-				Append( Buffer, Module_Factory_Maps.Key( M_C ) );
+				Append( Buffer, To_String( Module_Factory_Maps.Key( M_C ) ) );
 				Append( Buffer, "</li>" );
 			end Module_Iterator;
 		begin
 
 			Append( Buffer, "<h2>" );
-			Append( Buffer, Component_Name );
+			Append( Buffer, To_String( Component_Name ) );
 			Append( Buffer, "</h2>" );
 
 			Append( Buffer, "<h3>Services:</h3>" );
