@@ -64,10 +64,10 @@ package body KOW_View.Security.Modules is
 		Add_Contexts(
 				Module	=> Criteria_Module'Class( Module ), 
 				Criteria=> Criteria,
-				Request	=> Request
+				Status	=> Status
 			);
 
-		KOW_Sec.Accounting.Require( Criteria, KOW_View.Security.Get_User( Request ), Accountant'Access );
+		KOW_Sec.Accounting.Require( Criteria, KOW_View.Security.Get_User( Status.Request ), Accountant'Access );
 	end Initialize_Request;
 
 
@@ -101,7 +101,7 @@ package body KOW_View.Security.Modules is
 
 		use Templates_Parser;
 
-		User 	: KOW_Sec.User_Type := KOW_View.Security.Get_User( Request );
+		User 	: KOW_Sec.User_Type := KOW_View.Security.Get_User( Status.Request );
 		Params	: Templates_Parser.Translate_Set;
 	begin
 		if KOW_Sec.Is_Anonymous( User ) then
@@ -115,7 +115,7 @@ package body KOW_View.Security.Modules is
 							Template_Resource	=> To_String( Module.Login_Template ),
 							Template_Extension	=> HTML,
 							Parameters		=> Params,
-							Locale			=> KOW_View.Locales.Get_Locale( Request )
+							Locale			=> KOW_View.Locales.Get_Locale( Status.Request )
 						);
 		else
 			Include_Amdjs_Package( Module, "dijit.form.Button" );
@@ -126,7 +126,7 @@ package body KOW_View.Security.Modules is
 							Template_Resource	=> To_String( Module.Logout_Template ),
 							Template_Extension	=> HTML,
 							Parameters		=> Params,
-							Locale			=> KOW_View.Locales.Get_Locale( Request )
+							Locale			=> KOW_View.Locales.Get_Locale( Status.Request )
 						);
 		end if;
 	end Process_Body;
@@ -143,7 +143,7 @@ package body KOW_View.Security.Modules is
 				Status	: in     Request_Status_Type
 			) is
 	begin
-		if KOW_Sec.Is_Anonymous( KOW_View.Security.Get_user( Request ) ) then
+		if KOW_Sec.Is_Anonymous( KOW_View.Security.Get_user( Status.Request ) ) then
 			raise KOW_Sec.Login_Required;
 		end if;
 	end Initialize_Request;

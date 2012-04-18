@@ -60,23 +60,23 @@ package body KOW_View.Themes.Services is
 	overriding
 	procedure Process_Custom_Request(
 			Service		: in out Theme_Service;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out AWS.Response.Data
 		) is
 
 		-- process request for a theme's static file
 		-- only direct access to files that aren't template are alowed
 	
-		Theme_Name : constant String := Get_Theme_Name( Request );
+		Theme_Name : constant String := Get_Theme_Name( Status.Request );
 
-		URI		: constant string := KOW_View.Services.Util.Local_URI( Service, AWS.Status.URI( Request ), True );
+		URI		: constant string := KOW_View.Services.Util.Local_URI( Service, AWS.Status.URI( Status.Request ), True );
 		Extension	: constant string := Ada.Directories.Extension( URI );
 		File_Name	: constant string := URI( URI'First .. URI'Last - Extension'Length - 1);
 		Complete_Path	: constant string := Locate_Theme_Resource(
 				Theme_Name	=> Theme_Name,
 				Resource	=> File_Name,
 				Extension	=> Extension,
-				Virtual_Host	=> KOW_View.Virtual_Host( Request ),
+				Virtual_Host	=> KOW_View.Virtual_Host( Status.Request ),
 				Kind		=> Ada.Directories.Ordinary_File
 			);
 	begin
@@ -96,7 +96,7 @@ package body KOW_View.Themes.Services is
 	overriding
 	procedure Process_Json_Request(
 			Service		: in out Theme_Service;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out KOW_Lib.Json.Object_Type
 		) is
 		-- will raise program_error with nice message

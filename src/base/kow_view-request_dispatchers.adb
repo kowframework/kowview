@@ -78,9 +78,9 @@ package body KOW_View.Request_Dispatchers is
 		L : Dispatcher_Node_Access := Last( First );
 	begin
 		if L = null then
-			First := new Dispatcher_Node_Type( Dispatcher => Dispatcher, Next => null );
+			First := new Dispatcher_Node_Type'( Dispatcher => Dispatcher, Next => null );
 		else
-			L.Next := new Dispatcher_Node_Type( Dispatcher => Dispatcher, Next => null );
+			L.Next := new Dispatcher_Node_Type'( Dispatcher => Dispatcher, Next => null );
 		end if;
 	end Append_Dispatcher;
 

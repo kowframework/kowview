@@ -93,12 +93,14 @@ package body KOW_View is
 		-- this is the main function... it's the AWS callback used all around.
 		-- notice that in the v2.0 release the package KOW_View.Service_Mappings was extinguished
 
+		use Request_Dispatchers;
 
 		My_Action : KOW_Sec.Accounting.Base_Action_Type'Class := KOW_Sec.Accounting.New_Action(
 										Name		=> "request:" & AWS.Status.URI( Request ),
 										Root_Accountant	=> Accountant'Access
 									);
-		Dispatcher : Request_Dispatchers.Request_Dispatcher_Ptr := Request_Dispatchers.Get_Dispatcher( Request );
+
+		Dispatcher : Request_Dispatcher_Ptr := Request_Dispatchers.Get_Dispatcher( Request );
 	begin
 		if Dispatcher = null then
 			raise ERROR_404 with AWS.Status.URI( Request );

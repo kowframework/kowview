@@ -61,7 +61,7 @@ package KOW_View.Themes.Services is
 	overriding
 	procedure Process_Custom_Request(
 			Service		: in out Theme_Service;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out AWS.Response.Data
 		);
 	-- process request for a theme's static file
@@ -70,7 +70,7 @@ package KOW_View.Themes.Services is
 	overriding
 	procedure Process_Json_Request(
 			Service		: in out Theme_Service;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out KOW_Lib.Json.Object_Type
 		);
 	-- will raise program_error with nice message

@@ -61,7 +61,7 @@ package KOW_View.Pages.Modules is
 	overriding
 	procedure Process_Body(
 			Module	: in out Exception_Test_Module;
-			Request	: in     AWS.Status.Data;
+			Status	: in     Request_Status_Type;
 			Response:    out Ada.Strings.Unbounded.Unbounded_String
 		);
 

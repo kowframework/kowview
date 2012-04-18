@@ -38,6 +38,7 @@ with KOW_Lib.File_System;		use KOW_Lib.File_System;
 with KOW_Lib.Json;
 with KOW_Lib.Locales;
 with KOW_View.Components;		use KOW_View.Components;
+with KOW_View.Json_Util;
 with KOW_View.Services.Util;
 with KOW_View.Util;
 
@@ -54,13 +55,6 @@ package body KOW_View.Services is
 	-- Service Delegator Type --
 	----------------------------
 
-	type Service_Dispatcher_Type is new KOW_View.Request_Dispatchers.Implementations.Prefix_Request_Dispatcher_Type with record
-		Component_Name	: Component_Name_Type;
-		Component	: Components.Component_Ptr;
-		Service_Name	: Service_Name_Type;
-	end record;
-
-
 
 	overriding
 	function Dispatch(
@@ -69,9 +63,8 @@ package body KOW_View.Services is
 			) return AWS.Response.Data is
 		Status		: Request_Status_Type;
 	begin
-		Setup_Status( Dispatcher, Status );
+		Setup_Status( Dispatcher, Request, Status );
 		declare
-			use KOW_Config.Components;
 			Delegator	: Service_Delegator_Access := Get_Service_Delegator( Dispatcher.Component.all, Dispatcher.Service_Name );
 		begin
 
@@ -115,7 +108,8 @@ package body KOW_View.Services is
 		use KOW_View.Request_Dispatchers.Implementations;
 	begin
 		Setup_Status(
-				Dispatcher	=> Path_Request_Dispatcher_Type( Dispatcher ),
+				Dispatcher	=> Prefix_Dispatcher_Type( Dispatcher ),
+				Request		=> Request,
 				Status		=> Status
 			);
 		Status.Component := Dispatcher.Component_Name;

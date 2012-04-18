@@ -76,10 +76,8 @@ package body KOW_View.Util is
 				Tag	: in Ada.Tags.Tag;
 				Sufix	: in String := "_type"
 			) return Path_Type is
-		P	: Path_Type;
 		Str	: constant String := Get_Type_Name_String( Tag, Sufix );
 	begin
-		KOW_Lib.String_Util.Copy( From => Str, To => P );
-		return P;
+		return From_String( Str );
 	end Get_Type_Name;
 end KOW_View.Util;

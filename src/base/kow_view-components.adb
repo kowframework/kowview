@@ -37,6 +37,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -------------------
 with KOW_Config;
 with KOW_Lib.File_System;
+with KOW_Lib.String_Util;
 with KOW_View.Components.Registry;
 with KOW_View.Components.Util;
 with KOW_View.Util;
@@ -102,9 +103,8 @@ package body KOW_View.Components is
 			Name		: in     String;
 			Delegator	: in     Service_Delegator_Access
 		) is
-		Service_Name : Service_Name_Type;
+		Service_Name : Service_Name_Type := From_String( Name );
 	begin
-		KOW_Lib.String_Util.Copy( From => Name, To => Service_Name );
 		Register_Service_Delegator(
 				Component	=> Component,
 				Name		=> Service_Name,
@@ -141,22 +141,22 @@ package body KOW_View.Components is
 		Deleg		: Service_Delegator_Ptr;
 
 
-		begin
+	begin
 		if Service = No_Service then
 			pragma Assert( Component.Default_Service /= null, "there is no default service in the component " & Get_Name( Component ) );
 			return Service_Delegator_Access( Component.Default_Service );
 		elsif Service_Delegator_Maps.Contains( Component.Service_Delegators, Service ) then
 			Deleg := Service_Delegator_Maps.Element(
 							Component.Service_Delegators,
-							Name
+							Service
 						);
 			if Deleg = null then
-				raise SERVICE_ERROR with "unknown service (null): " & Service;
+				raise SERVICE_ERROR with "unknown service (null): " & To_String( Service );
 			else
 				return Service_Delegator_Access( Deleg );
 			end if;
 		else
-			raise SERVICE_ERROR with "unknown service (not registered): " & Service;
+			raise SERVICE_ERROR with "unknown service (not registered): " & To_String( Service );
 		end if;
 	end Get_Service_Delegator;
 
@@ -168,7 +168,7 @@ package body KOW_View.Components is
 		) is
 	begin
 		Process_Json_Request(
-				Delegator	=> Get_Service_Delegator( Component, Request ).all,
+				Delegator	=> Get_Service_Delegator( Component, Status.Service ).all,
 				Status		=> Status,
 				Response	=> Response
 			);
@@ -183,7 +183,7 @@ package body KOW_View.Components is
 		-- can be overriding for implementing default services and such
 	begin
 		Process_Custom_Request(
-				Delegator	=> Get_Service_Delegator( Component, Request ).all,
+				Delegator	=> Get_Service_Delegator( Component, Status.Service ).all,
 				Status		=> Status,
 				Response	=> Response
 			);
