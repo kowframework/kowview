@@ -48,7 +48,6 @@ with KOW_View.Services;
 ---------
 -- AWS --
 ---------
-with AWS.Status;
 with AWS.Response;
 
 package KOW_View.Services.Implementations is
@@ -62,7 +61,7 @@ package KOW_View.Services.Implementations is
 	overriding
 	procedure Process_Custom_Request(
 				Service		: in out Resource_Service;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Response	:    out AWS.Response.Data
 			);
 	-- serve a given file inside the service resource page
@@ -70,7 +69,7 @@ package KOW_View.Services.Implementations is
 	overriding
 	procedure Process_Json_Request(
 				Service		: in out Resource_Service;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Response	:    out KOW_Lib.Json.Object_Type
 			);
 

@@ -52,12 +52,12 @@ package body KOW_View.Services.Implementations is
 	overriding
 	procedure Process_Custom_Request(
 				Service		: in out Resource_Service;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Response	:    out AWS.Response.Data
 			) is
 		-- serve a given file inside the service resource page
-		Resource_URI	: constant String := KOW_View.Services.Util.Local_URI( Service, AWS.Status.URI( Request ), True );
-		Locale		: constant KOW_Lib.Locales.Locale_Type := KOW_View.Locales.Get_Locale( Request );
+		Resource_URI	: constant String := KOW_View.Services.Util.Local_URI( Service, AWS.Status.URI( Status.Request ), True );
+		Locale		: constant KOW_Lib.Locales.Locale_Type := KOW_View.Locales.Get_Locale( Status.Request );
 
 		Extension	: constant String := Ada.Directories.Extension( Resource_URI );
 
@@ -74,7 +74,7 @@ package body KOW_View.Services.Implementations is
 								Service		=> Resource_Service'Class( Service ),
 								Resource	=> Resource,
 								Extension	=> Extension,
-								Virtual_Host	=> KOW_View.Virtual_Host( Request ),
+								Virtual_Host	=> KOW_View.Virtual_Host( Status.Request ),
 								Locale		=> Locale
 							);
 	begin
@@ -93,7 +93,7 @@ package body KOW_View.Services.Implementations is
 	overriding
 	procedure Process_Json_Request(
 				Service		: in out Resource_Service;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Response	:    out KOW_Lib.Json.Object_Type
 			) is
 	begin
