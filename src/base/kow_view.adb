@@ -76,70 +76,18 @@ package body KOW_View is
 		-- notice that in the v2.0 release the package KOW_View.Service_Mappings was extinguished
 
 
-		Response	: AWS.Response.Data;
-		Component	: Component_Ptr;
-
-		function Request_Mode return Request_Mode_Type is
-			Params	: AWS.Parameters.List := AWS.Status.Parameters( Request );
-		begin
-			return Request_Mode_Type'Value( AWS.Parameters.Get( Params, "mode" ) & "_request" );
-		exception
-			when others => return Custom_Request;
-		end Request_Mode;
-
-
 		My_Action : KOW_Sec.Accounting.Base_Action_Type'Class := KOW_Sec.Accounting.New_Action(
 										Name		=> "request:" & AWS.Status.URI( Request ),
 										Root_Accountant	=> Accountant'Access
 									);
-		htdocs_path : constant String := "htdocs" & URI;
-
 		Dispatcher : Request_Dispatchers.Request_Dispatcher_Ptr := Request_Dispatchers.Get_Dispatcher( Request );
 	begin
-
-
 		if Dispatcher = null then
 			raise ERROR_404 with AWS.Status.URI( Request );
 		else
 			return Request_Dispatchers.Dispatch( Dispatcher.all, Request );
 		end if;
-
-		elsif URI = "/favicon.ico" then
-			raise REDIRECT with "/themes/theme/favicon.ico";
-		elsif URI = "/robots.txt" then
-			raise REDIRECT with "/pages/static/robots.txt";
-		end if;
-
-		Component := Component_Ptr( Registry.Get_Component( Request ) );
-		case Request_Mode is
-			when Json_Request =>
-						Response := KOW_View.Json_Util.Build_Error_Response( E => E, Wrap_Data => Wrap_Data );
-						KOW_Sec.Accounting.Set_Exit_Status(
-								My_Action,
-								KOW_Sec.Accounting.Exit_Error,
-								"json_error:" & Ada.Exceptions.Exception_Name( e ) & ":" & Ada.Exceptions.Exception_Message( e )
-							);
-
-
-				end;
-
-			when Custom_Request =>
-				Process_Custom_Request(
-						Component	=> Component.all,
-						Request		=> Request,
-						Response	=> Response
-					);
-				KOW_Sec.Accounting.Set_Exit_Status(
-						My_Action,
-						KOW_Sec.Accounting.Exit_Success,
-						"finished custom request"
-					);
-		end case;
-
-
-		return Response;
 	exception
-
 		when e : REDIRECT =>
 			KOW_Sec.Accounting.Set_Exit_Status(
 					My_Action,
@@ -157,7 +105,6 @@ package body KOW_View is
 
 			return AWS.Response.URL( To_String( Home ) );
 
-
 		when KOW_Sec.LOGIN_REQUIRED =>
 			KOW_Sec.Accounting.Set_Exit_Status(
 					My_Action,
@@ -167,16 +114,14 @@ package body KOW_View is
 
 			return AWS.Response.URL( To_String( Login_Page ) );
 
-
 		when e : others =>
 			KOW_Sec.Accounting.Set_Exit_Status(
 					My_Action,
 					KOW_Sec.Accounting.Exit_Fatal,
 					"Fatal error reraised to AWS.Server! " & Ada.Exceptions.Exception_Name( e ) & '(' & Ada.Exceptions.Exception_Message( e ) & ')'
 				);
-
-
 			Ada.Exceptions.Reraise_Occurrence( e );
+
 	end Process_Request;
 
 
