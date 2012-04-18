@@ -37,10 +37,6 @@ with KOW_View.Components;
 with KOW_View.Modules;
 with KOW_View.Modules.Util;
 
----------
--- AWS --
----------
-with AWS.Status;
 
 package body KOW_View.Modules.Stateless_Module_Factories is
 
@@ -53,8 +49,7 @@ package body KOW_View.Modules.Stateless_Module_Factories is
 	overriding
 	procedure Create(
 				Delegator	: in out Module_Factory_Type;
-				Request		: in     AWS.Status.Data;
-				Context		: in     String;
+				Status		: in     Request_Status_Type;
 				Module_Id	: in     Positive;
 				Request_Mode	: in     Request_Mode_Type;
 				Virtual_Host	: in     KOW_View.Virtual_Host_Name_Type;
@@ -64,7 +59,6 @@ package body KOW_View.Modules.Stateless_Module_Factories is
 		
 		The_Module : Module_Type_Access := new Module_Type;
 	begin
-		The_Module.Context := Ada.Strings.Unbounded.To_Unbounded_String( Context );
 		The_Module.ID := Module_id;
 		The_Module.ID_Count := 0;
 		The_Module.Component := Component_Ptr( Component );
@@ -77,7 +71,7 @@ package body KOW_View.Modules.Stateless_Module_Factories is
 	overriding
 	procedure Destroy(
 				Delegator	: in out Module_Factory_Type;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Module		: in out Module_Ptr
 			) is
 		-- free the module access type
