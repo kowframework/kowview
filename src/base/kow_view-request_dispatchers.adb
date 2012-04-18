@@ -36,11 +36,11 @@ pragma License (GPL);
 ---------
 -- AWS --
 ---------
-with Ada.Response;
+with AWS.Response;
 with AWS.Status;
 
 
-package body KOW_Sec.Request_Dispatchers is
+package body KOW_View.Request_Dispatchers is
 
 
 
@@ -84,4 +84,4 @@ package body KOW_Sec.Request_Dispatchers is
 		end if;
 	end Append_Dispatcher;
 
-end KOW_Sec.Request_Dispatchers;
+end KOW_View.Request_Dispatchers;

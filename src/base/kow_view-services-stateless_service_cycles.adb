@@ -40,7 +40,6 @@ with KOW_View.Services.Util;
 ---------
 with AWS.Response;
 with AWS.Session;
-with AWS.Status;
 
 
 package body KOW_View.Services.Stateless_Service_Cycles is
@@ -53,7 +52,7 @@ package body KOW_View.Services.Stateless_Service_Cycles is
 	overriding
 	procedure Process_Json_Request(
 			Delegator	: in out Service_Delegator_Type;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out KOW_Lib.Json.Object_Type
 		) is
 		Service : Service_Type;
@@ -62,7 +61,7 @@ package body KOW_View.Services.Stateless_Service_Cycles is
 
 		Process_Json_Request(
 				Service	=> Service,
-				Request	=> Request,
+				Status	=> Status,
 				Response=> Response
 			);
 	end Process_Json_Request;
@@ -71,7 +70,7 @@ package body KOW_View.Services.Stateless_Service_Cycles is
 	overriding
 	procedure Process_Custom_Request(
 			Delegator	: in out Service_Delegator_Type;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out AWS.Response.Data
 		) is
 		Service : Service_Type;
@@ -79,7 +78,7 @@ package body KOW_View.Services.Stateless_Service_Cycles is
 		Setup_Service( Component, Service );
 		Process_Custom_Request(
 				Service	=> Service,
-				Request	=> Request,
+				Status	=> Status,
 				Response=> Response
 			);
 	end Process_Custom_Request;

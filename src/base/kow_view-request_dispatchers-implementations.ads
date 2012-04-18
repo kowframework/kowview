@@ -36,11 +36,11 @@ pragma License (GPL);
 ---------
 -- AWS --
 ---------
-with Ada.Response;
+with AWS.Response;
 with AWS.Status;
 
 
-package KOW_Sec.Request_Dispatchers.Implementations is
+package KOW_View.Request_Dispatchers.Implementations is
 
 	--------------------------
 	-- Base Dispatcher Type --
@@ -136,4 +136,4 @@ private
 	end record;
 
 
-end KOW_Sec.Request_Dispatchers.Implementations;
+end KOW_View.Request_Dispatchers.Implementations;

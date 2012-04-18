@@ -75,35 +75,35 @@ package body KOW_View.Services.Stateful_Service_Cycles is
 	overriding
 	procedure Process_Json_Request(
 			Delegator	: in out Service_Delegator_Type;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out KOW_lib.Json.Object_Type
 		) is
-		Container : Service_Container_Type := Get( Request );
+		Container : Service_Container_Type := Get( Status.Request );
 	begin
 
 		Process_Json_Request(
 				Service	=> Container.Service,
-				Request	=> Request,
+				Status	=> Status,
 				Response=> Response
 			);
-		Set( Request, Container );
+		Set( Status.Request, Container );
 	end Process_Json_Request;
 
 
 	overriding
 	procedure Process_Custom_Request(
 			Delegator	: in out Service_Delegator_Type;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type
 			Response	:    out AWS.Response.Data
 		) is
-		Container : Service_Container_Type := Get( Request );
+		Container : Service_Container_Type := Get( Status.Request );
 	begin
 		Process_Custom_Request(
 				Service	=> Container.Service,
-				Request	=> Request,
+				Status	=> Status,
 				Response=> Response
 			);
-		Set( Request, Container );
+		Set( Status.Request, Container );
 	end Process_Custom_Request;
 
 

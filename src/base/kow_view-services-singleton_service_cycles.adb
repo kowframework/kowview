@@ -39,7 +39,6 @@ with KOW_View.Services.Util;
 -- AWS --
 ---------
 with AWS.Response;
-with AWS.Status;
 
 
 package body KOW_View.Services.Singleton_Service_Cycles is
@@ -53,13 +52,13 @@ package body KOW_View.Services.Singleton_Service_Cycles is
 	overriding
 	procedure Process_Json_Request(
 			Delegator	: in out Service_Delegator_Type;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out KOW_Lib.Json.Object_Type
 		) is
 	begin
 		Process_Json_Request(
 				Service	=> Service_Instance,
-				Request	=> Request,
+				Status	=> Status,
 				Response=> Response
 			);
 
@@ -69,13 +68,13 @@ package body KOW_View.Services.Singleton_Service_Cycles is
 	overriding
 	procedure Process_Custom_Request(
 			Delegator	: in out Service_Delegator_Type;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out AWS.Response.Data
 		) is
 	begin
 		Process_Custom_Request(
 				Service	=> Service_Instance,
-				Request	=> Request,
+				Status	=> Status,
 				Response=> Response
 			);
 	end Process_Custom_Request;

@@ -99,14 +99,14 @@ pragma Elaborate_Body( KOW_View.Services.Stateful_Service_Cycles );
 	overriding
 	procedure Process_Json_Request(
 			Delegator	: in out Service_Delegator_Type;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out KOW_Lib.Json.Object_Type
 		);
 
 	overriding
 	procedure Process_Custom_Request(
 			Delegator	: in out Service_Delegator_Type;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out AWS.Response.Data
 		);
 

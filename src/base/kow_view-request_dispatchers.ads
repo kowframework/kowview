@@ -36,11 +36,11 @@ pragma License (GPL);
 ---------
 -- AWS --
 ---------
-with Ada.Response;
+with AWS.Response;
 with AWS.Status;
 
 
-package KOW_Sec.Request_Dispatchers is
+package KOW_View.Request_Dispatchers is
 
 
 
@@ -79,7 +79,7 @@ package KOW_Sec.Request_Dispatchers is
 	procedure Append_Dispatcher( Dispatcher : in Request_Dispatcher_Ptr );
 	-- put the dispatcher into the end of the queue.
 
-begin
+private
 
 
 	type Dispatcher_Node_Type;
@@ -94,4 +94,4 @@ begin
 
 	First : Dispatcher_Node_Access;
 
-end KOW_Sec.Request_Dispatchers;
+end KOW_View.Request_Dispatchers;

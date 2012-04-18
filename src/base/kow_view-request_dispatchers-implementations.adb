@@ -36,11 +36,11 @@ pragma License (GPL);
 ---------
 -- AWS --
 ---------
-with Ada.Response;
+with AWS.Response;
 with AWS.Status;
 
 
-package body KOW_Sec.Request_Dispatchers.Implementations is
+package body KOW_View.Request_Dispatchers.Implementations is
 
 	--------------------------
 	-- Base Dispatcher Type --
@@ -172,4 +172,4 @@ package body KOW_Sec.Request_Dispatchers.Implementations is
 begin
 	Append_Dispatcher( Htdocs_Dispatcher'Access );
 
-end KOW_Sec.Request_Dispatchers.Implementations;
+end KOW_View.Request_Dispatchers.Implementations;
