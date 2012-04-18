@@ -53,7 +53,6 @@ with KOW_View.Pages.Services;
 -- AWS --
 ---------
 with AWS.Parameters;
-with AWS.Status;
 
 package KOW_View.Navigation.Modules is
 
@@ -102,14 +101,14 @@ package KOW_View.Navigation.Modules is
 	overriding
 	procedure Initialize_Request(
 				Module		: in out Menu_Module;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Config		: in out KOW_Config.Config_File_Type
 			);
 	
 	overriding
 	procedure Process_Body(
 				Module		: in out Menu_Module;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Response	:    out Unbounded_String
 			);
 	-- return a html list (ul) with the given menu
@@ -117,7 +116,7 @@ package KOW_View.Navigation.Modules is
 
 	procedure Initialize_Menu_Items(
 				Module		: in out Menu_Module;
-				Request		: in     AWS.Status.Data
+				Status		: in     Request_Status_Type
 			);
 	-- initialize all the menu items.
 	-- this can be overriden by your own implementation
@@ -127,7 +126,7 @@ package KOW_View.Navigation.Modules is
 
 	function New_Menu_Item(
 				Module		: in     Menu_Module;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Item_ID		: in     Positive;
 				Menu_Config	: in     KOW_Config.Config_File_Type
 			) return Menu_Item_Type;
@@ -135,7 +134,7 @@ package KOW_View.Navigation.Modules is
 
 	function Is_Active(
 				Module		: in     Menu_Module;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Menu_Item	: in     Menu_Item_Type
 			) return Boolean;
 	-- used only when disable_when_active is set in the item
@@ -167,14 +166,14 @@ package KOW_View.Navigation.Modules is
 	overriding
 	procedure Initialize_Request(
 				Module		: in out Module_Switcher_Menu_Module;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Config		: in out KOW_Config.Config_File_Type
 			);
 	
 	overriding
 	function New_Menu_Item(
 				Module		: in     Module_Switcher_Menu_Module;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Item_ID		: in     Positive;
 				Menu_Config	: in     KOW_Config.Config_File_Type
 			) return Menu_Item_Type;
@@ -184,7 +183,7 @@ package KOW_View.Navigation.Modules is
 	overriding
 	function Is_Active(
 				Module		: in     Module_Switcher_Menu_Module;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Menu_Item	: in     Menu_Item_Type
 			) return Boolean;
 	-- determine if the current section is the one being viewed
@@ -228,7 +227,7 @@ package KOW_View.Navigation.Modules is
 	overriding
 	procedure Initialize_Request(
 			Module		: in out Module_Switcher_Container_Module;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Config		: in out KOW_Config.Config_File_Type
 		);
 	-- Initialize the processing of a request
@@ -255,45 +254,28 @@ package KOW_View.Navigation.Modules is
 		) return KOW_Lib.UString_Vectors.Vector;
 
 
-	overriding
-	procedure Process_Head(
-			Module		: in out Module_Switcher_Container_Module;
-			Request		: in     AWS.Status.Data;
-			Response	:    out Unbounded_String
-		);
-	-- process header of the response.
-	-- it's assumed that 
 
 	overriding
 	procedure Process_Body(
 			Module		: in out Module_Switcher_Container_Module;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out Unbounded_String
 		);
 	-- process the request for a module.
 	-- sometimes is useful for a module only to be created and released - such as in a page counter module
 
-	overriding
-	procedure Process_Foot(
-			Module		: in out Module_Switcher_Container_Module;
-			Request		: in     AWS.Status.Data;
-			Response	:    out Unbounded_String
-		);
-	-- process some footer of the module
-	-- useful when creating benchmar modules
-
 
 	overriding
 	procedure Process_Json_Request(
 			Module		: in out Module_Switcher_Container_Module;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	: out    KOW_Lib.Json.Object_Type
 		);
 
 	overriding
 	procedure Finalize_Request(
 			Module		: in out Module_Switcher_Container_Module;
-			Request		: in     AWS.Status.Data
+			Status		: in     Request_Status_Type
 		);
 	-- Finalize processing the request.
 	-- Called when the process has been finalized

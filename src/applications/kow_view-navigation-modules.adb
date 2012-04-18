@@ -66,7 +66,7 @@ package body KOW_View.Navigation.Modules is
 	overriding
 	procedure Initialize_Request(
 				Module		: in out Menu_Module;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type
 				Config		: in out KOW_Config.Config_File_Type
 			) is
 	begin
@@ -79,12 +79,12 @@ package body KOW_View.Navigation.Modules is
 	overriding
 	procedure Process_Body(
 				Module		: in out Menu_Module;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type
 				Response	:    out Unbounded_String
 			) is
 		-- return a html list (ul) with the given menu
 		Current_Level	: Positive := 1;
-		URI		: constant String := AWS.Status.URI( Request );
+		URI		: constant String := AWS.Status.URI( Status.Request );
 
 
 		procedure Append_Disabled( Menu_Item : in Menu_ITem_Type ) is
@@ -195,7 +195,7 @@ package body KOW_View.Navigation.Modules is
 
 	procedure Initialize_Menu_Items(
 				Module		: in out Menu_Module;
-				Request		: in     AWS.Status.Data
+				Status		: in     Request_Status_Type
 			) is
 		-- initialize all the menu items.
 		-- this can be overriden by your own implementation
@@ -203,13 +203,13 @@ package body KOW_View.Navigation.Modules is
 		-- is called during the Proces_Body request to avoid infite looping
 		use KOW_Lib.Locales;
 
-		Current_Locale : KOW_Lib.Locales.Locale_Type := KOW_View.Locales.Get_Locale( Request );
+		Current_Locale : KOW_Lib.Locales.Locale_Type := KOW_View.Locales.Get_Locale( Status.Request );
 
 	begin
 		if Module.Is_Initialized and then Module.Locale = Current_Locale then
 			declare
 				use KOW_Sec;
-				User : KOW_Sec.User_Type := KOW_View.Security.Get_User( Request );
+				User : KOW_Sec.User_Type := KOW_View.Security.Get_User( Status.Request );
 			begin
 				if Module.Items_For = User.Data.Identity then
 					return;
@@ -230,7 +230,7 @@ package body KOW_View.Navigation.Modules is
 				declare
 					Menu_Item : Menu_Item_Type := New_Menu_Item(
 										Module		=> Menu_Module'Class( Module ),
-										Request		=> Request,
+										Status		=> Status,
 										Item_ID		=> i,
 										Menu_Config	=> Items( i )
 									);
@@ -245,13 +245,13 @@ package body KOW_View.Navigation.Modules is
 
 	function New_Menu_Item(
 				Module		: in     Menu_Module;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Item_ID		: in     Positive;
 				Menu_Config	: in     KOW_Config.Config_File_Type
 			) return Menu_Item_Type is
 		use KOW_View.URI_Util;
 
-		Current_Page	: constant String := To_String( Module.Context );
+		Current_Page	: constant String := To_String( Status.Local_URI );
 		Href		: constant String := KOW_Config.Default_Value( Menu_Config, "href", "" );
 		Menu_Item	: Menu_Item_Type;
 
@@ -276,7 +276,7 @@ package body KOW_View.Navigation.Modules is
 
 			Process_Custom_Request(
 					Service		=> Service,
-					Request		=> Request,
+					Status		=> Status,
 					Response	=> Dumb_Response,
 					Page		=> Page,
 					Initialize_Only	=> True
@@ -311,11 +311,11 @@ package body KOW_View.Navigation.Modules is
 
 	function Is_Active(
 				Module		: in     Menu_Module;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Menu_Item	: in     Menu_Item_Type
 			) return Boolean is
 		-- used only when disable_when_active is set in the item
-		URI		: constant String := AWS.Status.URI( Request );
+		URI		: constant String := AWS.Status.URI( Status.Request );
 	begin
 		return  Menu_Item.Href = URI or else Menu_Item.Href = URI & "/main";
 	end Is_Active;
@@ -328,7 +328,7 @@ package body KOW_View.Navigation.Modules is
 	overriding
 	procedure Initialize_Request(
 				Module		: in out Module_Switcher_Menu_Module;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Config		: in out KOW_Config.Config_File_Type
 			) is
 	begin
@@ -344,7 +344,7 @@ package body KOW_View.Navigation.Modules is
 
 		Initialize_Request(
 				Module	=> Menu_Module( Module ),
-				Request	=> Request,
+				Status	=> Status,
 				Config	=> Config
 			);
 	end Initialize_Request;
@@ -353,14 +353,14 @@ package body KOW_View.Navigation.Modules is
 	overriding
 	function New_Menu_Item(
 				Module		: in     Module_Switcher_Menu_Module;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Item_ID		: in     Positive;
 				Menu_Config	: in     KOW_Config.Config_File_Type
 			) return Menu_Item_Type is
 		-- initialize each menu item...
 		Menu_Item	: Menu_Item_Type;
 
-		P		: AWS.Parameters.List := AWS.Status.Parameters( Request );
+		P		: AWS.Parameters.List := AWS.Status.Parameters( Status.Request );
 
 		procedure Append_Preserved_Variables( C : in KOW_Lib.UString_Vectors.Cursor ) is
 			K : constant String := To_String( KOW_Lib.UString_Vectors.Element( C ) );
@@ -394,11 +394,11 @@ package body KOW_View.Navigation.Modules is
 	overriding
 	function Is_Active(
 				Module		: in     Module_Switcher_Menu_Module;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Menu_Item	: in     Menu_Item_Type
 			) return Boolean is
 	begin
-		return Selected_Module( Module, AWS.Status.Parameters( Request ) ) = Menu_Item.ID;
+		return Selected_Module( Module, AWS.Status.Parameters( Status.Request ) ) = Menu_Item.ID;
 	end Is_Active;
 
 
@@ -434,7 +434,7 @@ package body KOW_View.Navigation.Modules is
 	overriding
 	procedure Initialize_Request(
 			Module		: in out Module_Switcher_Container_Module;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Config		: in out KOW_Config.Config_File_Type
 		) is
 		-- Initialize the processing of a request
@@ -445,14 +445,13 @@ package body KOW_View.Navigation.Modules is
 		Module.Selector_Variable:= KOW_Config.Util.Unbounded_Strings.Default_Value( Config, "selector_variable", To_Unbounded_String( "selected_module_id" ) );
 
 
-		Current_Config		:= KOW_Config.Extract_Array( Config, "item" )( Selected_Module( Module, AWS.Status.Parameters( Request ) ) );
+		Current_Config		:= KOW_Config.Extract_Array( Config, "item" )( Selected_Module( Module, AWS.Status.Parameters( Status.Request ) ) );
 		Module.Current		:= KOW_View.Pages.Services.Util.Get_Module( Current_Config );
 
 
 		KOW_View.Components.Create(
 				Factory		=> Module.Current.Factory.all,
-				Request		=> Request,
-				Context		=> To_String( Module.Context ),
+				Status		=> Status,
 				Module_ID	=> Get_ID( Module ), -- same ID as the proxy :)
 				Request_mode	=> Custom_Request,
 				Virtual_Host	=> Module.Virtual_Host,
@@ -461,7 +460,7 @@ package body KOW_View.Navigation.Modules is
 
 		KOW_View.Components.Initialize_Request(
 				Module	=> Module.Current.Module.all,
-				Request	=> Request,
+				Status	=> Status,
 				Config	=> Current_Config
 			);
 	end Initialize_Request;
@@ -501,27 +500,11 @@ package body KOW_View.Navigation.Modules is
 	end Get_CSS_Includes;
 
 
-	overriding
-	procedure Process_Head(
-			Module		: in out Module_Switcher_Container_Module;
-			Request		: in     AWS.Status.Data;
-			Response	:    out Unbounded_String
-		) is
-		-- process header of the response.
-		-- it's assumed that 
-	begin
-		KOW_View.Components.Process_Head(
-						Module	=> Module.Current.Module.all,
-						Request	=> Request,
-						Response=> Response
-					);
-	end Process_Head;
-
 
 	overriding
 	procedure Process_Body(
 			Module		: in out Module_Switcher_Container_Module;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out Unbounded_String
 		) is
 		-- process the request for a module.
@@ -529,39 +512,22 @@ package body KOW_View.Navigation.Modules is
 	begin
 		KOW_View.Components.Process_Body(
 						Module	=> Module.Current.Module.all,
-						Request	=> Request,
+						Status	=> Status,
 						Response=> Response
 					);
 	end Process_Body;
 
 
 	overriding
-	procedure Process_Foot(
-			Module		: in out Module_Switcher_Container_Module;
-			Request		: in     AWS.Status.Data;
-			Response	:    out Unbounded_String
-		) is
-		-- process some footer of the module
-		-- useful when creating benchmar modules
-	begin
-		KOW_View.Components.Process_Foot(
-						Module	=> Module.Current.Module.all,
-						Request	=> Request,
-						Response=> Response
-					);
-	end Process_Foot;
-
-
-	overriding
 	procedure Process_Json_Request(
 			Module		: in out Module_Switcher_Container_Module;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	: out    KOW_Lib.Json.Object_Type
 		) is
 	begin
 		KOW_View.Components.Process_Json_Request(
 						Module	=> Module.Current.Module.all,
-						Request	=> Request,
+						Status	=> Status,
 						Response=> Response
 					);
 	end Process_Json_Request;
@@ -570,18 +536,18 @@ package body KOW_View.Navigation.Modules is
 	overriding
 	procedure Finalize_Request(
 			Module		: in out Module_Switcher_Container_Module;
-			Request		: in     AWS.Status.Data
+			Status		: in     Request_Status_Type
 		) is
 		-- Finalize processing the request.
 		-- Called when the process has been finalized
 	begin
 		KOW_View.Components.Finalize_Request(
 						Module	=> Module.Current.Module.all,
-						Request	=> Request
+						Status	=> Status
 					);
 		KOW_View.Components.Destroy(
 				Factory		=> Module.Current.Factory.all,
-				Request		=> Request,
+				Status		=> Status,
 				Module		=> Module.Current.Module
 			);
 	end Finalize_Request;

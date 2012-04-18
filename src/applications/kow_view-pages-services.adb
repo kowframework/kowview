@@ -189,7 +189,7 @@ package body KOW_View.Pages.Services is
 	overriding
 	procedure Process_Custom_Request(
 			Service		: in out Page_Service;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out AWS.Response.Data
 		) is
 	begin
@@ -204,7 +204,7 @@ package body KOW_View.Pages.Services is
 
 	procedure Process_Custom_Request(
 			Service		: in out Page_Service;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out AWS.Response.Data;
 			Page		: in     String;
 			Initialize_Only	: in     Boolean
@@ -418,10 +418,10 @@ package body KOW_View.Pages.Services is
 
 	function Get_Page(
 				Service	: in Page_Service;
-				Request	: in AWS.Status.Data
+				Status	: in Request_Status_Type
 			) return String is
 		-- retrieve the page name :)
-		Page : constant string := KOW_View.Services.Util.Local_URI( Service, AWS.Status.URI( Request ) );
+		Page : constant string := To_String( Status.Local_URI );
 	begin
 		if page = "" then
 			return "main";

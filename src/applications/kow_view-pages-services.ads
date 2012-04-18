@@ -54,7 +54,6 @@ with KOW_View.Themes;
 ---------
 -- AWS --
 ---------
-with AWS.Status;
 with AWS.Response;
 
 
@@ -88,7 +87,7 @@ package KOW_View.Pages.Services is
 	overriding
 	procedure Process_Json_Request(
 			Service	: in out Page_Service;
-			Request	: in     AWS.Status.Data;
+			Status	: in     Request_Status_Type;
 			Response:    out KOW_Lib.Json.Object_Type
 		);
 	-- run initialize for each one of the modules in the page
@@ -97,7 +96,7 @@ package KOW_View.Pages.Services is
 	overriding
 	procedure Process_Custom_Request(
 			Service		: in out Page_Service;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out AWS.Response.Data
 		);
 	-- process the entire module cycle returning a HTML page
@@ -105,7 +104,7 @@ package KOW_View.Pages.Services is
 
 	procedure Process_Custom_Request(
 			Service		: in out Page_Service;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out AWS.Response.Data;
 			Page		: in     String;
 			Initialize_Only	: in     Boolean
@@ -120,7 +119,7 @@ package KOW_View.Pages.Services is
 
 	function Get_Page(
 				Service	: in Page_Service;
-				Request	: in AWS.Status.Data
+				Status	: in Request_Status_Type
 			) return String;
 	-- retrieve the page name :)
 
@@ -216,14 +215,14 @@ package KOW_View.Pages.Services is
 	overriding
 	procedure Process_Json_Request(
 			Service	: in out Dir_Service;
-			Request	: in     AWS.Status.Data;
+			Status	: in     Request_Status_Type;
 			Response:    out KOW_Lib.Json.Object_Type
 		);
 
 	overriding
 	procedure Process_Custom_Request(
 			Service		: in out Dir_Service;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out AWS.Response.Data
 		);
 
