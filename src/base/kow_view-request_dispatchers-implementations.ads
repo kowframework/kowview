@@ -98,7 +98,7 @@ package KOW_View.Request_Dispatchers.Implementations is
 
 
 	type Htdocs_Dispatcher_Type is new Request_Dispatcher_Interface with record
-		Document_Path : Unbounded_String := To_Unbounded_String( "./htdocs" );
+		Document_Root : Unbounded_String := To_Unbounded_String( "./htdocs" );
 		-- TODO :: command line argument
 	end record;
 

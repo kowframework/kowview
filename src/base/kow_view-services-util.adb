@@ -41,7 +41,7 @@ package body KOW_View.Services.Util is
 
 	function Get_Name( Service_Tag : in Ada.Tags.Tag ) return String is
 	begin
-		return KOW_View.Util.Get_Type_Name( Service_Tag, "_service" );
+		return To_String( KOW_View.Util.Get_Type_Name( Service_Tag, "_service" ) );
 	end Get_Name;
 
 

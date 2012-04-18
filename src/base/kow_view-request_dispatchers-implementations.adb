@@ -32,13 +32,23 @@ pragma License (GPL);
 ------------------------------------------------------------------------------
 
 
+--------------
+-- Ada 2005 --
+--------------
+with Ada.Directories;
 
 ---------
 -- AWS --
 ---------
+with AWS.MIME;
+with AWS.Parameters;
 with AWS.Response;
 with AWS.Status;
 
+-------------------
+-- KOW Framework --
+-------------------
+with KOW_Lib.File_System;
 
 package body KOW_View.Request_Dispatchers.Implementations is
 
@@ -48,7 +58,7 @@ package body KOW_View.Request_Dispatchers.Implementations is
 
 
 	procedure Setup_Status(
-				Dispatcher	: in     Prefix_Dispatcher_Type;
+				Dispatcher	: in     Base_Dispatcher_Type;
 				Request		: in     AWS.Status.Data;
 				Status		: in out Request_Status_Type
 			) is
@@ -56,7 +66,7 @@ package body KOW_View.Request_Dispatchers.Implementations is
 		-- 	* mode
 		-- 	* request
 
-		Mode_Str : constant String := AWS.Status.Get( Request, "mode" );
+		Mode : constant String := AWS.Parameters.Get( AWS.Status.Parameters( Request ), "mode" );
 	begin
 		if Mode /= "" then
 			Status.Mode := Request_Mode_Type'Value( Mode );
@@ -77,9 +87,9 @@ package body KOW_View.Request_Dispatchers.Implementations is
 				Dispatcher	: in Prefix_Dispatcher_Type;
 				Request		: in AWS.Status.Data
 			) return Boolean is
-		URL : constant String := AWS.Status.URL( Request );
+		URI : constant String := AWS.Status.URI( Request );
 	begin
-		return Prefix /= null and then URL( URL'First .. URL'First + Dispatcher.Prefix_Length - 1 ) = Dispatcher.Prefix.all;
+		return Dispatcher.Prefix /= null and then URI( URI'First .. URI'First + Dispatcher.Prefix_Length - 1 ) = Dispatcher.Prefix.all;
 	end Can_Dispatch;
 
 
@@ -99,17 +109,17 @@ package body KOW_View.Request_Dispatchers.Implementations is
 	
 		function Local_URI return String is
 			-- return the local URI for the given prefi
-			URL : constant String := AWS.Status.URL( Request );
+			URI : constant String := AWS.Status.URI( Request );
 		begin
-			return URL( URL'First + Dispatcher.Prefix_Length .. URL'Last );
+			return URI( URI'First + Dispatcher.Prefix_Length .. URI'Last );
 		end Local_URI;
 	begin
 		Setup_Status( Base_Dispatcher_Type( Dispatcher ), Request, Status );
 		-- mode and request set by superclass
 
-		Copy( From => Dispatcher.Prefix.all, To => Status.Mapped_URI );
-		Copy( From => Dispatcher.Prefix.all, To => Status.Mapped_Expression );
-		Copy( From => Local_URI, To => Status.Local_URI );
+		Status.Mapped_URI := From_String( Dispatcher.Prefix.all );
+		Status.Mapped_Expression := From_String( Dispatcher.Prefix.all );
+		Status.Local_URI := From_String( Local_URI );
 	end Setup_Status;
 
 	procedure Set_Prefix(
@@ -135,7 +145,7 @@ package body KOW_View.Request_Dispatchers.Implementations is
 		-- check if the given URI exists inside the URI folder
 		htdocs_path : constant String := Compute_Path( Htdocs_Dispatcher_Type'Class( Dispatcher ), Request );
 	begin
-		return Ada.Directories.Exists( htdocs_path ) and then Ada.Directories."="( Ada.Directories.Ordinary_File, Ada.Directories.Kind( htdocs_path) ) then
+		return Ada.Directories.Exists( htdocs_path ) and then Ada.Directories."="( Ada.Directories.Ordinary_File, Ada.Directories.Kind( htdocs_path) );
 	end Can_Dispatch;
 
 
@@ -163,11 +173,6 @@ package body KOW_View.Request_Dispatchers.Implementations is
 		return To_String( Dispatcher.Document_Root ) / AWS.Status.URI( Request );
 	end Compute_Path;
 
-
-
-
-	Htdocs_Dispatcher : aliased Htdocs_Dispatcher_Type;
-	
 
 begin
 	Append_Dispatcher( Htdocs_Dispatcher'Access );
