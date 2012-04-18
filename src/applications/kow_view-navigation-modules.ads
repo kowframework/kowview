@@ -239,12 +239,12 @@ package KOW_View.Navigation.Modules is
 		) return KOW_Lib.UString_Vectors.Vector;
 
 	overriding
-	function Get_Dojo_Packages(
+	function Get_Amdjs_Packages(
 			Module		: in     Module_Switcher_Container_Module
 		) return KOW_Lib.UString_Vectors.Vector;
 	
 	overriding
-	function Get_Dojo_CSS(
+	function Get_Amdjs_CSS(
 			Module		: in     Module_Switcher_Container_Module
 		) return KOW_Lib.UString_Vectors.Vector;
 

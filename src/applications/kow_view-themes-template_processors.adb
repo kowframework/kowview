@@ -136,8 +136,8 @@ package body KOW_View.Themes.Template_Processors is
 		end Insert_All;
 	begin
 		Insert_All( "script_includes", Include_Buffers.Script_Includes );
-		Insert_All( "dojo_packages", Include_Buffers.Dojo_Packages );
-		Insert_All( "dojo_css", Include_Buffers.Dojo_CSS );
+		Insert_All( "Amdjs_packages", Include_Buffers.Amdjs_Packages );
+		Insert_All( "Amdjs_css", Include_Buffers.Amdjs_CSS );
 		Insert_All( "css_includes", Include_Buffers.CSS_Includes );
 	end Insert;
 
@@ -201,27 +201,27 @@ package body KOW_View.Themes.Template_Processors is
 			);
 	end Append_Script_Includes;
 
-	procedure Append_Dojo_Packages(
+	procedure Append_Amdjs_Packages(
 				Processor	: in out Template_Processor_Type;
-				Dojo_Packages	: in     KOW_Lib.UString_Vectors.Vector
+				Amdjs_Packages	: in     KOW_Lib.UString_Vectors.Vector
 			) is
 	begin
 		Append_Unique(
-				From	=> Dojo_Packages,
-				To	=> Processor.Include_Buffers.Dojo_Packages
+				From	=> Amdjs_Packages,
+				To	=> Processor.Include_Buffers.Amdjs_Packages
 			);
-	end Append_Dojo_Packages;
+	end Append_Amdjs_Packages;
 
-	procedure Append_Dojo_CSS(
+	procedure Append_Amdjs_CSS(
 				Processor	: in out Template_Processor_Type;
-				Dojo_CSS	: in     KOW_Lib.Ustring_Vectors.Vector
+				Amdjs_CSS	: in     KOW_Lib.Ustring_Vectors.Vector
 			) is
 	begin
 		Append_Unique(
-				From	=> Dojo_CSS,
-				To	=> Processor.Include_Buffers.Dojo_CSS
+				From	=> Amdjs_CSS,
+				To	=> Processor.Include_Buffers.Amdjs_CSS
 			);
-	end Append_Dojo_CSS;
+	end Append_Amdjs_CSS;
 
 
 
@@ -286,7 +286,7 @@ package body KOW_View.Themes.Template_Processors is
 	begin
 		Insert( Parameters, Assoc( "title", Processor.Title ) );
 		Insert( Parameters, Assoc( "author", Processor.Author ) );
-		Insert( Parameters, Assoc( "dojo_locale", KOW_View.Locales.Get_Dojo_Locale( Request ) ) );
+		Insert( Parameters, Assoc( "Amdjs_locale", KOW_View.Locales.Get_Amdjs_Locale( Request ) ) );
 		Insert( Parameters, Processor.Include_Buffers );
 
 		Region_Index_Maps.Iterate( Processor.Index_Map, Insert_Regions_Iterator'Access );

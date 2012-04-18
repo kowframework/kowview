@@ -79,10 +79,10 @@ package body KOW_View.Services.Implementations is
 							);
 	begin
 		-- we DO NOT encode JavaScript and CSS and anything else because... well... its not working at all
-		-- the thing is, dojo files can't be encoded for some weird reason... as I have no time for
+		-- the thing is, Amdjs files can't be encoded for some weird reason... as I have no time for
 		-- this right now I'll leave this research for later on....
 		--
-		-- TODO :: see why dojo.js doesn't like gzip neither deflate
+		-- TODO :: see why Amdjs.js doesn't like gzip neither deflate
 		Response := AWS.Response.File(
 				Content_Type    => AWS.MIME.Content_Type( Resource_Path ),
 				Filename        => Resource_Path

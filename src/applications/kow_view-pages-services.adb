@@ -287,22 +287,22 @@ package body KOW_View.Pages.Services is
 				);
 		end Process_Script_Includes;
 
-		procedure Process_Dojo_Packages( Complete : in out Complete_Module_Type ) is
+		procedure Process_Amdjs_Packages( Complete : in out Complete_Module_Type ) is
 		begin
-			Append_Dojo_Packages(
+			Append_Amdjs_Packages(
 					Processor	=> Processor,
-					Dojo_Packages	=> Get_Dojo_Packages( Complete.Module.all )
+					Amdjs_Packages	=> Get_Amdjs_Packages( Complete.Module.all )
 				);
-		end Process_Dojo_Packages;
+		end Process_Amdjs_Packages;
 
 
-		procedure Process_Dojo_CSS( Complete : in out Complete_Module_Type ) is
+		procedure Process_Amdjs_CSS( Complete : in out Complete_Module_Type ) is
 		begin
-			Append_Dojo_CSS(
+			Append_Amdjs_CSS(
 					Processor	=> Processor,
-					Dojo_CSS	=> Get_Dojo_CSS( Complete.Module.all )
+					Amdjs_CSS	=> Get_Amdjs_CSS( Complete.Module.all )
 				);
-		end Process_Dojo_CSS;
+		end Process_Amdjs_CSS;
 
 		procedure Process_CSS_Includes( Complete : in out Complete_Module_Type ) is
 		begin
@@ -355,21 +355,21 @@ package body KOW_View.Pages.Services is
 
 		-- I copy those to avoid pointer madness
 		Page_Scr : KOW_Lib.UString_Vectors.Vector := Page_Script_Includes;
-		Dojo_Pkg : KOW_Lib.UString_Vectors.Vector := Page_Dojo_Packages;
+		Amdjs_Pkg : KOW_Lib.UString_Vectors.Vector := Page_Amdjs_Packages;
 	begin
 		Setup( Service, Config );
 
 		------------------------------------------------------
-		-- Deal with required Page includes except for dojo --
+		-- Deal with required Page includes except for Amdjs --
 		------------------------------------------------------
 		Append_Script_Includes(
 				Processor	=> Processor,
 				Script_Includes	=> Page_Scr
 			);
 
-		Append_Dojo_Packages(
+		Append_Amdjs_Packages(
 				Processor	=> processor,
-				Dojo_Packages	=> Dojo_Pkg
+				Amdjs_Packages	=> Amdjs_Pkg
 			);
 
 		-------------------------
@@ -388,8 +388,8 @@ package body KOW_View.Pages.Services is
 			Iterate( Modules => Modules, Iterator => Process_Body'Access );
 
 			Iterate( Modules => Modules, Iterator => Process_Script_Includes'Access );
-			Iterate( Modules => Modules, Iterator => Process_Dojo_Packages'Access );
-			Iterate( Modules => Modules, Iterator => Process_Dojo_CSS'Access );
+			Iterate( Modules => Modules, Iterator => Process_Amdjs_Packages'Access );
+			Iterate( Modules => Modules, Iterator => Process_Amdjs_CSS'Access );
 			Iterate( Modules => Modules, Iterator => Process_CSS_Includes'Access );
 		end if;
 		Iterate( Modules => Modules, Iterator => Finalize'Access );
@@ -648,10 +648,10 @@ package body KOW_View.Pages.Services is
 		KOW_Lib.UString_Vectors.Append( Page_Script_Includes, To_Unbounded_String( Str ) );
 	end include;
 
-	procedure include_dojo( Str : in String ) is
+	procedure include_Amdjs( Str : in String ) is
 	begin
-		KOW_Lib.UString_Vectors.Append( Page_Dojo_Packages, To_Unbounded_String( Str ) );
-	end include_dojo;
+		KOW_Lib.UString_Vectors.Append( Page_Amdjs_Packages, To_Unbounded_String( Str ) );
+	end include_Amdjs;
 begin
 	include( "/pages/js/kowview.js" );
 	include( "/pages/js/kowview-messages.js" );
@@ -659,8 +659,8 @@ begin
 	include( "/pages/js/kowview-services.js" );
 
 
-	include_dojo( "dijit.Dialog" );
-	include_dojo( "dijit.form.Button" );
-	include_dojo( "dijit.ProgressBar" );
-	include_dojo( "dojo.io.iframe" ); -- used by the kowview-entities :)
+	include_Amdjs( "dijit.Dialog" );
+	include_Amdjs( "dijit.form.Button" );
+	include_Amdjs( "dijit.ProgressBar" );
+	include_Amdjs( "dojo.io.iframe" ); -- used by the kowview-entities :)
 end KOW_View.Pages.Services;

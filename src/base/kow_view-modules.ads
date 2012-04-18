@@ -80,8 +80,8 @@ package KOW_View.Modules is
 		-- json or custom request?
 
 		Script_Includes	: KOW_Lib.UString_Vectors.Vector;
-		Dojo_Packages	: KOW_Lib.UString_Vectors.Vector;
-		Dojo_CSS	: KOW_Lib.UString_Vectors.Vector;
+		Amdjs_Packages	: KOW_Lib.UString_Vectors.Vector;
+		Amdjs_CSS	: KOW_Lib.UString_Vectors.Vector;
 		CSS_Includes	: KOW_Lib.UString_Vectors.Vector;
 
 
@@ -100,12 +100,12 @@ package KOW_View.Modules is
 		) return KOW_Lib.UString_Vectors.Vector;
 
 	overriding
-	function Get_Dojo_Packages(
+	function Get_Amdjs_Packages(
 			Module		: in     Module_Type
 		) return KOW_Lib.UString_Vectors.Vector;
 	
 	overriding
-	function Get_Dojo_CSS(
+	function Get_Amdjs_CSS(
 			Module		: in Module_Type
 		) return KOW_Lib.UString_Vectors.Vector;
 
@@ -127,14 +127,14 @@ package KOW_View.Modules is
 		);
 
 	
-	procedure Include_Dojo_Package(
+	procedure Include_Amdjs_Package(
 			Module		: in out Module_Type;
-			Dojo_Package	: in     String
+			Amdjs_Package	: in     String
 		);
 	
-	procedure Include_Dojo_CSS(
+	procedure Include_Amdjs_CSS(
 			Module		: in out Module_Type;
-			Dojo_CSS	: in     String
+			Amdjs_CSS	: in     String
 		);
 
 	procedure Include_Component_CSS(

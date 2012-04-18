@@ -71,20 +71,20 @@ package body KOW_View.Modules is
 	end Get_Script_Includes;
 
 	overriding
-	function Get_Dojo_Packages(
+	function Get_Amdjs_Packages(
 			Module		: in     Module_Type
 		) return KOW_Lib.UString_Vectors.Vector is
 	begin
-		return Module.Dojo_Packages;
-	end Get_Dojo_Packages;
+		return Module.Amdjs_Packages;
+	end Get_Amdjs_Packages;
 
 	overriding
-	function Get_Dojo_CSS(
+	function Get_Amdjs_CSS(
 			Module		: in Module_Type
 		) return KOW_Lib.UString_Vectors.Vector is
 	begin
-		return Module.Dojo_CSS;
-	end Get_Dojo_CSS;
+		return Module.Amdjs_CSS;
+	end Get_Amdjs_CSS;
 
 
 	overriding
@@ -122,22 +122,22 @@ package body KOW_View.Modules is
 		KOW_Lib.UString_Vectors.Append( Module.Script_Includes, Script_Path );
 	end Include_Component_Script;
 
-	procedure Include_Dojo_Package(
+	procedure Include_Amdjs_Package(
 			Module		: in out Module_Type;
-			Dojo_Package	: in     String
+			Amdjs_Package	: in     String
 		) is
 	begin
-		KOW_Lib.UString_Vectors.Append( Module.Dojo_Packages, To_Unbounded_String( Dojo_Package ) );
-	end Include_Dojo_Package;
+		KOW_Lib.UString_Vectors.Append( Module.Amdjs_Packages, To_Unbounded_String( Amdjs_Package ) );
+	end Include_Amdjs_Package;
 
 
-	procedure Include_Dojo_CSS(
+	procedure Include_Amdjs_CSS(
 			Module		: in out Module_Type;
-			Dojo_CSS	: in     String
+			Amdjs_CSS	: in     String
 		) is
 	begin
-		KOW_Lib.UString_Vectors.Append( Module.Dojo_CSS, To_Unbounded_String( Dojo_CSS ) );
-	end Include_Dojo_CSS;
+		KOW_Lib.UString_Vectors.Append( Module.Amdjs_CSS, To_Unbounded_String( Amdjs_CSS ) );
+	end Include_Amdjs_CSS;
 
 
 	procedure Include_Component_CSS(

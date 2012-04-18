@@ -155,9 +155,9 @@ package body KOW_View.Security.Modules is
 		Params	: Templates_Parser.Translate_Set;
 	begin
 		if KOW_Sec.Is_Anonymous( User ) then
-			Include_Dojo_Package( Module, "dijit.form.Button" );
-			Include_Dojo_Package( Module, "dijit.form.Form" );
-			Include_Dojo_Package( Module, "dijit.form.ValidationTextBox" );
+			Include_Amdjs_Package( Module, "dijit.form.Button" );
+			Include_Amdjs_Package( Module, "dijit.form.Form" );
+			Include_Amdjs_Package( Module, "dijit.form.ValidationTextBox" );
 			Include_Component_Script( Module, "login.js" );
 			KOW_View.Security.REST.Insert_REST_Providers( Params );
 			Response := Parse_Template(
@@ -168,7 +168,7 @@ package body KOW_View.Security.Modules is
 							Locale			=> KOW_View.Locales.Get_Locale( Request )
 						);
 		else
-			Include_Dojo_Package( Module, "dijit.form.Button" );
+			Include_Amdjs_Package( Module, "dijit.form.Button" );
 			Include_Component_Script( Module, "logout.js" );
 			KOW_View.Security.Insert( Params, User );
 			Response := Parse_Template(

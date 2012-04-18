@@ -235,7 +235,7 @@ private
 
 	Page_Script_Includes	: KOW_Lib.UString_Vectors.Vector;
 	-- initialized by the body elaboration, includes all the script includes required by the
-	-- page service except for dojo main package (as it requires configuration in HTML part)
-	Page_Dojo_Packages	: KOW_Lib.UString_Vectors.Vector;
-	-- same as Page_Script_Includes but for dojo packages
+	-- page service except for Amdjs main package (as it requires configuration in HTML part)
+	Page_Amdjs_Packages	: KOW_Lib.UString_Vectors.Vector;
+	-- same as Page_Script_Includes but for Amdjs packages
 end KOW_View.Pages.Services;

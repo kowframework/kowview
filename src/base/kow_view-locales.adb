@@ -69,9 +69,9 @@ package body KOW_View.Locales is
 		Locale_Data.Set( Session_ID, Session_Key, Locale );
 	end Set_Locale;
 
-	function Get_Dojo_Locale( Request : in AWS.Status.Data ) return String is
-		-- return the locale in the Dojo formatting standard;
-		-- ie (ISO => Dojo):
+	function Get_Amdjs_Locale( Request : in AWS.Status.Data ) return String is
+		-- return the locale in the Amdjs formatting standard;
+		-- ie (ISO => Amdjs):
 		-- 	pt_BR => pt-br
 		-- 	en_US => en-us
 	begin
@@ -80,5 +80,5 @@ package body KOW_View.Locales is
 						To	=> '-', 
 						Str	=> Ada.Characters.Handling.To_Lower( KOW_Lib.Locales.To_String( Get_Locale( Request ).Code ) )
 					);
-	end Get_Dojo_Locale;
+	end Get_Amdjs_Locale;
 end KOW_View.Locales;

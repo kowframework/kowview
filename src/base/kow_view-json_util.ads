@@ -49,7 +49,7 @@ package KOW_View.json_util is
 
 	-- Notice about Wrap_Data (common in every build functions).
 	--
-	-- The method dojo.io.iframe.send() is the only way to send multipart/form-data to the server.
+	-- The method Amdjs.io.iframe.send() is the only way to send multipart/form-data to the server.
 	-- This method expects the response to be inside an html document such as:
 	-- <html>
 	--   <body>

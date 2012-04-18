@@ -96,8 +96,8 @@ package KOW_View.Themes.Template_Processors is
 	
 	type Include_Buffers_Type is record
 		Script_Includes	: KOW_Lib.UString_Vectors.Vector;
-		Dojo_Packages	: KOW_Lib.UString_Vectors.Vector;
-		Dojo_CSS	: KOW_Lib.UString_Vectors.Vector;
+		Amdjs_Packages	: KOW_Lib.UString_Vectors.Vector;
+		Amdjs_CSS	: KOW_Lib.UString_Vectors.Vector;
 		CSS_Includes	: KOW_Lib.UString_Vectors.Vector;
 	end record;
 
@@ -139,14 +139,14 @@ package KOW_View.Themes.Template_Processors is
 				Script_Includes	: in     KOW_Lib.UString_Vectors.Vector
 			);
 
-	procedure Append_Dojo_Packages(
+	procedure Append_Amdjs_Packages(
 				Processor	: in out Template_Processor_Type;
-				Dojo_Packages	: in     KOW_Lib.UString_Vectors.Vector
+				Amdjs_Packages	: in     KOW_Lib.UString_Vectors.Vector
 			);
 
-	procedure Append_Dojo_CSS(
+	procedure Append_Amdjs_CSS(
 				Processor	: in out Template_Processor_Type;
-				Dojo_CSS	: in     KOW_Lib.Ustring_Vectors.Vector
+				Amdjs_CSS	: in     KOW_Lib.Ustring_Vectors.Vector
 			);
 
 

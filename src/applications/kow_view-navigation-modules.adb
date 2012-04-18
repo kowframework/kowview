@@ -110,21 +110,21 @@ package body KOW_View.Navigation.Modules is
 
 			if Menu_Item.Href = "" then
 				if Current_Level = 1 then
-					Append( Response, "<div dojoType=""dijit.PopupMenuBarItem"">" );
+					Append( Response, "<div AmdjsType=""dijit.PopupMenuBarItem"">" );
 				else
-					Append( Response, "<div dojoType=""dijit.PopupMenuItem"">" );
+					Append( Response, "<div AmdjsType=""dijit.PopupMenuItem"">" );
 				end if;
 				Append( Response, "<span>" );
 				Append( Response, Menu_Item.Label );
 				Append( Response, "</span>" );
 
-				Append( Response, "<div dojoType=""dijit.Menu"">" );
+				Append( Response, "<div AmdjsType=""dijit.Menu"">" );
 				Current_Level := Current_Level + 1;
 			else
 				if Current_Level = 1 then
-					Append( Response, "<div dojoType=""dijit.MenuBarItem"" " );
+					Append( Response, "<div AmdjsType=""dijit.MenuBarItem"" " );
 				else
-					Append( Response, "<div dojoType=""dijit.MenuItem"" " );
+					Append( Response, "<div AmdjsType=""dijit.MenuItem"" " );
 				end if;
 				
 				Append( Response, "onClick=""document.location.href='" );
@@ -164,17 +164,17 @@ package body KOW_View.Navigation.Modules is
 
 
 		if Module.Dijit_Menu_Bar then
-			Include_Dojo_Package( Module, "dijit.Menu" );
-			Include_Dojo_Package( Module, "dijit.MenuBar" );
-    			Include_Dojo_Package( Module, "dijit.MenuBarItem");
-			Include_Dojo_Package( Module, "dijit.MenuItem" );
-			Include_Dojo_Package( Module, "dijit.PopupMenuBarItem" );
-			Include_Dojo_Package( Module, "dijit.PopupMenuItem" );
+			Include_Amdjs_Package( Module, "dijit.Menu" );
+			Include_Amdjs_Package( Module, "dijit.MenuBar" );
+    			Include_Amdjs_Package( Module, "dijit.MenuBarItem");
+			Include_Amdjs_Package( Module, "dijit.MenuItem" );
+			Include_Amdjs_Package( Module, "dijit.PopupMenuBarItem" );
+			Include_Amdjs_Package( Module, "dijit.PopupMenuItem" );
 
 
 
 		
-			Append( Response, "<div dojoType=""dijit.MenuBar"" class=""navigationDijitMenu"">" );
+			Append( Response, "<div AmdjsType=""dijit.MenuBar"" class=""navigationDijitMenu"">" );
 			Menu_Item_Vectors.Iterate( Module.Items, Dijit_Iterator'Access );
 				while Current_Level > 1 loop
 					-- close the ramining sub menus
@@ -476,20 +476,20 @@ package body KOW_View.Navigation.Modules is
 
 
 	overriding
-	function Get_Dojo_Packages(
+	function Get_Amdjs_Packages(
 			Module		: in     Module_Switcher_Container_Module
 		) return KOW_Lib.UString_Vectors.Vector is
 	begin
-		return KOW_View.Components.Get_Dojo_Packages( Module.Current.Module.all );
-	end Get_Dojo_Packages;
+		return KOW_View.Components.Get_Amdjs_Packages( Module.Current.Module.all );
+	end Get_Amdjs_Packages;
 	
 	overriding
-	function Get_Dojo_CSS(
+	function Get_Amdjs_CSS(
 			Module		: in     Module_Switcher_Container_Module
 		) return KOW_Lib.UString_Vectors.Vector is
 	begin
-		return KOW_View.Components.Get_Dojo_CSS( Module.Current.Module.all );
-	end Get_Dojo_CSS;
+		return KOW_View.Components.Get_Amdjs_CSS( Module.Current.Module.all );
+	end Get_Amdjs_CSS;
 
 	overriding
 	function Get_CSS_Includes(
