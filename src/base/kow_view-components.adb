@@ -65,11 +65,11 @@ package body KOW_View.Components is
 		end Trigger_Iterator;
 	begin
 		begin
-			Config := KOW_View.Components.Util.Load_Main_Configuration( Get_name( Component ) );
+			Config := KOW_View.Components.Util.Load_Main_Configuration( To_String( Get_name( Component ) ) );
 		exception
 			when KOW_Config.File_Not_Found =>
 				if Require_Configuration then
-					raise COMPONENT_ERROR with "Missing required configuration for component " & Get_Name( Component );
+					raise COMPONENT_ERROR with "Missing required configuration for component " & To_String( Get_Name( Component ) );
 				end if;
 		end;
 		Setup( Component_Type'Class( Component ), Config );
@@ -123,7 +123,7 @@ package body KOW_View.Components is
 		use Service_Delegator_Maps;
 	begin
 		if Contains( Component.Service_Delegators, Name ) then
-			raise CONSTRAINT_ERROR with "duplicated service :: " & To_String( Name ) & "@" & Get_Name( Component );
+			raise CONSTRAINT_ERROR with "duplicated service :: " & To_String( Name ) & "@" & To_String( Get_Name( Component ) );
 		end if;
 
 		Include( Component.Service_Delegators, Name, Service_Delegator_Ptr( Delegator ) );
@@ -143,7 +143,7 @@ package body KOW_View.Components is
 
 	begin
 		if Service = No_Service then
-			pragma Assert( Component.Default_Service /= null, "there is no default service in the component " & Get_Name( Component ) );
+			pragma Assert( Component.Default_Service /= null, "there is no default service in the component " & To_String( Get_Name( Component ) ) );
 			return Service_Delegator_Access( Component.Default_Service );
 		elsif Service_Delegator_Maps.Contains( Component.Service_Delegators, Service ) then
 			Deleg := Service_Delegator_Maps.Element(
@@ -200,7 +200,7 @@ package body KOW_View.Components is
 		use Module_Factory_Maps;
 	begin
 		if Contains( Component.Module_Factories, Name ) then
-			raise CONSTRAINT_ERROR with "duplicated module :: " & To_String( Name ) & "@" & Get_Name( Component );
+			raise CONSTRAINT_ERROR with "duplicated module :: " & To_String( Name ) & "@" & To_String( Get_Name( Component ) );
 		end if;
 
 		Include( Component.Module_Factories, Name, Module_Factory_Ptr( Factory ) );
@@ -214,7 +214,7 @@ package body KOW_View.Components is
 		return Module_Factory_Access( Module_Factory_Maps.Element( Component.Module_Factories, Name ) );
 	exception
 		when CONSTRAINT_ERROR =>
-			raise CONSTRAINT_ERROR with "module " & To_String( Name ) & " not found at component " & Get_Name( Component );
+			raise CONSTRAINT_ERROR with "module " & To_String( Name ) & " not found at component " & To_String( Get_Name( Component ) );
 	end Get_Module_Factory;
 
 
@@ -228,7 +228,7 @@ package body KOW_View.Components is
 		Tr : Initialization_Trigger_Ptr := Initialization_Trigger_Ptr( Initialization_Trigger );
 	begin
 		if Initialization_Trigger_Vectors.Contains( Component.Initialization_Triggers, Tr ) then
-			raise CONSTRAINT_ERROR with "duplicated trigger detected at component " & Get_Name( Component );
+			raise CONSTRAINT_ERROR with "duplicated trigger detected at component " & To_String( Get_Name( Component ) );
 		else
 			Initialization_Trigger_Vectors.Append( Component.Initialization_Triggers, Tr );
 		end if;
@@ -237,7 +237,7 @@ package body KOW_View.Components is
 
 
 
-	function Get_Name( Component : in Component_Type'Class ) return String is
+	function Get_Name( Component : in Component_Type'Class ) return Component_Name_Type is
 	begin
 		return KOW_View.Components.Util.Get_Name( Component'Tag );
 	end Get_Name;

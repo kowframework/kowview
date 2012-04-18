@@ -115,7 +115,7 @@ package body KOW_View.Modules is
 		) is
 		Script_Path : Unbounded_String := To_Unbounded_String( "/pages/js/component:" );
 	begin
-		Append( Script_Path, KOW_View.Components.Get_Name( Component ) );
+		Append( Script_Path, To_String( KOW_View.Components.Get_Name( Component ) ) );
 		Append( Script_Path, '/' );
 		Append( Script_Path, Script );
 
@@ -158,7 +158,7 @@ package body KOW_View.Modules is
 			CSS		: in     String
 		) is
 		CSS_Path : Unbounded_String := To_Unbounded_String( "/pages/css/component:" );
-	begin	Append( CSS_Path, KOW_View.Components.Get_Name( Component ) );
+	begin	Append( CSS_Path, To_String( KOW_View.Components.Get_Name( Component ) ) );
 		Append( CSS_Path, '/' );
 		Append( CSS_Path, CSS );
 
@@ -175,7 +175,7 @@ package body KOW_View.Modules is
 		) return String is
 		use KOW_Lib.File_System;
 
-		Prefix : constant String := Get_Name( Module ) & "_module";
+		Prefix : constant String := To_String( Get_Name( Module ) ) & "_module";
 	begin
 		return Locate_Resource(
 					Component	=> Module.Component.all,
@@ -261,7 +261,7 @@ package body KOW_View.Modules is
 
 
 
-	function Get_Name( Module : in Module_Type'Class ) return String is
+	function Get_Name( Module : in Module_Type'Class ) return Module_Name_Type is
 	begin
 		return KOW_View.Modules.Util.Get_Name( Module'Tag );
 	end Get_Name;

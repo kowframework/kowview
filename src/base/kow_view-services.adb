@@ -130,7 +130,7 @@ package body KOW_View.Services is
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
 			Locale		: in KOW_Lib.Locales.Locale_Type := KOW_Lib.Locales.Get_Default_Locale
 		) return String is
-		Prefix : constant String := Get_Name( Service ) & "_service";
+		Prefix : constant String := To_String( Get_Name( Service ) ) & "_service";
 	begin
 		return Locate_Resource(
 					Component	=> Service.Component.all,
@@ -154,7 +154,7 @@ package body KOW_View.Services is
 			use KOW_Config;
 			use KOW_view.Util;
 			Config : Config_File_Type := New_Config_File(
-							Get_Name( Component.all ) / Get_Name( Service )
+							To_String( Get_Name( Component.all ) ) / To_String( Get_Name( Service ) )
 						);
 		begin
 			Setup_Service( Service, Config );
@@ -189,21 +189,8 @@ package body KOW_View.Services is
 	end Parse_Template;
 
 
-	function Local_URI(
-				Service	: in Service_Type;
-				URI	: in String;
-				No_Slash: in Boolean := False
-			) return String is
-	begin
-		return Util.Local_URI(
-					Service	=> Service_Type'Class( Service ),
-					URI	=> URI,
-					No_Slash=> No_Slash
-				);
-	end Local_URI;
 
-
-	function Get_Name( Service : in Service_Type'Class ) return String is
+	function Get_Name( Service : in Service_Type'Class ) return Service_Name_Type is
 	begin
 		return KOW_View.Services.Util.Get_Name( Service'Tag );
 	end Get_Name;

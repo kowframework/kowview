@@ -58,7 +58,7 @@ package body KOW_View.Security.REST is
 		-- get the link for the provider...
 		-- which is the link for the service :D
 	begin
-		return '/' & KOW_View.Components.Get_Name( Provider.Component.all ) & '/' & To_String( Provider.Service_Name );
+		return '/' & To_String( KOW_View.Components.Get_Name( Provider.Component.all ) ) & '/' & To_String( Provider.Service_Name );
 	end Get_Link;
 
 	function Get_Icon(
@@ -68,7 +68,7 @@ package body KOW_View.Security.REST is
 		-- get the icon URL, which should respect:
 		-- 	[component_name]/[service_name]_resources/[to_lower(icon_size)].png
 	begin
-		return '/' & KOW_View.Components.Get_Name( Provider.Component.all ) & '/' &
+		return '/' & To_String( KOW_View.Components.Get_Name( Provider.Component.all ) ) & '/' &
 						To_String( Provider.Service_Name ) & "_resources/" &
 						Ada.Characters.Handling.To_Lower( Icon_Size_Type'Image( Icon_Size ) ) & ".png";
 	end Get_Icon;

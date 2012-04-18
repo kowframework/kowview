@@ -45,16 +45,12 @@ with KOW_Lib.Locales;
 
 package KOW_View.Components.Util is
 
-	function Get_Name( Component_Tag : in Ada.Tags.Tag ) return String;
+	function Get_Name( Component_Tag : in Ada.Tags.Tag ) return Component_Name_Type;
 	-- get the name by the tag
 	
 
-	function Get_Name( URI : in String ) return String;
-	-- get the component name for a given URI
-	-- assumes URI is not empty nor  /
-
 	function Locate_Resource(
-			Component_Name	: in String;
+			Component_Name	: in Component_Name_Type;
 			Resource	: in String;
 			Extension	: in String;
 			Virtual_Host	: in String;
@@ -65,7 +61,7 @@ package KOW_View.Components.Util is
 	-- this file should be placed at
 	-- 	[WORKING_DIR]/data/kowview/component_name/resource.extension
 	-- 	or
-	-- 	[WORKING_DIR]/applications/component_name/data/resource.extension
+	-- 	[WORKING_DIR]/components/component_name/data/resource.extension
 	-- returning it's name if nothing has been found raise Ada.Directories.Name_Error if not found
 	--
 	-- Also, when Locale_Code is provided look for the resources in a localized way.
@@ -75,9 +71,9 @@ package KOW_View.Components.Util is
 	-- 1. [WORKING_DIR]/data/kowview/foo/bar_pt_BR.ext
 	-- 2. [WORKING_DIR]/data/kowview/foo/bar_pt.ext
 	-- 3. [WORKING_DIR]/data/kowview/foo/bar.ext
-	-- 4. [WORKING_DIR]/applications/data/foo/bar_pt_BR.ext
-	-- 5. [WORKING_DIR]/applications/data/foo/bar_pt.ext
-	-- 6. [WORKING_DIR]/applications/data/foo/bar.ext
+	-- 4. [WORKING_DIR]/components/data/foo/bar_pt_BR.ext
+	-- 5. [WORKING_DIR]/components/data/foo/bar_pt.ext
+	-- 6. [WORKING_DIR]/components/data/foo/bar.ext
 	--
 	-- Returning the first file relative path found
 

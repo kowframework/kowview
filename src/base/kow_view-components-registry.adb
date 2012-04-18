@@ -95,20 +95,6 @@ package body KOW_View.Components.Registry is
 	end Get_Component;
 
 	
-
-	function Get_Component( Request : in AWS.Status.Data ) return KOW_View.Components.Component_Access is
-		-- get the component for the given request.
-
-		URI : constant String := AWS.Status.URI( Request );
-	begin
-		if URI'Length = 1 then -- URI = '/'
-			raise KOW_View.REDIRECT_TO_HOME;
-		else
-			return Get_Component( KOW_View.Components.Util.Get_Name( AWS.Status.URI( Request ) ) );
-		end if;
-	end Get_Component;
-
-
 	function Get_Components return Component_Maps.Map is
 		-- return all the components available;
 	begin

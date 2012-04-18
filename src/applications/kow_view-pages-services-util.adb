@@ -132,7 +132,7 @@ package body KOW_View.Pages.Services.Util is
 				-- load configuration from file in disk
 			begin
 				My_Config := KOW_View.Components.Util.Load_Configuration(
-											Component_Name		=> KOW_View.Components.Get_Name( KOW_View.Pages.Components.Component ),
+											Component_Name		=> To_String( KOW_View.Components.Get_Name( KOW_View.Pages.Components.Component ) ),
 											Configuration_Name	=> "page" / Page
 										);
 			end Load;

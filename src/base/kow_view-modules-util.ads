@@ -36,6 +36,6 @@ with Ada.Tags;
 
 package KOW_View.Modules.Util is
 
-	function Get_Name( Module_Tag : in Ada.Tags.Tag ) return String;
+	function Get_Name( Module_Tag : in Ada.Tags.Tag ) return Module_Name_Type;
 
 end KOW_View.Modules.Util;

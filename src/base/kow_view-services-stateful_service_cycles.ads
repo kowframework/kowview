@@ -75,7 +75,7 @@ pragma Elaborate_Body( KOW_View.Services.Stateful_Service_Cycles );
 						);
 
 	Service_Container_Key	: constant String := 
-		KOW_View.Components.Get_Name( Component.all ) & "::" & KOW_View.Services.Util.Get_Name( Service_Type'Tag ) & "::state";
+		To_String( KOW_View.Components.Get_Name( Component.all ) ) & "::" & To_String( KOW_View.Services.Util.Get_Name( Service_Type'Tag ) ) & "::state";
 	-- the key inside the session
 
 

@@ -27,54 +27,18 @@
 --------------
 -- Ada 2005 --
 --------------
-with Ada.Strings.Unbounded;
 with Ada.Tags;
 
 -------------------
 -- KOW Framework --
 -------------------
-with KOW_Lib.String_Util;
-with KOW_View.Components;
 with KOW_View.Util;
 
 package body KOW_View.Services.Util is
 
-	function Get_Name( Service_Tag : in Ada.Tags.Tag ) return String is
+	function Get_Name( Service_Tag : in Ada.Tags.Tag ) return Service_Name_Type is
 	begin
-		return To_String( KOW_View.Util.Get_Type_Name( Service_Tag, "_service" ) );
+		return KOW_View.Util.Get_Type_Name( Service_Tag, "_service" );
 	end Get_Name;
-
-
-	function Local_URI(
-				Service	: in KOW_View.Services.Service_Type'Class;
-				URI	: in String;
-				No_Slash: in Boolean := False
-			) return String is
-		-- get the URI stripping the service mapping
-
-		use KOW_View.Components;
-		Mapping : constant String := '/' & Get_Name( Service.Component.all ) & '/' & Get_Name( Service'Tag );
-
-		First : Integer := Mapping'Length + URI'First;
-		Last  : Integer := URI'Last;
-	begin
-		pragma Assert( Mapping'Length <= URI'Length, "this is not a valid URI for this service.. expect something inside " & Mapping );
-
-		if No_Slash then
-			First := First + 1;
-		end if;
-
-		while Last >= First and then URI( Last ) = '/' loop
-			Last := Last - 1;
-		end loop;
-
-		if First > Last then
-			return "";
-		else
-			-- NOTE :: this is slow because relies on unbounded_string AND the implementation of str_replace isn't the smartest either.
-			-- TODO :: optimize this code
-			return URI( First .. Last );
-		end if;
-	end Local_URI;
 
 end KOW_View.Services.Util;

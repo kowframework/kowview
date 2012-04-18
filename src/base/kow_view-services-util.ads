@@ -37,17 +37,6 @@ with Ada.Tags;
 
 package KOW_View.Services.Util is
 
-	function Get_Name( Service_Tag : in Ada.Tags.Tag ) return String;
-
-
-	function Local_URI(
-				Service	: in KOW_View.Services.Service_Type'Class;
-				URI	: in String;
-				No_Slash: in Boolean := False
-			) return String;
-	-- get the URI stripping the service mapping
-	-- if no_slash then tries to strip the forward slash in the begining
-	--
-	-- and removes all the end forward slashes
+	function Get_Name( Service_Tag : in Ada.Tags.Tag ) return Service_Name_Type;
 
 end KOW_View.Services.Util;

@@ -45,45 +45,18 @@ with KOW_View.Util;
 package body KOW_View.Components.Util is
 
 
-	function Get_Name( Component_Tag : in Ada.Tags.Tag ) return String is
+	function Get_Name( Component_Tag : in Ada.Tags.Tag ) return Component_Name_Type is
 	begin
-		return To_String( KOW_View.Util.Get_Type_Name(
+		return KOW_View.Util.Get_Type_Name(
 						Component_Tag,
 						"_component"
-					) );
+					);
 	end Get_Name;
-
 
 	
-	function Get_Name( URI : in String ) return String is
-                function Last_URI_Boundary return Integer is
-                begin
-
-                        for i in URI'First + 1 .. URI'Last loop
-                                if URI( i ) = '/' then
-                                        return i - 1;
-                                end if;
-                        end loop;
-
-
-                        -- if got here, the URI is the service mapping:
-                        return URI'Last;
-
-                end Last_URI_Boundary;
-
-		First : Positive := URI'First;
-
-        begin
-		if URI( First ) = '/' then
-			First := First + 1;
-		end if;
-
-		return URI( First .. Last_URI_Boundary );
-	end Get_Name;
-
 
 	function Locate_Resource(
-			Component_Name	: in String;
+			Component_Name	: in Component_Name_Type;
 			Resource	: in String;
 			Extension	: in String;
 			Virtual_Host	: in String;
@@ -102,7 +75,7 @@ package body KOW_View.Components.Util is
 		use Ada.Directories;
 		use KOW_Lib.File_System;
 
-		MComponent_Name	: String		:= KOW_Lib.String_Util.Str_Replace( From => '.', To => '-', Str => Component_Name );
+		MComponent_Name	: String		:= KOW_Lib.String_Util.Str_Replace( From => '.', To => '-', Str => To_String( Component_Name ) );
 
 		Name		: String		:= "data" / "kowview" / MComponent_Name / Resource; --& "." & Extension;
 		Default_Name	: String		:= "applications" / MComponent_Name / "data" / Resource;-- & "." & Extension;
@@ -173,7 +146,7 @@ package body KOW_View.Components.Util is
 				return Str;
 			end if;
 
-			raise Ada.Directories.Name_Error with "Resource "+Resource+ "." + Extension + " of component " + Component_name + " not found!";
+			raise Ada.Directories.Name_Error with "Resource "+Resource+ "." + Extension + " of component " + To_String( Component_name ) + " not found!";
 		end LMC;
 
 	begin

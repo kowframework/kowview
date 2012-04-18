@@ -343,7 +343,7 @@ package KOW_View.Components is
 
 
 
-	function Get_Name( Component : in Component_Type'Class ) return String;
+	function Get_Name( Component : in Component_Type'Class ) return Component_Name_Type;
 
 
 

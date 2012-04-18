@@ -460,7 +460,7 @@ package body KOW_View.Pages.Services is
 		
 		Comp	: constant String := "component:";
 		Last	: constant Integer := Ada.Strings.Fixed.Index( Source => Resource, Pattern => "/" );
-		Prefix	: constant String := KOW_View.Services.Get_Name( Service );
+		Prefix	: constant String := To_String( KOW_View.Services.Get_Name( Service ) );
 
 
 		function Get_Component return Component_Access is

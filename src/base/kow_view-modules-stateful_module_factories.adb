@@ -132,7 +132,7 @@ begin
 
 	KOW_View.Components.Register_Module_Factory(
 				Component	=> Component.all,
-				Name		=> From_String( KOW_View.Modules.Util.Get_Name( Module_Type'Tag ) ),
+				Name		=> KOW_View.Modules.Util.Get_Name( Module_Type'Tag ),
 				Factory		=> Factory_Instance'Access
 			);
 

@@ -59,7 +59,7 @@ pragma Elaborate_Body( KOW_View.Modules.Stateful_Module_Factories );
 	-- The Data --
 	--------------
 	Module_Container_Key_Prefix : constant String := 
-		KOW_View.Components.Get_Name( Component.all ) & "::" & KOW_View.Modules.Util.Get_Name( Module_Type'Tag ) & "::state::";
+		To_String( KOW_View.Components.Get_Name( Component.all ) ) & "::" & To_String( KOW_View.Modules.Util.Get_Name( Module_Type'Tag ) ) & "::state::";
 	
 	package Values is
 		Null_Module : Module_Type;

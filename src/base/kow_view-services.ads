@@ -150,14 +150,7 @@ package KOW_View.Services is
 	-- helper method for calling templates parser's parse method and locate_resource
 
 
-	function Local_URI(
-				Service	: in Service_Type;
-				URI	: in String;
-				No_Slash: in Boolean := False
-			) return String;
-
-
-	function Get_Name( Service : in Service_Type'Class ) return String;
+	function Get_Name( Service : in Service_Type'Class ) return Service_Name_Type;
 
 
 end KOW_View.Services;

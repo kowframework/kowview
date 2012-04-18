@@ -187,6 +187,6 @@ package KOW_View.Modules is
 
 
 
-	function Get_Name( Module : in Module_Type'Class ) return String;
+	function Get_Name( Module : in Module_Type'Class ) return Module_Name_Type;
 
 end KOW_View.Modules;
