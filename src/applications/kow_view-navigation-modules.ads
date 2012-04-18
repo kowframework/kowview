@@ -101,8 +101,7 @@ package KOW_View.Navigation.Modules is
 	overriding
 	procedure Initialize_Request(
 				Module		: in out Menu_Module;
-				Status		: in     Request_Status_Type;
-				Config		: in out KOW_Config.Config_File_Type
+				Status		: in     Request_Status_Type
 			);
 	
 	overriding
@@ -166,8 +165,7 @@ package KOW_View.Navigation.Modules is
 	overriding
 	procedure Initialize_Request(
 				Module		: in out Module_Switcher_Menu_Module;
-				Status		: in     Request_Status_Type;
-				Config		: in out KOW_Config.Config_File_Type
+				Status		: in     Request_Status_Type
 			);
 	
 	overriding
@@ -227,8 +225,7 @@ package KOW_View.Navigation.Modules is
 	overriding
 	procedure Initialize_Request(
 			Module		: in out Module_Switcher_Container_Module;
-			Status		: in     Request_Status_Type;
-			Config		: in out KOW_Config.Config_File_Type
+			Status		: in     Request_Status_Type
 		);
 	-- Initialize the processing of a request
 	-- also loads the current module and such

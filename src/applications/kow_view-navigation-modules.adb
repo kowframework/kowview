@@ -67,7 +67,6 @@ package body KOW_View.Navigation.Modules is
 	procedure Initialize_Request(
 				Module		: in out Menu_Module;
 				Status		: in     Request_Status_Type
-				Config		: in out KOW_Config.Config_File_Type
 			) is
 	begin
 		Module.Config := Config;
@@ -328,24 +327,24 @@ package body KOW_View.Navigation.Modules is
 	overriding
 	procedure Initialize_Request(
 				Module		: in out Module_Switcher_Menu_Module;
-				Status		: in     Request_Status_Type;
-				Config		: in out KOW_Config.Config_File_Type
+				Status		: in     Request_Status_Type
 			) is
 	begin
-		Module.Preserve_Variables := KOW_Lib.String_Util.Explode( ',', KOW_Config.Default_Value( Config, "preserve_variables", "") );
+
+		-- TODO :: configuration
+		-- Module.Preserve_Variables := KOW_Lib.String_Util.Explode( ',', KOW_Config.Default_Value( Config, "preserve_variables", "") );
 
 
-		Module.Default_Item	:= KOW_Config.Util.Integers.Default_Value( Config, "default_item", 1 );
+		-- Module.Default_Item	:= KOW_Config.Util.Integers.Default_Value( Config, "default_item", 1 );
 		-- the default item to be accepted as selected
 
-		Module.Selector_Variable:= KOW_Config.Util.Unbounded_Strings.Default_Value( Config, "selector_variable", To_Unbounded_String( "selected_module_id" ) );
+		-- Module.Selector_Variable:= KOW_Config.Util.Unbounded_Strings.Default_Value( Config, "selector_variable", To_Unbounded_String( "selected_module_id" ) );
 		-- the variable where should be stored the current selected module 
 
 
 		Initialize_Request(
 				Module	=> Menu_Module( Module ),
-				Status	=> Status,
-				Config	=> Config
+				Status	=> Status
 			);
 	end Initialize_Request;
 
@@ -434,18 +433,18 @@ package body KOW_View.Navigation.Modules is
 	overriding
 	procedure Initialize_Request(
 			Module		: in out Module_Switcher_Container_Module;
-			Status		: in     Request_Status_Type;
-			Config		: in out KOW_Config.Config_File_Type
+			Status		: in     Request_Status_Type
 		) is
 		-- Initialize the processing of a request
 		-- also loads the current module and such
 		Current_Config : KOW_Config.Config_File_Type;
 	begin
-		Module.Default_Item	:= KOW_Config.Util.Integers.Default_Value( Config, "default_item", 1 );
-		Module.Selector_Variable:= KOW_Config.Util.Unbounded_Strings.Default_Value( Config, "selector_variable", To_Unbounded_String( "selected_module_id" ) );
+		-- TODO :: configuration
+		-- Module.Default_Item	:= KOW_Config.Util.Integers.Default_Value( Config, "default_item", 1 );
+		-- Module.Selector_Variable:= KOW_Config.Util.Unbounded_Strings.Default_Value( Config, "selector_variable", To_Unbounded_String( "selected_module_id" ) );
 
 
-		Current_Config		:= KOW_Config.Extract_Array( Config, "item" )( Selected_Module( Module, AWS.Status.Parameters( Status.Request ) ) );
+		-- Current_Config		:= KOW_Config.Extract_Array( Config, "item" )( Selected_Module( Module, AWS.Status.Parameters( Status.Request ) ) );
 		Module.Current		:= KOW_View.Pages.Services.Util.Get_Module( Current_Config );
 
 
