@@ -42,7 +42,7 @@ with KOW_View.Services.Singleton_Service_Cycles;
 -- AWS --
 ---------
 with AWS.Response;
-with AWS.Status;
+
 
 package KOW_View.Security.Services is
 
@@ -69,7 +69,7 @@ package KOW_View.Security.Services is
 	overriding
 	procedure Process_Custom_Request(
 				Service		: in out Login_Service;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Response	:    out AWS.Response.Data
 			);
 	-- if username and password are provided, try the login process...
@@ -84,7 +84,7 @@ package KOW_View.Security.Services is
 	overriding
 	procedure Process_Json_Request(
 				Service		: in out Login_Service;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Response	:    out KOW_Lib.Json.Object_Type
 			);
 	-- tries the login process returning the user information on success 
@@ -110,7 +110,7 @@ package KOW_View.Security.Services is
 	overriding
 	procedure Process_Custom_Request(
 				Service		: in out Logout_Service;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Response	:    out AWS.Response.Data
 			);
 	-- simply logouts and redirects to /
@@ -120,7 +120,7 @@ package KOW_View.Security.Services is
 	overriding
 	procedure Process_Json_Request(
 				Service		: in out Logout_Service;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Response	:    out KOW_Lib.Json.Object_Type
 			);
 	-- raise CONSTRAINT_ERROR...
@@ -147,7 +147,7 @@ package KOW_View.Security.Services is
 	overriding
 	procedure Process_Custom_Request(
 				Service		: in out User_Info_Service;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Response	:    out AWS.Response.Data
 			);
 	-- show a simple user information html page
@@ -155,7 +155,7 @@ package KOW_View.Security.Services is
 	overriding
 	procedure Process_Json_Request(
 				Service		: in out User_Info_Service;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Response	:    out KOW_Lib.Json.Object_Type
 			);
 	-- return a json object with user: to_json(loged_user);
@@ -181,14 +181,14 @@ package KOW_View.Security.Services is
 	overriding
 	procedure Process_Custom_Request(
 				Service		: in out Switch_User_Service;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Response	:    out AWS.Response.Data
 			);
 	
 	overriding
 	procedure Process_Json_Request(
 				Service		: in out Switch_User_Service;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Response	:    out KOW_Lib.Json.Object_Type
 			);
 	

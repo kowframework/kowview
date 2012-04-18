@@ -34,8 +34,6 @@ with Ada.Strings.Unbounded;			use Ada.Strings.Unbounded;
 -------------------
 -- KOW Framework --
 -------------------
-with KOW_Config;
-with KOW_Config.Util;
 with KOW_Lib.Json;
 with KOW_Sec.Accounting;
 with KOW_View.Locales;
@@ -43,10 +41,6 @@ with KOW_View.Modules;
 with KOW_View.Security.Components;
 with KOW_View.Security.REST;
 
----------
--- AWS --
----------
-with AWS.Status;
 
 package body KOW_View.Security.Modules is
 
@@ -59,13 +53,13 @@ package body KOW_View.Security.Modules is
 	overriding
 	procedure Initialize_Request(
 				Module	: in out Criteria_Module;
-				Request	: in     AWS.Status.Data;
-				Config	: in out KOW_Config.Config_File_Type
+				Status	: in     Request_Status_Type
 			) is
 		-- where the magic happens
 		Criteria : KOW_Sec.Authorization_Criterias.Expression_Criteria_Type;
 	begin
-		Criteria.Descriptor := KOW_Config.Util.Unbounded_Strings.Default_Value( Config, "descriptor" );
+		-- TODO :: configuration
+		--Criteria.Descriptor := KOW_Config.Util.Unbounded_Strings.Default_Value( Config, "descriptor" );
 
 		Add_Contexts(
 				Module	=> Criteria_Module'Class( Module ), 
@@ -77,40 +71,6 @@ package body KOW_View.Security.Modules is
 	end Initialize_Request;
 
 
-	--------------------------
-	-- Head Criteria Module --
-	--------------------------
-
-	overriding
-	procedure Initialize_Request(
-				Module	: in out Head_Criteria_Module;
-				Request	: in     AWS.Status.Data;
-				Config	: in out KOW_Config.Config_File_Type
-			) is
-	begin
-		Module.Descriptor := KOW_Config.Util.Unbounded_Strings.Default_Value( Config, "descriptor" );
-	end Initialize_Request;
-
-	
-	overriding
-	procedure Process_Head(
-				Module	: in out Head_Criteria_Module;
-				Request	: in     AWS.Status.Data;
-				Output	:    out Unbounded_String
-			) is
-		Criteria : KOW_Sec.Authorization_Criterias.Expression_Criteria_Type;
-	begin
-		Criteria.Descriptor := Module.Descriptor;
-
-		Add_Contexts(
-				Module	=> Head_Criteria_Module'Class( Module ), 
-				Criteria=> Criteria,
-				Request	=> Request
-			);
-
-		KOW_Sec.Accounting.Require( Criteria, KOW_View.Security.Get_User( Request ), Accountant'Access );
-	end Process_Head;
-
 
 	-----------------------------
 	-- Login Controller Module --
@@ -121,30 +81,20 @@ package body KOW_View.Security.Modules is
 	overriding
 	procedure Initialize_Request(
 				Module	: in out Login_Controller_Module;
-				Request	: in     AWS.Status.Data;
-				Config	: in out KOW_Config.Config_File_Type
+				Status	: in     Request_Status_Type
 			) is
 	begin
-		Module.Login_Template := KOW_Config.Util.Unbounded_Strings.Default_Value( Config, "login_template", Default_Login_Template );
-		Module.Logout_Template:= KOW_Config.Util.Unbounded_Strings.Default_Value( Config, "logout_template", Default_Logout_Template );
+		-- Module.Login_Template := KOW_Config.Util.Unbounded_Strings.Default_Value( Config, "login_template", Default_Login_Template );
+		-- Module.Logout_Template:= KOW_Config.Util.Unbounded_Strings.Default_Value( Config, "logout_template", Default_Logout_Template );
+		-- TODO :: configuration
+		null;
 	end Initialize_Request;
 	
-	overriding
-	procedure Process_Head(
-				Module	: in out Login_Controller_Module;
-				Request	: in     AWS.Status.Data;
-				Response:    out Unbounded_String
-			) is
-		-- get the JavaScript functions for submiting login/logout information
-	begin
-		Response := Null_Unbounded_String;
-	end Process_Head;
-
 
 	overriding
 	procedure Process_Body(
 				Module	: in out Login_Controller_Module;
-				Request	: in     AWS.Status.Data;
+				Status	: in     Request_Status_Type;
 				Response:    out Unbounded_String
 			) is
 		-- render the login form/logged user information
@@ -190,8 +140,7 @@ package body KOW_View.Security.Modules is
 	overriding
 	procedure Initialize_Request(
 				Module	: in out Login_Required_Module;
-				Request	: in     AWS.Status.Data;
-				Config	: in out KOW_Config.Config_File_Type
+				Status	: in     Request_Status_Type
 			) is
 	begin
 		if KOW_Sec.Is_Anonymous( KOW_View.Security.Get_user( Request ) ) then

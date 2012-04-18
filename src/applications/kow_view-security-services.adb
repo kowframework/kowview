@@ -70,7 +70,7 @@ package body KOW_View.Security.Services is
 	overriding
 	procedure Process_Custom_Request(
 				Service		: in out Login_Service;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Response	:    out AWS.Response.Data
 			) is
 		-- if username and password are provided, try the login process...
@@ -82,8 +82,8 @@ package body KOW_View.Security.Services is
 		-- else
 		-- 	show the login page
 	
-		P		: constant AWS.Parameters.List := AWS.Status.Parameters( Request );
-		Session_ID	: constant AWS.Session.ID      := AWS.Status.Session( Request );
+		P		: constant AWS.Parameters.List := AWS.Status.Parameters( Status.Request );
+		Session_ID	: constant AWS.Session.ID      := AWS.Status.Session( Status.Request );
 	
 		Username	: constant String := AWS.Parameters.Get( P, "username" );
 		Password	: constant String := AWS.Parameters.Get( P, "password" );
@@ -157,14 +157,14 @@ package body KOW_View.Security.Services is
 	overriding
 	procedure Process_Json_Request(
 				Service		: in out Login_Service;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Response	:    out KOW_Lib.Json.Object_Type
 			) is
 		-- tries the login process returning the user information on success 
 		-- raises exception on errror (and the framework will gently send it back to the caller)
 
-		P		: constant AWS.Parameters.List := AWS.Status.Parameters( Request );
-		Session_ID	: constant AWS.Session.ID      := AWS.Status.Session( Request );
+		P		: constant AWS.Parameters.List := AWS.Status.Parameters( Status.Request );
+		Session_ID	: constant AWS.Session.ID      := AWS.Status.Session( Status.Request );
 	
 		Username	: constant String := AWS.Parameters.Get( P, "username" );
 		Password	: constant String := AWS.Parameters.Get( P, "password" );
@@ -204,13 +204,13 @@ package body KOW_View.Security.Services is
 	overriding
 	procedure Process_Custom_Request(
 				Service		: in out Logout_Service;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Response	:    out AWS.Response.Data
 			) is
 		-- simply logouts and redirects to /
 		-- if there is no user logged in no error is displayed
 
-		Session_ID	: constant AWS.Session.ID      := AWS.Status.Session( Request );
+		Session_ID	: constant AWS.Session.ID      := AWS.Status.Session( Status.Request );
 		Resp		: AWS.Response.Data := AWS.Response.URL ( "/" );
 	begin
 
@@ -224,10 +224,10 @@ package body KOW_View.Security.Services is
 	overriding
 	procedure Process_Json_Request(
 				Service		: in out Logout_Service;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Response	:    out KOW_Lib.Json.Object_Type
 			) is
-		Session_ID	: constant AWS.Session.ID      := AWS.Status.Session( Request );
+		Session_ID	: constant AWS.Session.ID      := AWS.Status.Session( Status.Request );
 		Resp		: AWS.Response.Data := AWS.Response.URL ( "/" );
 		Obj		: KOW_Lib.Json.Object_Type;
 	begin
@@ -249,7 +249,7 @@ package body KOW_View.Security.Services is
 	overriding
 	procedure Process_Custom_Request(
 				Service		: in out User_Info_Service;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Response	:    out AWS.Response.Data
 			) is
 		-- show a simple user information html page
@@ -280,7 +280,7 @@ package body KOW_View.Security.Services is
 	overriding
 	procedure Process_Json_Request(
 				Service		: in out User_Info_Service;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Response	:    out KOW_Lib.Json.Object_Type
 			) is
 		-- return a json object with user: to_json(loged_user);
@@ -297,16 +297,15 @@ package body KOW_View.Security.Services is
 
 	procedure Do_Switch(
 				Service	: Switch_User_Service;
-				Request	: in AWS.Status.Data
+				Status	: Request_Status_Type
 			) is
 		Criteria	: KOW_Sec.Authorization_Criterias.Role_Criteria_Type;
-		Session_ID	: constant AWS.Session.ID      := AWS.Status.Session( Request );
+		Session_ID	: constant AWS.Session.ID      := AWS.Status.Session( Status.Request );
 
 
 		function Identity return KOW_Sec.User_Identity_Type is
-			URI : constant String := AWS.Status.URI( Request );
 		begin
-			return KOW_Sec.To_Identity( Local_URI( Service, URI, True ) );-- TODO :: get the identity from the url
+			return KOW_Sec.To_Identity( To_String( Status.Local_URI ) );-- TODO :: get the identity from the url
 		end Identity;
 	begin
 		Criteria.Descriptor := Ada.Strings.Unbounded.To_Unbounded_String( String( KOW_Sec.Identity( Switch_User ) ) );
@@ -329,17 +328,17 @@ package body KOW_View.Security.Services is
 	overriding
 	procedure Process_Custom_Request(
 				Service		: in out Switch_User_Service;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Response	:    out AWS.Response.Data
 			) is
 	begin
-		Do_Switch( Service, Request );
+		Do_Switch( Service, Status );
 	end Process_Custom_Request;
 	
 	overriding
 	procedure Process_Json_Request(
 				Service		: in out Switch_User_Service;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Response	:    out KOW_Lib.Json.Object_Type
 			) is
 	begin
