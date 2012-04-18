@@ -42,7 +42,7 @@ package body KOW_View.Modules.Util is
 
 	function Get_Name( Module_Tag : in Ada.Tags.Tag ) return String is
 	begin
-		return KOW_View.Util.Get_Type_Name( Module_Tag, "_module" );
+		return To_String( KOW_View.Util.Get_Type_Name( Module_Tag, "_module" ) );
 	end Get_Name;
 
 end KOW_View.Modules.Util;

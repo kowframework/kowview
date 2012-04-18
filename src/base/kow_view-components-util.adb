@@ -47,10 +47,10 @@ package body KOW_View.Components.Util is
 
 	function Get_Name( Component_Tag : in Ada.Tags.Tag ) return String is
 	begin
-		return KOW_View.Util.Get_Type_Name(
+		return To_String( KOW_View.Util.Get_Type_Name(
 						Component_Tag,
 						"_component"
-					);
+					) );
 	end Get_Name;
 
 

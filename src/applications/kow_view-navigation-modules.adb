@@ -69,8 +69,10 @@ package body KOW_View.Navigation.Modules is
 				Status		: in     Request_Status_Type
 			) is
 	begin
-		Module.Config := Config;
-		Module.Dijit_Menu_Bar := KOW_Config.Util.Booleans.Default_Value( Config, "dijit_menu_bar", True );
+		-- TODO :: configuration
+		-- Module.Config := Config;
+		-- Module.Dijit_Menu_Bar := KOW_Config.Util.Booleans.Default_Value( Config, "dijit_menu_bar", True );
+		null;
 	end Initialize_Request;
 
 
@@ -78,7 +80,7 @@ package body KOW_View.Navigation.Modules is
 	overriding
 	procedure Process_Body(
 				Module		: in out Menu_Module;
-				Status		: in     Request_Status_Type
+				Status		: in     Request_Status_Type;
 				Response	:    out Unbounded_String
 			) is
 		-- return a html list (ul) with the given menu
@@ -86,11 +88,14 @@ package body KOW_View.Navigation.Modules is
 		URI		: constant String := AWS.Status.URI( Status.Request );
 
 
-		procedure Append_Disabled( Menu_Item : in Menu_ITem_Type ) is
+		procedure Append_Disabled( Menu_Item : in Menu_Item_Type ) is
 		begin
-			if Menu_Item.Disable_When_Active and then Is_Active( Menu_Module'Class( Module ), Request, Menu_Item ) then
-				Append( Response, " disabled" );
-			end if;
+			null;
+			-- TODO :: configuration
+			-- TODO :: the following line got broken
+			--if Menu_Item.Disable_When_Active and then Is_Active( Menu_Module'Class( Module ), Status.Request, Menu_Item ) then
+			--	Append( Response, " disabled" );
+			--end if;
 		end Append_Disabled;
 
 		procedure Dijit_Iterator( C : in Menu_Item_Vectors.Cursor ) is
@@ -159,7 +164,7 @@ package body KOW_View.Navigation.Modules is
 
 
 	begin
-		Initialize_Menu_Items( Menu_Module'Class( Module ), Request );
+		Initialize_Menu_Items( Menu_Module'Class( Module ), Status );
 
 
 		if Module.Dijit_Menu_Bar then
@@ -459,8 +464,7 @@ package body KOW_View.Navigation.Modules is
 
 		KOW_View.Components.Initialize_Request(
 				Module	=> Module.Current.Module.all,
-				Status	=> Status,
-				Config	=> Current_Config
+				Status	=> Status
 			);
 	end Initialize_Request;
 

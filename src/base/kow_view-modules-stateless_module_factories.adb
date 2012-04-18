@@ -48,7 +48,7 @@ package body KOW_View.Modules.Stateless_Module_Factories is
 
 	overriding
 	procedure Create(
-				Delegator	: in out Module_Factory_Type;
+				Factory		: in out Module_Factory_Type;
 				Status		: in     Request_Status_Type;
 				Module_Id	: in     Positive;
 				Request_Mode	: in     Request_Mode_Type;
@@ -81,7 +81,7 @@ package body KOW_View.Modules.Stateless_Module_Factories is
 begin
 	KOW_View.Components.Register_Module_Factory(
 				Component	=> Component.all,
-				Name		=> To_Unbounded_String( KOW_View.Modules.Util.Get_Name( Module_Type'Tag ) ),
+				Name		=> From_String( KOW_View.Modules.Util.Get_Name( Module_Type'Tag ) ),
 				Factory		=> Factory_Instance'Access
 			);
 

@@ -57,6 +57,7 @@ package body KOW_View.Modules.Stateful_Module_Factories is
 				Module_Id	: in Positive
 			) return String is
 		ID_Str : constant String := Ada.Strings.Fixed.Trim( Positive'Image( Module_Id ), Ada.Strings.Both );
+		Context : constant String := AWS.Status.URI( Status.Request );
 	begin
 		if KOW_View.Enable_Virtual_Host then
 			return Module_Container_Key_Prefix & Context & "::" & Virtual_Host & "::" & ID_Str;
@@ -70,16 +71,16 @@ package body KOW_View.Modules.Stateful_Module_Factories is
 			Virtual_Host	: in KOW_View.Virtual_Host_Name_Type;
 			Module_Id	: in Positive
 		) return Module_Type is
-		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
+		Session_ID  : constant AWS.Session.ID := AWS.Status.Session( Status.Request );
 	begin
 		return Module_Data.Get( Session_ID, Get_Key( Status, Virtual_Host, Module_ID ) );
 	end Get;
 	
 	procedure Set(
-			Request		: in AWS.Status.Data;
+			Status		: in Request_Status_Type;
 			Module		: in Module_Type
 		) is
-		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
+		Session_ID  : constant AWS.Session.ID := AWS.Status.Session( Status.Request );
 	begin
 		Module_Data.Set(
 					SID	=> Session_Id,
@@ -98,7 +99,6 @@ package body KOW_View.Modules.Stateful_Module_Factories is
 	procedure Create(
 				Delegator	: in out Module_Factory_Type;
 				Status		: in     Request_Status_Type;
-				Context		: in     String;
 				Module_Id	: in     Positive;
 				Request_Mode	: in     Request_Mode_Type;
 				Virtual_Host	: in     KOW_View.Virtual_Host_Name_Type;
@@ -108,7 +108,6 @@ package body KOW_View.Modules.Stateful_Module_Factories is
 		
 		The_Module : Module_Type_Access := new Module_Type'( Get( Status, Virtual_Host, Module_ID ) );
 	begin
-		The_Module.Context := Ada.Strings.Unbounded.To_Unbounded_String( Context );
 		The_Module.ID := Module_id;
 		The_Module.ID_Count := 0;
 		The_Module.Component := Component_Ptr( Component );
@@ -126,14 +125,14 @@ package body KOW_View.Modules.Stateful_Module_Factories is
 			) is
 		-- free the module access type
 	begin
-		Set( Status.Request, Module_Type( Module.all ) );
+		Set( Status, Module_Type( Module.all ) );
 		Free( Module_Type_Access( Module ) );
 	end Destroy;
 begin
 
 	KOW_View.Components.Register_Module_Factory(
 				Component	=> Component.all,
-				Name		=> To_Unbounded_String( KOW_View.Modules.Util.Get_Name( Module_Type'Tag ) ),
+				Name		=> From_String( KOW_View.Modules.Util.Get_Name( Module_Type'Tag ) ),
 				Factory		=> Factory_Instance'Access
 			);
 

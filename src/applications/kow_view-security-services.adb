@@ -102,9 +102,9 @@ package body KOW_View.Security.Services is
 										Service			=> Service,
 										Template_Resource	=> Login_Page,
 										Template_Extension	=> HTML,
-										Virtual_Host		=> KOW_View.Virtual_Host( Request ),
+										Virtual_Host		=> KOW_View.Virtual_Host( Status.Request ),
 										Parameters		=> Params,
-										Locale			=> KOW_View.Locales.Get_Locale( Request )
+										Locale			=> KOW_View.Locales.Get_Locale( Status.Request )
 									)
 --						Encoding	=> AWS.Messages.Deflate
 					);
@@ -146,9 +146,9 @@ package body KOW_View.Security.Services is
 									Service			=> Service,
 									Template_Resource	=> Login_Error_Page,
 									Template_Extension	=> HTML,
-									Virtual_Host		=> KOW_View.Virtual_Host( Request ),
+									Virtual_Host		=> KOW_View.Virtual_Host( Status.Request ),
 									Parameters		=> Params,
-									Locale			=> KOW_View.Locales.Get_Locale( Request )
+									Locale			=> KOW_View.Locales.Get_Locale( Status.Request )
 								)
 							);
 			end;
@@ -257,7 +257,7 @@ package body KOW_View.Security.Services is
 		use KOW_Sec;
 		use Templates_Parser;
 	
-		User	: User_Data_Type := Get_User( Request ).Data;
+		User	: User_Data_Type := Get_User( Status.Request ).Data;
 		Params	: Translate_Set;
 	begin
 		Insert( Params, User );
@@ -268,9 +268,9 @@ package body KOW_View.Security.Services is
 							Service			=> Service,
 							Template_Resource	=> User_Info_Page,
 							Template_Extension	=> HTML,
-							Virtual_Host		=> KOW_View.Virtual_Host( Request ),
+							Virtual_Host		=> KOW_View.Virtual_Host( Status.Request ),
 							Parameters		=> Params,
-							Locale			=> KOW_View.Locales.Get_Locale( Request )
+							Locale			=> KOW_View.Locales.Get_Locale( Status.Request )
 						)
 					);
 
@@ -286,7 +286,7 @@ package body KOW_View.Security.Services is
 		-- return a json object with user: to_json(loged_user);
 		Object : KOW_Lib.Json.Object_Type;
 	begin
-		KOW_Lib.Json.Set( Object, "user", KOW_Sec.To_Json( KOW_View.Security.Get_user( Request ).Data ) );
+		KOW_Lib.Json.Set( Object, "user", KOW_Sec.To_Json( KOW_View.Security.Get_user( Status.Request ).Data ) );
 		Response := Object;
 	end Process_Json_Request;
 
@@ -309,7 +309,7 @@ package body KOW_View.Security.Services is
 		end Identity;
 	begin
 		Criteria.Descriptor := Ada.Strings.Unbounded.To_Unbounded_String( String( KOW_Sec.Identity( Switch_User ) ) );
-		KOW_Sec.Accounting.Require( Criteria, KOW_View.Security.Get_User( Request ), Accountant'Access );
+		KOW_Sec.Accounting.Require( Criteria, KOW_View.Security.Get_User( Status.Request ), Accountant'Access );
 
 
 		KOW_View.Security.User_Data.Set(
@@ -342,7 +342,7 @@ package body KOW_View.Security.Services is
 				Response	:    out KOW_Lib.Json.Object_Type
 			) is
 	begin
-		Do_Switch( Service, Request );
+		Do_Switch( Service, Status );
 	end Process_Json_Request;
 
 

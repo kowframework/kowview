@@ -10,6 +10,13 @@ Things that should be done to the 3.0 release:
 		Get_Config( Service, Config := "setup" );   => ./components/[component]/[service]_service/[config].cfg
 		Get_Config( Module, Config := "setup" );    => ./components/[component]/[module]_module/[config].cfg
 
+	* page service
+	* menu module
+	* security module
+	* any other configurable module/service
+	* module factories and get_name(module) should be refactored
+	* look for and remove unused *.Util modules
+
 
 
 The config (and resource) path should be default to:
