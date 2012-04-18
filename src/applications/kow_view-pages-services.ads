@@ -67,7 +67,6 @@ package KOW_View.Pages.Services is
 	type Complete_Module_Type is record
 		Module	: KOW_View.Components.Module_Ptr;
 		Factory	: KOW_View.Components.Module_Factory_Ptr;
-		Config	: KOW_Config.Config_File_Type;
 	end record;
 
 	type Complete_Module_Array is array( Positive range <> ) of Complete_Module_Type;

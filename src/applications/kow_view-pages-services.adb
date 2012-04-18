@@ -87,7 +87,7 @@ package body KOW_View.Pages.Services is
 	overriding
 	procedure Process_Json_Request(
 			Service	: in out Page_Service;
-			Request	: in     AWS.Status.Data;
+			Status	: in     Request_Status_Type;
 			Response:    out KOW_Lib.Json.Object_Type
 		) is
 		-- run initialize for each one of the modules in the page
@@ -95,10 +95,10 @@ package body KOW_View.Pages.Services is
 
 		use KOW_View.Themes.Template_Processors;
 
-		Params		: AWS.Parameters.List := AWS.Status.Parameters( Request );
+		Params		: AWS.Parameters.List := AWS.Status.Parameters( Status.Request );
 
 
-		Page		: constant String := Get_Page( Service, Request );
+		Page		: constant String := Get_Page( Service, Status.Request );
 		Json_Module_Str	: constant String := AWS.Parameters.Get( Params, "module_id" );
 		Config		: KOW_Config.Config_File_Type := Util.Get_Config_File( Page );
 		Template	: KOW_View.Themes.Template_Type := Util.Get_Template( Config );
@@ -114,8 +114,7 @@ package body KOW_View.Pages.Services is
 		begin
 			Create(
 					Factory		=> Complete.Factory.all,
-					Request		=> Request,
-					Context		=> Page,
+					Status		=> Status,
 					Module_ID	=> Module_ID,
 					Request_Mode	=> Json_Request,
 					Virtual_Host	=> KOW_View.Virtual_Host( Request ),
@@ -131,8 +130,7 @@ package body KOW_View.Pages.Services is
 		begin
 			Initialize_Request(
 					Module	=> Complete.Module.all,
-					Request	=> Request,
-					Config	=> Complete.Config
+					Status	=> Status
 				);
 		end Initialize;
 
@@ -141,7 +139,7 @@ package body KOW_View.Pages.Services is
 		begin
 			Finalize_Request(
 					Module	=> Complete.Module.all,
-					Request	=> Request
+					Status	=> Status
 				);
 		end Finalize;
 
@@ -149,7 +147,7 @@ package body KOW_View.Pages.Services is
 		begin
 			Destroy(
 					Factory		=> Complete.Factory.all,
-					Request		=> Request,
+					Status		=> Status,
 					Module		=> Complete.Module
 				);
 		end Destroy;
@@ -171,7 +169,7 @@ package body KOW_View.Pages.Services is
 	
 			KOW_View.Components.Process_Json_Request(
 						Module	=> Modules( Integer'Value( Json_Module_Str ) ).Module.all,
-						Request	=> Request,
+						Status	=> Status,
 						Response=> Response
 					);
 		
@@ -195,9 +193,9 @@ package body KOW_View.Pages.Services is
 	begin
 		Process_Custom_Request(
 					Service		=> Service,
-					Request		=> Request,
+					Status		=> Status,
 					Response	=> Response,
-					Page		=> Get_Page( Service, Request ),
+					Page		=> Get_Page( Service, Status ),
 					Initialize_Only	=> False
 				);
 	end Process_Custom_Request;
@@ -228,13 +226,12 @@ package body KOW_View.Pages.Services is
 		Module_Id	: Positive := 1;
 
 
-		Virtual_Host	: constant KOW_View.Virtual_Host_Name_Type := KOW_View.Virtual_Host( Request );
+		Virtual_Host	: constant KOW_View.Virtual_Host_Name_Type := KOW_View.Virtual_Host( Status.Request );
 		procedure Create( Complete : in out Complete_Module_Type ) is
 		begin
 			Create(
 					Factory		=> Complete.Factory.all,
-					Request		=> Request,
-					Context		=> Page,
+					Status		=> Status,
 					Module_ID	=> Module_ID,
 					Request_mode	=> Custom_Request,
 					Virtual_Host	=> Virtual_Host,
@@ -259,8 +256,7 @@ package body KOW_View.Pages.Services is
 		begin
 			Initialize_Request(
 					Module	=> Complete.Module.all,
-					Request	=> Request,
-					Config	=> Complete.Config
+					Status	=> Status
 				);
 		end Initialize;
 
@@ -272,7 +268,7 @@ package body KOW_View.Pages.Services is
 			if Process_Module( id ) then
 				Process_Body(
 						Module		=> Complete.Module.all,
-						Request		=> Request,
+						Status		=> Status,
 						Response	=> Body_Buffers( id )
 					);
 			end if;
@@ -317,7 +313,7 @@ package body KOW_View.Pages.Services is
 		begin
 			Finalize_Request(
 					Module	=> Complete.Module.all,
-					Request	=> Request
+					Request	=> Status
 				);
 		end Finalize;
 
@@ -403,7 +399,7 @@ package body KOW_View.Pages.Services is
 		Processor.Title := Service.Title;
 		Processor.Author := Service.Author;
 
-		Process( Processor, Request, Response );
+		Process( Processor, Status.Request, Response );
 	exception
 		when e : others =>
 			-- remember to destroy...
@@ -518,7 +514,7 @@ package body KOW_View.Pages.Services is
 	overriding
 	procedure Process_Json_Request(
 			Service	: in out Dir_Service;
-			Request	: in     AWS.Status.Data;
+			Status	: in     Request_Status_Type;
 			Response:    out KOW_Lib.Json.Object_Type
 		) is
 		use KOW_Lib.Json;
@@ -577,7 +573,7 @@ package body KOW_View.Pages.Services is
 	overriding
 	procedure Process_Custom_Request(
 			Service		: in out Dir_Service;
-			Request		: in     AWS.Status.Data;
+			Status		: in     Request_Status_Type;
 			Response	:    out AWS.Response.Data
 		) is
 		use Ada.Strings.Unbounded;

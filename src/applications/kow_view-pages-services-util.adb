@@ -84,7 +84,6 @@ package body KOW_View.Pages.Services.Util is
 		Module		: Complete_Module_Type;
 	begin
 
-		Module.Config	:= Module_Config;
 		Module.Factory := Module_Factory_Ptr( Get_Module_Factory(
 							Component	=> Registry.Get_Component( Component_Name ).all,
 							Name		=> From_String( Default_Value( Module_Config, "module" ) )
