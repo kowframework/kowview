@@ -71,6 +71,24 @@ package body KOW_View is
 
 
 
+	----------------
+	-- Core Types --
+	----------------
+
+	function From_String( Str : in String ) return Path_Type is
+		-- convert any-lenghted str to path_type (if str'length > path_type'length raises constraint error)
+		Path : Path_Type;
+	begin
+		KOW_Lib.String_Util.Copy( From => Str, To => String( Path ) );
+		return Path;
+	end From_String;
+
+	function To_String( Path : in Path_Type ) return String is
+		-- convert the path into a trimmed string
+	begin
+		return Ada.Strings.Fixed.Trim( String( Path ), Ada.Strings.Right );
+	end To_String;
+
 	function Process_Request( Request : in AWS.Status.Data ) return AWS.Response.Data is
 		-- this is the main function... it's the AWS callback used all around.
 		-- notice that in the v2.0 release the package KOW_View.Service_Mappings was extinguished

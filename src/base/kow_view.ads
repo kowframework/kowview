@@ -86,6 +86,13 @@ package KOW_View is
 
 	No_Path : constant Path_Type := ( others => ' ' );
 
+
+	function From_String( Str : in String ) return Path_Type;
+	-- convert any-lenghted str to path_type (if str'length > path_type'length raises constraint error)
+
+	function To_String( Path : in Path_Type ) return String;
+	-- convert the path into a trimmed string
+
 	subtype Component_Name_Type is Path_Type;
 	subtype Service_Name_Type   is Path_Type;
 	subtype Module_Name_Type    is Path_Type;
