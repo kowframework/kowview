@@ -54,7 +54,7 @@ package KOW_View.Services is
 	-- Service Delegator Type --
 	----------------------------
 
-	type Service_Dispatcher_Type is new KOW_View.Request_Dispatchers.Implementations.Prefix_Request_Dispatcher_Type with record
+	type Service_Dispatcher_Type is new KOW_View.Request_Dispatchers.Implementations.Prefix_Dispatcher_Type with record
 		Component_Name	: Component_Name_Type;
 		Component	: Components.Component_Ptr;
 		Service_Name	: Service_Name_Type;
@@ -71,7 +71,7 @@ package KOW_View.Services is
 
 	overriding
 	procedure Setup_Status(
-				Dispatcher	: in     Base_Dispatcher_Type;
+				Dispatcher	: in     Service_Dispatcher_Type;
 				Request		: in     AWS.Status.Data;
 				Status		: in out Request_Status_Type
 			);

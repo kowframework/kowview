@@ -93,7 +93,7 @@ package body KOW_View.Services.Stateful_Service_Cycles is
 	overriding
 	procedure Process_Custom_Request(
 			Delegator	: in out Service_Delegator_Type;
-			Status		: in     Request_Status_Type
+			Status		: in     Request_Status_Type;
 			Response	:    out AWS.Response.Data
 		) is
 		Container : Service_Container_Type := Get( Status.Request );

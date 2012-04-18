@@ -39,6 +39,7 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 -------------------
 -- KOW Framework --
 -------------------
+with KOW_Lib.Json;
 with KOW_Sec.Accounting;
 
 

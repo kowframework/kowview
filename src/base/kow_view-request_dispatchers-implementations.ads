@@ -46,7 +46,7 @@ package KOW_View.Request_Dispatchers.Implementations is
 	-- Base Dispatcher Type --
 	--------------------------
 
-	type Base_Dispatcher_Type is abstract new Request_Dispatcher_Interface with private;
+	type Base_Dispatcher_Type is abstract new Request_Dispatcher_Interface with null record;
 
 	procedure Setup_Status(
 				Dispatcher	: in     Base_Dispatcher_Type;
@@ -61,7 +61,7 @@ package KOW_View.Request_Dispatchers.Implementations is
 	-- Prefix Dispatcher Type --
 	----------------------------
 
-	type Prefix_Dispatcher_Type is abstract new Request_Dispatcher_Interface with private;
+	type Prefix_Dispatcher_Type is abstract new Base_Dispatcher_Type with private;
 
 
 	overriding
@@ -127,7 +127,7 @@ package KOW_View.Request_Dispatchers.Implementations is
 	
 private
 
-	type Prefix_Dispatcher_Type is abstract new Request_Dispatcher_Interface with record
+	type Prefix_Dispatcher_Type is abstract new Base_Dispatcher_Type with record
 		-- the request dispatcher is a singleton object
 
 

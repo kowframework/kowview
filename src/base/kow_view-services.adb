@@ -108,7 +108,7 @@ package body KOW_View.Services is
 
 	overriding
 	procedure Setup_Status(
-				Dispatcher	: in     Base_Dispatcher_Type;
+				Dispatcher	: in     Service_Dispatcher_Type;
 				Request		: in     AWS.Status.Data;
 				Status		: in out Request_Status_Type
 			) is
