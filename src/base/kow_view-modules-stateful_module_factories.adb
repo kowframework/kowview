@@ -52,7 +52,7 @@ package body KOW_View.Modules.Stateful_Module_Factories is
 
 
 	function Get_Key(
-				Context		: in String;
+				Status		: in Request_Status_Type;
 				Virtual_Host	: in KOW_View.Virtual_Host_Name_Type;
 				Module_Id	: in Positive
 			) return String is
@@ -66,14 +66,13 @@ package body KOW_View.Modules.Stateful_Module_Factories is
 	end Get_Key;
 
 	function Get(
-			Request		: in AWS.Status.Data;
-			Context		: in String;
+			Status		: in Request_Status_Type;
 			Virtual_Host	: in KOW_View.Virtual_Host_Name_Type;
 			Module_Id	: in Positive
 		) return Module_Type is
 		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
 	begin
-		return Module_Data.Get( Session_ID, Get_Key( Context, Virtual_Host, Module_ID ) );
+		return Module_Data.Get( Session_ID, Get_Key( Status, Virtual_Host, Module_ID ) );
 	end Get;
 	
 	procedure Set(
@@ -84,7 +83,7 @@ package body KOW_View.Modules.Stateful_Module_Factories is
 	begin
 		Module_Data.Set(
 					SID	=> Session_Id,
-					Key	=> Get_Key( To_String( Module.Context ), Module.Virtual_Host, Module.Id ),
+					Key	=> Get_Key( Status, Module.Virtual_Host, Module.Id ),
 					Value	=> Module
 				);
 	end Set;
@@ -98,7 +97,7 @@ package body KOW_View.Modules.Stateful_Module_Factories is
 	overriding
 	procedure Create(
 				Delegator	: in out Module_Factory_Type;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Context		: in     String;
 				Module_Id	: in     Positive;
 				Request_Mode	: in     Request_Mode_Type;
@@ -107,7 +106,7 @@ package body KOW_View.Modules.Stateful_Module_Factories is
 			) is
 		-- create a module, setting it's ID if necessary
 		
-		The_Module : Module_Type_Access := new Module_Type'( Get( Request, Context, Virtual_Host, Module_ID ) );
+		The_Module : Module_Type_Access := new Module_Type'( Get( Status, Virtual_Host, Module_ID ) );
 	begin
 		The_Module.Context := Ada.Strings.Unbounded.To_Unbounded_String( Context );
 		The_Module.ID := Module_id;
@@ -122,12 +121,12 @@ package body KOW_View.Modules.Stateful_Module_Factories is
 	overriding
 	procedure Destroy(
 				Delegator	: in out Module_Factory_Type;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Module		: in out Module_Ptr
 			) is
 		-- free the module access type
 	begin
-		Set( Request, Module_Type( Module.all ) );
+		Set( Status.Request, Module_Type( Module.all ) );
 		Free( Module_Type_Access( Module ) );
 	end Destroy;
 begin

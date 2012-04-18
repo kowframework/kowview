@@ -73,20 +73,19 @@ pragma Elaborate_Body( KOW_View.Modules.Stateful_Module_Factories );
 	
 
 	function Get_Key(
-			Context		: in String;
+			Status		: in Request_Status_Type;
 			Virtual_Host	: in KOW_View.Virtual_Host_Name_Type;
 			Module_Id	: in Positive
 		) return String;
 
 	function Get(
-			Request		: in AWS.Status.Data;
-			Context		: in String;
+			Status		: in Request_Status_Type;
 			Virtual_Host	: in KOW_View.Virtual_Host_Name_Type;
 			Module_Id	: in Positive
 		) return Module_Type;
 	
 	procedure Set(
-			Request		: in AWS.Status.Data;
+			Status		: in Request_Status_Type;
 			Module		: in Module_Type
 		);
 
@@ -101,7 +100,7 @@ pragma Elaborate_Body( KOW_View.Modules.Stateful_Module_Factories );
 	overriding
 	procedure Create(
 				Delegator	: in out Module_Factory_Type;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Module_Id	: in     Positive;
 				Request_Mode	: in     Request_Mode_Type;
 				Virtual_Host	: in     KOW_View.Virtual_Host_Name_Type;
@@ -112,7 +111,7 @@ pragma Elaborate_Body( KOW_View.Modules.Stateful_Module_Factories );
 	overriding
 	procedure Destroy(
 				Delegator	: in out Module_Factory_Type;
-				Request		: in     AWS.Status.Data;
+				Status		: in     Request_Status_Type;
 				Module		: in out Module_Ptr
 			);
 	-- free the module access type
