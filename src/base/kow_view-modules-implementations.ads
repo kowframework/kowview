@@ -42,7 +42,6 @@ with Ada.Strings.Unbounded;			use Ada.Strings.Unbounded;
 -------------------
 -- KOW Framework --
 -------------------
-with KOW_Config;
 with KOW_View.Modules;
 
 
@@ -57,8 +56,7 @@ package KOW_View.Modules.Implementations is
 	overriding
 	procedure Initialize_Request(
 			Module		: in out Resource_Module;
-			Status		: in     Request_Status_Type;
-			Config		: in out KOW_Config.Config_File_Type
+			Status		: in     Request_Status_Type
 		);
 
 	overriding

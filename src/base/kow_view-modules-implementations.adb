@@ -34,7 +34,6 @@ with Ada.Text_IO;
 -------------------
 -- KOW Framework --
 -------------------
-with KOW_Config;
 with KOW_Lib.Locales;
 with KOW_View.Locales;
 with KOW_View.Modules;
@@ -45,11 +44,12 @@ package body KOW_View.Modules.Implementations is
 	overriding
 	procedure Initialize_Request(
 			Module		: in out Resource_Module;
-			Status		: in     Request_Status_Type;
-			Config		: in out KOW_Config.Config_File_Type
+			Status		: in     Request_Status_Type
 		) is
 	begin
-		Module.Resource := To_Unbounded_String( KOW_Config.Default_Value( Config, "resource" ) );
+		null;
+		--Module.Resource := To_Unbounded_String( KOW_Config.Default_Value( Config, "resource" ) );
+		-- TODO :: configuration
 	end Initialize_Request;
 
 
@@ -62,7 +62,7 @@ package body KOW_View.Modules.Implementations is
 		-- return the content specified by the configuration
 
 		Resource_URI	: constant String := To_String( Module.Resource );
-		Locale		: constant KOW_Lib.Locales.Locale_Type := KOW_View.Locales.Get_Locale( Request );
+		Locale		: constant KOW_Lib.Locales.Locale_Type := KOW_View.Locales.Get_Locale( Status.Request );
 
 		Extension	: constant String := Ada.Directories.Extension( Resource_URI );
 
