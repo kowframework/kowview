@@ -26,7 +26,7 @@ project kvdriver is
 	-- Main Variables --
 	--------------------
 
-	Project := $project;
+	Project_Name := $project;
 	version	:= $version;
 	OS	: Supported_OS	:= external( "OS", "GNU/Linux" );
 	Debug	: True_False	:= external( "DEBUG", "false" );
@@ -40,7 +40,7 @@ project kvdriver is
 	----------------
 
 
-	for Source_Dirs use ( "../../include/" & Project & "/" );
+	for Source_Dirs use ( "../../include/" & Project_Name & "/" );
 	for Externally_Built use External( "KVDRIVER_EXTERNALLY_BUILT", "true" );
 	for Exec_Dir use "../../bin/";
 	for Main use ("kvdriver");

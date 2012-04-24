@@ -333,6 +333,9 @@ package body KOW_View.Security.Services is
 			) is
 	begin
 		Do_Switch( Service, Status );
+		-- no need to set the Response; but we'll do it anyway so the compiler won't
+		-- give an ugly message
+		Response := AWS.Response.Build( "", "" );
 	end Process_Custom_Request;
 	
 	overriding
@@ -343,6 +346,13 @@ package body KOW_View.Security.Services is
 			) is
 	begin
 		Do_Switch( Service, Status );
+		-- no need to set the Response; but we'll do it anyway so the compiler won't
+		-- give an ugly message
+		declare
+			Obj : KOW_lib.Json.Object_Type;
+		begin
+			Response := Obj;
+		end;
 	end Process_Json_Request;
 
 
