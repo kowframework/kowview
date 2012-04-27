@@ -53,8 +53,61 @@ with AWS.Response;
 package KOW_View.Services.Implementations is
 
 
+	------------------
+	-- KTML Service --
+	------------------
 
-	type Resource_Service is new KOW_View.Services.Service_Type with null record;
+
+	type KTML_Service is abstract new KOW_View.Services.Service_Type with null record;
+
+
+	overriding
+	procedure Process_Custom_Request(
+				Service		: in out KTML_Service;
+				Status		: in     Request_Status_Type;
+				Response	:    out AWS.Response.Data
+			);
+	-- call's Process_Json_Request and process the:
+	--
+	-- The template used is by default the module resource "success.ktml". It means:
+	--
+	-- 	[module_name]_module/success.ktml
+	-- template using the json response as the initial state for the KTML parser.
+	--
+	-- if The parameter "response" is set then uses the template [response_value].ktml, ie:
+	-- 	[module_name]_module/[response_value].ktml
+	--
+	-- Localization is considered. :)
+	--
+	-- All the calls are dynamically dispatched
+
+
+
+	procedure Build_KTML_Response(
+				Service		: in out KTML_Service;
+				Status		: in     Request_Status_Type;
+				Template	: in     String;
+				Initial_State	: in     KOW_Lib.Json.Object_Type;
+				Response	:    out AWS.Response.Data
+			);
+	-- build the KTML response, being:
+	-- 	template	: the name of the template being used, without the extension (assumed to be ktml)
+	-- Localization is considered and the response is deflate encoded 
+
+
+	procedure Set_Response(
+				Service		: in out KTML_Service;
+				Response	: in out KOW_Lib.Json.Object_Type;
+				Value		: in     String
+			);
+	-- set the response for the current request
+
+
+	----------------------
+	-- Resource Service --
+	----------------------
+
+	type Resource_Service is abstract new KOW_View.Services.Service_Type with null record;
 	-- The resource service can be used by your own component to provide
 	-- access to file resources, such as images and static HTML data.
 

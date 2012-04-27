@@ -473,6 +473,182 @@ package body KOW_View.KTML is
 
 
 
+
+
+			-------------------------
+			-- Case Processor Type --
+			-------------------------
+			package Case_Factories is new Generic_Factories( Case_Processor_Type, "kv:case" );
+
+
+			-------------------------
+			-- Case Processor Type --
+			-------------------------
+			overriding
+			procedure Process_Node(
+						Processor	: in out Case_Processor_Type;
+						Doc		: in     DOM.Core.Document;
+						N		: in out DOM.Core.Node;
+						State		: in out KOW_Lib.Json.Object_Type
+					) is
+				-- <kv:case source="the_key_used">
+				--	<kv:when value="the matched value"></kv:when>
+  				--	<kv:when json="{'the matched value','can_be_one_of_an_json_array'}"></kv:when>
+				--	<kv:when key="a_state_variable_name"></kv:when>
+				--	<kv:default>The default value</kv:default>
+				-- </kv:case>
+				--
+				--
+				-- The values are compared as string.
+				-- When using key and json pointing to array, look for elements contained in this array (in any level; it means it works in arrays of arrays)
+				-- When using key and json pointing to object, look for object's keys (only the 1st level)
+
+				Whens		: Node_List := Elements.Get_Elements_By_Tag_Name( N, "kv:when" );
+				Defaults	: Node_List := Elements.Get_Elements_By_Tag_Name( N, "kv:default" );
+
+				Source_Str	: constant String := DOM_Util.Node_Attribute( N, "source", "" );
+			begin
+				if Source_Str = "" then
+					raise PROGRAM_ERROR with "no source specified in the kv:case tag";
+				end if;
+
+				declare
+					Data	: constant KOW_Lib.Json.Data_Type := KOW_Lib.Json.Get( State, Source_Str );
+					Value	: constant String := KOW_Lib.Json.To_String( Data );
+				begin
+					for i in 0 .. Nodes.Length( Whens ) - 1 loop
+						Child_N := Nodes.Item( Whens, i );
+						Process_When(
+								Processor	=> Case_Processor_Type'Class( Proessor ),
+								Doc		=> Doc,
+								N		=> Child_N,
+								State		=> State,
+								Value		=> Value
+							);
+					end loop;
+
+					for i in 0 .. Nodes.Length( Defaults ) - 1 loop
+						Child_N := Nodes.Item( Defaults, i );
+						Process_Default(
+								Processor	=> Case_Processor_Type'Class( Proessor ),
+								Doc		=> Doc,
+								N		=> Child_N,
+								State		=> State
+							);
+					end loop;
+				end;
+
+
+			end Process_Node;	
+
+
+
+			procedure Remove( N : in out DOM.Core.Node ) is
+				-- remove this node from the parent, and frees it
+				Parent : DOM.Core.Node := DOM.Core.Nodes.Parent_Node( N );
+			begin
+				N := DOM.Core.Nodes.Remove_Child( Parent, N );
+				DOM.Core.Nodes.Free( N, true );
+			end Remove;
+
+			procedure Process_When(
+						Processor	: in out Case_Processor_Type;
+						Doc		: in     DOM.Core.Document;
+						N		: in out DOM.Core.Node;
+						State		: in out KOW_Lib.Json.Object_Type;
+						Value		: in     String
+					) is
+				use KOW_Lib.Json;
+
+				procedure Assert_Null( v1, v2 : in String ) is
+				begin
+					if v1 /= "" or v2 /= "" then
+						raise PROGRAM_ERROR with "only one of value, json or key must be set in the kv:when tag";
+					end if;
+				end Assert_Null;
+
+				When_Value	: constant String := Elements.Get_Attribute( N, "value" );
+				When_Json	: constant String := Elements.Get_Attribute( N, "json" );
+				When_Key	: constant String := Elements.Get_Attribute( N, "key" );
+
+				Data		: Json_Data_Type;
+
+
+				function Match( D : in Json_Data_Type ) return Boolean is
+
+					Found : Boolean := False;
+					procedure Array_Iterator( Idx: in Natural; Val : in Json_Data_Type ) is
+					begin
+						if not Found then
+							Found := Match( Val );
+						end if;
+					end Array_Iterator;
+
+					procedure Object_Iterator( Key : in String; Val : in Json_Data_Type ) is
+					begin
+						if not Found and then Key = Value then
+							Found := True;
+						end if;
+					end Object_Iterator;
+				begin
+					case Get_Type( D ) is
+						when Json_Array =>
+							Iterate( From_Data( D ), Array_Iterator'Access );
+							return Found;
+						when Json_Object =>
+							Iterate( From_Data( D ), Object_Iterator'Access );
+							return Found;
+						when others =>
+							return To_String( D )  = Value;
+					end case;
+				end Match;
+			begin
+				if Processor.Value_Found then
+					Remove( N );
+					return;
+				end if;
+
+				if When_Value /= "" then
+					Assert_Null( When_Json, When_Key );
+					if Value /= When_Value then
+						Remove( N );
+						return;
+					end if;
+
+					-- TODO :: process this node
+					return;
+				elsif When_Json /= "" then
+					Assert_Null( When_Key, "" );
+					Data := From_Json( When_Json );
+				elsif When_Key /= "" then
+					Data := Get( State, When_Key );
+				else
+					raise PROGRAM_ERROR with "one of value, json or key is needed in kv:when tag";
+				end if;
+
+				if Match( Data ) then
+					-- TODO :: process this node
+				else
+					Remove( N );
+				end if;
+
+			end Process_When;
+			
+			procedure Process_Default(
+						Processor	: in out Case_Processor_Type;
+						Doc		: in     DOM.Core.Document;
+						N		: in out DOM.Core.Node;
+						State		: in out KOW_Lib.Json.Object_Type
+					) is
+				if Processor.Value_Found then
+					Remove( N );
+					return;
+				end if;
+			end Process_Defaults;
+
+
+
+
 			-------------------------
 			-- Each Processor Type --
 			-------------------------

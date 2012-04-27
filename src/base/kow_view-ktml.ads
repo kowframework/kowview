@@ -50,23 +50,10 @@ with DOM.Core;
 -- The KTML is a superset of the XHTML language. Actually, it's just a
 -- smart way to deal with XML files.
 
-
--- TODO: filters in string processing:: ie ${key|filter_name}
--- TODO: useful filters: message (module/request aware), if_set, parameter (module/request aware), user (kowsec for getting user data such as ${first_name|user}
--- TODO: the template_parser type with important variables such as the dom document and the filter map
--- TODO: kv:if
--- TODO: kv:case
--- TODO: kv:if_set
--- TODO: kv:region (this one will require some sort of
---
--- TODO: kv:extends/kv:extension_point => maybe it's not really needed
-
 package KOW_View.KTML is
 
 
 	Logger : constant KOW_Lib.Log.Logger_Type := KOW_Lib.Log.Get_Logger( "KOW_View.KTML" );
-	
-
 
 
 	-------------------
@@ -272,6 +259,55 @@ package KOW_View.KTML is
 					);
 			-- create the item representing empty iterators if needed (ie, no call to create_item has been made and
 			-- there is the <kv:empty> child element in this iterator parent node
+
+
+
+
+			-------------------------
+			-- Case Processor Type --
+			-------------------------
+
+			type Case_Processor_Type is new Defaults.Processor_Type with record
+				Value_Found	: Boolean := False;
+			end record;
+
+
+			overriding
+			procedure Process_Node(
+						Processor	: in out Case_Processor_Type;
+						Doc		: in     DOM.Core.Document;
+						N		: in out DOM.Core.Node;
+						State		: in out KOW_Lib.Json.Object_Type
+					);
+			-- <kv:case source="the_key_used">
+			--	<kv:when value="the matched value"></kv:when>
+  			--	<kv:when json="{'the matched value','can_be_one_of_an_json_array'}"></kv:when>
+			--	<kv:when key="a_state_variable_name"></kv:when>
+			--	<kv:default>The default value</kv:default>
+			-- </kv:case>
+			--
+			--
+			-- The values are compared as string.
+			-- When using key and json pointing to array, look for elements contained in this array (in any level; it means it works in arrays of arrays)
+			-- When using key and json pointing to object, look for object's keys (only the 1st level)
+
+
+
+			procedure Process_When(
+						Processor	: in out Case_Processor_Type;
+						Doc		: in     DOM.Core.Document;
+						N		: in out DOM.Core.Node;
+						State		: in out KOW_Lib.Json.Object_Type;
+						Value		: in     String
+					);
+			
+			procedure Process_Default(
+						Processor	: in out Case_Processor_Type;
+						Doc		: in     DOM.Core.Document;
+						N		: in out DOM.Core.Node;
+						State		: in out KOW_Lib.Json.Object_Type
+					);
+
 
 			-------------------------
 			-- Each Processor Type --

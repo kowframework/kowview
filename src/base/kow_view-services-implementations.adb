@@ -34,6 +34,7 @@ with Ada.Directories;
 -------------------
 with KOW_Lib.Json;
 with KOW_Lib.Locales;
+with KOW_View.KTML;
 with KOW_View.Locales;
 with KOW_View.Services;
 with KOW_View.Services.Util;
@@ -48,6 +49,104 @@ with AWS.Status;
 with AWS.Response;
 
 package body KOW_View.Services.Implementations is
+
+
+
+	------------------
+	-- KTML Service --
+	------------------
+
+
+	Resp_Att: constant String := "response";
+
+	overriding
+	procedure Process_Custom_Request(
+				Service		: in out KTML_Service;
+				Status		: in     Request_Status_Type;
+				Response	:    out AWS.Response.Data
+			) is
+		-- call's Process_Json_Request and process the:
+		--
+		-- The template used is by default the module resource "success.ktml". It means:
+		--
+		-- 	[module_name]_module/success.ktml
+		-- template using the json response as the initial state for the KTML parser.
+		--
+		-- if The parameter "response" is set then uses the template [response_value].ktml, ie:
+		-- 	[module_name]_module/[response_value].ktml
+		--
+		-- Localization is considered. :)
+
+		Object : KOW_Lib.Json.Object_Type;
+	begin
+		Process_Json_Request(
+					Service		=> KTML_Service'Class( Service ),
+					Status		=> Status,
+					Response	=> Object
+				);
+
+		if KOW_Lib.Json.Contains( Object, Resp_Att ) then
+			Build_KTML_Response(
+						Service		=> KTML_Service'Class( Service ),
+						Status		=> Status,
+						Template	=> KOW_Lib.Json.Get( Object, Resp_Att ),
+						Initial_State	=> Object,
+						Response	=> Response
+					);
+		else
+			Build_KTML_Response(
+						Service		=> KTML_Service'Class( Service ),
+						Status		=> Status,
+						Template	=> "success",
+						Initial_State	=> Object,
+						Response	=> Response
+					);
+		end if;
+
+	end Process_Custom_Request;
+
+
+	procedure Build_KTML_Response(
+				Service		: in out KTML_Service;
+				Status		: in     Request_Status_Type;
+				Template	: in     String;
+				Initial_State	: in     KOW_Lib.Json.Object_Type;
+				Response	:    out AWS.Response.Data
+			) is
+		-- build the KTML response, being:
+		-- 	template	: the name of the template being used, without the extension (assumed to be ktml)
+		-- Localization is considered and the response is deflate encoded 
+
+		Template_Path	: constant String := Locate_Resource(
+								Service		=> KTML_Service'Class( Service ),
+								Resource	=> Template,
+								Extension	=> "ktml",
+								Virtual_Host	=> KOW_View.Virtual_Host( Status.Request ),
+								Locale		=> KOW_View.Locales.Get_Locale( Status.Request ) 
+							);
+	begin
+		Response := AWS.Response.Build(
+					Content_Type	=> "text/html",
+					Message_Body	=> KOW_View.KTML.Render( Template_Path, Initial_State ),
+					Encoding	=> AWS.Messages.Deflate
+				);
+	end Build_KTML_Response;
+
+	procedure Set_Response(
+				Service		: in out KTML_Service;
+				Response	: in out KOW_Lib.Json.Object_Type;
+				Value		: in     String
+			) is
+		-- set the response for the current request
+	begin
+		KOW_Lib.Json.Set( Response, Resp_Att, Value );
+	end Set_Response;
+
+
+
+	----------------------
+	-- Resource Service --
+	----------------------
 
 	overriding
 	procedure Process_Custom_Request(
