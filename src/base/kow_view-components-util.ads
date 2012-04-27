@@ -59,21 +59,21 @@ package KOW_View.Components.Util is
 		) return String;
 	-- locate a resource file for this component
 	-- this file should be placed at
-	-- 	[WORKING_DIR]/data/kowview/component_name/resource.extension
+	-- 	[WORKING_DIR]/data/component_name/resource.extension
 	-- 	or
-	-- 	[WORKING_DIR]/components/component_name/data/resource.extension
+	-- 	[WORKING_DIR]/components/component_name/resource.extension
 	-- returning it's name if nothing has been found raise Ada.Directories.Name_Error if not found
 	--
 	-- Also, when Locale_Code is provided look for the resources in a localized way.
 	-- 
 	-- For instance, when looking for component's foo the bar.ext resource in pt_BR locale it'd look for:
 	--
-	-- 1. [WORKING_DIR]/data/kowview/foo/bar_pt_BR.ext
-	-- 2. [WORKING_DIR]/data/kowview/foo/bar_pt.ext
-	-- 3. [WORKING_DIR]/data/kowview/foo/bar.ext
-	-- 4. [WORKING_DIR]/components/data/foo/bar_pt_BR.ext
-	-- 5. [WORKING_DIR]/components/data/foo/bar_pt.ext
-	-- 6. [WORKING_DIR]/components/data/foo/bar.ext
+	-- 1. [WORKING_DIR]/data/foo/bar_pt_BR.ext
+	-- 2. [WORKING_DIR]/data/foo/bar_pt.ext
+	-- 3. [WORKING_DIR]/data/foo/bar.ext
+	-- 4. [WORKING_DIR]/components/foo/bar_pt_BR.ext
+	-- 5. [WORKING_DIR]/components/foo/bar_pt.ext
+	-- 6. [WORKING_DIR]/components/foo/bar.ext
 	--
 	-- Returning the first file relative path found
 

@@ -77,12 +77,12 @@ package body KOW_View.Components.Util is
 
 		MComponent_Name	: String		:= KOW_Lib.String_Util.Str_Replace( From => '.', To => '-', Str => To_String( Component_Name ) );
 
-		Name		: String		:= "data" / "kowview" / MComponent_Name / Resource; --& "." & Extension;
-		Default_Name	: String		:= "applications" / MComponent_Name / "data" / Resource;-- & "." & Extension;
+		Name		: String		:= "data" / MComponent_Name / Resource; --& "." & Extension;
+		Default_Name	: String		:= "components" / MComponent_Name / Resource;-- & "." & Extension;
 
 		function Virtual_Host_Name return String is
 		begin
-			return "data"/"kowview"/"vhost"/Virtual_Host/MComponent_Name/Resource;
+			return "data"/"vhost"/Virtual_Host/MComponent_Name/Resource;
 		end Virtual_Host_Name;
 
 
@@ -146,15 +146,18 @@ package body KOW_View.Components.Util is
 				return Str;
 			end if;
 
-			raise Ada.Directories.Name_Error with "Resource "+Resource+ "." + Extension + " of component " + To_String( Component_name ) + " not found!";
+			raise Ada.Directories.Name_Error with "Resource " & Resource & "." & Extension & " of component " & To_String( Component_name ) + " not found!";
 		end LMC;
 
 	begin
-
+		-- Notice the parameter in LMC function actually calls the "+" function which is responsible for checking
+		-- if the string is found
 		if KOW_View.Enable_Virtual_Host then
 			return LMC( "" + Virtual_Host_Name + Name + Default_Name );
+			-- check the virtual host name, then name then default name
 		else
 			return LMC( "" + Name + Default_Name );
+			-- check the name then default name
 		end if;
 
 	end Locate_Resource;
