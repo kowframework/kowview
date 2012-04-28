@@ -155,4 +155,31 @@ package body KOW_View.DOM_Util is
 		return N;
 	end Create_From_Template;
 
+
+
+	procedure Process_Template(
+				Doc		: in     Document;
+				N		: in out Node;
+				Default_Tag	: in     String;
+				Deep		: in     Boolean
+			) is
+		-- same as Create_From_Template, but instead of simply returning a new node,
+		-- replaces the current Node freeing the old one
+		New_N : Node := Create_From_Template(
+					Doc		=> Doc,
+					Template_Node	=> N,
+					Default_Tag	=> Default_Tag,
+					Deep		=> Deep
+				);
+	begin
+		N := Nodes.Replace_Child(
+					N		=> Nodes.Parent_Node( N ),
+					Old_Child	=> N,
+					New_Child	=> New_N
+				);
+		Nodes.Free( N, True );
+		N := New_N;
+	end Process_Template;
+
+
 end KOW_View.DOM_Util;

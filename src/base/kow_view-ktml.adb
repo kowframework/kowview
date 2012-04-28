@@ -507,7 +507,15 @@ package body KOW_View.KTML is
 				Defaults	: Node_List := Elements.Get_Elements_By_Tag_Name( N, "kv:default" );
 
 				Source_Str	: constant String := DOM_Util.Node_Attribute( N, "source", "" );
+				New_N		: Node;
 			begin
+				Process_Node_Attributes(
+						Processor	=> Case_Processor_Type'CLass( Processor ),
+						Doc		=> Doc,
+						N		=> N,
+						State		=> State
+					);
+
 				if Source_Str = "" then
 					raise PROGRAM_ERROR with "no source specified in the kv:case tag";
 				end if;
@@ -519,7 +527,7 @@ package body KOW_View.KTML is
 					for i in 0 .. Nodes.Length( Whens ) - 1 loop
 						Child_N := Nodes.Item( Whens, i );
 						Process_When(
-								Processor	=> Case_Processor_Type'Class( Proessor ),
+								Processor	=> Case_Processor_Type'Class( Processor ),
 								Doc		=> Doc,
 								N		=> Child_N,
 								State		=> State,
@@ -530,7 +538,7 @@ package body KOW_View.KTML is
 					for i in 0 .. Nodes.Length( Defaults ) - 1 loop
 						Child_N := Nodes.Item( Defaults, i );
 						Process_Default(
-								Processor	=> Case_Processor_Type'Class( Proessor ),
+								Processor	=> Case_Processor_Type'Class( Processor ),
 								Doc		=> Doc,
 								N		=> Child_N,
 								State		=> State
@@ -539,6 +547,12 @@ package body KOW_View.KTML is
 				end;
 
 
+				DOM_Util.Process_Template_Node(
+							Processor	=> Case_Processor_Type'Class( Processor ),
+							Doc		=> Doc,
+							N		=> N,
+							State		=> State
+						);
 			end Process_Node;	
 
 
@@ -551,6 +565,32 @@ package body KOW_View.KTML is
 				DOM.Core.Nodes.Free( N, true );
 			end Remove;
 
+
+
+			procedure Process_Template_Node(
+						Processor	: in out Case_processor_Type;
+						Doc		: in     DOM.Core.Document;
+						N		: in out DOM.Core.Node;
+						State		: in out KOW_Lib.Json.Object_Type
+					) is
+			begin
+				DOM_Util.Process_Template(
+							Doc		=> Doc,
+							N		=> N,
+							Default_Tag	=> "span",
+							Deep		=> True
+						);
+
+
+				Process_Child_Nodes(
+						Processor	=> Case_Processor_Type'CLass( Processor ),
+						Doc		=> Doc,
+						N		=> N,
+						State		=> State
+					);
+			end Process_Template_Node;
+
+
 			procedure Process_When(
 						Processor	: in out Case_Processor_Type;
 						Doc		: in     DOM.Core.Document;
@@ -560,74 +600,86 @@ package body KOW_View.KTML is
 					) is
 				use KOW_Lib.Json;
 
-				procedure Assert_Null( v1, v2 : in String ) is
+
+
+				function Is_A_Match return Boolean is
+					procedure Assert_Null( v1, v2 : in String ) is
+					begin
+						if v1 /= "" or v2 /= "" then
+							raise PROGRAM_ERROR with "only one of value, json or key must be set in the kv:when tag";
+						end if;
+					end Assert_Null;
+
+					When_Value	: constant String := Elements.Get_Attribute( N, "value" );
+					When_Json	: constant String := Elements.Get_Attribute( N, "json" );
+					When_Key	: constant String := Elements.Get_Attribute( N, "key" );
+
+					Data		: Json_Data_Type;
+					function Match( D : in Json_Data_Type ) return Boolean is
+
+						Found : Boolean := False;
+						procedure Array_Iterator( Idx: in Natural; Val : in Json_Data_Type ) is
+						begin
+							if not Found then
+								Found := Match( Val );
+							end if;
+						end Array_Iterator;
+
+						procedure Object_Iterator( Key : in String; Val : in Json_Data_Type ) is
+						begin
+							if not Found and then Key = Value then
+								Found := True;
+							end if;
+						end Object_Iterator;
+					begin
+						case Get_Type( D ) is
+							when Json_Array =>
+								Iterate( From_Data( D ), Array_Iterator'Access );
+								return Found;
+							when Json_Object =>
+								Iterate( From_Data( D ), Object_Iterator'Access );
+								return Found;
+							when others =>
+								return To_String( D )  = Value;
+						end case;
+					end Match;
 				begin
-					if v1 /= "" or v2 /= "" then
-						raise PROGRAM_ERROR with "only one of value, json or key must be set in the kv:when tag";
+					if Processor.Value_Found then
+						return false;
 					end if;
-				end Assert_Null;
 
-				When_Value	: constant String := Elements.Get_Attribute( N, "value" );
-				When_Json	: constant String := Elements.Get_Attribute( N, "json" );
-				When_Key	: constant String := Elements.Get_Attribute( N, "key" );
-
-				Data		: Json_Data_Type;
+					if When_Value /= "" then
+						Assert_Null( When_Json, When_Key );
+						return Value = When_Value;
+					end if;
 
 
-				function Match( D : in Json_Data_Type ) return Boolean is
+					if When_Json /= "" then
+						Assert_Null( When_Key, "" );
+						Data := From_Json( When_Json );
+					elsif When_Key /= "" then
+						Data := Get( State, When_Key );
+					else
+						raise PROGRAM_ERROR with "one of value, json or key is needed in kv:when tag";
+					end if;
 
-					Found : Boolean := False;
-					procedure Array_Iterator( Idx: in Natural; Val : in Json_Data_Type ) is
-					begin
-						if not Found then
-							Found := Match( Val );
-						end if;
-					end Array_Iterator;
-
-					procedure Object_Iterator( Key : in String; Val : in Json_Data_Type ) is
-					begin
-						if not Found and then Key = Value then
-							Found := True;
-						end if;
-					end Object_Iterator;
-				begin
-					case Get_Type( D ) is
-						when Json_Array =>
-							Iterate( From_Data( D ), Array_Iterator'Access );
-							return Found;
-						when Json_Object =>
-							Iterate( From_Data( D ), Object_Iterator'Access );
-							return Found;
-						when others =>
-							return To_String( D )  = Value;
-					end case;
-				end Match;
+					return Match( Data );
+				end Is_A_Match;
 			begin
-				if Processor.Value_Found then
-					Remove( N );
-					return;
-				end if;
+				Process_Node_Attributes(
+						Processor	=> Case_Processor_Type'CLass( Processor ),
+						Doc		=> Doc,
+						N		=> N,
+						State		=> State
+					);
 
-				if When_Value /= "" then
-					Assert_Null( When_Json, When_Key );
-					if Value /= When_Value then
-						Remove( N );
-						return;
-					end if;
-
-					-- TODO :: process this node
-					return;
-				elsif When_Json /= "" then
-					Assert_Null( When_Key, "" );
-					Data := From_Json( When_Json );
-				elsif When_Key /= "" then
-					Data := Get( State, When_Key );
-				else
-					raise PROGRAM_ERROR with "one of value, json or key is needed in kv:when tag";
-				end if;
-
-				if Match( Data ) then
-					-- TODO :: process this node
+				if is_A_Match then
+					DOM_Util.Process_Template_Node(
+								Processor	=> Case_Processor_Type'Class( Processor ),
+								Doc		=> Doc,
+								N		=> N,
+								State		=> State
+							);
 				else
 					Remove( N );
 				end if;
@@ -640,9 +692,23 @@ package body KOW_View.KTML is
 						N		: in out DOM.Core.Node;
 						State		: in out KOW_Lib.Json.Object_Type
 					) is
+			begin
 				if Processor.Value_Found then
 					Remove( N );
-					return;
+				else
+					Process_Node_Attributes(
+							Processor	=> Case_Processor_Type'CLass( Processor ),
+							Doc		=> Doc,
+							N		=> N,
+							State		=> State
+						);
+
+					DOM_Util.Process_Template_Node(
+								Processor	=> Case_Processor_Type'Class( Processor ),
+								Doc		=> Doc,
+								N		=> N,
+								State		=> State
+							);
 				end if;
 			end Process_Defaults;
 

@@ -82,4 +82,15 @@ package KOW_View.DOM_Util is
 	-- creates a new element node from the template_node
 	-- the new node will be of the tag attribute of the given node or default_Tag
 	-- if deep, clone child node as well
+
+
+	procedure Process_Template(
+				Doc		: in     Document;
+				N		: in out Node;
+				Default_Tag	: in     String;
+				Deep		: in     Boolean
+			);
+	-- same as Create_From_Template, but instead of simply returning a new node,
+	-- replaces the current Node freeing the old one
+	-- N will then point to the newly created node
 end KOW_View.DOM_Util;
