@@ -549,6 +549,7 @@ package body KOW_View.KTML is
 				end;
 
 
+				Elements.Remove_Attribute( N, "source" );
 				Process_Template_Node(
 							Processor	=> Case_Processor_Type'Class( Processor ),
 							Doc		=> Doc,
@@ -677,6 +678,11 @@ package body KOW_View.KTML is
 					);
 
 				if Is_A_Match then
+
+					Elements.Remove_Attribute( N, "value" );
+					Elements.Remove_Attribute( N, "json" );
+					Elements.Remove_Attribute( N, "key" );
+
 					Processor.Value_Found := True;
 					Process_Template_Node(
 								Processor	=> Case_Processor_Type'Class( Processor ),
