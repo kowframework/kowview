@@ -38,6 +38,7 @@ with Ahven.Framework;
 -------------------
 -- KOW Framework --
 -------------------
+with KOW_View;				use KOW_View;
 with KOW_View.Components;
 with KOW_View.Modules;
 with KOW_View.Modules.Util;		use KOW_View.Modules.Util;
@@ -69,7 +70,7 @@ package body KOW_View_Tests.Modules.Util is
 
 	function Get_Module return Meu_Modulo_Module is
 		use KOW_View.Components;
-		Dumb_Request	: AWS.Status.Data;
+		Status : Request_Status_Type;
 
 		Module		: KOW_View.Components.Module_Ptr;
 		Expected_Name : constant String := "meu_modulo";
@@ -77,10 +78,9 @@ package body KOW_View_Tests.Modules.Util is
 		Create(
 					Factory		=> KOW_View_Tests.Components.Get_Module_Factory(
 									KOW_View_Tests.Components.Component,
-									To_Unbounded_String( Expected_Name )
+									From_String( Expected_Name )
 								).all,
-					Request		=> Dumb_Request,
-					Context		=> "/some/page",
+					Status		=> Status,
 					Module_Id	=> 1,
 					Request_mode	=> KOW_View.Custom_Request,
 					Virtual_Host	=> ( others => ' ' ),
@@ -98,7 +98,7 @@ package body KOW_View_Tests.Modules.Util is
 
 	procedure Test_Create_Module is
 		use KOW_View.Components;
-		Dumb_Request	: AWS.Status.Data;
+		Status : Request_Status_Type;
 
 		Module		: KOW_View.Components.Module_Ptr;
 		Expected_Name : constant String := "meu_modulo";
@@ -106,10 +106,9 @@ package body KOW_View_Tests.Modules.Util is
 		Create(
 					Factory		=> KOW_View_Tests.Components.Get_Module_Factory(
 									KOW_View_Tests.Components.Component,
-									To_Unbounded_String( Expected_Name )
+									From_String( Expected_Name )
 								).all,
-					Request		=> Dumb_Request,
-					Context		=> "/some/page",
+					Status		=> Status,
 					Module_Id	=> 1,
 					Request_mode	=> KOW_View.Custom_Request,
 					Virtual_Host	=> ( others => ' ' ),
@@ -129,7 +128,7 @@ package body KOW_View_Tests.Modules.Util is
 
 	procedure Test_Get_Name_Object is
 		Module : Meu_Modulo_Module := Get_Module;
-		Computed_Name : constant String := KOW_View.Modules.Get_Name( Module );
+		Computed_Name : constant String := To_String( KOW_View.Modules.Get_Name( Module ) );
 		Expected_Name : constant String := "meu_modulo";
 	begin
 		Ahven.Assert(
@@ -144,7 +143,7 @@ package body KOW_View_Tests.Modules.Util is
 
 	procedure Test_Get_Name_Tag is
 		Expected_Name : constant String := "meu_modulo";
-		Computed_Name : Constant String := KOW_View.Modules.Util.Get_Name( Meu_Modulo_Module'Tag );
+		Computed_Name : Constant String := To_String( KOW_View.Modules.Util.Get_Name( Meu_Modulo_Module'Tag ) );
 	begin
 		Ahven.Assert(
 				Condition	=> Expected_Name = Computed_Name,

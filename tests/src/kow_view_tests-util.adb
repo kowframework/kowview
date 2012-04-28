@@ -34,6 +34,7 @@ with Ahven.Framework;
 -------------------
 -- KOW Framework --
 -------------------
+with KOW_View;
 with KOW_View.Util;		use KOW_View.Util;
 
 package body KOW_View_Tests.Util is
@@ -51,7 +52,7 @@ package body KOW_View_Tests.Util is
 		type Meu_Tipo_Type is tagged null record;
 
 		Expected_Name : constant String := "meu_tipo";
-		Computed_Name : constant String := Get_Type_Name( Meu_Tipo_Type'Tag );
+		Computed_Name : constant String := KOW_View.To_String( Get_Type_Name( Meu_Tipo_Type'Tag ) );
 	begin
 		Ahven.Assert(
 				Condition	=> Expected_Name = Computed_Name,

@@ -35,6 +35,7 @@ with Ahven.Framework;
 -- KOW Framework --
 -------------------
 with KOW_Lib.Json;
+with KOW_View;
 with KOW_View.Services;
 with KOW_View.Services.Util;		use KOW_View.Services.Util;
 
@@ -61,13 +62,13 @@ package body KOW_View_Tests.Services.Util is
 
 	procedure Process_Json_Request(
 			Service	: in out Meu_Servico_Service;
-			Request	: in     AWS.Status.Data;
+			Status	: in     KOW_View.Request_Status_Type;
 			Response:    out KOW_Lib.Json.Object_Type
 		) is null;
 
 	procedure Process_Custom_Request(
 			Service		: in out Meu_Servico_Service;
-			Request		: in     AWS.Status.Data;
+			Status		: in     KOW_View.Request_Status_Type;
 			Response	:    out AWS.Response.Data
 		) is null;
 
@@ -76,7 +77,7 @@ package body KOW_View_Tests.Services.Util is
 		C : meu_servico_Service;
 
 		Expected_Name : constant String := "meu_servico";
-		Computed_Name : constant String := KOW_View.Services.Get_Name( C );
+		Computed_Name : constant String := KOW_View.To_String( KOW_View.Services.Get_Name( C ) );
 	begin
 		Ahven.Assert(
 				Condition	=> Expected_Name = Computed_Name,
@@ -86,7 +87,7 @@ package body KOW_View_Tests.Services.Util is
 
 	procedure Test_Get_Name_Tag is
 		Expected_Name : constant String := "meu_servico";
-		Computed_Name : Constant String := KOW_View.Services.Util.Get_Name( meu_servico_Service'Tag );
+		Computed_Name : Constant String := KOW_View.To_String( KOW_View.Services.Util.Get_Name( meu_servico_Service'Tag ) );
 	begin
 		Ahven.Assert(
 				Condition	=> Expected_Name = Computed_Name,

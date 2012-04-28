@@ -44,7 +44,6 @@ package KOW_View_Tests.Components.Util is
 
 	procedure Test_Get_Name_Object;
 	procedure Test_Get_Name_Tag;
-	procedure Test_Get_Name_URI;
 
 
 end KOW_View_Tests.Components.Util;

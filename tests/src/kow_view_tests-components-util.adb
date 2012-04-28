@@ -34,6 +34,7 @@ with Ahven.Framework;
 -------------------
 -- KOW Framework --
 -------------------
+with KOW_View;				use KOW_View;
 with KOW_View.Components;
 with KOW_View.Components.Util;		use KOW_View.Components.Util;
 
@@ -46,14 +47,13 @@ package body KOW_View_Tests.Components.Util is
 		Set_Name( T, "KOW_View.Components.Util" );
 		Ahven.Framework.Add_Test_Routine( T, Test_Get_Name_Object'Access, "Get_Name( object )" );
 		Ahven.Framework.Add_Test_Routine( T, Test_Get_Name_Tag'Access, "Get_Name( tag )" );
-		Ahven.Framework.Add_Test_Routine( T, Test_Get_Name_URI'Access, "Get_Name( uri )" );
 	end Initialize;
 
 
 
 	procedure Test_Get_Name_Object is
 		Expected_Name : constant String := "meu_componente";
-		Computed_Name : constant String := KOW_View.Components.Get_Name( Component ); 
+		Computed_Name : constant String := To_String( KOW_View.Components.Get_Name( Component ) ); 
 	begin
 		Ahven.Assert(
 				Condition	=> Expected_Name = Computed_Name,
@@ -63,23 +63,12 @@ package body KOW_View_Tests.Components.Util is
 
 	procedure Test_Get_Name_Tag is
 		Expected_Name : constant String := "meu_componente";
-		Computed_Name : Constant String := KOW_View.Components.Util.Get_Name( Meu_Componente_Component'Tag );
+		Computed_Name : constant String := To_String( KOW_View.Components.Util.Get_Name( Meu_Componente_Component'Tag ) );
 	begin
 		Ahven.Assert(
 				Condition	=> Expected_Name = Computed_Name,
 				Message		=> Computed_Name & " is not valid (expected" & Expected_Name & ")"
 			);
 	end Test_Get_Name_Tag;
-
-	procedure Test_Get_Name_URI is
-		Expected_Name	: constant String := "meu_componente";
-		Computed_Name	: constant String := KOW_View.Components.Util.Get_Name( URI => "/meu_componente/seila/" );
-	begin
-		Ahven.Assert(
-				Condition	=> Expected_name = Computed_Name,
-				Message		=> Computed_Name & " is not valid (expected " & Expected_name & ")"
-			);
-	end Test_Get_Name_URI;
-
 
 end KOW_View_Tests.Components.Util;
