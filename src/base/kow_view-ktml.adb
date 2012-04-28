@@ -981,6 +981,72 @@ package body KOW_View.KTML is
 				Do_Process_Node;
 			end Process_Node;
 
+
+
+			---------------------------
+			-- If Set Processor Type --
+			---------------------------
+
+			package If_Set_Factories is new Generic_Factories( If_Set_Processor_Type, "kv:if_set" );
+			-- <kv:if_set key="theKey">
+			--	do some stuff with theKey
+			--	<kv:fallback>used only when theKey is not set, replacing the if_set node</kv:fallback>
+			-- </kv:if_set>
+
+			overriding
+			procedure Process_Node(
+						Processor	: in out If_Set_Processor_Type;
+						Doc		: in     DOM.Core.Document;
+						N		: in out DOM.Core.Node;
+						State		: in out KOW_Lib.Json.Object_Type
+					) is
+				use DOM.Core;
+				Key : constant String := Elements.Get_Attribute( N, "key" );
+
+				Fallbacks	: Node_List := Elements.Get_Elements_By_Tag_Name( N, "kv:fallback" );
+				FB		: Node;
+				Parent		: Node;
+			begin
+				if KOW_Lib.Json.Contains( State, Key ) then
+					for i in 0 .. Nodes.Length( Fallbacks ) - 1 loop
+						FB := Nodes.Item( Fallbacks, i );
+						Remove( FB );
+					end loop;
+
+					Elements.Remove_Attribute( N, "key" );
+				else
+					if Nodes.Length( Fallbacks ) = 0 then
+						Remove( N );
+					else
+						FB := DOM_Util.Create_From_Template(
+									Doc		=> Doc,
+									Template_Node	=> Nodes.Item( Fallbacks, 0 ),
+									Default_Tag	=> "span",
+									Deep		=> true
+								);
+						Parent := Nodes.Parent_Node( N );
+						N := Nodes.Replace_Child(
+										N		=> Parent,
+										Old_Child	=> N,
+										New_Child	=> FB
+									);
+						Nodes.Free( N, True );
+						N := FB;
+
+
+						Process_Child_Nodes(
+								Processor	=> If_Set_Processor_Type'Class( Processor ),
+								Doc		=> Doc,
+								N		=> N,
+								State		=> State
+							);
+					end if;
+				end if;
+			end Process_Node;
+
+
+
+
 			------------------------
 			-- Set Processor Type --
 			------------------------

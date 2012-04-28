@@ -352,6 +352,24 @@ package KOW_View.KTML is
 					);
 
 
+			---------------------------
+			-- If Set Processor Type --
+			---------------------------
+
+			type If_Set_Processor_Type is new Defaults.Processor_Type with null record;
+			-- <kv:if_set key="theKey">
+			--	do some stuff with theKey
+			--	<kv:fallback>used only when theKey is not set, replacing the if_set node</kv:fallback>
+			-- </kv:if_set>
+
+			overriding
+			procedure Process_Node(
+						Processor	: in out If_Set_Processor_Type;
+						Doc		: in     DOM.Core.Document;
+						N		: in out DOM.Core.Node;
+						State		: in out KOW_Lib.Json.Object_Type
+					);
+
 			------------------------
 			-- Set Processor Type --
 			------------------------
