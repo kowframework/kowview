@@ -1014,6 +1014,22 @@ package body KOW_View.KTML is
 					end loop;
 
 					Elements.Remove_Attribute( N, "key" );
+
+					DOM_Util.Process_Template(
+								Doc		=> Doc,
+								N		=> N,
+								Default_Tag	=> "span",
+								Deep		=> True
+							);
+
+					Process_Child_Nodes(
+							Processor	=> If_Set_Processor_Type'Class( Processor ),
+							Doc		=> Doc,
+							N		=> N,
+							State		=> State
+						);
+
+
 				else
 					if Nodes.Length( Fallbacks ) = 0 then
 						Remove( N );
