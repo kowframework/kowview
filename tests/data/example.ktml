@@ -9,13 +9,15 @@
 		${welcome}
 
 
-		<kv:case source="i">
-			<kv:when value="2">the value is indeed 2</kv:when>
-			<kv:when key="anArray">the value is in the array ${anArray}</kv:when>
-			<kv:when key="anObject">the value is in the object ${anObject}</kv:when>
-			<kv:when json="{lala:'lol'}"</kv:when>
-			<kv:default>No case value found mother of god!</kv:default>
-		</kv:case>
+		<kv:each source="valuesForCase" target="caseValue">
+			<kv:case source="caseValue">
+				<kv:when value="2">the value is indeed 2</kv:when>
+				<kv:when key="anArray">the value is in the array ${anArray}</kv:when>
+				<kv:when key="anObject">the value is in the object ${anObject}</kv:when>
+				<kv:when json="{lala:'lol', lololo: 'lol'}">the value is in the json string</kv:when>
+				<kv:default>No case value found for ${caseValue} mother of god!</kv:default>
+			</kv:case>
+		</kv:each>
 
 
 

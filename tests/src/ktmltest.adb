@@ -41,6 +41,34 @@ procedure KTMLTest is
 	end Add_Users;
 begin
 
+	-- 
+	-- case
+	--
+	declare
+		VFC : Array_Type;
+		An_Array : Array_Type;
+		An_Object: Object_Type;
+	begin
+		Append( An_Array, 3 );
+		Append( An_Array, "omg" );
+
+		Set( An_Object, "lala", "lala" );
+		Set( An_Object, "laleli", "laleli" );
+
+		Append( VFC, 2 );
+		Append( VFC, "omg" );
+		Append( VFC, "laleli" );
+		Append( VFC, "lololo" );
+		Append( VFC, "unlisted" );
+
+
+
+		Set( State, "valuesForCase", VFC );
+		Set( State, "anArray", An_Array );
+		Set( State, "anObject", An_Object );
+	end;
+
+
 	Set( Some_Obj, "omg1", "lalala" );
 	Set( Some_Obj, "omg2", "lalala2" );
 	Set( Some_Obj, "omg3", "lalala3" );
