@@ -57,7 +57,7 @@
 		<kv:set key="elements" value="3"/>
 
 		<kv:ifset key="elements">
-			Elements is already set!
+			Elements is already set and the value is ${elements}!
 		</kv:ifset>
 
 		<kv:ifset key="elements">
