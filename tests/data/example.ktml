@@ -10,13 +10,16 @@
 
 
 		<kv:each source="valuesForCase" target="caseValue">
-			<kv:case source="caseValue">
-				<kv:when value="2">the value is indeed 2</kv:when>
-				<kv:when key="anArray">the value is in the array ${anArray}</kv:when>
-				<kv:when key="anObject">the value is in the object ${anObject}</kv:when>
-				<kv:when json="{lala:'lol', lololo: 'lol'}">the value is in the json string</kv:when>
-				<kv:default>No case value found for ${caseValue} mother of god!</kv:default>
-			</kv:case>
+			<kv:item>
+				<kv:case source="caseValue">
+					<kv:when value="2">the value "${caseValue}" is indeed 2</kv:when>
+					<kv:when key="anArray">the value "${caseValue}" is in the array ${anArray}</kv:when>
+					<kv:when key="anObject">the value "${caseValue}" is in the object ${anObject}</kv:when>
+					<kv:when json="{lala:'lol', lololo: 'lol'}">the value "${caseValue}" is in the json string</kv:when>
+					<kv:when json="[10,11,21]">the value "${caseValue}" is in the json string</kv:when>
+					<kv:default>No case value found for "${caseValue}" mother of god!</kv:default>
+				</kv:case>
+			</kv:item>
 		</kv:each>
 
 
