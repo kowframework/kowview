@@ -676,7 +676,8 @@ package body KOW_View.KTML is
 						State		=> State
 					);
 
-				if is_A_Match then
+				if Is_A_Match then
+					Processor.Value_Found := True;
 					Process_Template_Node(
 								Processor	=> Case_Processor_Type'Class( Processor ),
 								Doc		=> Doc,

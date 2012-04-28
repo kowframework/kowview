@@ -7,6 +7,19 @@
 
 	<body>
 		${welcome}
+
+
+		<kv:case source="i">
+			<kv:when value="2">the value is indeed 2</kv:when>
+			<kv:when key="anArray">the value is in the array ${anArray}</kv:when>
+			<kv:when key="anObject">the value is in the object ${anObject}</kv:when>
+			<kv:when json="{lala:'lol'}"</kv:when>
+			<kv:default>No case value found mother of god!</kv:default>
+		</kv:case>
+
+
+
+
 		<kv:each source="users" target="item">
 			<kv:item tag="">
 				${item.username} is the loging for ${item.name}
@@ -29,16 +42,11 @@
 
 		<kv:set key="elements" value="3"/>
 
-		<kv:for from="1" to="3" reverse="false" target="i" welcomeMessage="${welcome}" keep="false">
+		<kv:for from="1" to="10" reverse="false" target="i" welcomeMessage="${welcome}" keep="false">
 			<kv:item>${i}</kv:item>
 			<kv:item id="item_${i}">${i}</kv:item>
 			<kv:empty>OMG.. empty for loop</kv:empty>
 
-			<kv:case source="i">
-				<kv:when value="1">the value is indeed one</kv:when>
-				<kv:when json="[2,3]">the value is indeed one of two or 3</kv:when>
-				<kv:default>No case value found mother of god!</kv:default>
-			</kv:case>
 		</kv:for>
 
 
