@@ -44,8 +44,27 @@
 			<kv:item>${key} => ${item}</kv:item>
 		</kv:each>
 
+		<kv:ifset key="elements">
+			Elements is already set!
+		</kv:ifset>
+
+		<kv:ifset key="elements">
+			Elements is already set!
+			<kv:fallback>Elements is not set brother!</kv:fallback>
+		</kv:ifset>
+
 
 		<kv:set key="elements" value="3"/>
+
+		<kv:ifset key="elements">
+			Elements is already set!
+		</kv:ifset>
+
+		<kv:ifset key="elements">
+			Elements is already set!
+			<kv:fallback>Elements is not set brother!</kv:fallback>
+		</kv:ifset>
+
 
 		<kv:for from="1" to="10" reverse="false" target="i" welcomeMessage="${welcome}" keep="false">
 			<kv:item>${i}</kv:item>
