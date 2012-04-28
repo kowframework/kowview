@@ -33,6 +33,12 @@
 			<kv:item>${i}</kv:item>
 			<kv:item id="item_${i}">${i}</kv:item>
 			<kv:empty>OMG.. empty for loop</kv:empty>
+
+			<kv:case source="i">
+				<kv:when value="1">the value is indeed one</kv:when>
+				<kv:when json="[2,3]">the value is indeed one of two or 3</kv:when>
+				<kv:default>No case value found mother of god!</kv:default>
+			</kv:case>
 		</kv:for>
 
 
