@@ -357,10 +357,10 @@ package KOW_View.KTML is
 			---------------------------
 
 			type If_Set_Processor_Type is new Defaults.Processor_Type with null record;
-			-- <kv:if_set key="theKey">
+			-- <kv:ifset key="theKey">
 			--	do some stuff with theKey
 			--	<kv:fallback>used only when theKey is not set, replacing the if_set node</kv:fallback>
-			-- </kv:if_set>
+			-- </kv:ifset>
 
 			overriding
 			procedure Process_Node(

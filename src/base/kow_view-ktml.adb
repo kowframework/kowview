@@ -987,11 +987,11 @@ package body KOW_View.KTML is
 			-- If Set Processor Type --
 			---------------------------
 
-			package If_Set_Factories is new Generic_Factories( If_Set_Processor_Type, "kv:if_set" );
-			-- <kv:if_set key="theKey">
+			package If_Set_Factories is new Generic_Factories( If_Set_Processor_Type, "kv:ifset" );
+			-- <kv:ifset key="theKey">
 			--	do some stuff with theKey
 			--	<kv:fallback>used only when theKey is not set, replacing the if_set node</kv:fallback>
-			-- </kv:if_set>
+			-- </kv:ifset>
 
 			overriding
 			procedure Process_Node(
