@@ -503,11 +503,12 @@ package body KOW_View.KTML is
 				-- When using key and json pointing to array, look for elements contained in this array (in any level; it means it works in arrays of arrays)
 				-- When using key and json pointing to object, look for object's keys (only the 1st level)
 
+				use DOM.Core;
+
 				Whens		: Node_List := Elements.Get_Elements_By_Tag_Name( N, "kv:when" );
 				Defaults	: Node_List := Elements.Get_Elements_By_Tag_Name( N, "kv:default" );
 
 				Source_Str	: constant String := DOM_Util.Node_Attribute( N, "source", "" );
-				New_N		: Node;
 			begin
 				Process_Node_Attributes(
 						Processor	=> Case_Processor_Type'CLass( Processor ),
@@ -521,8 +522,9 @@ package body KOW_View.KTML is
 				end if;
 
 				declare
-					Data	: constant KOW_Lib.Json.Data_Type := KOW_Lib.Json.Get( State, Source_Str );
+					Data	: constant KOW_Lib.Json.Json_Data_Type := KOW_Lib.Json.Get( State, Source_Str );
 					Value	: constant String := KOW_Lib.Json.To_String( Data );
+					Child_N	: Node;
 				begin
 					for i in 0 .. Nodes.Length( Whens ) - 1 loop
 						Child_N := Nodes.Item( Whens, i );
@@ -547,7 +549,7 @@ package body KOW_View.KTML is
 				end;
 
 
-				DOM_Util.Process_Template_Node(
+				Process_Template_Node(
 							Processor	=> Case_Processor_Type'Class( Processor ),
 							Doc		=> Doc,
 							N		=> N,
@@ -599,6 +601,7 @@ package body KOW_View.KTML is
 						Value		: in     String
 					) is
 				use KOW_Lib.Json;
+				use DOM.Core;
 
 
 
@@ -674,7 +677,7 @@ package body KOW_View.KTML is
 					);
 
 				if is_A_Match then
-					DOM_Util.Process_Template_Node(
+					Process_Template_Node(
 								Processor	=> Case_Processor_Type'Class( Processor ),
 								Doc		=> Doc,
 								N		=> N,
@@ -703,14 +706,14 @@ package body KOW_View.KTML is
 							State		=> State
 						);
 
-					DOM_Util.Process_Template_Node(
+					Process_Template_Node(
 								Processor	=> Case_Processor_Type'Class( Processor ),
 								Doc		=> Doc,
 								N		=> N,
 								State		=> State
 							);
 				end if;
-			end Process_Defaults;
+			end Process_Default;
 
 
 

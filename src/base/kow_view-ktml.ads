@@ -292,6 +292,13 @@ package KOW_View.KTML is
 			-- When using key and json pointing to object, look for object's keys (only the 1st level)
 
 
+			procedure Process_Template_Node(
+						Processor	: in out Case_processor_Type;
+						Doc		: in     DOM.Core.Document;
+						N		: in out DOM.Core.Node;
+						State		: in out KOW_Lib.Json.Object_Type
+					);
+
 
 			procedure Process_When(
 						Processor	: in out Case_Processor_Type;
