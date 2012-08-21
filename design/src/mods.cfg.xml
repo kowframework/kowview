@@ -1,6 +1,0 @@
-<config>
-     <!-- as it's XML it supports comments // -->
-	<section name="user">
-		<key name="1" value="mod_user1.tmplt"/>
-     	</section>
-</config>
