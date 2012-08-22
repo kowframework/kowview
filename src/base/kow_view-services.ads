@@ -46,39 +46,13 @@ with KOW_View.Request_Dispatchers.Implementations;
 -- AWS --
 ---------
 with AWS.Response;
-with Templates_Parser;
 
 package KOW_View.Services is
 
-	-----------------------------
-	-- Service Dispatcher Type --
-	-----------------------------
 
-	type Service_Dispatcher_Type is new KOW_View.Request_Dispatchers.Implementations.Prefix_Dispatcher_Type with record
-		Component_Name	: Component_Name_Type;
-		Component	: Components.Component_Ptr;
-		Service_Name	: Service_Name_Type;
-	end record;
-
-
-
-	overriding
-	function Dispatch(
-				Dispatcher	: in Service_Dispatcher_Type;
-				Request		: in AWS.Status.Data
-			) return AWS.Response.Data;
-
-
-	overriding
-	procedure Setup_Status(
-				Dispatcher	: in     Service_Dispatcher_Type;
-				Request		: in     AWS.Status.Data;
-				Status		: in out Request_Status_Type
-			);
-
-	--------------
-	-- Services --
-	--------------
+	------------------
+	-- Service Type --
+	------------------
 
 
 	--type Service_Type is abstract new Ada.Finalization.Controlled with record
@@ -122,26 +96,51 @@ package KOW_View.Services is
 	-- locate the resource [service_name]/resource.extension within the component
 
 
-
-	procedure Setup_Service(
-			Component	: in     Component_Access;
-			Service		: in out Service_Type'Class
-		);
-	-- load the configuration file and run setup..
-
-
-	function Parse_Template(
-			Service			: in Service_Type;
-			Template_Resource	: in String;
-			Template_Extension	: in String := "";
-			Virtual_Host		: in String := "";
-			Parameters		: in Templates_Parser.Translate_Set;
-			Locale			: in KOW_Lib.Locales.Locale_Type := KOW_Lib.Locales.Get_Default_Locale
-		) return String;
-	-- helper method for calling templates parser's parse method and locate_resource
-
-
 	function Get_Name( Service : in Service_Type'Class ) return Service_Name;
 
+
+
+	---------------------
+	-- Service Factory --
+	---------------------
+
+
+	type Service_Factory_Type is interface;
+
+	procedure Create(
+				Factory	: in out Service_Factory_Type;
+				Service	:    out Service_Ptr
+			) is abstract;
+	-- allocate and return the service
+
+	procedure Destroy(
+				Factory	: in out Service_Factory_Type;
+				Service	: in out Service_Ptr
+			) is abstract;
+	-- deallocate the service; the pointer to Service should be null
+
+
+	-------------------------
+	-- Service Dispatchers --
+	-------------------------
+
+	type Prefix_Dispatcher_Type is abstract new KOW_View.Request_Dispatchers.Implementations.Prefix_Dispatcher_Type with record
+		Service_Factory		: Service_Factory_Ptr;
+	end record;
+
+
+	overriding
+	function Dispatch(
+				Dispatcher	: in Service_Dispatcher_Type;
+				Request		: in AWS.Status.Data
+			) return AWS.Response.Data;
+
+
+	overriding
+	procedure Setup_Status(
+				Dispatcher	: in     Service_Dispatcher_Type;
+				Request		: in     AWS.Status.Data;
+				Status		: in out Request_Status_Type
+			);
 
 end KOW_View.Services;

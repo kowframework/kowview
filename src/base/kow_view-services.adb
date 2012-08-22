@@ -47,7 +47,6 @@ with KOW_View.Util;
 ---------
 with AWS.Parameters;
 with AWS.Response;
-with Templates_Parser;
 
 package body KOW_View.Services is
 	----------------------------
@@ -117,9 +116,19 @@ package body KOW_View.Services is
 
 
 
-	-------------
-	-- Service --
-	-------------
+	------------------
+	-- Service_Type --
+	------------------
+
+	function Allowed(
+			Service	: in     Service_Type;
+			Status	: in     Request_Status_Type
+		) return Boolean is
+		-- determine if the user is allowed to access the given service
+	begin
+		return true;
+	end Allowed;
+
 
 	function Locate_Resource(
 			Service		: in Service_Type;
@@ -140,53 +149,6 @@ package body KOW_View.Services is
 					Locale		=> Locale
 				);
 	end Locate_Resource;
-
-
-	procedure Setup_Service(
-			Component	: in     Component_Access;
-			Service		: in out Service_Type'Class
-		) is
-		-- load the configuration file and run setup..
-	begin
-		Service.Component := Component_Ptr( Component );
-		declare
-			use KOW_Config;
-			use KOW_view.Util;
-			Config : Config_File_Type := New_Config_File(
-							To_String( Get_Name( Component.all ) ) / To_String( Get_Name( Service ) )
-						);
-		begin
-			Setup_Service( Service, Config );
-		end;
-	exception
-		when KOW_Config.FILE_NOT_FOUND => null;
-	end Setup_Service;
-
-
-
-	function Parse_Template(
-			Service			: in Service_Type;
-			Template_Resource	: in String;
-			Template_Extension	: in String := "";
-			Virtual_Host		: in String := "";
-			Parameters		: in Templates_Parser.Translate_Set;
-			Locale			: in KOW_Lib.Locales.Locale_Type := KOW_Lib.Locales.Get_Default_Locale
-		) return String is
-		-- helper method for calling templates parser's parse method and locate_resource
-
-		
-		Resource : constant String := Locate_Resource(
-						Service		=> Service_Type'Class( Service ),
-						Resource	=> Template_Resource,
-						Extension	=> Template_Extension,
-						Virtual_Host	=> Virtual_Host,
-						Kind		=> Ada.Directories.Ordinary_File,
-						Locale		=> Locale
-					);
-	begin
-		return Templates_Parser.Parse( Resource, Parameters );
-	end Parse_Template;
-
 
 
 	function Get_Name( Service : in Service_Type'Class ) return Service_Name is
