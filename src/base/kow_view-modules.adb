@@ -261,7 +261,7 @@ package body KOW_View.Modules is
 
 
 
-	function Get_Name( Module : in Module_Type'Class ) return Module_Name_Type is
+	function Get_Name( Module : in Module_Type'Class ) return Module_Name is
 	begin
 		return KOW_View.Util.Get_Type_Name( Module_Tag, "_module" );
 	end Get_Name;

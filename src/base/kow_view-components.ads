@@ -59,23 +59,6 @@ with AWS.Response;
 
 package KOW_View.Components is
 
-	---------------------
-	-- Components Name --
-	---------------------
-
-
-	type Component_Name is String ( 1 .. 50 );
-	-- The Name of the component
-	
-
-	function To_Name( Str : in String ) return Component_Name;
-	-- convert from string to component name
-	
-	function To_String( Name : in Component_Name ) return String;
-	-- trim the name and return it as a simple string
-
-
-
 	--------------------
 	-- Component Type --
 	--------------------

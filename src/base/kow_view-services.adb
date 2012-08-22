@@ -168,7 +168,7 @@ package body KOW_View.Services is
 			Service			: in Service_Type;
 			Template_Resource	: in String;
 			Template_Extension	: in String := "";
-			Virtual_Host		: in String;
+			Virtual_Host		: in String := "";
 			Parameters		: in Templates_Parser.Translate_Set;
 			Locale			: in KOW_Lib.Locales.Locale_Type := KOW_Lib.Locales.Get_Default_Locale
 		) return String is
@@ -189,7 +189,7 @@ package body KOW_View.Services is
 
 
 
-	function Get_Name( Service : in Service_Type'Class ) return Service_Name_Type is
+	function Get_Name( Service : in Service_Type'Class ) return Service_Name is
 	begin
 		return KOW_View.Util.Get_Type_Name( Service'Tag, "_service" );
 	end Get_Name;

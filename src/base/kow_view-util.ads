@@ -52,6 +52,6 @@ package KOW_View.Util is
 	function Get_Type_Name(
 			Tag	: in Ada.Tags.Tag;
 			Sufix	: in String := "_type"
-		) return Path_Type;
+		) return Name_Type;
 
 end KOW_View.Util;

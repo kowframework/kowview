@@ -134,14 +134,14 @@ package KOW_View.Services is
 			Service			: in Service_Type;
 			Template_Resource	: in String;
 			Template_Extension	: in String := "";
-			Virtual_Host		: in String;
+			Virtual_Host		: in String := "";
 			Parameters		: in Templates_Parser.Translate_Set;
 			Locale			: in KOW_Lib.Locales.Locale_Type := KOW_Lib.Locales.Get_Default_Locale
 		) return String;
 	-- helper method for calling templates parser's parse method and locate_resource
 
 
-	function Get_Name( Service : in Service_Type'Class ) return Service_Name_Type;
+	function Get_Name( Service : in Service_Type'Class ) return Service_Name;
 
 
 end KOW_View.Services;

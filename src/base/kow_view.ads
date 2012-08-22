@@ -82,25 +82,25 @@ package KOW_View is
 	-- Names 
 	--
 
-	type Path_Type is new String( 1 .. 150 );
+	type Name_Type is new String( 1 .. 50 );
 
-	No_Path : constant Path_Type := ( others => ' ' );
+	No_Path : constant Name_Type := ( others => ' ' );
 
 
-	function From_String( Str : in String ) return Path_Type;
-	-- convert any-lenghted str to path_type (if str'length > path_type'length raises constraint error)
+	function To_Name( Str : in String ) return Name_Type;
+	-- convert any-lenghted str to Name_Type (if str'length > Name_Type'length raises constraint error)
 
-	function To_String( Path : in Path_Type ) return String;
+	function To_String( Path : in Name_Type ) return String;
 	-- convert the path into a trimmed string
 
-	subtype Component_Name_Type is Path_Type;
-	subtype Service_Name_Type   is Path_Type;
-	subtype Module_Name_Type    is Path_Type;
+	subtype Component_Name is Name_Type;	-- @see KOW_View.Components
+	subtype Service_Name   is Name_Type;	-- @see KOW_View.Services
+	subtype Context_Name   is Name_Type;	-- to be used by the service implementation
 
 
-	No_Component : constant Component_Name_Type := ( others => ' ' );
-	No_Service   : constant Service_Name_Type   := ( others => ' ' );
-	No_Module    : constant Module_Name_Type    := ( others => ' ' );
+	No_Component : constant Component_Name := ( others => ' ' );
+	No_Service   : constant Service_Name   := ( others => ' ' );
+	No_Context   : constant Context_Name   := ( others => ' ' );
 
 
 	-- 
@@ -109,12 +109,12 @@ package KOW_View is
 	type Request_Status_Type is record
 		Mode			: Request_Mode_Type;
 		-- if it's a json a custom request
-		Mapped_URI		: Path_Type;
+		Mapped_URI		: Name_Type;
 		-- the part of the URI that has been mapped 
-		Mapped_Expression	: Path_Type;
+		Mapped_Expression	: Name_Type;
 		-- the expression used to map this URI
 
-		Local_URI		: Path_Type;
+		Local_URI		: Name_Type;
 		-- the part of the URI that hasn't been mapped
 
 		Request_Parameters	: KOW_Lib.Json.Object_Type;
@@ -132,9 +132,9 @@ package KOW_View is
 		--
 		-- Those should also be defined by the request dispatcher
 		--
-		Component		: Component_Name_Type := No_Component;
-		Service			: Service_Name_Type   := No_Service;
-		Module			: Module_Name_Type    := No_Module;
+		Component		: Component_Name := No_Component;
+		Service			: Service_Name   := No_Service;
+		Context			: Context_Name   := No_Context;
 	end record;
 
 

@@ -75,15 +75,15 @@ package body KOW_View is
 	-- Core Types --
 	----------------
 
-	function From_String( Str : in String ) return Path_Type is
-		-- convert any-lenghted str to path_type (if str'length > path_type'length raises constraint error)
-		Path : Path_Type;
+	function To_Name( Str : in String ) return Name_Type is
+		-- convert any-lenghted str to Name_Type (if str'length > Name_Type'length raises constraint error)
+		Path : Name_Type;
 	begin
 		KOW_Lib.String_Util.Copy( From => Str, To => String( Path ) );
 		return Path;
-	end From_String;
+	end To_Name;
 
-	function To_String( Path : in Path_Type ) return String is
+	function To_String( Path : in Name_Type ) return String is
 		-- convert the path into a trimmed string
 	begin
 		return Ada.Strings.Fixed.Trim( String( Path ), Ada.Strings.Right );
