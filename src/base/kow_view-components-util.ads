@@ -45,9 +45,6 @@ with KOW_Lib.Locales;
 
 package KOW_View.Components.Util is
 
-	function Get_Name( Component_Tag : in Ada.Tags.Tag ) return Component_Name_Type;
-	-- get the name by the tag
-	
 
 	function Locate_Resource(
 			Component_Name	: in Component_Name_Type;

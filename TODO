@@ -5,6 +5,7 @@ Things that should be done to the 3.0 release:
 
 	1. remove all kow_config dependency in modules in favour of a kow_lib.json.object_type
 		Status.URI_Parameters	=> Status.Request_Parameters/Attributes (figure out a cooler name)
+		note to self		=> services and components will still use kow_config
 	2. implement a method for retrieving specific configurations
 		Get_Config( Component, Config := "setup" ); => ./components/[component]/data/[config].cfg
 		Get_Config( Service, Config := "setup" );   => ./components/[component]/data/[service]_service.cfg
@@ -21,7 +22,7 @@ Things that should be done to the 3.0 release:
 
 The config (and resource) path should be default to:
 	1 => ./data/
-	2 => ./
+	2 => ./components/
 
 
 

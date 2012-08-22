@@ -45,37 +45,28 @@ with KOW_View.Util;
 
 
 package body KOW_View.Components is
+	---------------------
+	-- Components Name --
+	---------------------
 
+	function To_Name( Str : in String ) return Component_Name is
+		-- convert from string to component name
+		Name : Component_Name;
+	begin
+		KOW_Lib.String_Util.Copy( From => Str, To => Name );
+		return Name;
+	end To_Name;
+
+	function To_String( Name : in Component_Name ) return String is
+		-- trim the name and return it as a simple string
+	begin
+		return Ada.Strings.Fixed.Trim( Name, Ada.Strings.Right );
+	end To_String;
 
 
 	---------------
 	-- Component --
 	---------------
-
-	procedure Initialize(
-			Component		: in out Component_Type;
-			Require_Configuration	: in     Boolean
-		) is
-
-		Config : KOW_Config.Config_File_Type;
-
-		procedure Trigger_Iterator( C : in Initialization_Trigger_Vectors.Cursor ) is
-		begin
-			Initialization_Trigger_Vectors.Element( C ).all;
-		end Trigger_Iterator;
-	begin
-		begin
-			Config := KOW_View.Components.Util.Load_Main_Configuration( To_String( Get_name( Component ) ) );
-		exception
-			when KOW_Config.File_Not_Found =>
-				if Require_Configuration then
-					raise COMPONENT_ERROR with "Missing required configuration for component " & To_String( Get_Name( Component ) );
-				end if;
-		end;
-		Setup( Component_Type'Class( Component ), Config );
-		
-		Initialization_Trigger_Vectors.Iterate( Component.Initialization_Triggers, Trigger_Iterator'Access );
-	end Initialize;
 
 	function Locate_Resource(
 			Component	: in Component_Type;
@@ -85,165 +76,133 @@ package body KOW_View.Components is
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
 			Locale		: in KOW_Lib.Locales.Locale_Type := KOW_Lib.Locales.Get_Default_Locale
 		) return String is
+		-- locate a resource file for this component
+		-- this file should be placed at
+		-- 	[WORKING_DIR]/data/component_name/resource.extension
+		-- 	or
+		-- 	[WORKING_DIR]/applications/component_name/data/resource.extension
+		-- returning it's name if nothing has been found raise Ada.Directories.Name_Error if not found
+
+
+
+		use Ada.Directories;
+		use KOW_Lib.File_System;
+
+		CName		: constant String	:= To_String( Component.Name );
+		Name		: constant String	:= "data" / CName / Resource; --& "." & Extension;
+		Default_Name	: constant String	:= "components" / CName / Resource;-- & "." & Extension;
+
+		function Virtual_Host_Name return String is
+			pragma Inline( Virtual_Host_Name );
+
+			-- declared inside a function so it's never be computed if
+			-- virtual host is disabled
+		begin
+			return "vhost"/Virtual_Host/CName/Resource;
+		end Virtual_Host_Name;
+
+
+
+
+
+		function check( FName : in String ) return Boolean is
+		begin
+			
+			if not Ada.Directories.Exists( FName ) then
+				return false;
+			elsif Ada.Directories.Kind( FName ) /= Kind then
+				return false;
+			else
+				return True;
+			end if;
+		end Check;
+
+
+
+
+		function Check_Localized( FName : in String ) return String is
+			use Ada.Strings;
+			use Ada.Strings.Unbounded;
+			use KOW_Lib.Locales;
+
+
+			function inner_check( LC : in Locale_Code_Type ) return String is
+				N : constant String := FName & '_' & To_String( LC ) & '.' & Extension;
+			begin
+				if Check( N ) then
+					return N;
+				else
+					return "";
+				end if;
+			end inner_check;
+
+			The_Name : constant String := Inner_Check( Locale_Code );
+		begin
+			if The_Name /= "" then
+				return The_Name;
+			else
+				return Inner_Check( ( Language => Locale_Code.Language, Country => No_Country ) );
+			end if;
+		end Check_Localized;
+	
+
+
+		function "+"( L, R : in String ) return String is
+			Computed : String renames L;
+			The_name : String renames R;
+		begin
+			if Computed = "" then
+				return Check_Localized( The_Name );
+			else
+				return Computed;
+			end if;
+		end "+";
+
+		function LMC( Str : in String ) return String is
+			-- it's a last minute check; raise exception if the resource is not found
+		begin
+			if Str /= "" then
+				return Str;
+			end if;
+
+			raise Ada.Directories.Name_Error with "Resource " & Resource & "." & Extension & " of component " & To_String( Component_name ) + " not found!";
+		end LMC;
+
 	begin
-		return KOW_View.Components.Util.Locate_Resource(
-					Component_Name	=> Get_Name( Component ),
-					Resource	=> Resource,
-					Extension	=> Extension,
-					Virtual_Host	=> Virtual_Host,
-					Kind		=> Kind,
-					Locale_Code	=> Locale.Code
-				);
+		-- Notice the parameter in LMC function actually calls the "+" function which is responsible for checking
+		-- if the string is found
+		if KOW_View.Enable_Virtual_Host and then Virtual_Host /= "" then
+			return LMC( "" + Virtual_Host_Name + Name + Default_Name );
+			-- check the virtual host name, then name then default name
+		else
+			return LMC( "" + Name + Default_Name );
+			-- check the name then default name
+		end if;
 
 	end Locate_Resource;
 
 
-	procedure Register_Service_Delegator(
-			Component	: in out Component_Type;
-			Name		: in     String;
-			Delegator	: in     Service_Delegator_Access
-		) is
-		Service_Name : Service_Name_Type := From_String( Name );
-	begin
-		Register_Service_Delegator(
-				Component	=> Component,
-				Name		=> Service_Name,
-				Delegator	=> Delegator
-			);
-	end Register_Service_Delegator;
 
-
-	procedure Register_Service_Delegator(
-			Component	: in out Component_Type;
-			Name		: in     Service_Name_Type;
-			Delegator	: in     Service_Delegator_Access
-		) is
-		-- register a new service delegator...
-		-- the name of this delegator is going to be calculated from the 
-		use Service_Delegator_Maps;
-	begin
-		if Contains( Component.Service_Delegators, Name ) then
-			raise CONSTRAINT_ERROR with "duplicated service :: " & To_String( Name ) & "@" & To_String( Get_Name( Component ) );
-		end if;
-
-		Include( Component.Service_Delegators, Name, Service_Delegator_Ptr( Delegator ) );
-	end Register_Service_Delegator;
-
-
-
-	function Get_Service_Delegator(
+	function Load_Config(
 			Component	: in Component_Type;
-			Service		: in Service_Name_Type
-		) return Service_Delegator_Access is
-		-- return the service delegator for this request..
-		-- you should override this method in case you want only one service in your component 
-		
-		Deleg		: Service_Delegator_Ptr;
-
-
+			N		: in String
+		) return KOW_Config.Config_File_Type is
+		-- load the configuration file
+		use KOW_Lib.File_System;
 	begin
-		if Service = No_Service then
-			pragma Assert( Component.Default_Service /= null, "there is no default service in the component " & To_String( Get_Name( Component ) ) );
-			return Service_Delegator_Access( Component.Default_Service );
-		elsif Service_Delegator_Maps.Contains( Component.Service_Delegators, Service ) then
-			Deleg := Service_Delegator_Maps.Element(
-							Component.Service_Delegators,
-							Service
-						);
-			if Deleg = null then
-				raise SERVICE_ERROR with "unknown service (null): " & To_String( Service );
-			else
-				return Service_Delegator_Access( Deleg );
-			end if;
-		else
-			raise SERVICE_ERROR with "unknown service (not registered): " & To_String( Service );
-		end if;
-	end Get_Service_Delegator;
+		return KOW_Config.New_Config_File( To_String( Component.Name ) / N, False );
+	end Load_Config;
 
 
-	procedure Process_Json_Request(
-			Component	: in out Component_Type;
-			Status		: in     Request_Status_Type;
-			Response	:    out KOW_Lib.Json.Object_Type
-		) is
+
+	function New_Component(
+				Name	: in String )
+			) return Component_Ptr is
+		-- allocate and initialize the component
+		-- use this to declare your own components
+		Component : Component_Access := new Component_Type( Name => To_Name( String ) );
 	begin
-		Process_Json_Request(
-				Delegator	=> Get_Service_Delegator( Component, Status.Service ).all,
-				Status		=> Status,
-				Response	=> Response
-			);
-	end Process_Json_Request;
-
-	procedure Process_Custom_Request(
-			Component	: in out Component_Type;
-			Status		: in     Request_Status_Type;
-			Response	:    out AWS.Response.Data
-		) is
-		-- this is where the request processing takes place..
-		-- can be overriding for implementing default services and such
-	begin
-		Process_Custom_Request(
-				Delegator	=> Get_Service_Delegator( Component, Status.Service ).all,
-				Status		=> Status,
-				Response	=> Response
-			);
-	end Process_Custom_Request;
-
-
-
-
-	procedure Register_Module_Factory(
-			Component	: in out Component_Type;
-			Name		: in     Module_Name_Type;
-			Factory		: in     Module_Factory_Access
-		) is
-		use Module_Factory_Maps;
-	begin
-		if Contains( Component.Module_Factories, Name ) then
-			raise CONSTRAINT_ERROR with "duplicated module :: " & To_String( Name ) & "@" & To_String( Get_Name( Component ) );
-		end if;
-
-		Include( Component.Module_Factories, Name, Module_Factory_Ptr( Factory ) );
-	end Register_Module_Factory;
-	
-	function Get_Module_Factory(
-			Component	: in Component_Type;
-			Name		: in Module_Name_Type
-		) return Module_Factory_Access is
-	begin
-		return Module_Factory_Access( Module_Factory_Maps.Element( Component.Module_Factories, Name ) );
-	exception
-		when CONSTRAINT_ERROR =>
-			raise CONSTRAINT_ERROR with "module " & To_String( Name ) & " not found at component " & To_String( Get_Name( Component ) );
-	end Get_Module_Factory;
-
-
-
-
-	procedure Register_Initialization_Trigger(
-				Component		: in out Component_Type;
-				Initialization_Trigger	: in     Initialization_Trigger_Access
-			) is
-
-		Tr : Initialization_Trigger_Ptr := Initialization_Trigger_Ptr( Initialization_Trigger );
-	begin
-		if Initialization_Trigger_Vectors.Contains( Component.Initialization_Triggers, Tr ) then
-			raise CONSTRAINT_ERROR with "duplicated trigger detected at component " & To_String( Get_Name( Component ) );
-		else
-			Initialization_Trigger_Vectors.Append( Component.Initialization_Triggers, Tr );
-		end if;
-	end Register_Initialization_Trigger;
-
-
-
-
-	function Get_Name( Component : in Component_Type'Class ) return Component_Name_Type is
-	begin
-		return KOW_View.Components.Util.Get_Name( Component'Tag );
-	end Get_Name;
-
-
-
-
+		return Component_Ptr( Component );
+	end New_Component;
 
 end KOW_View.Components;
