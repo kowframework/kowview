@@ -50,9 +50,9 @@ with Templates_Parser;
 
 package KOW_View.Services is
 
-	----------------------------
-	-- Service Delegator Type --
-	----------------------------
+	-----------------------------
+	-- Service Dispatcher Type --
+	-----------------------------
 
 	type Service_Dispatcher_Type is new KOW_View.Request_Dispatchers.Implementations.Prefix_Dispatcher_Type with record
 		Component_Name	: Component_Name_Type;
@@ -90,20 +90,8 @@ package KOW_View.Services is
 
 		Component	: Component_Ptr;
 		-- the service to whom this service belongs
-
 	end record;
 
-
-
-	procedure Setup_Service(
-			Service		: in out Service_Type;
-			Config		: in     KOW_Config.Config_File_Type
-		) is null;
-	-- for those services that can be configured, this is where you implement the configuration calling
-	-- this is usefull if you have two diferent instances of the same service, each one with
-	-- different setup...
-	--
-	-- this is new on kowview 2.0
 
 
 	procedure Process_Json_Request(
@@ -127,10 +115,13 @@ package KOW_View.Services is
 			Service		: in Service_Type;
 			Resource	: in String;
 			Extension	: in String := "";
-			Virtual_Host	: in String;
+			Virtual_Host	: in String := "";
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
 			Locale		: in KOW_Lib.Locales.Locale_Type := KOW_Lib.Locales.Get_Default_Locale
 		) return String;
+	-- locate the resource [service_name]/resource.extension within the component
+
+
 
 	procedure Setup_Service(
 			Component	: in     Component_Access;

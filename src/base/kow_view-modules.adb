@@ -38,7 +38,7 @@ with KOW_Lib.File_System;
 with KOW_Lib.Json;
 with KOW_Lib.Locales;
 with KOW_View.Components;		use KOW_View.Components;
-with KOW_View.Modules.Util;
+with KOW_View.Util;
 
 
 ---------
@@ -263,7 +263,7 @@ package body KOW_View.Modules is
 
 	function Get_Name( Module : in Module_Type'Class ) return Module_Name_Type is
 	begin
-		return KOW_View.Modules.Util.Get_Name( Module'Tag );
+		return KOW_View.Util.Get_Type_Name( Module_Tag, "_module" );
 	end Get_Name;
 
 end KOW_View.Modules;

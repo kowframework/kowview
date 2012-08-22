@@ -39,7 +39,6 @@ with KOW_Lib.Json;
 with KOW_Lib.Locales;
 with KOW_View.Components;		use KOW_View.Components;
 with KOW_View.Json_Util;
-with KOW_View.Services.Util;
 with KOW_View.Util;
 
 
@@ -192,7 +191,7 @@ package body KOW_View.Services is
 
 	function Get_Name( Service : in Service_Type'Class ) return Service_Name_Type is
 	begin
-		return KOW_View.Services.Util.Get_Name( Service'Tag );
+		return KOW_View.Util.Get_Type_Name( Service'Tag, "_service" );
 	end Get_Name;
 
 
