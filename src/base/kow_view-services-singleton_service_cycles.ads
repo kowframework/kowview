@@ -53,7 +53,7 @@ pragma Elaborate_Body( KOW_View.Services.Singleton_Service_Cycles );
 	-- The Factory --
 	-------------------
 
-	type Service_Factory_Type is new KOW_View.Components.Service_Factory_Interface with null record;
+	type Service_Factory_Type is new KOW_View.Services.Service_Factory_Interface with null record;
 
 
 	overriding
