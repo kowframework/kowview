@@ -105,18 +105,19 @@ package KOW_View.Services is
 	---------------------
 
 
-	type Service_Factory_Type is interface;
+	type Service_Factory_Interface is interface;
 	-- The service factory controlls the life cycle of the services
-	--
+	
+	type Service_Factory_Ptr is access all Service_Factory_Interface'Class;
 
 	procedure Create(
-				Factory	: in out Service_Factory_Type;
+				Factory	: in out Service_Factory_Interface;
 				Service	:    out Service_Ptr
 			) is abstract;
 	-- allocate and return the service
 
 	procedure Destroy(
-				Factory	: in out Service_Factory_Type;
+				Factory	: in out Service_Factory_Interface;
 				Service	: in out Service_Ptr
 			) is abstract;
 	-- deallocate the service; the pointer to Service should be null

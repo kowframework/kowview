@@ -115,7 +115,7 @@ package body KOW_View.Services is
 						Response : AWS.Response.Data;
 					begin
 						Process_Custom_Request(
-									Delegator	=> Service.all,
+									Service		=> Service.all,
 									Status		=> Status,
 									Response	=> Response
 								);
@@ -127,7 +127,7 @@ package body KOW_View.Services is
 						Wrap_Data : constant Boolean := AWS.Parameters.Get( AWS.Status.Parameters( Status.Request ), "iframe" ) = "true";
 					begin
 						Process_Json_Request(
-									Delegator	=> Service.all,
+									Service		=> Service.all,
 									Status		=> Status,
 									Response	=> Response
 								);

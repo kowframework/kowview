@@ -23,7 +23,7 @@
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
--- Delegator implementation for Stateful services                          --
+-- Factory implementation for Stateful services                          --
 ------------------------------------------------------------------------------
 
 
@@ -68,13 +68,13 @@ package body KOW_View.Services.Stateful_Service_Cycles is
 
 
 	-------------------
-	-- The Delegator --
+	-- The Factory --
 	-------------------
 
 
 	overriding
 	procedure Process_Json_Request(
-			Delegator	: in out Service_Delegator_Type;
+			Factory	: in out Service_Factory_Type;
 			Status		: in     Request_Status_Type;
 			Response	:    out KOW_lib.Json.Object_Type
 		) is
@@ -92,7 +92,7 @@ package body KOW_View.Services.Stateful_Service_Cycles is
 
 	overriding
 	procedure Process_Custom_Request(
-			Delegator	: in out Service_Delegator_Type;
+			Factory	: in out Service_Factory_Type;
 			Status		: in     Request_Status_Type;
 			Response	:    out AWS.Response.Data
 		) is
@@ -109,11 +109,11 @@ package body KOW_View.Services.Stateful_Service_Cycles is
 
 begin
 	-------------------------------
-	-- we register the delegator --
+	-- we register the Factory --
 	-------------------------------
-	KOW_View.Components.Register_Service_Delegator(
+	KOW_View.Components.Register_Service_Factory(
 				Component.all,
 				KOW_View.Services.Util.Get_Name( Service_Type'Tag ),
-				Delegator'Unrestricted_Access
+				Factory'Unrestricted_Access
 			);
 end KOW_View.Services.Stateful_Service_Cycles;

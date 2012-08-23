@@ -24,7 +24,7 @@
 pragma License (GPL);
 
 ------------------------------------------------------------------------------
--- Delegator implementation for Stateful services                          --
+-- Factory implementation for Stateful services                          --
 ------------------------------------------------------------------------------
 
 
@@ -90,22 +90,22 @@ pragma Elaborate_Body( KOW_View.Services.Stateful_Service_Cycles );
 
 
 	-------------------
-	-- The Delegator --
+	-- The Factory --
 	-------------------
 
-	type Service_Delegator_Type is new KOW_View.Components.Service_Delegator_Interface with null record;
+	type Service_Factory_Type is new KOW_View.Components.Service_Factory_Interface with null record;
 
 
 	overriding
 	procedure Process_Json_Request(
-			Delegator	: in out Service_Delegator_Type;
+			Factory	: in out Service_Factory_Type;
 			Status		: in     Request_Status_Type;
 			Response	:    out KOW_Lib.Json.Object_Type
 		);
 
 	overriding
 	procedure Process_Custom_Request(
-			Delegator	: in out Service_Delegator_Type;
+			Factory	: in out Service_Factory_Type;
 			Status		: in     Request_Status_Type;
 			Response	:    out AWS.Response.Data
 		);
@@ -116,7 +116,7 @@ pragma Elaborate_Body( KOW_View.Services.Stateful_Service_Cycles );
 	-- Variables --
 	---------------
 	
-	Delegator : aliased Service_Delegator_Type;
+	Factory : aliased Service_Factory_Type;
 
 
 end KOW_View.Services.Stateful_Service_Cycles;

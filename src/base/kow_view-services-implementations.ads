@@ -69,13 +69,13 @@ package KOW_View.Services.Implementations is
 			);
 	-- call's Process_Json_Request and process the:
 	--
-	-- The template used is by default the module resource "success.ktml". It means:
+	-- The template used is by default the service resource "success.ktml". It means:
 	--
-	-- 	[module_name]_module/success.ktml
+	-- 	[component_name]/[service_name]/success.ktml
 	-- template using the json response as the initial state for the KTML parser.
 	--
 	-- if The parameter "response" is set then uses the template [response_value].ktml, ie:
-	-- 	[module_name]_module/[response_value].ktml
+	-- 	[component_name]/[service_name]/[response_value].ktml
 	--
 	-- Localization is considered. :)
 	--

@@ -23,7 +23,7 @@
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
--- Delegator implementation for singleton services                          --
+-- Factory implementation for singleton services                          --
 ------------------------------------------------------------------------------
 
 
@@ -45,13 +45,13 @@ package body KOW_View.Services.Singleton_Service_Cycles is
 
 
 	-------------------
-	-- The Delegator --
+	-- The Factory --
 	-------------------
 
 
 	overriding
 	procedure Process_Json_Request(
-			Delegator	: in out Service_Delegator_Type;
+			Factory	: in out Service_Factory_Type;
 			Status		: in     Request_Status_Type;
 			Response	:    out KOW_Lib.Json.Object_Type
 		) is
@@ -67,7 +67,7 @@ package body KOW_View.Services.Singleton_Service_Cycles is
 
 	overriding
 	procedure Process_Custom_Request(
-			Delegator	: in out Service_Delegator_Type;
+			Factory	: in out Service_Factory_Type;
 			Status		: in     Request_Status_Type;
 			Response	:    out AWS.Response.Data
 		) is
@@ -89,12 +89,12 @@ package body KOW_View.Services.Singleton_Service_Cycles is
 
 begin
 	-------------------------------
-	-- we register the delegator --
+	-- we register the Factory --
 	-------------------------------
-	KOW_View.Components.Register_Service_Delegator(
+	KOW_View.Components.Register_Service_Factory(
 				Component.all,
 				KOW_View.Services.Util.Get_Name( Service_Type'Tag ),
-				Delegator'Unrestricted_Access
+				Factory'Unrestricted_Access
 			);
 	KOW_View.Components.Register_Initialization_Trigger(
 				Component.all,
