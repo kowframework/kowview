@@ -29,14 +29,6 @@ package My_Component.Pages is
 
 
 	overriding
-	function Allowed(
-				Page		: in My_Page;
-				Status		: in KOW_View.Request_Status_Type
-			) return Boolean;
-	-- check if the current page is allowed
-
-
-	overriding
 	function Get_Modules(
 				Page		: in My_Page;
 				Status		: in KOW_View.Request_Status_Type;
