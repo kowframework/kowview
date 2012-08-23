@@ -49,71 +49,6 @@ with AWS.Parameters;
 with AWS.Response;
 
 package body KOW_View.Services is
-	----------------------------
-	-- Service Delegator Type --
-	----------------------------
-
-
-	overriding
-	function Dispatch(
-				Dispatcher	: in Service_Dispatcher_Type;
-				Request		: in AWS.Status.Data
-			) return AWS.Response.Data is
-		Status		: Request_Status_Type;
-	begin
-		Setup_Status( Dispatcher, Request, Status );
-		declare
-			Delegator	: Service_Delegator_Access := Get_Service_Delegator( Dispatcher.Component.all, Dispatcher.Service_Name );
-		begin
-
-			case Status.Mode is
-				when Custom_Request =>
-					declare
-						Response : AWS.Response.Data;
-					begin
-						Process_Custom_Request(
-									Delegator	=> Delegator.all,
-									Status		=> Status,
-									Response	=> Response
-								);
-						return Response;
-					end;
-				when Json_Request =>
-					declare
-						Response : KOW_Lib.Json.Object_Type;
-						Wrap_Data : constant Boolean := AWS.Parameters.Get( AWS.Status.Parameters( Status.Request ), "iframe" ) = "true";
-					begin
-						Process_Json_Request(
-									Delegator	=> Delegator.all,
-									Status		=> Status,
-									Response	=> Response
-								);
-						return KOW_View.Json_Util.Build_Success_Response( Object => Response, Wrap_Data => Wrap_Data );
-					end;
-			end case;
-		end;
-	end Dispatch;
-
-	
-
-
-	overriding
-	procedure Setup_Status(
-				Dispatcher	: in     Service_Dispatcher_Type;
-				Request		: in     AWS.Status.Data;
-				Status		: in out Request_Status_Type
-			) is
-		use KOW_View.Request_Dispatchers.Implementations;
-	begin
-		Setup_Status(
-				Dispatcher	=> Prefix_Dispatcher_Type( Dispatcher ),
-				Request		=> Request,
-				Status		=> Status
-			);
-		Status.Component := Dispatcher.Component_Name;
-		Status.Service   := Dispatcher.Service_Name;
-	end Setup_Status;
-
 
 
 	------------------
@@ -155,6 +90,79 @@ package body KOW_View.Services is
 	begin
 		return KOW_View.Util.Get_Type_Name( Service'Tag, "_service" );
 	end Get_Name;
+
+
+
+	-------------------------
+	-- Service Dispatchers --
+	-------------------------
+
+	overriding
+	function Dispatch(
+				Dispatcher	: in Service_Dispatcher_Type;
+				Request		: in AWS.Status.Data
+			) return AWS.Response.Data is
+		Status		: Request_Status_Type;
+	begin
+		Setup_Status( Dispatcher, Request, Status );
+		declare
+			Service		: Service_Ptr;
+		begin
+			Create( Dispatcher.Factory.all, Service );
+			case Status.Mode is
+				when Custom_Request =>
+					declare
+						Response : AWS.Response.Data;
+					begin
+						Process_Custom_Request(
+									Delegator	=> Service.all,
+									Status		=> Status,
+									Response	=> Response
+								);
+						return Response;
+					end;
+				when Json_Request =>
+					declare
+						Response : KOW_Lib.Json.Object_Type;
+						Wrap_Data : constant Boolean := AWS.Parameters.Get( AWS.Status.Parameters( Status.Request ), "iframe" ) = "true";
+					begin
+						Process_Json_Request(
+									Delegator	=> Service.all,
+									Status		=> Status,
+									Response	=> Response
+								);
+						return KOW_View.Json_Util.Build_Success_Response( Object => Response, Wrap_Data => Wrap_Data );
+					end;
+			end case;
+			Destroy( Dispatcher.Factory.all, Service );
+		exception
+			when e : others =>
+				if Service /= null then
+					Destroy( Dispatcher.Factory.all, Service );
+				end if;
+				Ada.Exceptions.Reraise_Occurrence( e );
+		end;
+	end Dispatch;
+
+	
+
+
+	overriding
+	procedure Setup_Status(
+				Dispatcher	: in     Service_Dispatcher_Type;
+				Request		: in     AWS.Status.Data;
+				Status		: in out Request_Status_Type
+			) is
+		use KOW_View.Request_Dispatchers.Implementations;
+	begin
+		Setup_Status(
+				Dispatcher	=> Prefix_Dispatcher_Type( Dispatcher ),
+				Request		=> Request,
+				Status		=> Status
+			);
+		Status.Component := Dispatcher.Component_Name;
+		Status.Service   := Dispatcher.Service_Name;
+	end Setup_Status;
 
 
 end KOW_View.Services;

@@ -106,6 +106,8 @@ package KOW_View.Services is
 
 
 	type Service_Factory_Type is interface;
+	-- The service factory controlls the life cycle of the services
+	--
 
 	procedure Create(
 				Factory	: in out Service_Factory_Type;
@@ -125,7 +127,7 @@ package KOW_View.Services is
 	-------------------------
 
 	type Prefix_Dispatcher_Type is abstract new KOW_View.Request_Dispatchers.Implementations.Prefix_Dispatcher_Type with record
-		Service_Factory		: Service_Factory_Ptr;
+		Service : Service_Factory_Ptr;
 	end record;
 
 
