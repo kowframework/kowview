@@ -97,6 +97,8 @@ package KOW_View.Services is
 
 
 	function Get_Name( Service : in Service_Type'Class ) return Service_Name;
+	-- return the name of the service
+	-- the service type has to be named [SERVICE_NAME]_Service
 
 
 
