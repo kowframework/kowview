@@ -29,19 +29,8 @@ pragma License (GPL);
 ------------------------------------------------------------------------------
 
 
--------------------
--- KOW Framework --
--------------------
-with KOW_View.Components;
-with KOW_View.Services;
 
 package KOW_View.Themes is
-
-	Component : constant KOW_View.Components.Component_Ptr := KOW_View.Components.New_Component( "themes" );
-
-
-	subtype Template_Name is KOW_View.Path_Type;
-
 
 	----------------------
 	-- The Theme Engine --
@@ -63,18 +52,43 @@ package KOW_View.Themes is
 				Template	: in     Template_Name;
 				Initial_State	: in     KOW_Lib.Json.Object_Type;
 				Response	:    out AWS.Response.Data
-			);
-	-- build the response for the given page
+			) is
+		-- build the response for the given page
+		Template_Path : constant String := Locate_Template(
+								Theme_Engine	=> Theme_Engine_Type'Class( Theme_Engine ),
+								Service		=> Service,
+								Template	=> Template,
+								Status		=> Status
+							);
+	begin
 
+		Response : AWS.Response.Build(
+						Content_Type	=> AWS.Mime.Text_HTML,
+						Message_Body	=> KOW_View.KHTML.Render(
+										File_Path	=> Template_Path,
+										Initial_State	=> Initial_State
+									)
+							);
+	end Build_Response;
 
 	function Locate_Template(
 				Theme_Engine	: in Theme_Engine_Type;
 				Service		: in KOW_View.Services.Service_Type'Class;
 				Template	: in Template_Name;
 				Status		: in KOW_View.Request_Status_Type
-			) return String;
-	-- load the template, returning it as a String
-
+			) return String is
+		-- load the template, returning it as a String
+		sss
+	begin
+		return KOW_View.Components.Locate_Resource(
+					Component	=> Component.all,
+					Resource	=> To_String( Template ),
+					Extension	=> "ktml",
+					-- TODO:: see if it's plausible to extend the status type to include both:
+					Virtual_Host	=> Status.Virtual_Host,
+					Locale		=> Status.Locale
+				);
+	end Locate_Template;
 
 
 	Default : constant Theme_Engine_Ptr := new Theme_Engine_Type;

@@ -55,15 +55,6 @@ package body KOW_View.Services is
 	-- Service_Type --
 	------------------
 
-	function Allowed(
-			Service	: in     Service_Type;
-			Status	: in     Request_Status_Type
-		) return Boolean is
-		-- determine if the user is allowed to access the given service
-	begin
-		return true;
-	end Allowed;
-
 
 	function Locate_Resource(
 			Service		: in Service_Type;
@@ -86,9 +77,9 @@ package body KOW_View.Services is
 	end Locate_Resource;
 
 
-	function Get_Name( Service : in Service_Type'Class ) return Service_Name is
+	function Get_Name( Service : in Service_Type ) return Service_Name is
 	begin
-		return KOW_View.Util.Get_Type_Name( Service'Tag, "_service" );
+		return KOW_View.Util.Get_Type_Name( Service_Type'Class( Service )'Tag, "_service" );
 	end Get_Name;
 
 

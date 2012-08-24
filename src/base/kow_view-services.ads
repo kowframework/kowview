@@ -96,7 +96,7 @@ package KOW_View.Services is
 	-- locate the resource [service_name]/resource.extension within the component
 
 
-	function Get_Name( Service : in Service_Type'Class ) return Service_Name;
+	function Get_Name( Service : in Service_Type ) return Service_Name;
 	-- return the name of the service
 	-- the service type has to be named [SERVICE_NAME]_Service
 

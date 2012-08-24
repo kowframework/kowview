@@ -33,6 +33,7 @@ pragma License (GPL);
 --------------
 -- Ada 2005 --
 --------------
+with Ada.Exceptions;
 with Ada.Strings.Unbouned;
 
 
@@ -41,6 +42,7 @@ with Ada.Strings.Unbouned;
 -------------------
 with KOW_Lib.Json;
 with KOW_View.Services;
+with KOW_View.Util;
 
 
 ---------
@@ -49,108 +51,7 @@ with KOW_View.Services;
 with AWS.Response;
 
 
-package KOW_View.Pages is
-
-
-	------------------------
-	-- The Page Interface --
-	------------------------
-
-	type Page_Inteface is interface;
-	-- for the Module, a page is just an interface that implement some methods it uses
-	--
-	-- also, the page is responsible for handling the modules it contains
-
-
-	procedure Append(
-				Page	: in out Page_Interface;
-				Content	: in     String
-			) is abstract;
-	-- append some content into the page
-	-- this is a callback for the module
-
-	procedure Include_Script(
-				Page	: in out Page_Interface;
-				Script	: in     String
-			) is abstract;
-	-- include a script into the page
-
-	procedure Include_CSS(
-				Page	: in out Page_Interface;
-				CSS	: in     String
-			) is abstract;
-	-- include a CSS file into the page
-
-
-
-	procedure Include_AMDJS_Module(
-				Page	: in out Page_Interface;
-				Module	: in     String
-			) is abstract;
-	-- include an AMDJS module into the page.
-	-- which amdjs implementation to use is up to the Theme engine.
-	
-
-
-	function Get_Module_Id(
-				Page	: in Page_Interface
-			) return String is abstract;
-	-- return a string that can be used to identify the current module
-
-	---------------------
-	-- The Module Type --
-	---------------------
-
-	type Module_Interface is interface;
-	-- the module represents a small part of the page
-
-	type Module_Ptr is access all Module_Interface'Class;
-
-
-	procedure Process_Request(
-				Module	: in out Module_Interface;
-				Page	: in out Page_Interface'Class;
-				Status	: in     Request_Status_Type
-			) is abstract;
-	-- process the HTML body for the given request
-	-- the body should be included in the page using the Append method.
-
-
-	procedure Process_Json_Request(
-				Module	: in out Module_Interface;
-				Page	: in out Page_interface'Class;
-				Status	: in     Request_Status_Type;
-				Response:    out KOW_Lib.Json.Object_Type
-			) is abstract;
-	-- called when processing json requests by the page
-
-
-
-	-----------------------------
-	-- The Module Factory Type --
-	-----------------------------
-
-
-	type Module_Factory_Interface is interface;
-	-- the module factory interface is responsible for controlling the module
-	-- life cycle.
-
-	type Module_Factory_Ptr is access all Module_Factory_Interface'Class;
-	type Module_Factory_Array is array( Positive range <> ) of Module_Factory_Ptr;
-
-
-
-	procedure Create(
-				Factory	: in out Module_Factory_Interface;
-				Module	:    out Module_Ptr
-			) is abstract;
-	-- return an initialized access to a module
-
-	procedure Destroy(
-				Factory	: in out Module_Factory_Interface;
-				Module	: in out Module_Ptr
-			) is abstract;
-	-- deallocate the given module
+package body KOW_View.Pages is
 
 
 
@@ -158,21 +59,14 @@ package KOW_View.Pages is
 	-- Page Service --
 	------------------
 
-	type Page_Title is access String;
-
 	generic
 		type Regions is (<>);
-	package Base is
-
-		Theme_Engine : KOW_View.Themes.Theme_Engine_Ptr := KOW_View.Themes.Default;
-		-- this can be overriden by the implementation
-
-
+		Theme_Engine : KOW_View.Themes.Theme_Engine_Ptr;
+	package body Base is
 		type Page_Type is new abstract KOW_View.Services.Service_Type and Page_Interface with record
 			Title			: Page_Title;
 			-- the page title
 
-			Template		: KOW_View.Themes.Template_Name;
 
 			Scripts, CSSs, AMDJS	: KOW_Lib.Json.Array_Type;
 			-- store the things to be included
@@ -181,12 +75,7 @@ package KOW_View.Pages is
 			Current_Region	: Regions;
 			Current_Index	: Positive;
 			-- map the current module and region
-
-
-			Buffer		: Ada.Strings.Unbouned.Unbounded_String;
-			-- a buffer that's reutilized
 		end record;
-
 
 
 		-- 
@@ -196,9 +85,12 @@ package KOW_View.Pages is
 		overriding
 		function Get_Name(
 				Page	: in Page_Type
-			) return Service_Name;
-		-- get the page name (based on your own type's name)
-		-- the type should be [PAGE NAME]_Page
+			) return Service_Name is
+			-- get the page name (based on your own type's name)
+			-- the type should be [PAGE NAME]_Page
+		begin
+			return KOW_View.Util.Get_Type_Name( Page_Type'Class( Page )'Tag, "_page" );
+		end Get_Name;
 
 
 		overriding
@@ -206,14 +98,87 @@ package KOW_View.Pages is
 					Page		: in out Page_Type;
 					Status		: in     KOW_View.Request_Status_Type;
 					Response	:    out AWS.Response.Data
-				);
+				) is
+			Initial_State	: KOW_Lib.Json.Object_Type;
+			Module		: Module_Ptr;
+		begin
+			KOW_Lib.Json.Set( Initial_State, "title", Page.Title.all );
+
+			for Page.Current_Region in Regions'Range loop
+				declare
+					Factories : Module_Factory_Array := Get_Module_Factories(
+													Page	=> Page_Type'Class( Page ),
+													Region	=> Page.Current_Region
+												);
+					Contents  : KOW_Lib.Json.Array_Type;
+				begin
+					for Page.Current_Index in Factories'Range loop
+						Create( Factories( Page.Current_Index ).all, Module );
+						pragma Assert( Module /= null, "The factory is not allocating the correct module!" );
+
+						Page.Buffer := Ada.Strings.Unbounded.Null_Unbounded_String;
+						Process_Request( Module.all, Page, Status );
+						KOW_Lib.Json.Append( Contents, Page.Buffer );
+
+						Destroy( Factories( Page.Current_Index ).all, Module );
+						pragma Assert( Module = null, "The factory is not deallocating the module! Memory leak?" );
+					end loop;
+
+					KOW_Lib.Json.Set( Initial_State, Regions'Image( Page.Current_Region ) & "_CONTENTS", Contents );
+				end;
+			end loop;
+
+
+			KOW_View.Themes.Build_Response(
+							Theme_Engine	=> Theme_Engine.all,
+							Service		=> Page,
+							Status		=> Status,
+							Template	=> Page.Template,
+							Initial_State	=> Initial_State,
+							Response	=> Response
+						);
+		end Process_Custom_Request;
+
+
 
 		overriding
 		procedure Process_Json_Request(
 					Page		: in out Page_Type;
 					Status		: in     KOW_View.Request_Status_Type;
 					Response	:    out KOW_Lib.Json.Object_Type
+				) is
+			Factory	: Module_Factory_Ptr;
+			Module	: Module_Ptr;
+		begin
+			Split(
+					Page	=> Page_Type'Class( Page ),
+					Context	=> Status.Context,
+					Region	=> Page.Current_Region,
+					Index	=> Page.Current_Index
 				);
+
+			Factory := Get_Modules( 
+						Page	=> Page_Type'Class( Page ),
+					       	Region	=> Page.Current_Region
+					)( Page.Currend_Index );
+
+			Create( Factory.all, Module );
+
+			Process_Json_Request(
+						Module	=> Module.all,
+						Status	=> Status,
+						Response=> Response
+					);
+
+			Destroy( Factory.all, Module );
+		exception
+			when e : others =>
+				if Module /= null then
+					Destroy( Factory.all, Module );
+				end if;
+				Ada.Exceptions.Reraise_Occurrence( e );
+
+		end Process_Json_Request;
 	
 		--
 		-- Page Interface Methods
@@ -221,44 +186,56 @@ package KOW_View.Pages is
 
 		overriding
 		procedure Append(
-
 				Page	: in out Page_Type;
 				Content	: in     String
-			);
-		-- append some content into the page
-		-- this is a callback for the module
+			) is
+			-- append some content into the page
+			-- this is a callback for the module
+		begin
+			Ada.Strings.Unbounded.Append( Page.Buffer, Content );
+		end Append;
+
 
 		overriding
 		procedure Include_Script(
 					Page	: in out Page_Type;
 					Script	: in     String
-				);
-		-- include a script into the page
+				) is
+			-- include a script into the page
+		begin
+			Append_Unique( Page.Scripts, Script );
+		end Include_Script;
 
 		overriding
 		procedure Include_CSS(
 					Page	: in out Page_Type;
 					CSS	: in     String
-				);
-		-- include a CSS file into the page
-
+				) is
+			-- include a CSS file into the page
+		begin
+			Append_Unique( Page.CSS, CSS );
+		end Include_CSS;
 
 
 		overriding
 		procedure Include_AMDJS_Module(
 					Page	: in out Page_Type;
 					Module	: in     String
-				);
-		-- include an AMDJS module into the page.
-		-- which amdjs implementation to use is up to the Theme engine.
-		
+				) is
+			-- include an AMDJS module into the page.
+			-- which amdjs implementation to use is up to the Theme engine.
+		begin
+			Append_Unique( Page.AMDJS, Module );
+		end Include_AMDJS_Module;
 
 
 		function Get_Module_Id(
 					Page	: in Page_Type
-				) return String;
-		-- return a string that can be used to identify the current module
-
+				) return String is
+			-- return a string that can be used to identify the current module
+		begin
+			return Regions'Image( Page.Current_Region ) & "_" & Ada.Strings.Fixed.Trim( Positive'Image( Page.Current_Index ), Ada.Strings.Both );
+		end Get_Module_Id;
 
 		-- 
 		-- New Methods
@@ -269,14 +246,17 @@ package KOW_View.Pages is
 					Context	: in     Name_Type;
 					Region	:    out Regions;
 					Index	:    out Positive
-				);
+				) is
+			SContext	: constant String := To_String( Context );
+			Idx 		: constant Integer := Ada.Strings.Fixed.Index( SContext, ":" );
+		begin
+			if Idx not in Context'Range then
+				raise CONSTRAINT_ERROR with SContext & " is not a valid context for this request.";
+			end if;
+			Region := Regions'Value( SContext( SContext'First .. Idx - 1 ) );
+			Index := Positive'Value( SContext( Idx + 1 .. SContext'Last ) );
+		end Split;
 
-
-
-		function Get_Module_Factories(
-					Page	: in Page_Type;
-					Region	: in Regions
-				) return Module_Factory_Array is abstract;
 
 	end Base;
 

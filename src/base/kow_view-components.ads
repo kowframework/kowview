@@ -117,7 +117,7 @@ package KOW_View.Components is
 
 
 	function New_Component(
-				Name	: in String )
+				Name	: in String
 			) return Component_Ptr;
 	-- allocate and initialize the component
 	-- use this to declare your own components
