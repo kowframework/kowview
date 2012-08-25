@@ -53,23 +53,23 @@ with AWS.Status;
 
 package body KOW_View.Locales is
 
-	function Get_Locale( Request : in AWS.Status.Data ) return KOW_Lib.Locales.Locale_Type is
+	function Get_Locale( Status : in Request_Status_Type ) return KOW_Lib.Locales.Locale_Type is
 		-- get the session's locale
-		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
+		Session_ID  : constant AWS.Session.ID := AWS.Status.Session( Status.Request );
 	begin
 		return Locale_Data.Get( Session_ID, Session_Key );
 	end Get_Locale;
 
 	procedure Set_Locale(
-				Request	: in AWS.Status.Data;
+				Status	: in Request_Status_Type;
 				Locale	: in KOW_Lib.Locales.Locale_Type
 			) is
-		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
+		Session_ID  : constant AWS.Session.ID := AWS.Status.Session( Status.Request );
 	begin
 		Locale_Data.Set( Session_ID, Session_Key, Locale );
 	end Set_Locale;
 
-	function Get_Amdjs_Locale( Request : in AWS.Status.Data ) return String is
+	function Get_Amdjs_Locale( Status : Request_Status_Type ) return String is
 		-- return the locale in the Amdjs formatting standard;
 		-- ie (ISO => Amdjs):
 		-- 	pt_BR => pt-br
@@ -78,7 +78,7 @@ package body KOW_View.Locales is
 		return KOW_Lib.String_Util.Str_Replace(
 						From	=> '_',
 						To	=> '-', 
-						Str	=> Ada.Characters.Handling.To_Lower( KOW_Lib.Locales.To_String( Get_Locale( Request ).Code ) )
+						Str	=> Ada.Characters.Handling.To_Lower( KOW_Lib.Locales.To_String( Get_Locale( Status ).Code ) )
 					);
 	end Get_Amdjs_Locale;
 end KOW_View.Locales;

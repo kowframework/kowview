@@ -87,11 +87,10 @@ package KOW_View.Services is
 
 	function Locate_Resource(
 			Service		: in Service_Type;
+			Status		: in Request_Status_Type;
 			Resource	: in String;
 			Extension	: in String := "";
-			Virtual_Host	: in String := "";
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
-			Locale		: in KOW_Lib.Locales.Locale_Type := KOW_Lib.Locales.Get_Default_Locale
 		) return String;
 	-- locate the resource [service_name]/resource.extension within the component
 

@@ -1,5 +1,4 @@
-
-G------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 --                                                                          --
 --                          KOW Framework :: View                           --
 --                                                                          --
@@ -76,6 +75,10 @@ package KOW_View.Themes is
 	-- load the template, returning it as a String
 
 
+	function Locate_Theme_Resource(
+				Theme_Engine	: in Theme_Engine_Type;
+				Service		: in KOW_View.Services.Service_Type'Class;
+				Resourc
 
 	Default : constant Theme_Engine_Ptr := new Theme_Engine_Type;
 	-- the default theme engine

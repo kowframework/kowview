@@ -40,6 +40,7 @@ with KOW_Lib.File_System;
 with KOW_Lib.String_Util;
 with KOW_View.Components.Registry;
 with KOW_View.Components.Util;
+with KOW_View.Locales;
 with KOW_View.Util;
 
 
@@ -70,11 +71,10 @@ package body KOW_View.Components is
 
 	function Locate_Resource(
 			Component	: in Component_Type;
+			Status		: in Request_Status_Type;
 			Resource	: in String;
 			Extension	: in String := "";
-			Virtual_Host	: in String;
 			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
-			Locale		: in KOW_Lib.Locales.Locale_Type := KOW_Lib.Locales.Get_Default_Locale
 		) return String is
 		-- locate a resource file for this component
 		-- this file should be placed at
@@ -91,6 +91,9 @@ package body KOW_View.Components is
 		CName		: constant String	:= To_String( Component.Name );
 		Name		: constant String	:= "data" / CName / Resource; --& "." & Extension;
 		Default_Name	: constant String	:= "components" / CName / Resource;-- & "." & Extension;
+
+		Virtual_Host	: constant String	:= KOW_View.Virtual_Host( Status );
+		Locale		: constant Locale_Type	:= KOW_View.Locales.Get_Locale( Status );
 
 		function Virtual_Host_Name return String is
 			pragma Inline( Virtual_Host_Name );

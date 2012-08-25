@@ -121,8 +121,8 @@ package body KOW_View.Services.Implementations is
 								Service		=> KTML_Service'Class( Service ),
 								Resource	=> Template,
 								Extension	=> "ktml",
-								Virtual_Host	=> KOW_View.Virtual_Host( Status.Request ),
-								Locale		=> KOW_View.Locales.Get_Locale( Status.Request ) 
+								Virtual_Host	=> KOW_View.Virtual_Host( Status ),
+								Locale		=> KOW_View.Locales.Get_Locale( Status ) 
 							);
 	begin
 		Response := AWS.Response.Build(
@@ -156,7 +156,7 @@ package body KOW_View.Services.Implementations is
 			) is
 		-- serve a given file inside the service resource page
 		Resource_URI	: constant String := To_String( Status.Local_URI );
-		Locale		: constant KOW_Lib.Locales.Locale_Type := KOW_View.Locales.Get_Locale( Status.Request );
+		Locale		: constant KOW_Lib.Locales.Locale_Type := KOW_View.Locales.Get_Locale( Status );
 
 		Extension	: constant String := Ada.Directories.Extension( Resource_URI );
 
@@ -173,7 +173,7 @@ package body KOW_View.Services.Implementations is
 								Service		=> Resource_Service'Class( Service ),
 								Resource	=> Resource,
 								Extension	=> Extension,
-								Virtual_Host	=> KOW_View.Virtual_Host( Status.Request ),
+								Virtual_Host	=> KOW_View.Virtual_Host( Status ),
 								Locale		=> Locale
 							);
 	begin

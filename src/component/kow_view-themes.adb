@@ -78,15 +78,12 @@ package KOW_View.Themes is
 				Status		: in KOW_View.Request_Status_Type
 			) return String is
 		-- load the template, returning it as a String
-		sss
 	begin
 		return KOW_View.Components.Locate_Resource(
 					Component	=> Component.all,
 					Resource	=> To_String( Template ),
 					Extension	=> "ktml",
-					-- TODO:: see if it's plausible to extend the status type to include both:
-					Virtual_Host	=> Status.Virtual_Host,
-					Locale		=> Status.Locale
+					Status		=> Status
 				);
 	end Locate_Template;
 

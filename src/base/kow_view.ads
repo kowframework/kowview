@@ -187,8 +187,8 @@ package KOW_View is
 	-- send email with information about excetpions that aren't expected
 	-- disabled by default on development environments
 
-	E_Mail_From_Name	: Unbounded_String := To_Unbounded_String( "Teca" );
-	E_Mail_From_Address	: Unbounded_String := To_Unbounded_String( "teca@teca.etc.br" );
+	E_Mail_From_Name	: Unbounded_String := To_Unbounded_String( "KOW" );
+	E_Mail_From_Address	: Unbounded_String := To_Unbounded_String( "contato@kow.com.br" );
 
 	E_Mail_To_Name		: Unbounded_String := To_Unbounded_String( "Marcelo" );
 	E_Mail_To_Address	: Unbounded_String := To_Unbounded_String( "marcelo@kow.com.br" );
@@ -224,9 +224,11 @@ package KOW_View is
 	
 	Enable_Virtual_Host	: Boolean := False;
 	-- enable name virtual hosts
+	-- TODO :: implement virtual hosts
+	-- it should map several domain names into a single virtual hosts (most problably using regexp)
 
 	function Virtual_Host(
-			Request	: in AWS.Status.Data
+			Status	: in Request_Status_Type
 		) return Virtual_Host_Name_Type;
 	-- compute the current virtual host
 

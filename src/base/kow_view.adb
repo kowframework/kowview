@@ -371,7 +371,7 @@ package body KOW_View is
 
 
 	function Virtual_Host(
-			Request	: in AWS.Status.Data
+			Status : in Request_Status_Type
 		) return Virtual_Host_Name_Type is
 		-- TODO :: implement-me
 		-- compute the current virtual host

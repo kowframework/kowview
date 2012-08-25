@@ -41,7 +41,6 @@ with KOW_Lib.Locales;
 -- AWS --
 ---------
 with AWS.Session;
-with AWS.Status;
 
 
 package KOW_View.Locales is
@@ -67,16 +66,16 @@ package KOW_View.Locales is
 	-- Methods --
 	-------------
 
-	function Get_Locale( Request : in AWS.Status.Data ) return KOW_Lib.Locales.Locale_Type;
+	function Get_Locale( Status : Request_Status_Type ) return KOW_Lib.Locales.Locale_Type;
 	-- get the session's locale
 
 	procedure Set_Locale(
-				Request	: in AWS.Status.Data;
+				Status	: in Request_Status_Type;
 				Locale	: in KOW_Lib.Locales.Locale_Type
 			);
 	-- set the session's locale
 
-	function Get_Amdjs_Locale( Request : in AWS.Status.Data ) return String;
+	function Get_Amdjs_Locale( Status : Request_Status_Type ) return String;
 	-- return the locale in the Amdjs formatting standard;
 	-- ie (ISO => Amdjs):
 	-- 	pt_BR => pt-br
