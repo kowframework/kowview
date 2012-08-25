@@ -4,7 +4,7 @@
 --                                                                          --
 --                              KOW Framework                               --
 --                                                                          --
---                                 S p e c                                  --
+--                                 B o d y                                  --
 --                                                                          --
 --               Copyright (C) 2007-2011, KOW Framework Project             --
 --                                                                          --
@@ -24,64 +24,70 @@
 pragma License (GPL);
 
 ------------------------------------------------------------------------------
--- Main package for Theme Engines                                           --
+-- Main package for Theme Engines Default Service                           --
 ------------------------------------------------------------------------------
 
 
 -------------------
 -- KOW Framework --
 -------------------
-with KOW_View.Components;
+with KOW_Lib.Json;
 with KOW_View.Services;
 
-package KOW_View.Themes is
-
-	Component : constant KOW_View.Components.Component_Ptr := KOW_View.Components.New_Component( "themes" );
+package body KOW_View.Themes.Services is
 
 
-	subtype Template_Name is KOW_View.Path_Type;
+	Themes_Prefix	: constant String := "/themes/";
+
+	type Theme_Service is new KOW_View.Services.Service_Type with null record;
 
 
-	----------------------
-	-- The Theme Engine --
-	----------------------
+	procedure Process_Custom_Request(
+			Service		: in out Theme_Service;
+			Status		: in     Request_Status_Type;
+			Response	:    out AWS.Response.Data
+		) is
 
+		-- process request for a theme's static file
+		-- only direct access to files that aren't template are alowed
 	
-	type Theme_Engine_Type is tagged null record;
-	-- the theme is used by the page services
-	-- this is the main theme implementation, but that can be overriden
+		Theme_Name : constant String := Get_Theme_Name( Status.Request );
 
-	type Theme_Engine_Ptr is access all Theme_Engine_Type'Class;
+		URI		: constant string := To_String( Status.Local_URI );
+		Extension	: constant string := Ada.Directories.Extension( URI );
+		File_Name	: constant string := URI( URI'First .. URI'Last - Extension'Length - 1);
+		Complete_Path	: constant string := KOW_View.Components.Locate_Resource(
+								Component	=> Component.all,
+								Resource	=> File_Name,
+								Extension	=> Extension,
+								Status		=> Status
+							);
+	begin
 
+		if Extension = "ktml" then
+			raise CONSTRAINT_ERROR with "I can't show you my template sources! Sorry!";
+		end if;
 
-
-	procedure Build_Response(
-				Theme_Engine	: in     Theme_Engine_Type;
-				Service		: in     KOW_View.Services.Service_Type'Class;
-				Status		: in     KOW_View.Request_Status_Type;
-				Template	: in     Template_Name;
-				Initial_State	: in     KOW_Lib.Json.Object_Type;
-				Response	:    out AWS.Response.Data
+		-- if it got here, everything went well
+		Response := AWS.Response.File(
+				Content_Type	=> AWS.MIME.Content_Type( Complete_Path ),
+				Filename	=> Complete_Path
 			);
-	-- build the response for the given page
+	end Process_Custom_Request;
 
 
-	function Locate_Template(
-				Theme_Engine	: in Theme_Engine_Type;
-				Service		: in KOW_View.Services.Service_Type'Class;
-				Template	: in Template_Name;
-				Status		: in KOW_View.Request_Status_Type
-			) return String;
-	-- load the template, returning it as a String
+	overriding
+	procedure Process_Json_Request(
+			Service		: in out Theme_Service;
+			Status		: in     Request_Status_Type;
+			Response	:    out KOW_Lib.Json.Object_Type
+		) is
+		-- raise PROGRAM_ERROR with a nice message
+	begin
+		raise PROGRAM_ERROR with "can't handle json request in the theme service";
+	end Process_Json_Request;
 
 
-	function Locate_Theme_Resource(
-				Theme_Engine	: in Theme_Engine_Type;
-				Service		: in KOW_View.Services.Service_Type'Class;
-				Resourc
 
 
-	Default : constant Theme_Engine_Ptr := new Theme_Engine_Type;
-	-- the default theme engine
-	
-end KOW_View.Themes;
+end KOW_View.Themes.Services;

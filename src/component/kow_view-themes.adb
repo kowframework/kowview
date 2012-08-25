@@ -28,6 +28,10 @@ pragma License (GPL);
 -- Main package for Theme Engines                                           --
 ------------------------------------------------------------------------------
 
+-------------------
+-- KOW Framework --
+-------------------
+with KOW_Lib.File_System;
 
 
 package KOW_View.Themes is
@@ -78,17 +82,26 @@ package KOW_View.Themes is
 				Status		: in KOW_View.Request_Status_Type
 			) return String is
 		-- load the template, returning it as a String
+
+		function Try( Str : in String ) return String is
+		begin
+			return KOW_View.Components.Locate_Resource(
+						Component	=> Component.all,
+						Resource	=> Str,
+						Extension	=> "ktml",
+						Status		=> Status
+					);
+		end Try;
+
+		Tpl : constant String := To_String( Template );
+
+		use KOW_Lib.File_System;
 	begin
-		return KOW_View.Components.Locate_Resource(
-					Component	=> Component.all,
-					Resource	=> To_String( Template ),
-					Extension	=> "ktml",
-					Status		=> Status
-				);
+		return Try( To_String( KOW_View.Services.Get_Name( Service ) ) / Tpl );
+	exception
+		when Ada.Directories.Name_Error =>
+			return Try( Tpl );
 	end Locate_Template;
 
 
-	Default : constant Theme_Engine_Ptr := new Theme_Engine_Type;
-	-- the default theme engine
-	
 end KOW_View.Themes;

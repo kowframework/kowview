@@ -24,64 +24,36 @@
 pragma License (GPL);
 
 ------------------------------------------------------------------------------
--- Main package for Theme Engines                                           --
+-- Main package for Theme Engines Default Service                           --
 ------------------------------------------------------------------------------
 
 
 -------------------
 -- KOW Framework --
 -------------------
-with KOW_View.Components;
+with KOW_Lib.Json;
 with KOW_View.Services;
 
-package KOW_View.Themes is
-
-	Component : constant KOW_View.Components.Component_Ptr := KOW_View.Components.New_Component( "themes" );
+package KOW_View.Themes.Services is
 
 
-	subtype Template_Name is KOW_View.Path_Type;
+	Themes_Prefix	: constant String := "/themes/";
+
+	type Theme_Service is new KOW_View.Services.Service_Type with null record;
 
 
-	----------------------
-	-- The Theme Engine --
-	----------------------
+	procedure Process_Custom_Request(
+			Service		: in out Theme_Service;
+			Status		: in     Request_Status_Type;
+			Response	:    out AWS.Response.Data
+		);
+	-- look for a theme resource
 
-	
-	type Theme_Engine_Type is tagged null record;
-	-- the theme is used by the page services
-	-- this is the main theme implementation, but that can be overriden
+	procedure Process_Json_Request(
+			Service	: in out Theme_Service;
+			Status	: in     Request_Status_Type;
+			Response:    out KOW_Lib.Json.Object_Type
+		);
+	-- raise PROGRAM_ERROR with a nice message
 
-	type Theme_Engine_Ptr is access all Theme_Engine_Type'Class;
-
-
-
-	procedure Build_Response(
-				Theme_Engine	: in     Theme_Engine_Type;
-				Service		: in     KOW_View.Services.Service_Type'Class;
-				Status		: in     KOW_View.Request_Status_Type;
-				Template	: in     Template_Name;
-				Initial_State	: in     KOW_Lib.Json.Object_Type;
-				Response	:    out AWS.Response.Data
-			);
-	-- build the response for the given page
-
-
-	function Locate_Template(
-				Theme_Engine	: in Theme_Engine_Type;
-				Service		: in KOW_View.Services.Service_Type'Class;
-				Template	: in Template_Name;
-				Status		: in KOW_View.Request_Status_Type
-			) return String;
-	-- load the template, returning it as a String
-
-
-	function Locate_Theme_Resource(
-				Theme_Engine	: in Theme_Engine_Type;
-				Service		: in KOW_View.Services.Service_Type'Class;
-				Resourc
-
-
-	Default : constant Theme_Engine_Ptr := new Theme_Engine_Type;
-	-- the default theme engine
-	
-end KOW_View.Themes;
+end KOW_View.Themes.Services;
