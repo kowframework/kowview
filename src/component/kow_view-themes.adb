@@ -88,7 +88,7 @@ package KOW_View.Themes is
 			return KOW_View.Components.Locate_Resource(
 						Component	=> Component.all,
 						Resource	=> Str,
-						Extension	=> "ktml",
+						Extension	=> Template_Extension,
 						Status		=> Status
 					);
 		end Try;

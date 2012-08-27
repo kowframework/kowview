@@ -64,7 +64,7 @@ package body KOW_View.Themes.Services is
 							);
 	begin
 
-		if Extension = "ktml" then
+		if Extension = Template_Extension then
 			raise CONSTRAINT_ERROR with "I can't show you my template sources! Sorry!";
 		end if;
 

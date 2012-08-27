@@ -38,8 +38,8 @@ package KOW_View.Themes is
 
 	Component : constant KOW_View.Components.Component_Ptr := KOW_View.Components.New_Component( "themes" );
 
-
 	subtype Template_Name is KOW_View.Path_Type;
+	Template_Extension : constant String := "ktml";
 
 
 	----------------------
