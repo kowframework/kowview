@@ -50,7 +50,7 @@ package body KOW_View.Services.Stateful_Service_Factories is
 	---------------------------
 	function Get( Request : in AWS.Status.Data ) return Service_Container_Type is
 		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
-		Container : Service_Container_Type := Service_Container_Data.Get( Session_ID, Service_Container_Key );
+		Container : Service_Container_Type := Service_Container_Data.Get( Session_ID, Session_Key );
 	begin
 		if Container.Is_Null then
 			Setup_Service( Component, Container.Service );
@@ -62,7 +62,7 @@ package body KOW_View.Services.Stateful_Service_Factories is
 	procedure Set( Request : in AWS.Status.Data; Container : in Service_Container_Type ) is
 		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
 	begin
-		Service_Container_Data.Set( Session_ID, Service_Container_Key, Container );
+		Service_Container_Data.Set( Session_ID, Session_Key, Container );
 	end Set;
 
 

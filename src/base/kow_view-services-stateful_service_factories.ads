@@ -53,6 +53,7 @@ with AWS.Status;
 generic
 	type Service_Type is new KOW_View.Services.Service_Type with private;
 	Component	: KOW_View.Components.Component_Access;
+	Session_Key	: String;
 package KOW_View.Services.Stateful_Service_Factories is
 pragma Elaborate_Body( KOW_View.Services.Stateful_Service_Factories );
 
@@ -73,10 +74,6 @@ pragma Elaborate_Body( KOW_View.Services.Stateful_Service_Factories );
 							Is_null => true,
 							Service => <>
 						);
-
-	Service_Container_Key	: constant String := 
-		To_String( KOW_View.Components.Get_Name( Component.all ) ) & "::" & To_String( KOW_View.Services.Util.Get_Name( Service_Type'Tag ) ) & "::state";
-	-- the key inside the session
 
 
 	package Service_Container_Data is new AWS.Session.Generic_Data(
