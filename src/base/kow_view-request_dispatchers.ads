@@ -60,12 +60,30 @@ package KOW_View.Request_Dispatchers is
 				Dispatcher	: in Request_Dispatcher_Interface;
 				Request		: in AWS.Status.Data
 			) return Boolean is abstract;
+	-- check if the dispatcher can attend to a given request
+	-- no security considerations are taken into account; do security checks in the Is_Allowed function above
 
+	
+
+	function Login_Required(
+				Dispatcher	: in Request_Dispatcher_Interface;
+				Request		: in AWS.Status.Data
+			) return Boolean is abstract;
+	-- checks if the user must perform a login operation to continue
+	
+	function Access_Denied(
+				Dispatcher	: in Request_Dispatcher_Interface;
+				Request		: in AWS.Status.Data
+			) return Boolean is abstract;
+	-- do some security checks to see if the current request is allowed
+	-- implement most of your security checks here; avoid using exceptions since this
+	-- method is more efficient
 
 	function Dispatch(
 				Dispatcher	: in Request_Dispatcher_Interface;
 				Request		: in AWS.Status.Data
 			) return AWS.Response.Data is abstract;
+	-- method that actually deals with processing the request
 
 
 	----------------------

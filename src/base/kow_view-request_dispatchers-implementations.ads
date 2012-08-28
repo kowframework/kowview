@@ -50,6 +50,21 @@ package KOW_View.Request_Dispatchers.Implementations is
 	-- a base for the request dispatchers you might want to implement
 	-- useful
 
+
+	overriding
+	function Login_Required(
+				Dispatcher	: in     Base_Dispatcher_Type;
+				Request		: in     AWS.Status.Data
+			) return Boolean;
+	-- return false
+	
+	overriding
+	function Access_Denied(
+				Dispatcher	: in     Base_Dispatcher_Type;
+				Request		: in     AWS.Status.Data
+			) return Boolean;
+	-- return false;
+
 	procedure Setup_Status(
 				Dispatcher	: in     Base_Dispatcher_Type;
 				Request		: in     AWS.Status.Data;

@@ -56,6 +56,24 @@ package body KOW_View.Request_Dispatchers.Implementations is
 	-- Base Dispatcher Type --
 	--------------------------
 
+	overriding
+	function Login_Required(
+				Dispatcher	: in     Base_Dispatcher_Type;
+				Request		: in     AWS.Status.Data
+			) return Boolean is
+	begin
+		return false;
+	end Login_Required;
+	
+	overriding
+	function Access_Denied(
+				Dispatcher	: in     Base_Dispatcher_Type;
+				Request		: in     AWS.Status.Data
+			) return Boolean is
+	begin
+		 return false;
+	end Access_Denied; 
+
 
 	procedure Setup_Status(
 				Dispatcher	: in     Base_Dispatcher_Type;

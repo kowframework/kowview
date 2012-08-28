@@ -89,6 +89,25 @@ package body KOW_View is
 		return Ada.Strings.Fixed.Trim( String( Path ), Ada.Strings.Right );
 	end To_String;
 
+
+
+	-----------------------
+	-- Useful processors --
+	-----------------------
+
+	function Process_Login_Required( Request : in AWS.Status.Data ) return AWS.Response.Data is
+		-- redirect to the login page
+	begin
+		return AWS.Response.URL( To_String( Login_Page ) );
+	end Process_Login_Required;
+
+
+	-----------------------
+	-- Default Processor --
+	-----------------------
+
+
+
 	function Process_Request( Request : in AWS.Status.Data ) return AWS.Response.Data is
 		-- this is the main function... it's the AWS callback used all around.
 		-- notice that in the v2.0 release the package KOW_View.Service_Mappings was extinguished
@@ -104,6 +123,10 @@ package body KOW_View is
 	begin
 		if Dispatcher = null then
 			raise ERROR_404 with AWS.Status.URI( Request );
+		elsif Login_Required( Dispatcher.all, Request ) then
+			return Process_Login_Required( Request );
+		elsif Access_Denied( Dispatcher.all, Request ) then
+			raise KOW_Sec.ACCESS_DENIED;
 		else
 			return Request_Dispatchers.Dispatch( Dispatcher.all, Request );
 		end if;
@@ -131,8 +154,7 @@ package body KOW_View is
 					KOW_Sec.Accounting.Exit_Warning,
 					"redirected to login page"
 				);
-
-			return AWS.Response.URL( To_String( Login_Page ) );
+			return Process_Login_Required( Request );
 
 		when e : others =>
 			KOW_Sec.Accounting.Set_Exit_Status(

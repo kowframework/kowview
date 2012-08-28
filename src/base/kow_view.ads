@@ -139,6 +139,21 @@ package KOW_View is
 
 
 
+	-----------------------
+	-- Useful processors --
+	-----------------------
+
+	function Process_Login_Required( Request : in AWS.Status.Data ) return AWS.Response.Data;
+	-- redirect to the login page
+	
+
+
+	-----------------------
+	-- Default Processor --
+	-----------------------
+
+
+
 	function Process_Request( Request : in AWS.Status.Data ) return AWS.Response.Data;
 	-- this is the main function... it's the AWS callback used all around.
 	-- notice that in the v2.0 release the package KOW_View.Service_Mappings was extinguished
