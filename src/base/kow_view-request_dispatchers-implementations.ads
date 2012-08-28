@@ -32,6 +32,10 @@ pragma License (GPL);
 ------------------------------------------------------------------------------
 
 
+-------------------
+-- KOW Framework --
+-------------------
+with KOW_Sec;
 
 ---------
 -- AWS --
@@ -46,24 +50,25 @@ package KOW_View.Request_Dispatchers.Implementations is
 	-- Base Dispatcher Type --
 	--------------------------
 
-	type Base_Dispatcher_Type is abstract new Request_Dispatcher_Interface with null record;
-	-- a base for the request dispatchers you might want to implement
-	-- useful
-
+	type Base_Dispatcher_Type is abstract new Request_Dispatcher_Interface with record
+		-- a base for the request dispatchers you might want to implement
+		-- useful
+		Criteria : KOW_Sec.Criteria_Ptr;
+	end record;
 
 	overriding
 	function Login_Required(
 				Dispatcher	: in     Base_Dispatcher_Type;
 				Request		: in     AWS.Status.Data
 			) return Boolean;
-	-- return false
+	-- return Criteria /= null and then Is_Anonymous
 	
 	overriding
 	function Access_Denied(
 				Dispatcher	: in     Base_Dispatcher_Type;
 				Request		: in     AWS.Status.Data
 			) return Boolean;
-	-- return false;
+	-- return Criteria /= null and then not Is_Allowed(Criteria)
 
 	procedure Setup_Status(
 				Dispatcher	: in     Base_Dispatcher_Type;

@@ -49,6 +49,8 @@ with AWS.Status;
 -- KOW Framework --
 -------------------
 with KOW_Lib.File_System;
+with KOW_Sec;
+with KOW_View.Security;
 
 package body KOW_View.Request_Dispatchers.Implementations is
 
@@ -61,8 +63,9 @@ package body KOW_View.Request_Dispatchers.Implementations is
 				Dispatcher	: in     Base_Dispatcher_Type;
 				Request		: in     AWS.Status.Data
 			) return Boolean is
+		use KOW_Sec;
 	begin
-		return false;
+		return Dispatcher.Criteria /= null and then KOW_View.Security.Is_Anonymous( Request );
 	end Login_Required;
 	
 	overriding
@@ -70,8 +73,25 @@ package body KOW_View.Request_Dispatchers.Implementations is
 				Dispatcher	: in     Base_Dispatcher_Type;
 				Request		: in     AWS.Status.Data
 			) return Boolean is
+		use KOW_Sec;
 	begin
-		 return false;
+		if Dispatcher.Criteria = null then
+			return false;
+		end if;
+		declare
+			Criteria : Criteria_Type'Class := Dispatcher.Criteria.all;
+			-- we work in a cloned criteria
+			User     : User_Type := KOW_View.Security.Get_User( Request );
+			Response : Boolean;
+		begin
+			Is_Allowed(
+					Criteria	=> Criteria,
+					User		=> User,
+					Response	=> Response
+				);
+			return not Response;
+		end;
+
 	end Access_Denied; 
 
 
