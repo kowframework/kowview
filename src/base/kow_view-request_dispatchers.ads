@@ -71,7 +71,7 @@ package KOW_View.Request_Dispatchers is
 			) return Boolean is abstract;
 	-- checks if the user must perform a login operation to continue
 	
-	function Access_Denied(
+	function Is_Allowed(
 				Dispatcher	: in Request_Dispatcher_Interface;
 				Request		: in AWS.Status.Data
 			) return Boolean is abstract;

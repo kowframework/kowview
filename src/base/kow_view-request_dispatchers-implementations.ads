@@ -64,11 +64,11 @@ package KOW_View.Request_Dispatchers.Implementations is
 	-- return Criteria /= null and then Is_Anonymous
 	
 	overriding
-	function Access_Denied(
+	function Is_Allowed(
 				Dispatcher	: in     Base_Dispatcher_Type;
 				Request		: in     AWS.Status.Data
 			) return Boolean;
-	-- return Criteria /= null and then not Is_Allowed(Criteria)
+	-- return Criteria = null or else Is_Allowed(Criteria)
 
 	procedure Setup_Status(
 				Dispatcher	: in     Base_Dispatcher_Type;

@@ -125,7 +125,7 @@ package body KOW_View is
 			raise ERROR_404 with AWS.Status.URI( Request );
 		elsif Login_Required( Dispatcher.all, Request ) then
 			return Process_Login_Required( Request );
-		elsif Access_Denied( Dispatcher.all, Request ) then
+		elsif not Is_Allowed( Dispatcher.all, Request ) then
 			raise KOW_Sec.ACCESS_DENIED;
 		else
 			return Request_Dispatchers.Dispatch( Dispatcher.all, Request );

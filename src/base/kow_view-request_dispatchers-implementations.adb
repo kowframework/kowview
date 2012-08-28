@@ -69,14 +69,14 @@ package body KOW_View.Request_Dispatchers.Implementations is
 	end Login_Required;
 	
 	overriding
-	function Access_Denied(
+	function Is_Allowed(
 				Dispatcher	: in     Base_Dispatcher_Type;
 				Request		: in     AWS.Status.Data
 			) return Boolean is
 		use KOW_Sec;
 	begin
 		if Dispatcher.Criteria = null then
-			return false;
+			return true;
 		end if;
 		declare
 			Criteria : Criteria_Type'Class := Dispatcher.Criteria.all;
@@ -89,10 +89,10 @@ package body KOW_View.Request_Dispatchers.Implementations is
 					User		=> User,
 					Response	=> Response
 				);
-			return not Response;
+			return Response;
 		end;
 
-	end Access_Denied; 
+	end Is_Allowed; 
 
 
 	procedure Setup_Status(
