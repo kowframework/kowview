@@ -4,7 +4,7 @@
 --                                                                          --
 --                              KOW Framework                               --
 --                                                                          --
---                                 B o d y                                  --
+--                                 S p e c                                  --
 --                                                                          --
 --               Copyright (C) 2007-2011, KOW Framework Project             --
 --                                                                          --
@@ -21,32 +21,44 @@
 -- MA 02111-1307, USA.                                                      --
 --                                                                          --
 ------------------------------------------------------------------------------
+pragma License (GPL);
 
 ------------------------------------------------------------------------------
--- Factory implementation for singleton services                          --
+-- Factory implementation for Stateless services                          --
 ------------------------------------------------------------------------------
 
 
+--------------
+-- Ada 2005 --
+--------------
+with Ada.Finalization;
 
 ------------------
 -- KOW Famework --
 ------------------
 with KOW_Lib.Json;
 with KOW_View.Components;
-with KOW_View.Services.Util;
 
 ---------
 -- AWS --
 ---------
 with AWS.Response;
+with AWS.Session;
+with AWS.Status;
 
 
-package body KOW_View.Services.Singleton_Service_Cycles is
+generic
+	type Service_Type is new KOW_View.Services.Service_Type with private;
+	Component	: KOW_View.Components.Component_Access;
+package KOW_View.Services.Stateless_Service_Factories is
+pragma Elaborate_Body( KOW_View.Services.Stateless_Service_Factories );
 
 
 	-------------------
 	-- The Factory --
 	-------------------
+
+	type Service_Factory_Type is new KOW_View.Services.Service_Factory_Interface with null record;
 
 
 	overriding
@@ -54,50 +66,22 @@ package body KOW_View.Services.Singleton_Service_Cycles is
 			Factory	: in out Service_Factory_Type;
 			Status		: in     Request_Status_Type;
 			Response	:    out KOW_Lib.Json.Object_Type
-		) is
-	begin
-		Process_Json_Request(
-				Service	=> Service_Instance,
-				Status	=> Status,
-				Response=> Response
-			);
-
-	end Process_Json_Request;
-
+		);
 
 	overriding
 	procedure Process_Custom_Request(
 			Factory	: in out Service_Factory_Type;
 			Status		: in     Request_Status_Type;
 			Response	:    out AWS.Response.Data
-		) is
-	begin
-		Process_Custom_Request(
-				Service	=> Service_Instance,
-				Status	=> Status,
-				Response=> Response
-			);
-	end Process_Custom_Request;
+		);
 
 
 
-	procedure Initialize_Service_Trigger is
-	begin
-		Setup_Service( Component, Service_Instance );
-	end Initialize_Service_Trigger;
-		
+	---------------
+	-- Variables --
+	---------------
+	
+	Factory : aliased Service_Factory_Type;
 
-begin
-	-------------------------------
-	-- we register the Factory --
-	-------------------------------
-	KOW_View.Components.Register_Service_Factory(
-				Component.all,
-				KOW_View.Services.Util.Get_Name( Service_Type'Tag ),
-				Factory'Unrestricted_Access
-			);
-	KOW_View.Components.Register_Initialization_Trigger(
-				Component.all,
-				Initialize_Service_Trigger'Unrestricted_Access
-			);
-end KOW_View.Services.Singleton_Service_Cycles;
+
+end KOW_View.Services.Stateless_Service_Factories;

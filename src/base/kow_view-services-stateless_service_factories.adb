@@ -23,7 +23,7 @@
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
--- Factory implementation for Stateful services                          --
+-- Factory implementation for Stateless services                          --
 ------------------------------------------------------------------------------
 
 
@@ -40,32 +40,9 @@ with KOW_View.Services.Util;
 ---------
 with AWS.Response;
 with AWS.Session;
-with AWS.Status;
 
 
-package body KOW_View.Services.Stateful_Service_Cycles is
-
-	---------------------------
-	-- The Service Container --
-	---------------------------
-	function Get( Request : in AWS.Status.Data ) return Service_Container_Type is
-		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
-		Container : Service_Container_Type := Service_Container_Data.Get( Session_ID, Service_Container_Key );
-	begin
-		if Container.Is_Null then
-			Setup_Service( Component, Container.Service );
-		end if;
-
-		return Container;
-	end Get;
-
-	procedure Set( Request : in AWS.Status.Data; Container : in Service_Container_Type ) is
-		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
-	begin
-		Service_Container_Data.Set( Session_ID, Service_Container_Key, Container );
-	end Set;
-
-
+package body KOW_View.Services.Stateless_Service_Factories is
 
 	-------------------
 	-- The Factory --
@@ -76,17 +53,17 @@ package body KOW_View.Services.Stateful_Service_Cycles is
 	procedure Process_Json_Request(
 			Factory	: in out Service_Factory_Type;
 			Status		: in     Request_Status_Type;
-			Response	:    out KOW_lib.Json.Object_Type
+			Response	:    out KOW_Lib.Json.Object_Type
 		) is
-		Container : Service_Container_Type := Get( Status.Request );
+		Service : Service_Type;
 	begin
+		Setup_Service( Component, Service );
 
 		Process_Json_Request(
-				Service	=> Container.Service,
+				Service	=> Service,
 				Status	=> Status,
 				Response=> Response
 			);
-		Set( Status.Request, Container );
 	end Process_Json_Request;
 
 
@@ -96,14 +73,14 @@ package body KOW_View.Services.Stateful_Service_Cycles is
 			Status		: in     Request_Status_Type;
 			Response	:    out AWS.Response.Data
 		) is
-		Container : Service_Container_Type := Get( Status.Request );
+		Service : Service_Type;
 	begin
+		Setup_Service( Component, Service );
 		Process_Custom_Request(
-				Service	=> Container.Service,
+				Service	=> Service,
 				Status	=> Status,
 				Response=> Response
 			);
-		Set( Status.Request, Container );
 	end Process_Custom_Request;
 
 
@@ -116,4 +93,4 @@ begin
 				KOW_View.Services.Util.Get_Name( Service_Type'Tag ),
 				Factory'Unrestricted_Access
 			);
-end KOW_View.Services.Stateful_Service_Cycles;
+end KOW_View.Services.Stateless_Service_Factories;

@@ -23,7 +23,7 @@
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
--- Factory implementation for Stateless services                          --
+-- Factory implementation for singleton services                          --
 ------------------------------------------------------------------------------
 
 
@@ -39,10 +39,10 @@ with KOW_View.Services.Util;
 -- AWS --
 ---------
 with AWS.Response;
-with AWS.Session;
 
 
-package body KOW_View.Services.Stateless_Service_Cycles is
+package body KOW_View.Services.Singleton_Service_Factories is
+
 
 	-------------------
 	-- The Factory --
@@ -55,15 +55,13 @@ package body KOW_View.Services.Stateless_Service_Cycles is
 			Status		: in     Request_Status_Type;
 			Response	:    out KOW_Lib.Json.Object_Type
 		) is
-		Service : Service_Type;
 	begin
-		Setup_Service( Component, Service );
-
 		Process_Json_Request(
-				Service	=> Service,
+				Service	=> Service_Instance,
 				Status	=> Status,
 				Response=> Response
 			);
+
 	end Process_Json_Request;
 
 
@@ -73,16 +71,21 @@ package body KOW_View.Services.Stateless_Service_Cycles is
 			Status		: in     Request_Status_Type;
 			Response	:    out AWS.Response.Data
 		) is
-		Service : Service_Type;
 	begin
-		Setup_Service( Component, Service );
 		Process_Custom_Request(
-				Service	=> Service,
+				Service	=> Service_Instance,
 				Status	=> Status,
 				Response=> Response
 			);
 	end Process_Custom_Request;
 
+
+
+	procedure Initialize_Service_Trigger is
+	begin
+		Setup_Service( Component, Service_Instance );
+	end Initialize_Service_Trigger;
+		
 
 begin
 	-------------------------------
@@ -93,4 +96,8 @@ begin
 				KOW_View.Services.Util.Get_Name( Service_Type'Tag ),
 				Factory'Unrestricted_Access
 			);
-end KOW_View.Services.Stateless_Service_Cycles;
+	KOW_View.Components.Register_Initialization_Trigger(
+				Component.all,
+				Initialize_Service_Trigger'Unrestricted_Access
+			);
+end KOW_View.Services.Singleton_Service_Factories;

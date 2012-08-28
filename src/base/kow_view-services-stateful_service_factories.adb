@@ -4,7 +4,7 @@
 --                                                                          --
 --                              KOW Framework                               --
 --                                                                          --
---                                 S p e c                                  --
+--                                 B o d y                                  --
 --                                                                          --
 --               Copyright (C) 2007-2011, KOW Framework Project             --
 --                                                                          --
@@ -21,23 +21,19 @@
 -- MA 02111-1307, USA.                                                      --
 --                                                                          --
 ------------------------------------------------------------------------------
-pragma License (GPL);
 
 ------------------------------------------------------------------------------
--- Factory implementation for Stateless services                          --
+-- Factory implementation for Stateful services                          --
 ------------------------------------------------------------------------------
 
 
---------------
--- Ada 2005 --
---------------
-with Ada.Finalization;
 
 ------------------
 -- KOW Famework --
 ------------------
 with KOW_Lib.Json;
 with KOW_View.Components;
+with KOW_View.Services.Util;
 
 ---------
 -- AWS --
@@ -47,41 +43,77 @@ with AWS.Session;
 with AWS.Status;
 
 
-generic
-	type Service_Type is new KOW_View.Services.Service_Type with private;
-	Component	: KOW_View.Components.Component_Access;
-package KOW_View.Services.Stateless_Service_Cycles is
-pragma Elaborate_Body( KOW_View.Services.Stateless_Service_Cycles );
+package body KOW_View.Services.Stateful_Service_Factories is
+
+	---------------------------
+	-- The Service Container --
+	---------------------------
+	function Get( Request : in AWS.Status.Data ) return Service_Container_Type is
+		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
+		Container : Service_Container_Type := Service_Container_Data.Get( Session_ID, Service_Container_Key );
+	begin
+		if Container.Is_Null then
+			Setup_Service( Component, Container.Service );
+		end if;
+
+		return Container;
+	end Get;
+
+	procedure Set( Request : in AWS.Status.Data; Container : in Service_Container_Type ) is
+		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
+	begin
+		Service_Container_Data.Set( Session_ID, Service_Container_Key, Container );
+	end Set;
+
 
 
 	-------------------
 	-- The Factory --
 	-------------------
 
-	type Service_Factory_Type is new KOW_View.Services.Service_Factory_Interface with null record;
-
 
 	overriding
 	procedure Process_Json_Request(
 			Factory	: in out Service_Factory_Type;
 			Status		: in     Request_Status_Type;
-			Response	:    out KOW_Lib.Json.Object_Type
-		);
+			Response	:    out KOW_lib.Json.Object_Type
+		) is
+		Container : Service_Container_Type := Get( Status.Request );
+	begin
+
+		Process_Json_Request(
+				Service	=> Container.Service,
+				Status	=> Status,
+				Response=> Response
+			);
+		Set( Status.Request, Container );
+	end Process_Json_Request;
+
 
 	overriding
 	procedure Process_Custom_Request(
 			Factory	: in out Service_Factory_Type;
 			Status		: in     Request_Status_Type;
 			Response	:    out AWS.Response.Data
-		);
+		) is
+		Container : Service_Container_Type := Get( Status.Request );
+	begin
+		Process_Custom_Request(
+				Service	=> Container.Service,
+				Status	=> Status,
+				Response=> Response
+			);
+		Set( Status.Request, Container );
+	end Process_Custom_Request;
 
 
-
-	---------------
-	-- Variables --
-	---------------
-	
-	Factory : aliased Service_Factory_Type;
-
-
-end KOW_View.Services.Stateless_Service_Cycles;
+begin
+	-------------------------------
+	-- we register the Factory --
+	-------------------------------
+	KOW_View.Components.Register_Service_Factory(
+				Component.all,
+				KOW_View.Services.Util.Get_Name( Service_Type'Tag ),
+				Factory'Unrestricted_Access
+			);
+end KOW_View.Services.Stateful_Service_Factories;
