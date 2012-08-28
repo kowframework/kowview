@@ -47,6 +47,8 @@ package KOW_View.Request_Dispatchers.Implementations is
 	--------------------------
 
 	type Base_Dispatcher_Type is abstract new Request_Dispatcher_Interface with null record;
+	-- a base for the request dispatchers you might want to implement
+	-- useful
 
 	procedure Setup_Status(
 				Dispatcher	: in     Base_Dispatcher_Type;
@@ -91,6 +93,10 @@ package KOW_View.Request_Dispatchers.Implementations is
 			);
 
 
+	---------------------------
+	-- Restricted Dispatcher --
+	---------------------------
+
 
 	-----------------------
 	-- htdocs Dispatcher --
@@ -98,8 +104,8 @@ package KOW_View.Request_Dispatchers.Implementations is
 
 
 	type Htdocs_Dispatcher_Type is new Request_Dispatcher_Interface with record
+		-- a dispatcher that serves static files from the ./htdocs folder
 		Document_Root : Unbounded_String := To_Unbounded_String( "./htdocs" );
-		-- TODO :: command line argument
 	end record;
 
 	overriding
