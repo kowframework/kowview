@@ -113,14 +113,14 @@ package body KOW_View.Pages is
 					Contents  : KOW_Lib.Json.Array_Type;
 				begin
 					for Page.Current_Index in Factories'Range loop
-						Create( Factories( Page.Current_Index ).all, Module );
+						Create( Factories( Page.Current_Index ).all, Status, Module );
 						pragma Assert( Module /= null, "The factory is not allocating the correct module!" );
 
 						Page.Buffer := Ada.Strings.Unbounded.Null_Unbounded_String;
 						Process_Request( Module.all, Page, Status );
 						KOW_Lib.Json.Append( Contents, Page.Buffer );
 
-						Destroy( Factories( Page.Current_Index ).all, Module );
+						Destroy( Factories( Page.Current_Index ).all, Status, Module );
 						pragma Assert( Module = null, "The factory is not deallocating the module! Memory leak?" );
 					end loop;
 
@@ -162,7 +162,7 @@ package body KOW_View.Pages is
 					       	Region	=> Page.Current_Region
 					)( Page.Currend_Index );
 
-			Create( Factory.all, Module );
+			Create( Factory.all, Status, Module );
 
 			Process_Json_Request(
 						Module	=> Module.all,
@@ -170,11 +170,11 @@ package body KOW_View.Pages is
 						Response=> Response
 					);
 
-			Destroy( Factory.all, Module );
+			Destroy( Factory.all, Status, Module );
 		exception
 			when e : others =>
 				if Module /= null then
-					Destroy( Factory.all, Module );
+					Destroy( Factory.all, Status, Module );
 				end if;
 				Ada.Exceptions.Reraise_Occurrence( e );
 

@@ -142,12 +142,14 @@ package KOW_View.Pages is
 
 	procedure Create(
 				Factory	: in out Module_Factory_Interface;
+				Status	: in     Request_Status_Type;
 				Module	:    out Module_Ptr
 			) is abstract;
 	-- return an initialized access to a module
 
 	procedure Destroy(
 				Factory	: in out Module_Factory_Interface;
+				Status	: in     Request_Status_Type;
 				Module	: in out Module_Ptr
 			) is abstract;
 	-- deallocate the given module

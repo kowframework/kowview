@@ -186,27 +186,6 @@ package body KOW_View.Modules is
 			raise program_error with "can't serve static files in JSON requests";
 		end Process_Json_Request;
 
-		--------------------
-		-- Module Factory --
-		--------------------
-
-		overriding
-		procedure Create(
-					Factory	: in out Static_Module_Factory;
-					Module	:    out Module_Ptr
-			) is
-		begin
-			Module := The_Module;
-		end Create;
-	
-		overriding
-		procedure Destroy(
-					Factory	: in out Static_Module_Factory;
-					Module	: in out Module_Ptr
-				) is
-		begin
-			Module := null;
-		end Destroy;
 
 	end Static_Modules;
 

@@ -37,6 +37,7 @@ with Ada.Text_IO;
 -- KOW Framework --
 -------------------
 with KOW_View.Components;	use KOW_View.Components;
+with KOW_View.Module_Factories;
 with KOW_View.Pages;		use KOW_View.Pages;
 
 
@@ -135,24 +136,9 @@ package KOW_View.Modules is
 		-- The Factory --
 		-----------------
 
-		type Static_Module_Factory is new Module_Factory_Interface with null record;
-		-- return a singleton object
-		-- destroy does only sets the pointer to null
-
-		overriding
-		procedure Create(
-					Factory	: in out Static_Module_Factory;
-					Module	:    out Module_Ptr
-			);
-	
-		overriding
-		procedure Destroy(
-					Factory	: in out Static_Module_Factory;
-					Module	: in out Module_Ptr
-				);
-
-		The_Module	: constant Module_Ptr := new Static_Module;
-		Factory		: constant Module_Factory_Ptr := new Static_Module_Factory;
+		package Factories is new Module_Factories.Singleton_Modules( Static_Module );
+		
+		Factory : constant Module_Factory_Ptr := new Facotires.Module_Factory;
 	end Static_Modules;
 
 
