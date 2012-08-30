@@ -66,6 +66,7 @@ package KOW_View.Services is
 		-- the service to whom this service belongs
 	end record;
 
+	type Service_Ptr is access all Service_Type'Class;
 
 
 	procedure Process_Json_Request(
@@ -90,7 +91,7 @@ package KOW_View.Services is
 			Status		: in Request_Status_Type;
 			Resource	: in String;
 			Extension	: in String := "";
-			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
+			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
 		) return String;
 	-- locate the resource [service_name]/resource.extension within the component
 
@@ -128,8 +129,8 @@ package KOW_View.Services is
 	-- Service Dispatchers --
 	-------------------------
 
-	type Prefix_Dispatcher_Type is abstract new KOW_View.Request_Dispatchers.Implementations.Prefix_Dispatcher_Type with record
-		Service : Service_Factory_Ptr;
+	type Service_Dispatcher_Type is abstract new KOW_View.Request_Dispatchers.Implementations.Prefix_Dispatcher_Type with record
+		Factory : Service_Factory_Ptr;
 	end record;
 
 
@@ -138,13 +139,5 @@ package KOW_View.Services is
 				Dispatcher	: in Service_Dispatcher_Type;
 				Request		: in AWS.Status.Data
 			) return AWS.Response.Data;
-
-
-	overriding
-	procedure Setup_Status(
-				Dispatcher	: in     Service_Dispatcher_Type;
-				Request		: in     AWS.Status.Data;
-				Status		: in out Request_Status_Type
-			);
 
 end KOW_View.Services;

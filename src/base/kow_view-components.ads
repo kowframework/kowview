@@ -77,7 +77,7 @@ package KOW_View.Components is
 			Status		: in Request_Status_Type;
 			Resource	: in String;
 			Extension	: in String := "";
-			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
+			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
 		) return String;
 	-- locate a resource file for this component
 	-- this file should be placed at

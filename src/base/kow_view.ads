@@ -126,15 +126,13 @@ package KOW_View is
 		-- the AWS.Status.Data value for the given request
 
 
-		-- 
-		-- The following attributes correspond to the specific component, service and module that will process
-		-- the current request;
-		--
-		-- Those should also be defined by the request dispatcher
-		--
-		Component		: Component_Name := No_Component;
-		Service			: Service_Name   := No_Service;
 		Context			: Context_Name   := No_Context;
+		-- the context is an arbitrary HTTP parameter that's
+		-- set by the dispatcher and used by the service
+		--
+		--
+		-- in page services, it will identify the module ID for json
+		-- requests for instance
 	end record;
 
 

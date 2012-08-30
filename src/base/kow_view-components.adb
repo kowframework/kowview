@@ -38,8 +38,6 @@ with Ada.Strings.Unbounded;		use Ada.Strings.Unbounded;
 with KOW_Config;
 with KOW_Lib.File_System;
 with KOW_Lib.String_Util;
-with KOW_View.Components.Registry;
-with KOW_View.Components.Util;
 with KOW_View.Locales;
 with KOW_View.Util;
 
@@ -74,7 +72,7 @@ package body KOW_View.Components is
 			Status		: in Request_Status_Type;
 			Resource	: in String;
 			Extension	: in String := "";
-			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
+			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
 		) return String is
 		-- locate a resource file for this component
 		-- this file should be placed at
@@ -199,7 +197,7 @@ package body KOW_View.Components is
 
 
 	function New_Component(
-				Name	: in String )
+				Name	: in String
 			) return Component_Ptr is
 		-- allocate and initialize the component
 		-- use this to declare your own components

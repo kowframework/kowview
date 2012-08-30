@@ -61,7 +61,7 @@ package body KOW_View.Services is
 			Status		: in Request_Status_Type;
 			Resource	: in String;
 			Extension	: in String := "";
-			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
+			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
 		) return String is
 		Prefix : constant String := To_String( Get_Name( Service ) ) & "_service";
 	begin
@@ -70,7 +70,7 @@ package body KOW_View.Services is
 					Status		=> Status,
 					Resource	=> Prefix / Resource,
 					Extension	=> Extension,
-					Kind		=> Kind,
+					Kind		=> Kind
 				);
 	end Locate_Resource;
 
@@ -92,6 +92,7 @@ package body KOW_View.Services is
 				Request		: in AWS.Status.Data
 			) return AWS.Response.Data is
 		Status		: Request_Status_Type;
+		Response	: AWS.Response.Data;
 	begin
 		Setup_Status( Dispatcher, Request, Status );
 		declare
@@ -100,30 +101,26 @@ package body KOW_View.Services is
 			Create( Dispatcher.Factory.all, Service );
 			case Status.Mode is
 				when Custom_Request =>
-					declare
-						Response : AWS.Response.Data;
-					begin
-						Process_Custom_Request(
-									Service		=> Service.all,
-									Status		=> Status,
-									Response	=> Response
-								);
-						return Response;
-					end;
+					Process_Custom_Request(
+								Service		=> Service.all,
+								Status		=> Status,
+								Response	=> Response
+							);
 				when Json_Request =>
 					declare
-						Response : KOW_Lib.Json.Object_Type;
+						JResponse : KOW_Lib.Json.Object_Type;
 						Wrap_Data : constant Boolean := AWS.Parameters.Get( AWS.Status.Parameters( Status.Request ), "iframe" ) = "true";
 					begin
 						Process_Json_Request(
 									Service		=> Service.all,
 									Status		=> Status,
-									Response	=> Response
+									Response	=> JResponse
 								);
-						return KOW_View.Json_Util.Build_Success_Response( Object => Response, Wrap_Data => Wrap_Data );
+						Response := KOW_View.Json_Util.Build_Success_Response( Object => JResponse, Wrap_Data => Wrap_Data );
 					end;
 			end case;
 			Destroy( Dispatcher.Factory.all, Service );
+			return Response;
 		exception
 			when e : others =>
 				if Service /= null then
@@ -132,26 +129,6 @@ package body KOW_View.Services is
 				Ada.Exceptions.Reraise_Occurrence( e );
 		end;
 	end Dispatch;
-
-	
-
-
-	overriding
-	procedure Setup_Status(
-				Dispatcher	: in     Service_Dispatcher_Type;
-				Request		: in     AWS.Status.Data;
-				Status		: in out Request_Status_Type
-			) is
-		use KOW_View.Request_Dispatchers.Implementations;
-	begin
-		Setup_Status(
-				Dispatcher	=> Prefix_Dispatcher_Type( Dispatcher ),
-				Request		=> Request,
-				Status		=> Status
-			);
-		Status.Component := Dispatcher.Component_Name;
-		Status.Service   := Dispatcher.Service_Name;
-	end Setup_Status;
 
 
 end KOW_View.Services;
