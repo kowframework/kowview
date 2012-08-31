@@ -33,7 +33,6 @@
 ------------------
 with KOW_Lib.Json;
 with KOW_View.Components;
-with KOW_View.Services.Util;
 
 ---------
 -- AWS --

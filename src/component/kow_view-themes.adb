@@ -1,5 +1,4 @@
-
-G------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 --                                                                          --
 --                          KOW Framework :: View                           --
 --                                                                          --
@@ -28,6 +27,8 @@ pragma License (GPL);
 -- Main package for Theme Engines                                           --
 ------------------------------------------------------------------------------
 
+
+
 --------------
 -- Ada 2005 --
 --------------
@@ -38,23 +39,23 @@ with Ada.Directories;
 -- KOW Framework --
 -------------------
 with KOW_Lib.File_System;
+with KOW_View.KTML;
 
 
-package KOW_View.Themes is
+---------
+-- AWS --
+---------
+with AWS.Mime;
+with AWS.Response;
+
+
+package body KOW_View.Themes is
 
 	----------------------
 	-- The Theme Engine --
 	----------------------
 
 	
-	type Theme_Engine_Type is tagged null record;
-	-- the theme is used by the page services
-	-- this is the main theme implementation, but that can be overriden
-
-	type Theme_Engine_Ptr is access all Theme_Engine_Type'Class;
-
-
-
 	procedure Build_Response(
 				Theme_Engine	: in     Theme_Engine_Type;
 				Service		: in     KOW_View.Services.Service_Type'Class;
@@ -72,9 +73,9 @@ package KOW_View.Themes is
 							);
 	begin
 
-		Response : AWS.Response.Build(
+		Response := AWS.Response.Build(
 						Content_Type	=> AWS.Mime.Text_HTML,
-						Message_Body	=> KOW_View.KHTML.Render(
+						Message_Body	=> KOW_View.KTML.Render(
 										File_Path	=> Template_Path,
 										Initial_State	=> Initial_State
 									)
@@ -124,14 +125,13 @@ package KOW_View.Themes is
 					);
 		end Try;
 
-		Tpl : constant String := To_String( Template );
-
 		use KOW_Lib.File_System;
 
-		return Try( To_String( KOW_View.Services.Get_Name( Service ) ) / Tpl );
+	begin
+		return Try( To_String( KOW_View.Services.Get_Name( Service ) ) / Resource );
 	exception
 		when Ada.Directories.Name_Error =>
-			return Try( Tpl );
-	end Locate_Template;
+			return Try( Resource );
+	end Locate_Resource;
 
 end KOW_View.Themes;

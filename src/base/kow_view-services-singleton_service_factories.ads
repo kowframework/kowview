@@ -77,7 +77,4 @@ pragma Elaborate_Body( KOW_View.Services.Singleton_Service_Factories );
 	
 	Factory : aliased Service_Factory_Type;
 
-private
-	procedure Initialize_Service_Trigger;
-
 end KOW_View.Services.Singleton_Service_Factories;

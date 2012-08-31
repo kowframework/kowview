@@ -113,7 +113,7 @@ package KOW_View.Modules is
 		-- The Module --
 		----------------
 
-		type Static_Module is new Base_Module ( Component ) with null record;
+		type Static_Module is new Base_Module ( Component ) with private;
 
 		overriding
 		procedure Process_Request(
@@ -137,9 +137,9 @@ package KOW_View.Modules is
 		-- The Factory --
 		-----------------
 
-		package Factories is new Module_Factories.Singleton_Modules( Static_Module );
+		package Factories is new Module_Factories.Singleton_Modules( Component => Component, Module_Type => Static_Module );
 		
-		Factory : constant Module_Factory_Ptr := new Facotires.Module_Factory;
+		Factory : constant Module_Factory_Ptr := new Factories.Module_Factory;
 	end Static_Modules;
 
 

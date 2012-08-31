@@ -70,7 +70,7 @@ package body KOW_View.Modules is
 		return Locate_Resource(
 					Component	=> Module.Component.all,
 					Status		=> Status,
-					Resource	=> Get_Name( Base_Module'Class( Module ) ) & "_module" / Resource,
+					Resource	=> To_String( Get_Name( Base_Module'Class( Module ) ) ) & "_module" / Resource,
 					Extension	=> Extension,
 					Kind		=> Kind
 				);
