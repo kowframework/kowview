@@ -52,14 +52,14 @@ package body KOW_View.Components is
 		-- convert from string to component name
 		Name : Component_Name;
 	begin
-		KOW_Lib.String_Util.Copy( From => Str, To => Name );
+		KOW_Lib.String_Util.Copy( From => Str, To => String( Name ) );
 		return Name;
 	end To_Name;
 
 	function To_String( Name : in Component_Name ) return String is
 		-- trim the name and return it as a simple string
 	begin
-		return Ada.Strings.Fixed.Trim( Name, Ada.Strings.Right );
+		return Ada.Strings.Fixed.Trim( String( Name ), Ada.Strings.Right );
 	end To_String;
 
 
@@ -85,6 +85,7 @@ package body KOW_View.Components is
 
 		use Ada.Directories;
 		use KOW_Lib.File_System;
+		use KOW_Lib.Locales;
 
 		CName		: constant String	:= To_String( Component.Name );
 		Name		: constant String	:= "data" / CName / Resource; --& "." & Extension;
@@ -124,7 +125,6 @@ package body KOW_View.Components is
 		function Check_Localized( FName : in String ) return String is
 			use Ada.Strings;
 			use Ada.Strings.Unbounded;
-			use KOW_Lib.Locales;
 
 
 			function inner_check( LC : in Locale_Code_Type ) return String is
@@ -137,12 +137,12 @@ package body KOW_View.Components is
 				end if;
 			end inner_check;
 
-			The_Name : constant String := Inner_Check( Locale_Code );
+			The_Name : constant String := Inner_Check( Locale.Code );
 		begin
 			if The_Name /= "" then
 				return The_Name;
 			else
-				return Inner_Check( ( Language => Locale_Code.Language, Country => No_Country ) );
+				return Inner_Check( ( Language => Locale.Code.Language, Country => No_Country ) );
 			end if;
 		end Check_Localized;
 	
@@ -166,7 +166,12 @@ package body KOW_View.Components is
 				return Str;
 			end if;
 
-			raise Ada.Directories.Name_Error with "Resource " & Resource & "." & Extension & " of component " & To_String( Component_name ) + " not found!";
+			declare
+				use kOW_View.Components;
+				Name : constant String := To_String( Component.Name );
+			begin
+				raise Ada.Directories.Name_Error with "Resource " & Resource & "." & Extension & " of component " & Name & " not found!";
+			end;
 		end LMC;
 
 	begin
@@ -201,7 +206,7 @@ package body KOW_View.Components is
 			) return Component_Ptr is
 		-- allocate and initialize the component
 		-- use this to declare your own components
-		Component : Component_Access := new Component_Type( Name => To_Name( String ) );
+		Component : Component_Access := new Component_Type'( Name => To_Name( Name ) );
 	begin
 		return Component_Ptr( Component );
 	end New_Component;
