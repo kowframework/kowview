@@ -239,7 +239,8 @@ package body KOW_View is
 						if Ada.Directories.Exists( Template_Path ) then
 							User := KOW_View.Security.Get_User( Error.Request );
 
-							KOW_View.Security.Insert( P, User );
+							--KOW_View.Security.Insert( P, User );
+							-- TODO :: fix up the inserting of user data...
 							Insert( P, Assoc( "exception_name", Exception_Name( E ) ) );
 							Insert( P, Assoc( "exception_message", Exception_Message( E ) ) );
 							Insert( P, Assoc( "exception_information", Exception_Information( E ) ) );
