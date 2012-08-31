@@ -34,7 +34,7 @@ pragma License (GPL);
 -- Ada 2005 --
 --------------
 with Ada.Exceptions;
-with Ada.Strings.Unbouned;
+with Ada.Strings.Unbounded;
 
 
 -------------------

@@ -80,7 +80,7 @@ package body KOW_View.Module_Factories is
 	package body Stateful_Modules is
 
 
-		type Module_Access is access Module_Type;
+		type Module_Access is access all Module_Type;
 
 		procedure Free is new Ada.Unchecked_Deallocation( Object => Module_Type, Name => Module_Access );
 		Null_Module : Module_Type;
@@ -97,8 +97,8 @@ package body KOW_View.Module_Factories is
 					Module	:    out Module_Ptr
 				) is
 			Session_ID : constant AWS.Session.ID := AWS.Status.Session( Status.Request );
-			Module  : Module_Type := Module_Container_Data.Get( Sesion_Id, Session_Key );
-			The_Module : Module_Access := new Module_Type'( Module );
+			Module_Template	: Module_Type := Module_Container_Data.Get( Session_Id, Session_Key );
+			The_Module	: Module_Access := new Module_Type'( Module_Template );
 		begin
 			Module := Module_Ptr( The_Module );
 		end Create;
@@ -112,7 +112,7 @@ package body KOW_View.Module_Factories is
 			Session_ID : constant AWS.Session.ID := AWS.Status.Session( Status.Request );
 		begin
 			Module_Container_Data.Set( Session_ID, Session_Key, Module_Access( Module ).all );
-			Free( Module );
+			Free( Module_Access( Module ) );
 		end Destroy;
 	end Stateful_Modules;
 
@@ -124,7 +124,7 @@ package body KOW_View.Module_Factories is
 
 	package body Stateless_Modules is
 
-		type Module_Access is access Module_Type;
+		type Module_Access is access all Module_Type;
 		procedure Free is new Ada.Unchecked_Deallocation( Object => Module_Type, Name => Module_Access );
 
 		overriding
@@ -145,7 +145,7 @@ package body KOW_View.Module_Factories is
 					Module	: in out Module_Ptr
 				) is
 		begin
-			Free( Module );
+			Free( Module_Access( Module ) );
 		end Destroy;
 
 	end Stateless_Modules;

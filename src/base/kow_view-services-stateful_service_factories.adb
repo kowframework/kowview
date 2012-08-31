@@ -106,14 +106,4 @@ package body KOW_View.Services.Stateful_Service_Factories is
 		Set( Status.Request, Container );
 	end Process_Custom_Request;
 
-
-begin
-	-------------------------------
-	-- we register the Factory --
-	-------------------------------
-	KOW_View.Components.Register_Service_Factory(
-				Component.all,
-				KOW_View.Services.Util.Get_Name( Service_Type'Tag ),
-				Factory'Unrestricted_Access
-			);
 end KOW_View.Services.Stateful_Service_Factories;

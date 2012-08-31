@@ -38,7 +38,7 @@ package KOW_View.Themes is
 
 	Component : constant KOW_View.Components.Component_Ptr := KOW_View.Components.New_Component( "themes" );
 
-	subtype Template_Name is KOW_View.Path_Type;
+	subtype Template_Name is KOW_View.Name_Type;
 	Template_Extension : constant String := "ktml";
 
 
@@ -74,11 +74,6 @@ package KOW_View.Themes is
 			) return String;
 	-- load the template, returning it as a String
 
-
-	function Locate_Theme_Resource(
-				Theme_Engine	: in Theme_Engine_Type;
-				Service		: in KOW_View.Services.Service_Type'Class;
-				Resourc
 
 
 	Default : constant Theme_Engine_Ptr := new Theme_Engine_Type;

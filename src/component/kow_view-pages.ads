@@ -33,7 +33,7 @@ pragma License (GPL);
 --------------
 -- Ada 2005 --
 --------------
-with Ada.Strings.Unbouned;
+with Ada.Strings.Unbounded;
 
 
 -------------------
@@ -41,6 +41,7 @@ with Ada.Strings.Unbouned;
 -------------------
 with KOW_Lib.Json;
 with KOW_View.Services;
+with KOW_View.Themes;
 
 
 ---------
@@ -56,7 +57,7 @@ package KOW_View.Pages is
 	-- The Page Interface --
 	------------------------
 
-	type Page_Inteface is interface;
+	type Page_Interface is interface;
 	-- for the Module, a page is just an interface that implement some methods it uses
 	--
 	-- also, the page is responsible for handling the modules it contains
@@ -170,7 +171,7 @@ package KOW_View.Pages is
 		-- this can be overriden by the implementation
 
 
-		type Page_Type is new abstract KOW_View.Services.Service_Type and Page_Interface with record
+		type Page_Type is abstract new KOW_View.Services.Service_Type and Page_Interface with record
 			Title			: Page_Title;
 			-- the page title
 
@@ -185,7 +186,7 @@ package KOW_View.Pages is
 			-- map the current module and region
 
 
-			Buffer		: Ada.Strings.Unbouned.Unbounded_String;
+			Buffer		: Ada.Strings.Unbounded.Unbounded_String;
 			-- a buffer that's reutilized
 		end record;
 
