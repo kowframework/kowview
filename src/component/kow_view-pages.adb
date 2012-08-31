@@ -34,6 +34,7 @@ pragma License (GPL);
 -- Ada 2005 --
 --------------
 with Ada.Exceptions;
+with Ada.Strings.Fixed;
 with Ada.Strings.Unbounded;
 
 
@@ -59,24 +60,7 @@ package body KOW_View.Pages is
 	-- Page Service --
 	------------------
 
-	generic
-		type Regions is (<>);
-		Theme_Engine : KOW_View.Themes.Theme_Engine_Ptr;
 	package body Base is
-		type Page_Type is new abstract KOW_View.Services.Service_Type and Page_Interface with record
-			Title			: Page_Title;
-			-- the page title
-
-
-			Scripts, CSSs, AMDJS	: KOW_Lib.Json.Array_Type;
-			-- store the things to be included
-
-
-			Current_Region	: Regions;
-			Current_Index	: Positive;
-			-- map the current module and region
-		end record;
-
 
 		-- 
 		-- Service Methods 
@@ -104,7 +88,8 @@ package body KOW_View.Pages is
 		begin
 			KOW_Lib.Json.Set( Initial_State, "title", Page.Title.all );
 
-			for Page.Current_Region in Regions'Range loop
+			for r in Regions'Range loop
+				Page.Current_Region := r;
 				declare
 					Factories : Module_Factory_Array := Get_Module_Factories(
 													Page	=> Page_Type'Class( Page ),
@@ -112,7 +97,8 @@ package body KOW_View.Pages is
 												);
 					Contents  : KOW_Lib.Json.Array_Type;
 				begin
-					for Page.Current_Index in Factories'Range loop
+					for I in Factories'Range loop
+						Page.Current_Index := I;
 						Create( Factories( Page.Current_Index ).all, Status, Module );
 						pragma Assert( Module /= null, "The factory is not allocating the correct module!" );
 
@@ -157,15 +143,16 @@ package body KOW_View.Pages is
 					Index	=> Page.Current_Index
 				);
 
-			Factory := Get_Modules( 
+			Factory := Get_Module_Factories( 
 						Page	=> Page_Type'Class( Page ),
 					       	Region	=> Page.Current_Region
-					)( Page.Currend_Index );
+					)( Page.Current_Index );
 
 			Create( Factory.all, Status, Module );
 
 			Process_Json_Request(
 						Module	=> Module.all,
+						Page	=> Page,
 						Status	=> Status,
 						Response=> Response
 					);
@@ -196,6 +183,34 @@ package body KOW_View.Pages is
 		end Append;
 
 
+
+		procedure Append_Unique(
+					Arr	: in out KOW_Lib.Json.Array_type;
+					Value	: in     String
+				) is
+			use KOW_Lib.Json;
+
+
+			Exists : Boolean := False;
+
+			procedure Iterator(
+						Index	: in Natural;
+						Data	: in Json_Data_Type
+					) is
+				Str : String := From_Data( Data );
+			begin
+				if Str = Value then
+					Exists := true;
+				end if;
+			end Iterator;
+		begin
+			Iterate( Arr, Iterator'Access );
+			if not exists then
+				Append( Arr, Value );
+			end if;
+		end Append_Unique;
+
+
 		overriding
 		procedure Include_Script(
 					Page	: in out Page_Type;
@@ -213,7 +228,7 @@ package body KOW_View.Pages is
 				) is
 			-- include a CSS file into the page
 		begin
-			Append_Unique( Page.CSS, CSS );
+			Append_Unique( Page.CSSs, CSS );
 		end Include_CSS;
 
 

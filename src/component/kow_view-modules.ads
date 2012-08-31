@@ -98,7 +98,7 @@ package KOW_View.Modules is
 
 
 	generic
-		Component : Component_Ptr;
+		TheComponent : Component_Ptr;
 		Resource  : String;
 		-- the resource to be served (to be located by module's Locate_Resource function)
 		-- the "html" extension is always used
@@ -113,7 +113,10 @@ package KOW_View.Modules is
 		-- The Module --
 		----------------
 
-		type Static_Module is new Base_Module ( Component ) with private;
+		--type Static_Module is new Base_Module ( Component ) with null record;
+		type Static_Module is new Module_Interface with record
+			Component : KOW_View.Components.Component_Ptr := TheComponent;
+		end record;
 
 		overriding
 		procedure Process_Request(
@@ -137,9 +140,9 @@ package KOW_View.Modules is
 		-- The Factory --
 		-----------------
 
-		package Factories is new Module_Factories.Singleton_Modules( Component => Component, Module_Type => Static_Module );
+		package Factories is new Module_Factories.Singleton_Modules( Module_Type => Static_Module );
 		
-		Factory : constant Module_Factory_Ptr := new Factories.Module_Factory;
+		Factory : constant Module_Factory_Ptr := new Factories.Singleton_Module_Factory;
 	end Static_Modules;
 
 

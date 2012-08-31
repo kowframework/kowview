@@ -163,7 +163,7 @@ package body KOW_View.Modules is
 				) is
 
 			Path : constant String := Locate_Resource(
-									Module		=> Static_Module'Class( Module ),
+									Module		=> Static_Module'Class( Module ).component.all,
 									Status		=> Status,
 									Resource	=> Resource,
 									Extension	=> "html",
