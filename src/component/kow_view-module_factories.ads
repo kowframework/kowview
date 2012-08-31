@@ -31,7 +31,7 @@ pragma License (GPL);
 with KOW_View.Pages;		use KOW_View.Pages;
 
 
-package KOW_View.Modules.Factories is
+package KOW_View.Module_Factories is
 
 
 	-----------------------
@@ -127,4 +127,4 @@ package KOW_View.Modules.Factories is
 	end Stateless_Modules;
 
 
-end KOW_View.Modules.Factories;
+end KOW_View.Module_Factories;

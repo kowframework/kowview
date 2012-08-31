@@ -155,9 +155,9 @@ package body KOW_View.Request_Dispatchers.Implementations is
 		Setup_Status( Base_Dispatcher_Type( Dispatcher ), Request, Status );
 		-- mode and request set by superclass
 
-		Status.Mapped_URI := From_String( Dispatcher.Prefix.all );
-		Status.Mapped_Expression := From_String( Dispatcher.Prefix.all );
-		Status.Local_URI := From_String( Local_URI );
+		Status.Mapped_URI := To_Name( Dispatcher.Prefix.all );
+		Status.Mapped_Expression := To_Name( Dispatcher.Prefix.all );
+		Status.Local_URI := To_Name( Local_URI );
 	end Setup_Status;
 
 	procedure Set_Prefix(

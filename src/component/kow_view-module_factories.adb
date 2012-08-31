@@ -43,7 +43,7 @@ with AWS.Status;
 with KOW_View.Pages;		use KOW_View.Pages;
 
 
-package body KOW_View.Modules.Factories is
+package body KOW_View.Module_Factories is
 
 	-----------------------
 	-- Singleton Modules --
@@ -82,7 +82,7 @@ package body KOW_View.Modules.Factories is
 
 		type Module_Access is access Module_Type;
 
-		procedure Free is new Ada.Unchecked_Deallocation( Object => Module_Type, Name => Module_Access ):
+		procedure Free is new Ada.Unchecked_Deallocation( Object => Module_Type, Name => Module_Access );
 		Null_Module : Module_Type;
 
 		package Module_Container_Data is new AWS.Session.Generic_Data(
@@ -154,4 +154,4 @@ package body KOW_View.Modules.Factories is
 
 
 
-end KOW_View.Modules.Factories;
+end KOW_View.Module_Factories;
