@@ -162,17 +162,18 @@ package body KOW_View.Modules is
 					Status	: in     Request_Status_Type
 				) is
 
-			Path : constant String := Locate_Resource(
-									Module		=> Static_Module'Class( Module ).component.all,
-									Status		=> Status,
-									Resource	=> Resource,
-									Extension	=> "html",
-									Kind		=> Ada.Directories.Ordinary_File
-								);
+--			Path : constant String := Locate_Resource(
+--									Module		=> Static_Module'Class( Module ),
+--									Status		=> Status,
+--									Resource	=> Resource,
+--									Extension	=> "html",
+--									Kind		=> Ada.Directories.Ordinary_File
+--								);
+			Path : constant String := "";
 		begin
 			Pages.Append(
-					Page		=> Page,
-					Contents	=> Get_Contents( Path )
+					Page	=> Page,
+					Content	=> Get_Contents( Path )
 				);
 		end Process_Request;
 		
