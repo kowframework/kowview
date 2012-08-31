@@ -224,7 +224,6 @@ package KOW_View.Pages is
 
 		overriding
 		procedure Append(
-
 				Page	: in out Page_Type;
 				Content	: in     String
 			);

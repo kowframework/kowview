@@ -170,7 +170,7 @@ package body KOW_View.Modules is
 									Kind		=> Ada.Directories.Ordinary_File
 								);
 		begin
-			Append(
+			Pages.Append(
 					Page		=> Page,
 					Contents	=> Get_Contents( Path )
 				);
