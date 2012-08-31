@@ -27,13 +27,16 @@
 ------------------------------------------------------------------------------
 
 
+--------------
+-- Ada 2005 --
+--------------
+with Ada.Unchecked_Deallocation;
 
 ------------------
 -- KOW Famework --
 ------------------
 with KOW_Lib.Json;
 with KOW_View.Components;
-with KOW_View.Services.Util;
 
 ---------
 -- AWS --
@@ -50,20 +53,16 @@ package body KOW_View.Services.Stateful_Service_Factories is
 
 	procedure Free is new Ada.Unchecked_Deallocation( Object => Service_Type, Name => Service_Access );
 
-	---------------------------
-	-- The Service Container --
-	---------------------------
-	function Get( Request : in AWS.Status.Data ) return Service_Container_Type is
+	function Get( Request : in AWS.Status.Data ) return Service_Type is
 		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
-		Container : Service_Container_Type := Service_Container_Data.Get( Session_ID, Session_Key );
 	begin
-		return Container;
+		return Service_Data.Get( Session_ID, Session_Key );
 	end Get;
 
-	procedure Set( Request : in AWS.Status.Data; Container : in Service_Container_Type ) is
+	procedure Set( Request : in AWS.Status.Data; Service : in Service_Type ) is
 		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
 	begin
-		Service_Container_Data.Set( Session_ID, Session_Key, Container );
+		Service_Data.Set( Session_ID, Session_Key, Service );
 	end Set;
 
 
@@ -79,7 +78,7 @@ package body KOW_View.Services.Stateful_Service_Factories is
 				Status	: in     Request_Status_Type;
 				Service	:    out Service_Ptr
 			) is
-		Srv : Service_Access :=  New_Service_Type( Get( Status.Request ) );
+		Srv : Service_Access :=  new Service_Type'( Get( Status.Request ) );
 	begin
 		Service := Service_Ptr( Srv );
 	end Create;
@@ -92,7 +91,7 @@ package body KOW_View.Services.Stateful_Service_Factories is
 				Service	: in out Service_Ptr
 			) is
 	begin
-		Set( Status.Request, Service.all );
+		Set( Status.Request, Service_Access( Service ).all );
 		Free( Service_Access( Service ) );
 	end Destroy;
 

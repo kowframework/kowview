@@ -39,8 +39,6 @@ with Ada.Finalization;
 with KOW_Lib.Json;
 with KOW_View.Components;
 with KOW_View.Services;
-with KOW_View.Services.Util;
-with KOW_View.Util;
 
 ---------
 -- AWS --
