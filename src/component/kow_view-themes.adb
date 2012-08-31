@@ -92,7 +92,7 @@ package KOW_View.Themes is
 	begin
 
 		return Locate_Resource(
-						Theme_engine	=> Theme_Engine,
+						Theme_engine	=> Theme_Engine_Type'Class( Theme_Engine ),
 						Service		=> Service,
 						Status		=> Status,
 						Resource	=> To_String( Template ),
