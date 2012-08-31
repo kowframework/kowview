@@ -37,7 +37,6 @@ with KOW_Lib.Locales;
 with KOW_View.KTML;
 with KOW_View.Locales;
 with KOW_View.Services;
-with KOW_View.Services.Util;
 
 
 ---------
@@ -119,10 +118,9 @@ package body KOW_View.Services.Implementations is
 
 		Template_Path	: constant String := Locate_Resource(
 								Service		=> KTML_Service'Class( Service ),
+								Status		=> Status,
 								Resource	=> Template,
-								Extension	=> "ktml",
-								Virtual_Host	=> KOW_View.Virtual_Host( Status ),
-								Locale		=> KOW_View.Locales.Get_Locale( Status ) 
+								Extension	=> "ktml"
 							);
 	begin
 		Response := AWS.Response.Build(
@@ -171,10 +169,9 @@ package body KOW_View.Services.Implementations is
 
 		Resource_Path	: constant String := Locate_Resource(
 								Service		=> Resource_Service'Class( Service ),
+								Status		=> Status,
 								Resource	=> Resource,
-								Extension	=> Extension,
-								Virtual_Host	=> KOW_View.Virtual_Host( Status ),
-								Locale		=> Locale
+								Extension	=> Extension
 							);
 	begin
 		-- we DO NOT encode JavaScript and CSS and anything else because... well... its not working at all

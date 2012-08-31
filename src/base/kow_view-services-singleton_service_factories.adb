@@ -48,37 +48,21 @@ package body KOW_View.Services.Singleton_Service_Factories is
 	-- The Factory --
 	-------------------
 
-
-	overriding
-	procedure Process_Json_Request(
-			Factory	: in out Service_Factory_Type;
-			Status		: in     Request_Status_Type;
-			Response	:    out KOW_Lib.Json.Object_Type
-		) is
+	procedure Create(
+				Factory	: in out Service_Factory_Type;
+				Service	:    out Service_Ptr
+			) is
 	begin
-		Process_Json_Request(
-				Service	=> Service_Instance,
-				Status	=> Status,
-				Response=> Response
-			);
+		Service := Service_Instance;
+	end Create;
 
-	end Process_Json_Request;
-
-
-	overriding
-	procedure Process_Custom_Request(
-			Factory	: in out Service_Factory_Type;
-			Status		: in     Request_Status_Type;
-			Response	:    out AWS.Response.Data
-		) is
+	procedure Destroy(
+				Factory	: in out Service_Factory_Type;
+				Service	: in out Service_Ptr
+			) is
 	begin
-		Process_Custom_Request(
-				Service	=> Service_Instance,
-				Status	=> Status,
-				Response=> Response
-			);
-	end Process_Custom_Request;
-
+		Service := null;
+	end Destroy;
 
 
 end KOW_View.Services.Singleton_Service_Factories;
