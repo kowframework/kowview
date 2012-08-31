@@ -41,6 +41,7 @@ with Ada.Strings.Unbounded;
 with KOW_Lib.File_System;
 with KOW_View.Components;	use KOW_View.Components;
 with KOW_View.Pages;		use KOW_View.Pages;
+with KOW_View.Util;
 
 
 
@@ -51,7 +52,7 @@ package body KOW_View.Modules is
 	-- Base Module --
 	-----------------
 
-	function Get_Name( Module : in Base_Module ) return String is
+	function Get_Name( Module : in Base_Module ) return Module_Name is
 	begin
 		return KOW_View.Util.Get_Type_Name( Base_Module'Class( Module )'Tag, "_module" );
 	end Get_Name;
@@ -61,7 +62,7 @@ package body KOW_View.Modules is
 			Status		: in Request_Status_Type;
 			Resource	: in String;
 			Extension	: in String := "";
-			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
+			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
 		) return String is
 		use KOW_Lib.File_System;
 	begin
@@ -127,8 +128,7 @@ package body KOW_View.Modules is
 
 
 
-	generic
-	package Static_Modules is
+	package body Static_Modules is
 
 		function Get_Contents ( Path : in String ) return String is
 			-- TODO :: figure out how to create a cache of some sort

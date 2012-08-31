@@ -48,12 +48,13 @@ package KOW_View.Modules is
 	-----------------
 	-- Base Module --
 	-----------------
+	subtype Module_Name is Name_Type;
 
 	type Base_Module( Component : Component_Ptr ) is abstract new Module_Interface with null record;
 	-- a module to be used as base to other module implementations
 
 
-	function Get_Name( Module : in Base_Module ) return String;
+	function Get_Name( Module : in Base_Module ) return Module_Name;
 	-- giving the module type is name SOMETHING_Module, returns SOMETHING
 
 	function Locate_Resource(
@@ -61,7 +62,7 @@ package KOW_View.Modules is
 			Status		: in Request_Status_Type;
 			Resource	: in String;
 			Extension	: in String := "";
-			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File;
+			Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
 		) return String;
 	-- locate resource using the Component's locate_resource method
 	-- the resource will be:
@@ -98,7 +99,7 @@ package KOW_View.Modules is
 
 	generic
 		Component : Component_Ptr;
-		Resource  : constant String;
+		Resource  : String;
 		-- the resource to be served (to be located by module's Locate_Resource function)
 		-- the "html" extension is always used
 	package Static_Modules is

@@ -28,18 +28,26 @@ pragma License (GPL);
 ------------------------------------------------------------------------------
 
 
+
+--------------
+-- Ada 2005 --
+--------------
+with Ada.Directories;
+
 -------------------
 -- KOW Framework --
 -------------------
 with KOW_Lib.Json;
 with KOW_View.Services;
 
+
+---------
+-- AWS --
+---------
+with AWS.Mime;
+
 package body KOW_View.Themes.Services is
 
-
-	Themes_Prefix	: constant String := "/themes/";
-
-	type Theme_Service is new KOW_View.Services.Service_Type with null record;
 
 
 	procedure Process_Custom_Request(

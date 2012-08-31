@@ -78,6 +78,6 @@ package body KOW_View.Util is
 			) return Name_Type is
 		Str	: constant String := Get_Type_Name_String( Tag, Sufix );
 	begin
-		return From_String( Str );
+		return To_Name( Str );
 	end Get_Type_Name;
 end KOW_View.Util;
