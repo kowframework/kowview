@@ -123,7 +123,7 @@ package KOW_View.Request_Dispatchers.Implementations is
 	-----------------------
 
 
-	type Htdocs_Dispatcher_Type is new Request_Dispatcher_Interface with record
+	type Htdocs_Dispatcher_Type is new Base_Dispatcher_Type with record
 		-- a dispatcher that serves static files from the ./htdocs folder
 		Document_Root : Unbounded_String := To_Unbounded_String( "./htdocs" );
 	end record;
@@ -155,8 +155,6 @@ private
 
 	type Prefix_Dispatcher_Type is abstract new Base_Dispatcher_Type with record
 		-- the request dispatcher is a singleton object
-
-
 		Prefix		: String_Access;
 		Prefix_Length	: Natural := 0;
 	end record;
