@@ -40,6 +40,7 @@ with Ada.Strings.Unbounded;
 -------------------
 with KOW_Lib.File_System;
 with KOW_View.Components;	use KOW_View.Components;
+with KOW_View.KTML;
 with KOW_View.Pages;		use KOW_View.Pages;
 with KOW_View.Util;
 

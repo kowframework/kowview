@@ -59,16 +59,15 @@ package body KOW_View.Themes.Services is
 		-- process request for a theme's static file
 		-- only direct access to files that aren't template are alowed
 	
-		Theme_Name : constant String := Get_Theme_Name( Status.Request );
-
 		URI		: constant string := To_String( Status.Local_URI );
 		Extension	: constant string := Ada.Directories.Extension( URI );
 		File_Name	: constant string := URI( URI'First .. URI'Last - Extension'Length - 1);
-		Complete_Path	: constant string := KOW_View.Components.Locate_Resource(
-								Component	=> Component.all,
+		Complete_Path	: constant string := KOW_View.Themes.Locate_Resource(
+								Theme_Engine	=> Default.all,
+								Service		=> Service,
+								Status		=> Status,
 								Resource	=> File_Name,
-								Extension	=> Extension,
-								Status		=> Status
+								Extension	=> Extension
 							);
 	begin
 

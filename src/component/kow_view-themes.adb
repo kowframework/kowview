@@ -28,6 +28,12 @@ pragma License (GPL);
 -- Main package for Theme Engines                                           --
 ------------------------------------------------------------------------------
 
+--------------
+-- Ada 2005 --
+--------------
+with Ada.Directories;
+
+
 -------------------
 -- KOW Framework --
 -------------------
@@ -61,8 +67,8 @@ package KOW_View.Themes is
 		Template_Path : constant String := Locate_Template(
 								Theme_Engine	=> Theme_Engine_Type'Class( Theme_Engine ),
 								Service		=> Service,
-								Template	=> Template,
-								Status		=> Status
+								Status		=> Status,
+								Template	=> Template
 							);
 	begin
 
@@ -78,30 +84,54 @@ package KOW_View.Themes is
 	function Locate_Template(
 				Theme_Engine	: in Theme_Engine_Type;
 				Service		: in KOW_View.Services.Service_Type'Class;
-				Template	: in Template_Name;
-				Status		: in KOW_View.Request_Status_Type
+				Status		: in KOW_View.Request_Status_Type;
+				Template	: in Template_Name
 			) return String is
 		-- load the template, returning it as a String
+
+	begin
+
+		return Locate_Resource(
+						Theme_engine	=> Theme_Engine,
+						Service		=> Service,
+						Status		=> Status,
+						Resource	=> To_String( Template ),
+						Extension	=> Template_Extension,
+						Kind		=> Ada.Directories.Ordinary_File
+					);
+	end Locate_Template;
+
+
+
+	function Locate_Resource(
+				Theme_Engine	: in Theme_Engine_Type;
+				Service		: in KOW_View.Services.Service_Type'Class;
+				Status		: in KOW_View.Request_Status_Type;
+				Resource	: in String;
+				Extension	: in String;
+				Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
+			) return String is
+
 
 		function Try( Str : in String ) return String is
 		begin
 			return KOW_View.Components.Locate_Resource(
 						Component	=> Component.all,
+						Status		=> Status,
 						Resource	=> Str,
 						Extension	=> Template_Extension,
-						Status		=> Status
+						Kind		=> Kind
 					);
 		end Try;
 
 		Tpl : constant String := To_String( Template );
 
 		use KOW_Lib.File_System;
-	begin
+
 		return Try( To_String( KOW_View.Services.Get_Name( Service ) ) / Tpl );
 	exception
 		when Ada.Directories.Name_Error =>
 			return Try( Tpl );
 	end Locate_Template;
-
 
 end KOW_View.Themes;

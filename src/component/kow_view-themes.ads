@@ -28,6 +28,11 @@ pragma License (GPL);
 ------------------------------------------------------------------------------
 
 
+--------------
+-- Ada 2005 --
+--------------
+with Ada.Directories;
+
 -------------------
 -- KOW Framework --
 -------------------
@@ -69,10 +74,20 @@ package KOW_View.Themes is
 	function Locate_Template(
 				Theme_Engine	: in Theme_Engine_Type;
 				Service		: in KOW_View.Services.Service_Type'Class;
-				Template	: in Template_Name;
-				Status		: in KOW_View.Request_Status_Type
+				Status		: in KOW_View.Request_Status_Type;
+				Template	: in Template_Name
 			) return String;
 	-- load the template, returning it as a String
+
+	
+	function Locate_Resource(
+				Theme_Engine	: in Theme_Engine_Type;
+				Service		: in KOW_View.Services.Service_Type'Class;
+				Status		: in KOW_View.Request_Status_Type;
+				Resource	: in String;
+				Extension	: in String;
+				Kind		: in Ada.Directories.File_Kind := Ada.Directories.Ordinary_File
+			) return String;
 
 
 

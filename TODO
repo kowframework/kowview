@@ -5,18 +5,15 @@ Things that should be done to the 3.0 release:
 
 	1. remove all kow_config dependency in modules in favour of a kow_lib.json.object_type
 		Status.URI_Parameters	=> Status.Request_Parameters/Attributes (figure out a cooler name)
-		note to self		=> services and components will still use kow_config
+		note to self		=> services and components will still use kow_config (optionally)
 	2. implement a method for retrieving specific configurations
 		Get_Config( Component, Config := "setup" ); => ./components/[component]/data/[config].cfg
 		Get_Config( Service, Config := "setup" );   => ./components/[component]/data/[service]_service.cfg
 		Get_Config( Module, Config := "setup" );    => ./components/[component]/data/[module]_module.cfg
 
-	* page service
 	* menu module
 	* security module
 	* any other configurable module/service
-	* module factories and get_name(module) should be refactored
-	* look for and remove unused *.Util modules
 
 
 
