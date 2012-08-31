@@ -50,6 +50,7 @@ package body KOW_View.Services.Singleton_Service_Factories is
 
 	procedure Create(
 				Factory	: in out Service_Factory_Type;
+				Status	: in     Request_Status_Type;
 				Service	:    out Service_Ptr
 			) is
 	begin
@@ -58,6 +59,7 @@ package body KOW_View.Services.Singleton_Service_Factories is
 
 	procedure Destroy(
 				Factory	: in out Service_Factory_Type;
+				Status	: in     Request_Status_Type;
 				Service	: in out Service_Ptr
 			) is
 	begin

@@ -28,6 +28,11 @@
 
 
 
+--------------
+-- Ada 2005 --
+--------------
+with Ada.Unchecked_Deallocation;
+
 ------------------
 -- KOW Famework --
 ------------------
@@ -47,39 +52,28 @@ package body KOW_View.Services.Stateless_Service_Factories is
 	-- The Factory --
 	-------------------
 
+	type Service_Access is access all Service_Type;
+	procedure Free is new Ada.Unchecked_Deallocation( Object => Service_Type, Name => Service_Access );
 
 	overriding
-	procedure Process_Json_Request(
-			Factory	: in out Service_Factory_Type;
-			Status		: in     Request_Status_Type;
-			Response	:    out KOW_Lib.Json.Object_Type
-		) is
-		Service : Service_Type;
+	procedure Create(
+				Factory	: in out Service_Factory_Type;
+				Status	: in     Request_Status_Type;
+				Service	:    out Service_Ptr
+			) is
+		Srv : Service_Access := new Service_Type;
 	begin
-		Setup_Service( Component, Service );
-
-		Process_Json_Request(
-				Service	=> Service,
-				Status	=> Status,
-				Response=> Response
-			);
-	end Process_Json_Request;
-
+		Service := Service_Ptr( Srv );
+	end Create;
 
 	overriding
-	procedure Process_Custom_Request(
-			Factory	: in out Service_Factory_Type;
-			Status		: in     Request_Status_Type;
-			Response	:    out AWS.Response.Data
-		) is
-		Service : Service_Type;
+	procedure Destroy(
+				Factory	: in out Service_Factory_Type;
+				Status	: in     Request_Status_Type;
+				Service	: in out Service_Ptr
+			) is
 	begin
-		Setup_Service( Component, Service );
-		Process_Custom_Request(
-				Service	=> Service,
-				Status	=> Status,
-				Response=> Response
-			);
-	end Process_Custom_Request;
+		Free( Service_Access( Service ) );
+	end Destroy;
 
 end KOW_View.Services.Stateless_Service_Factories;

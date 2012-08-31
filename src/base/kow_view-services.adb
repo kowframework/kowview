@@ -98,7 +98,7 @@ package body KOW_View.Services is
 		declare
 			Service		: Service_Ptr;
 		begin
-			Create( Dispatcher.Factory.all, Service );
+			Create( Dispatcher.Factory.all, Status, Service );
 			case Status.Mode is
 				when Custom_Request =>
 					Process_Custom_Request(
@@ -119,12 +119,12 @@ package body KOW_View.Services is
 						Response := KOW_View.Json_Util.Build_Success_Response( Object => JResponse, Wrap_Data => Wrap_Data );
 					end;
 			end case;
-			Destroy( Dispatcher.Factory.all, Service );
+			Destroy( Dispatcher.Factory.all, Status, Service );
 			return Response;
 		exception
 			when e : others =>
 				if Service /= null then
-					Destroy( Dispatcher.Factory.all, Service );
+					Destroy( Dispatcher.Factory.all, Status, Service );
 				end if;
 				Ada.Exceptions.Reraise_Occurrence( e );
 		end;

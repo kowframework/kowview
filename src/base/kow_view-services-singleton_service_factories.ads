@@ -57,11 +57,13 @@ pragma Elaborate_Body( KOW_View.Services.Singleton_Service_Factories );
 
 	procedure Create(
 				Factory	: in out Service_Factory_Type;
+				Status	: in     Request_Status_Type;
 				Service	:    out Service_Ptr
 			);
 
 	procedure Destroy(
 				Factory	: in out Service_Factory_Type;
+				Status	: in     Request_Status_Type;
 				Service	: in out Service_Ptr
 			);
 

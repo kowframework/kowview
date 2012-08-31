@@ -45,6 +45,11 @@ with AWS.Status;
 
 package body KOW_View.Services.Stateful_Service_Factories is
 
+
+	type Service_Access is access all Service_Type;
+
+	procedure Free is new Ada.Unchecked_Deallocation( Object => Service_Type, Name => Service_Access );
+
 	---------------------------
 	-- The Service Container --
 	---------------------------
@@ -52,10 +57,6 @@ package body KOW_View.Services.Stateful_Service_Factories is
 		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
 		Container : Service_Container_Type := Service_Container_Data.Get( Session_ID, Session_Key );
 	begin
-		if Container.Is_Null then
-			Setup_Service( Component, Container.Service );
-		end if;
-
 		return Container;
 	end Get;
 
@@ -67,43 +68,35 @@ package body KOW_View.Services.Stateful_Service_Factories is
 
 
 
+
 	-------------------
 	-- The Factory --
 	-------------------
 
-
 	overriding
-	procedure Process_Json_Request(
-			Factory	: in out Service_Factory_Type;
-			Status		: in     Request_Status_Type;
-			Response	:    out KOW_lib.Json.Object_Type
-		) is
-		Container : Service_Container_Type := Get( Status.Request );
+	procedure Create(
+				Factory	: in out Service_Factory_Type;
+				Status	: in     Request_Status_Type;
+				Service	:    out Service_Ptr
+			) is
+		Srv : Service_Access :=  New_Service_Type( Get( Status.Request ) );
 	begin
-
-		Process_Json_Request(
-				Service	=> Container.Service,
-				Status	=> Status,
-				Response=> Response
-			);
-		Set( Status.Request, Container );
-	end Process_Json_Request;
+		Service := Service_Ptr( Srv );
+	end Create;
 
 
 	overriding
-	procedure Process_Custom_Request(
-			Factory	: in out Service_Factory_Type;
-			Status		: in     Request_Status_Type;
-			Response	:    out AWS.Response.Data
-		) is
-		Container : Service_Container_Type := Get( Status.Request );
+	procedure Destroy(
+				Factory	: in out Service_Factory_Type;
+				Status	: in     Request_Status_Type;
+				Service	: in out Service_Ptr
+			) is
 	begin
-		Process_Custom_Request(
-				Service	=> Container.Service,
-				Status	=> Status,
-				Response=> Response
-			);
-		Set( Status.Request, Container );
-	end Process_Custom_Request;
+		Set( Status.Request, Service.all );
+		Free( Service_Access( Service ) );
+	end Destroy;
+
+
+
 
 end KOW_View.Services.Stateful_Service_Factories;

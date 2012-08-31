@@ -114,12 +114,14 @@ package KOW_View.Services is
 
 	procedure Create(
 				Factory	: in out Service_Factory_Interface;
+				Status	: in     Request_Status_Type;
 				Service	:    out Service_Ptr
 			) is abstract;
 	-- allocate and return the service
 
 	procedure Destroy(
 				Factory	: in out Service_Factory_Interface;
+				Status	: in     Request_Status_Type;
 				Service	: in out Service_Ptr
 			) is abstract;
 	-- deallocate the service; the pointer to Service should be null

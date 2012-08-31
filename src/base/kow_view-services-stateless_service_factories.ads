@@ -60,21 +60,19 @@ pragma Elaborate_Body( KOW_View.Services.Stateless_Service_Factories );
 
 	type Service_Factory_Type is new KOW_View.Services.Service_Factory_Interface with null record;
 
+	overriding
+	procedure Create(
+				Factory	: in out Service_Factory_Type;
+				Status	: in     Request_Status_Type;
+				Service	:    out Service_Ptr
+			);
 
 	overriding
-	procedure Process_Json_Request(
-			Factory	: in out Service_Factory_Type;
-			Status		: in     Request_Status_Type;
-			Response	:    out KOW_Lib.Json.Object_Type
-		);
-
-	overriding
-	procedure Process_Custom_Request(
-			Factory	: in out Service_Factory_Type;
-			Status		: in     Request_Status_Type;
-			Response	:    out AWS.Response.Data
-		);
-
+	procedure Destroy(
+				Factory	: in out Service_Factory_Type;
+				Status	: in     Request_Status_Type;
+				Service	: in out Service_Ptr
+			);
 
 
 	---------------

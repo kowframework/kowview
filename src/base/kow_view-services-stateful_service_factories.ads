@@ -59,33 +59,15 @@ pragma Elaborate_Body( KOW_View.Services.Stateful_Service_Factories );
 
 
 
-
-	---------------------------
-	-- The Service Container --
-	---------------------------
-	
-
-	type Service_Container_Type is record
-		Service	: Service_Type;
-		Is_Null	: Boolean := True;
-	end record;
-
-	Null_Service_Container	: constant Service_Container_Type := (
-							Is_null => true,
-							Service => <>
-						);
+	Service_Template : Service_Type;
 
 
-	package Service_Container_Data is new AWS.Session.Generic_Data(
-			Data		=> Service_Container_Type,
-			Null_Data	=> Null_Service_Container
+	package Service_Data is new AWS.Session.Generic_Data(
+			Data		=> Service_Type,
+			Null_Data	=> Service_Template 
 		);
 
 	
-	function Get( Request : in AWS.Status.Data ) return Service_Container_Type;
-	procedure Set( Request : in AWS.Status.Data; Container : in Service_Container_Type );
-
-
 	-------------------
 	-- The Factory --
 	-------------------
@@ -94,18 +76,19 @@ pragma Elaborate_Body( KOW_View.Services.Stateful_Service_Factories );
 
 
 	overriding
-	procedure Process_Json_Request(
-			Factory	: in out Service_Factory_Type;
-			Status		: in     Request_Status_Type;
-			Response	:    out KOW_Lib.Json.Object_Type
-		);
+	procedure Create(
+				Factory	: in out Service_Factory_Type;
+				Status	: in     Request_Status_Type;
+				Service	:    out Service_Ptr
+			);
 
 	overriding
-	procedure Process_Custom_Request(
-			Factory	: in out Service_Factory_Type;
-			Status		: in     Request_Status_Type;
-			Response	:    out AWS.Response.Data
-		);
+	procedure Destroy(
+				Factory	: in out Service_Factory_Type;
+				Status	: in     Request_Status_Type;
+				Service	: in out Service_Ptr
+			);
+
 
 
 
