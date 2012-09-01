@@ -12,8 +12,6 @@ Things that should be done to the 3.0 release:
 		Get_Config( Module, Config := "setup" );    => ./components/[component]/data/[module]_module.cfg
 	3. exception templates should use the KTML template now, instead of the AWS engine
 
-	4. figure out how to use generic packages with the base_module module
-
 	* menu module
 	* security module
 	* any other configurable module/service

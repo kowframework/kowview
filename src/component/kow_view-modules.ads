@@ -41,7 +41,8 @@ with KOW_View.Module_Factories;
 with KOW_View.Pages;		use KOW_View.Pages;
 
 
-
+generic
+	Component : KOW_View.Components.Component_Ptr;
 package KOW_View.Modules is
 
 
@@ -50,9 +51,10 @@ package KOW_View.Modules is
 	-----------------
 	subtype Module_Name is Name_Type;
 
-	type Base_Module( Component : Component_Ptr ) is abstract new Module_Interface with null record;
-	-- a module to be used as base to other module implementations
-
+	type Base_Module is abstract new Module_Interface with record
+		-- a module to be used as base to other module implementations
+		Component : KOW_View.Components.Component_Ptr := KOW_View.Modules.Component;
+	end record;
 
 	function Get_Name( Module : in Base_Module ) return Module_Name;
 	-- giving the module type is name SOMETHING_Module, returns SOMETHING
@@ -74,7 +76,7 @@ package KOW_View.Modules is
 	-- KTML Module --
 	-----------------
 
-	type KTML_Module ( Component : Component_Ptr ) is abstract new Base_Module (Component) with null record;
+	type KTML_Module is abstract new Base_Module with null record;
 	-- render a template using the results from Process_Json_Request
 	-- the json procedure should determine if it's being called by the page ASYNC
 	-- Json request handler or is rendering the HTML by the Status.Mode variable
@@ -98,7 +100,6 @@ package KOW_View.Modules is
 
 
 	generic
-		TheComponent : Component_Ptr;
 		Resource  : String;
 		-- the resource to be served (to be located by module's Locate_Resource function)
 		-- the "html" extension is always used
@@ -114,9 +115,7 @@ package KOW_View.Modules is
 		----------------
 
 		--type Static_Module is new Base_Module ( Component ) with null record;
-		type Static_Module is new Module_Interface with record
-			Component : KOW_View.Components.Component_Ptr := TheComponent;
-		end record;
+		type Static_Module is new Base_Module with null record;
 
 		overriding
 		procedure Process_Request(
