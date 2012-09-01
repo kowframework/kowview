@@ -110,7 +110,7 @@ package KOW_View.Components is
 
 	function Load_Config(
 			Component	: in Component_Type;
-			N		: in String
+			N		: in String := "setup"
 		) return KOW_Config.Config_File_Type;
 	-- load the configuration file
 

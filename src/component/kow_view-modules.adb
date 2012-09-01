@@ -75,6 +75,20 @@ package body KOW_View.Modules is
 					Kind		=> Kind
 				);
 	end Locate_Resource;
+	
+
+	function Load_Config(
+			Module	: in Base_Module;
+			N	: in String := "setup"
+		) return KOW_Config.Config_File_Type is
+		use KOW_Lib.File_System;
+	begin
+		return KOW_View.Components.Load_Config(
+							Component	=> Module.Component.all,
+							N		=> To_String( Get_Name( Base_Module'Class( Module ) ) ) & "_module" / N
+						);
+	end Load_Config;
+
 
 	-----------------
 	-- KTML Module --

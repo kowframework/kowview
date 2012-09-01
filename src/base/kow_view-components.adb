@@ -191,7 +191,7 @@ package body KOW_View.Components is
 
 	function Load_Config(
 			Component	: in Component_Type;
-			N		: in String
+			N		: in String := "setup"
 		) return KOW_Config.Config_File_Type is
 		-- load the configuration file
 		use KOW_Lib.File_System;

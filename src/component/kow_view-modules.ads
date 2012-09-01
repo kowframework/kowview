@@ -32,10 +32,10 @@ with Ada.Text_IO;
 
 
 
-
 -------------------
 -- KOW Framework --
 -------------------
+with KOW_Config;
 with KOW_View.Components;	use KOW_View.Components;
 with KOW_View.Module_Factories;
 with KOW_View.Pages;		use KOW_View.Pages;
@@ -69,6 +69,12 @@ package KOW_View.Modules is
 	-- locate resource using the Component's locate_resource method
 	-- the resource will be:
 	-- [module_name]_module/resource
+
+
+	function Load_Config(
+			Module	: in Base_Module;
+			N	: in String := "setup"
+		) return KOW_Config.Config_File_Type;
 
 
 

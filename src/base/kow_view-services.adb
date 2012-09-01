@@ -75,6 +75,22 @@ package body KOW_View.Services is
 	end Locate_Resource;
 
 
+
+	function Load_Config(
+			Service	: in Service_Type;
+			N	: in String := "setup"
+		) return KOW_Config.Config_File_Type is
+		use KOW_Lib.File_System;
+	begin
+		return KOW_View.Components.Load_Config(
+							Component	=> Service.Component.all,
+							N		=> To_String( Get_Name( Service_Type'Class( Service ) ) ) & "_service" / N
+						);
+	end Load_Config;
+
+
+
+
 	function Get_Name( Service : in Service_Type ) return Service_Name is
 	begin
 		return KOW_View.Util.Get_Type_Name( Service_Type'Class( Service )'Tag, "_service" );
