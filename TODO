@@ -4,9 +4,8 @@ Things that should be done to the 3.0 release:
 
 	1. exception templates should use the KTML template now, instead of the AWS engine
 
-	* menu module
+	* template for menu module in kvdriver
 	* security module
-	* any other configurable module/service
 
 
 
