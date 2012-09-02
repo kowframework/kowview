@@ -69,12 +69,6 @@ package KOW_View.Services is
 	type Service_Ptr is access all Service_Type'Class;
 
 
-	procedure Process_Json_Request(
-			Service	: in out Service_Type;
-			Status	: in     Request_Status_Type;
-			Response:    out KOW_Lib.Json.Object_Type
-		) is abstract;
-
 	procedure Process_Custom_Request(
 			Service		: in out Service_Type;
 			Status		: in     Request_Status_Type;
@@ -83,6 +77,13 @@ package KOW_View.Services is
 	-- process a request to a service
 	-- the entire request is handled by the service
 	-- sometimes is useful for a service only to be created and released - such as in a counter service
+
+
+	procedure Process_Json_Request(
+			Service	: in out Service_Type;
+			Status	: in     Request_Status_Type;
+			Response:    out KOW_Lib.Json.Object_Type
+		) is abstract;
 
 
 
