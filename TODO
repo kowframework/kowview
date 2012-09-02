@@ -1,5 +1,8 @@
 
 
+
+== FOR NOW the development is halted in favour of the kvdriver development; once kvdriver is usable I'll finish the required services ==
+
 Things that should be done to the 3.0 release:
 
 	* exception templates should use the KTML template now, instead of the AWS engine
@@ -8,7 +11,6 @@ Things that should be done to the 3.0 release:
 
 	* template for menu module in kvdriver
 	* security (password based)
-		=> login_service
 		=> logout_service
 		=> switch_user_service
 		=> login_controller_module
