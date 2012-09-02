@@ -125,6 +125,7 @@ package KOW_View.Request_Dispatchers.Implementations is
 
 	type Htdocs_Dispatcher_Type is new Base_Dispatcher_Type with record
 		-- a dispatcher that serves static files from the ./htdocs folder
+		-- can only be mapped to /
 		Document_Root : Unbounded_String := To_Unbounded_String( "./htdocs" );
 	end record;
 
