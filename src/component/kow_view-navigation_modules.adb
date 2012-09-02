@@ -31,7 +31,6 @@ with Ada.Strings.Unbounded;
 with Ada.Text_IO;
 
 
-
 -------------------
 -- KOW Framework --
 -------------------
@@ -42,7 +41,13 @@ with KOW_View.Locales;
 with KOW_View.Module_Factories;
 with KOW_View.Modules;
 with KOW_View.Pages;			use KOW_View.Pages;
-with KOW_View.Reques_Dispatchers;
+with KOW_View.Request_Dispatchers;
+
+
+---------
+-- AWS --
+---------
+with AWS.Status;
 
 
 package body KOW_View.Navigation_Modules is
@@ -141,8 +146,8 @@ package body KOW_View.Navigation_Modules is
 
 
 		procedure Append_Items(
-					Into	: Array_Type;
-					From	: Array_Type
+					Into	: in out Array_Type;
+					From	: in     Array_Type
 				) is
 
 			procedure Iterator(
@@ -152,8 +157,10 @@ package body KOW_View.Navigation_Modules is
 				Item_Object	: Object_Type := From_Data( Data );
 				Item		: Menu_Item_Type := To_Menu_Item( Item_Object );
 				Child_Items	: Array_Type;
+				Allowed		: Boolean;
 			begin
-				if Is_Allowed( Menu_Module'Class( Menu ), Status, Item ) then
+				Is_Allowed_And_Active( Menu_Module'Class( Menu ), Status, Item, Allowed );
+				if Allowed then
 					Append_Items(
 							Into	=> Child_Items,
 							From	=> Item.Child_Items
@@ -218,21 +225,22 @@ package body KOW_View.Navigation_Modules is
 				Status	: in     Request_Status_Type;
 				Item	: in out Menu_Item_Type;
 				Allowed	:    out Boolean
-			) return Boolean is
+			) is
 		-- check if the menu item is accessible (local items always checked; remote items never checked)
 		use KOW_View.Request_Dispatchers;
 		Dispatcher : Request_Dispatcher_Ptr;
+		URL	: constant String := To_String( Item.Href );
 	begin
-		if Menu.Href(1) = '/' then
-			Dispatcher := Get_Dispatcher( Status.Request );
+		if Item.Href(1) = '/' then
+			Dispatcher := Get_Dispatcher( URL );
 			if Dispatcher = null then
-				raise BROKEN_LINK with To_String( Menu.Name ) & " point to a invalid local URI: '" & To_String( Menu.Href ) & ''';
+				raise BROKEN_LINK with To_String( Item.Name ) & " point to a invalid local URI: '" & To_String( Item.Href ) & ''';
 			end if;
 
 			Allowed := Is_Allowed( Dispatcher.all, Status.Request );
-			Item.Is_Active := Dispatcher = Get_Dispatcher( Status.Request );
+			Item.Is_Active := URL = AWS.Status.URI( Status.Request );
 		else
-			return true;
+			Allowed := True;
 		end if;
 	end Is_Allowed_And_Active;
 
@@ -240,9 +248,17 @@ package body KOW_View.Navigation_Modules is
 				Menu	: in     Menu_Module;
 				Item	: in     Menu_Item_Type;
 				Locale	: in     KOW_Lib.Locales.Locale_Type
-			) return String;
-	-- get the label to be used to build the interface
-
+			) return String is
+		-- get the label to be used to build the interface
+		use KOW_Config;
+		Name : constant String := To_String( Item.Name );
+	begin
+		if Contains( Menu.Labels, Name ) then
+			return Value( Menu.Labels, Name, Locale.Code );
+		else
+			return "[" & name & "]";
+		end if;
+	end Get_Label;
 
 end KOW_View.Navigation_Modules;
 

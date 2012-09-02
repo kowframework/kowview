@@ -145,7 +145,7 @@ package KOW_View.Request_Dispatchers.Implementations is
 
 	function Compute_Path(
 				Dispatcher	: in Htdocs_Dispatcher_Type;
-				Request		: in AWS.Status.Data
+				URI		: in String
 			) return String;
 
 

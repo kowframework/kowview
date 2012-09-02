@@ -48,6 +48,9 @@ generic
 package KOW_View.Navigation_Modules is
 
 
+	BROKEN_LINK : Exception;
+	-- used by the menu module when building the menu
+
 	-------------------
 	-- The Menu Item --
 	-------------------
@@ -165,8 +168,8 @@ package KOW_View.Navigation_Modules is
 				Menu	: in     Menu_Module;
 				Status	: in     Request_Status_Type;
 				Item	: in out Menu_Item_Type;
-				Allowed	:    out Boolean;
-			) return Boolean;
+				Allowed	:    out Boolean
+			);
 	-- check if the menu item is accessible (local items always checked; remote items never checked)
 
 

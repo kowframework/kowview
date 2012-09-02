@@ -125,7 +125,6 @@ package body KOW_View.Request_Dispatchers.Implementations is
 				Dispatcher	: in Prefix_Dispatcher_Type;
 				URI		: in String
 			) return Boolean is
-		URI : constant String := AWS.Status.URI( Request );
 	begin
 		return Dispatcher.Prefix /= null and then URI( URI'First .. URI'First + Dispatcher.Prefix_Length - 1 ) = Dispatcher.Prefix.all;
 	end Can_Dispatch;
@@ -181,7 +180,7 @@ package body KOW_View.Request_Dispatchers.Implementations is
 				URI		: in String
 			) return Boolean is
 		-- check if the given URI exists inside the URI folder
-		htdocs_path : constant String := Compute_Path( Htdocs_Dispatcher_Type'Class( Dispatcher ), Request );
+		htdocs_path : constant String := Compute_Path( Htdocs_Dispatcher_Type'Class( Dispatcher ), URI );
 	begin
 		return Ada.Directories.Exists( htdocs_path ) and then Ada.Directories."="( Ada.Directories.Ordinary_File, Ada.Directories.Kind( htdocs_path) );
 	end Can_Dispatch;
@@ -193,7 +192,7 @@ package body KOW_View.Request_Dispatchers.Implementations is
 				Request		: in AWS.Status.Data
 			) return AWS.Response.Data is
 		-- serve the file using the standard AWS methods
-		htdocs_path : constant String := Compute_Path( Htdocs_Dispatcher_Type'Class( Dispatcher ), Request );
+		htdocs_path : constant String := Compute_Path( Htdocs_Dispatcher_Type'Class( Dispatcher ), AWS.Status.URI( Request ) );
 	begin
 		return AWS.Response.File(
 					Content_Type    => AWS.MIME.Content_Type( htdocs_path ),
@@ -204,11 +203,11 @@ package body KOW_View.Request_Dispatchers.Implementations is
 
 	function Compute_Path(
 				Dispatcher	: in Htdocs_Dispatcher_Type;
-				Request		: in AWS.Status.Data
+				URI		: in String
 			) return String is
 		use KOW_Lib.File_System;
 	begin
-		return To_String( Dispatcher.Document_Root ) / AWS.Status.URI( Request );
+		return To_String( Dispatcher.Document_Root ) / URI;
 	end Compute_Path;
 
 
