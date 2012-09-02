@@ -55,8 +55,10 @@ package body KOW_View.Services.Stateful_Service_Factories is
 
 	function Get( Request : in AWS.Status.Data ) return Service_Type is
 		Session_ID  : constant AWS.Session.ID := AWS.Status.Session (Request);
+		Service : Service_Type := Service_Data.Get( Session_ID, Session_Key );
 	begin
-		return Service_Data.Get( Session_ID, Session_Key );
+		Service.Component := Component;
+		return Service;
 	end Get;
 
 	procedure Set( Request : in AWS.Status.Data; Service : in Service_Type ) is

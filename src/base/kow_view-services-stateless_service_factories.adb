@@ -63,6 +63,7 @@ package body KOW_View.Services.Stateless_Service_Factories is
 			) is
 		Srv : Service_Access := new Service_Type;
 	begin
+		Srv.Component := Component;
 		Service := Service_Ptr( Srv );
 	end Create;
 
