@@ -44,7 +44,7 @@ with AWS.Response;
 
 generic
 	type Service_Type is new KOW_View.Services.Service_Type with private;
-	Component	: KOW_View.Components.Component_Access;
+	Component	: KOW_View.Components.Component_Ptr;
 package KOW_View.Services.Singleton_Service_Factories is
 pragma Elaborate_Body( KOW_View.Services.Singleton_Service_Factories );
 

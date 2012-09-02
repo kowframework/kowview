@@ -64,6 +64,4 @@ package body KOW_View.Services.Singleton_Service_Factories is
 	begin
 		Service := null;
 	end Destroy;
-
-
 end KOW_View.Services.Singleton_Service_Factories;

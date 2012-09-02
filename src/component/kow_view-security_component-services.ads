@@ -23,63 +23,45 @@
 ------------------------------------------------------------------------------
 pragma License (GPL);
 
-------------------------------------------------------------------------------
--- Factory implementation for Stateless services                          --
-------------------------------------------------------------------------------
 
 
---------------
--- Ada 2005 --
---------------
-with Ada.Finalization;
-
-------------------
--- KOW Famework --
-------------------
-with KOW_Lib.Json;
-with KOW_View.Components;
-
----------
--- AWS --
----------
-with AWS.Response;
-with AWS.Session;
-with AWS.Status;
+-------------------
+-- KOW Framework --
+-------------------
+with KOW_View.Components;				use KOW_View.Components;
+with KOW_View.Services;
+with KOW_View.Services.Singleton_Service_Factories;
 
 
-generic
-	type Service_Type is new KOW_View.Services.Service_Type with private;
-	Component	: KOW_View.Components.Component_Ptr;
-package KOW_View.Services.Stateless_Service_Factories is
-pragma Elaborate_Body( KOW_View.Services.Stateless_Service_Factories );
+package KOW_View.Security_Component.Services is
 
 
 	-------------------
-	-- The Factory --
+	-- Login Service --
 	-------------------
 
-	type Service_Factory_Type is new KOW_View.Services.Service_Factory_Interface with null record;
+	type Login_Service is new KOW_View.Services.Service_Type with null record;
 
 	overriding
-	procedure Create(
-				Factory	: in out Service_Factory_Type;
+	procedure Process_Custom_Request(
+				Service	: in out Login_Service;
 				Status	: in     Request_Status_Type;
-				Service	:    out Service_Ptr
+				Response:    out AWS.Response.Data
 			);
+	-- do login and redirect to the referer OR destination parameter
+
 
 	overriding
-	procedure Destroy(
-				Factory	: in out Service_Factory_Type;
+	procedure Process_Json_Request(
+				Service	: in out Login_Service;
 				Status	: in     Request_Status_Type;
-				Service	: in out Service_Ptr
+				Response:    out KOW_Lib.Json.Object_Type
 			);
+	-- do login fi needed, and print user info
 
 
-	---------------
-	-- Variables --
-	---------------
-	
-	Factory : aliased Service_Factory_Type;
-
-
-end KOW_View.Services.Stateless_Service_Factories;
+	package Login_Factories is new KOW_View.Services.Singleton_Service_Factories(
+								Service_Type	=> Login_Service,
+								Component	=> Component
+							);
+end KOW_View.Security_Component.Services;

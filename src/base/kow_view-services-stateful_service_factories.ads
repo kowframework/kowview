@@ -50,7 +50,7 @@ with AWS.Status;
 
 generic
 	type Service_Type is new KOW_View.Services.Service_Type with private;
-	Component	: KOW_View.Components.Component_Access;
+	Component	: KOW_View.Components.Component_Ptr;
 	Session_Key	: String;
 package KOW_View.Services.Stateful_Service_Factories is
 pragma Elaborate_Body( KOW_View.Services.Stateful_Service_Factories );
