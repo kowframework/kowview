@@ -47,13 +47,13 @@ package body KOW_View.Request_Dispatchers is
 	----------------------
 	-- Dispatcher Queue --
 	----------------------
-	function Get_Dispatcher( Request : in AWS.Status.Data ) return Request_Dispatcher_Ptr is
+	function Get_Dispatcher( URI : in String ) return Request_Dispatcher_Ptr is
 		-- try getting the dispatcher; if not found, return null.
 		Element : Dispatcher_Node_Access := First;
 	begin
 
 		while Element /= null loop
-			if Can_Dispatch( Element.Dispatcher.all, Request ) then
+			if Can_Dispatch( Element.Dispatcher.all, URI ) then
 				return Element.Dispatcher;
 			else
 				Element := Element.Next;

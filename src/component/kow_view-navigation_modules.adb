@@ -36,10 +36,13 @@ with Ada.Text_IO;
 -- KOW Framework --
 -------------------
 with KOW_Config;
-with KOW_View.Components;	use KOW_View.Components;
+with KOW_Lib.Locales;
+with KOW_View.Components;		use KOW_View.Components;
+with KOW_View.Locales;
 with KOW_View.Module_Factories;
-with KOW_View.Pages;		use KOW_View.Pages;
 with KOW_View.Modules;
+with KOW_View.Pages;			use KOW_View.Pages;
+with KOW_View.Reques_Dispatchers;
 
 
 package body KOW_View.Navigation_Modules is
@@ -58,8 +61,7 @@ package body KOW_View.Navigation_Modules is
 	begin
 		Set( Object, "name", To_String( Item.Name ) );
 		Set( Object, "href", To_String( Item.Href ) );
-		Set( Object, "disable_when_active", Item.Disable_When_Active );
-		Set( Object, "has_access", Item.Has_Access );
+		Set( Object, "is_active", Item.Is_Active );
 		Set( Object, "child_items", Item.Child_Items );
 
 		return Object;
@@ -73,8 +75,7 @@ package body KOW_View.Navigation_Modules is
 		return (
 				Name			=> To_Name( Get( Object, "name" ) ),
 				Href			=> To_Name( Get( Object, "href" ) ),
-				Disable_When_Active	=> Get( Object, "disable_when_active" ),
-				Has_Access		=> Get( Object, "has_access" ),
+				Is_Active		=> Get( Object, "is_active" ),
 				Child_Items		=> Get( Object, "child_items" )
 			);
 	end To_Menu_Item;
@@ -115,7 +116,7 @@ package body KOW_View.Navigation_Modules is
 			) is
 		-- return the menu structure in json format
 	begin
-		Response := To_Json( Module );
+		Response := To_Json( Module, Status );
 	end Process_Json_Request;
 
 	procedure Append(
@@ -127,12 +128,54 @@ package body KOW_View.Navigation_Modules is
 		KOW_Lib.Json.Append( Menu.Items, To_Json( Item ) );
 	end Append;
 
-	function To_Json( Menu : in Menu_Module ) return KOW_Lib.Json.Object_Type is
+	function To_Json(
+				Menu	: in Menu_Module;
+				Status	: in Request_Status_Type
+			) return KOW_Lib.Json.Object_Type is
 		-- conver the menu into a json object
-		Object : KOW_Lib.Json.Object_Type;
-	begin
-		KOW_Lib.Json.Set( Object, "items", Menu.Items );
+		use KOW_Lib.Json;
+		Object	: Object_Type;
+		Items	: Array_Type;
 
+		Locale	: KOW_Lib.Locales.Locale_Type := KOW_View.Locales.Get_Locale( Status );
+
+
+		procedure Append_Items(
+					Into	: Array_Type;
+					From	: Array_Type
+				) is
+
+			procedure Iterator(
+						Index	: Natural;
+						Data	: Json_Data_Type
+					) is
+				Item_Object	: Object_Type := From_Data( Data );
+				Item		: Menu_Item_Type := To_Menu_Item( Item_Object );
+				Child_Items	: Array_Type;
+			begin
+				if Is_Allowed( Menu_Module'Class( Menu ), Status, Item ) then
+					Append_Items(
+							Into	=> Child_Items,
+							From	=> Item.Child_Items
+						);
+					Item.Child_Items := Child_Items;
+	
+					Item_Object := To_Json( Item );
+					Set( Item_Object, "label", Get_Label( Menu_Module'Class( Menu ), Item, Locale ) );
+	
+					Append( Into, Item_Object );
+				end if;
+			end Iterator;
+		begin
+
+			Iterate( From, Iterator'Access );
+		end Append_Items;
+	begin
+		Append_Items(
+				Into	=> Items,
+				From	=> Menu.Items
+			);
+		KOW_Lib.Json.Set( Object, "items", Items );
 		return Object;
 	end To_Json;
 
@@ -167,6 +210,38 @@ package body KOW_View.Navigation_Modules is
 						N		=> "labels"
 					);
 	end Setup_Labels;
+
+
+
+	procedure Is_Allowed_And_Active(
+				Menu	: in     Menu_Module;
+				Status	: in     Request_Status_Type;
+				Item	: in out Menu_Item_Type;
+				Allowed	:    out Boolean
+			) return Boolean is
+		-- check if the menu item is accessible (local items always checked; remote items never checked)
+		use KOW_View.Request_Dispatchers;
+		Dispatcher : Request_Dispatcher_Ptr;
+	begin
+		if Menu.Href(1) = '/' then
+			Dispatcher := Get_Dispatcher( Status.Request );
+			if Dispatcher = null then
+				raise BROKEN_LINK with To_String( Menu.Name ) & " point to a invalid local URI: '" & To_String( Menu.Href ) & ''';
+			end if;
+
+			Allowed := Is_Allowed( Dispatcher.all, Status.Request );
+			Item.Is_Active := Dispatcher = Get_Dispatcher( Status.Request );
+		else
+			return true;
+		end if;
+	end Is_Allowed_And_Active;
+
+	function Get_Label(
+				Menu	: in     Menu_Module;
+				Item	: in     Menu_Item_Type;
+				Locale	: in     KOW_Lib.Locales.Locale_Type
+			) return String;
+	-- get the label to be used to build the interface
 
 
 end KOW_View.Navigation_Modules;

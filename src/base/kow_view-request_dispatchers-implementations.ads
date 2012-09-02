@@ -89,7 +89,7 @@ package KOW_View.Request_Dispatchers.Implementations is
 	overriding
 	function Can_Dispatch(
 				Dispatcher	: in Prefix_Dispatcher_Type;
-				Request		: in AWS.Status.Data
+				URI		: in String
 			) return Boolean;
 	
 
@@ -131,7 +131,7 @@ package KOW_View.Request_Dispatchers.Implementations is
 	overriding
 	function Can_Dispatch(
 				Dispatcher	: in Htdocs_Dispatcher_Type;
-				Request		: in AWS.Status.Data
+				URI		: in String
 			) return Boolean;
 	-- check if the given URI exists inside the URI folder
 

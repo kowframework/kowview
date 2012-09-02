@@ -58,7 +58,7 @@ package KOW_View.Request_Dispatchers is
 
 	function Can_Dispatch(
 				Dispatcher	: in Request_Dispatcher_Interface;
-				Request		: in AWS.Status.Data
+				URI		: in String
 			) return Boolean is abstract;
 	-- check if the dispatcher can attend to a given request
 	-- no security considerations are taken into account; do security checks in the Is_Allowed function above
@@ -91,7 +91,7 @@ package KOW_View.Request_Dispatchers is
 	----------------------
 
 
-	function Get_Dispatcher( Request : in AWS.Status.Data ) return Request_Dispatcher_Ptr;
+	function Get_Dispatcher( URI : in String ) return Request_Dispatcher_Ptr;
 	-- try getting the dispatcher; if not found, return null.
 
 	procedure Append_Dispatcher( Dispatcher : in Request_Dispatcher_Ptr );

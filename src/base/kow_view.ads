@@ -82,9 +82,9 @@ package KOW_View is
 	-- Names 
 	--
 
-	type Name_Type is new String( 1 .. 50 );
+	type Name_Type is new String( 1 .. 150 );
 
-	No_Path : constant Name_Type := ( others => ' ' );
+	No_Name : constant Name_Type := ( others => ' ' );
 
 
 	function To_Name( Str : in String ) return Name_Type;

@@ -119,7 +119,7 @@ package body KOW_View is
 										Root_Accountant	=> Accountant'Access
 									);
 
-		Dispatcher : Request_Dispatcher_Ptr := Request_Dispatchers.Get_Dispatcher( Request );
+		Dispatcher : Request_Dispatcher_Ptr := Request_Dispatchers.Get_Dispatcher( AWS.Status.URI( Request ) );
 	begin
 		if Dispatcher = null then
 			raise ERROR_404 with AWS.Status.URI( Request );

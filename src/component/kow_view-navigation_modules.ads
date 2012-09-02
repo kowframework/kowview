@@ -36,6 +36,7 @@ with Ada.Text_IO;
 -- KOW Framework --
 -------------------
 with KOW_Config;
+with KOW_Lib.Locales;
 with KOW_View.Components;	use KOW_View.Components;
 with KOW_View.Module_Factories;
 with KOW_View.Pages;		use KOW_View.Pages;
@@ -63,10 +64,9 @@ package KOW_View.Navigation_Modules is
 
 
 	type Menu_Item_Type is record
-		Name			: Menu_Name;
-		Href			: Menu_Href;
-		Disable_When_Active	: Boolean := True;
-		Has_Access		: Boolean := False;
+		Name			: Menu_Name	:= No_Name;
+		Href			: Menu_Href	:= No_Name;
+		Is_Active		: Boolean	:= False;
 		Child_Items		: KOW_lib.Json.Array_Type;
 	end record;
 
@@ -130,9 +130,12 @@ package KOW_View.Navigation_Modules is
 
 
 	function To_Json(
-				Menu	: in Menu_Module
+				Menu	: in Menu_Module;
+				Status	: in Request_Status_Type
 			) return KOW_Lib.Json.Object_Type;
 	-- conver the menu into a json object
+	-- only accessible items will be listed
+	-- setup the label property in each item using the current locale
 
 
 
@@ -157,5 +160,21 @@ package KOW_View.Navigation_Modules is
 	-- initialize the menu.labels property
 
 
+
+	procedure Is_Allowed_And_Active(
+				Menu	: in     Menu_Module;
+				Status	: in     Request_Status_Type;
+				Item	: in out Menu_Item_Type;
+				Allowed	:    out Boolean;
+			) return Boolean;
+	-- check if the menu item is accessible (local items always checked; remote items never checked)
+
+
+	function Get_Label(
+				Menu	: in     Menu_Module;
+				Item	: in     Menu_Item_Type;
+				Locale	: in     KOW_Lib.Locales.Locale_Type
+			) return String;
+	-- get the label to be used to build the interface
 end KOW_View.Navigation_Modules;
 

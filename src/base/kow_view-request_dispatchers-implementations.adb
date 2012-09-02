@@ -123,7 +123,7 @@ package body KOW_View.Request_Dispatchers.Implementations is
 	overriding
 	function Can_Dispatch(
 				Dispatcher	: in Prefix_Dispatcher_Type;
-				Request		: in AWS.Status.Data
+				URI		: in String
 			) return Boolean is
 		URI : constant String := AWS.Status.URI( Request );
 	begin
@@ -178,7 +178,7 @@ package body KOW_View.Request_Dispatchers.Implementations is
 	overriding
 	function Can_Dispatch(
 				Dispatcher	: in Htdocs_Dispatcher_Type;
-				Request		: in AWS.Status.Data
+				URI		: in String
 			) return Boolean is
 		-- check if the given URI exists inside the URI folder
 		htdocs_path : constant String := Compute_Path( Htdocs_Dispatcher_Type'Class( Dispatcher ), Request );
