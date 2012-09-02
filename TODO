@@ -5,7 +5,18 @@ Things that should be done to the 3.0 release:
 	1. exception templates should use the KTML template now, instead of the AWS engine
 
 	* template for menu module in kvdriver
-	* security module
+	* security (password based)
+		=> login_service
+		=> logout_service
+		=> switch_user_service
+		=> login_controller_module
+		=> switch_user_controller_module
+
+	* security (REST based)
+		=> facebook specific code
+		=> google specific code
+		=> yahoo specific code
+		=> then convert into an univorm API
 
 
 
